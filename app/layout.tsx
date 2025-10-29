@@ -5,8 +5,6 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import { CurrencyProvider } from "@/lib/contexts/currency-context"
 import { AuthProvider } from "@/lib/contexts/auth-context"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { generateOrganizationSchema, generateWebSiteSchema, serializeSchema } from "@/lib/schema"
 import "./globals.css"
 
@@ -71,13 +69,9 @@ export default function RootLayout({
         </a>
         <AuthProvider>
           <CurrencyProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main id="main-content" className="flex-1" role="main">
-                {children}
-              </main>
-              <Footer />
-            </div>
+            <main id="main-content" className="flex-1" role="main">
+              {children}
+            </main>
           </CurrencyProvider>
         </AuthProvider>
         <Toaster />

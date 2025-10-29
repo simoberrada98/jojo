@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
@@ -19,6 +20,7 @@ const SORT_OPTIONS = [
 ]
 
 export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
+  const searchParams = useSearchParams()
   const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -26,6 +28,14 @@ export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
   const [sortBy, setSortBy] = useState("newest")
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState([0, 200000])
+
+  // Set category from URL params
+  useEffect(() => {
+    const categoryParam = searchParams.get("category")
+    if (categoryParam) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [searchParams])
 
   // Fetch all products on mount
   useEffect(() => {

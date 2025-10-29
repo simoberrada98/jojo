@@ -2,70 +2,71 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { useRouter } from "next/navigation"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import ProductImage from "@/components/product-image"
 import { Button } from "@/components/ui/button"
-import { ChevronRight, Filter } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 const collections = [
   {
     id: "asic-miners",
     name: "ASIC Miners",
+    category: "ASIC",
     description: "Professional ASIC mining hardware for Bitcoin and other cryptocurrencies",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 12,
     featured: true,
   },
   {
     id: "gpu-rigs",
     name: "GPU Mining Rigs",
+    category: "GPU",
     description: "High-performance GPU rigs for Ethereum and altcoin mining",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 8,
     featured: true,
   },
   {
     id: "compact-miners",
     name: "Compact Miners",
+    category: "Compact",
     description: "Space-efficient mining solutions for home and small operations",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 6,
     featured: false,
   },
   {
     id: "enterprise-solutions",
     name: "Enterprise Solutions",
+    category: "Enterprise",
     description: "Large-scale mining infrastructure and datacenter equipment",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 15,
     featured: true,
   },
   {
     id: "accessories",
     name: "Mining Accessories",
+    category: "ASIC",
     description: "Power supplies, cooling systems, and mining accessories",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 24,
     featured: false,
   },
   {
     id: "software-tools",
     name: "Software & Tools",
+    category: "GPU",
     description: "Mining software, monitoring tools, and optimization utilities",
-    image: "/placeholder.svg?height=400&width=600",
     productCount: 10,
     featured: false,
   },
 ]
 
 export default function CollectionPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
-  const filteredCollections = selectedCategory ? collections.filter((c) => c.id === selectedCategory) : collections
+  const router = useRouter()
+  const [cartCount, setCartCount] = useState(0)
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header cartCount={cartCount} />
 
       <main className="pt-20">
         {/* Breadcrumb */}
@@ -84,24 +85,11 @@ export default function CollectionPage() {
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
+            <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Mining Hardware Collections</h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Explore our curated collections of mining hardware, from entry-level to enterprise-grade solutions
               </p>
-            </div>
-
-            {/* Filter Bar */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-accent" />
-                <span className="text-sm font-medium text-foreground">Filter by Category</span>
-              </div>
-              {selectedCategory && (
-                <Button variant="outline" size="sm" onClick={() => setSelectedCategory(null)} className="text-xs">
-                  Clear Filter
-                </Button>
-              )}
             </div>
           </div>
         </section>
@@ -109,20 +97,18 @@ export default function CollectionPage() {
         {/* Collections Grid */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCollections.map((collection) => (
-              <div
+            {collections.map((collection) => (
+              <Link
                 key={collection.id}
-                className="group cursor-pointer"
-                onClick={() => setSelectedCategory(collection.id)}
+                href="/#products"
+                className="group block"
               >
-                <div className="relative overflow-hidden rounded-lg mb-4 h-64 bg-card border border-border">
-                  <img
-                    src={collection.image || "/placeholder.svg"}
-                    alt={collection.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative overflow-hidden rounded-lg mb-4 h-64 border border-border group-hover:border-accent transition-all duration-300">
+                  <div className="group-hover:scale-105 transition-transform duration-500 h-full">
+                    <ProductImage category={collection.category} />
+                  </div>
                   {collection.featured && (
-                    <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                    <div className="absolute top-4 right-4 bg-accent/90 backdrop-blur-sm text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold z-10">
                       Featured
                     </div>
                   )}
@@ -137,7 +123,7 @@ export default function CollectionPage() {
                     Explore →
                   </Button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

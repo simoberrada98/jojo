@@ -18,6 +18,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [cartCount, setCartCount] = useState(0)
+  const [selectedImage, setSelectedImage] = useState(0)
   const { currency, formatPrice } = useCurrency()
 
   useEffect(() => {
@@ -108,14 +109,37 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Visual */}
             <div className="space-y-4">
-              <div className="relative h-96 lg:h-[600px] bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 rounded-xl overflow-hidden border border-border">
-                <ProductImage category={product.category} />
-
+              {/* Main Image */}
+              <div className="relative h-96 lg:h-[600px] rounded-xl overflow-hidden border border-border">
+                <ProductImage 
+                  category={product.category} 
+                  image={product.images?.[selectedImage] || product.image} 
+                />
+                
                 {/* Category Badge */}
-                <div className="absolute top-4 left-4 bg-accent/90 text-accent-foreground px-4 py-2 rounded-lg font-semibold">
+                <div className="absolute top-4 left-4 bg-accent/90 backdrop-blur-sm text-accent-foreground px-4 py-2 rounded-lg font-semibold z-10">
                   {product.category}
                 </div>
               </div>
+              
+              {/* Thumbnail Gallery */}
+              {product.images && product.images.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {product.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                        selectedImage === idx
+                          ? "border-accent scale-105"
+                          : "border-border hover:border-accent/50"
+                      }`}
+                    >
+                      <ProductImage category={product.category} image={img} />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
