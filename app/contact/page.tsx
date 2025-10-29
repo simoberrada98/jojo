@@ -3,12 +3,14 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { useCart } from "@/lib/contexts/cart-context"
 
 export default function ContactPage() {
+  const { itemCount } = useCart()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,7 +35,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header cartCount={itemCount} />
 
       <main className="pt-20">
         {/* Hero Section */}
