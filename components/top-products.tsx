@@ -1,26 +1,29 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ProductImage from "@/components/product-image"
-import type { Product } from "@/lib/data/local-product-store"
+import { useCurrency } from "@/lib/contexts/currency-context"
+import type { DisplayProduct } from "@/lib/types/product"
 
 interface TopProductsProps {
   onAddToCart?: (productId: number | string) => void
 }
 
 export default function TopProducts({ onAddToCart }: TopProductsProps) {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
+  const { currency, formatPrice } = useCurrency()
 
   useEffect(() => {
     async function fetchTopProducts() {
       try {
         setLoading(true)
         // Fetch all products and sort by rating
-        const response = await fetch("/api/products_by_id?limit=50")
+        const response = await fetch("/api/products?limit=50")
         if (!response.ok) throw new Error("Failed to fetch products")
         
         const data = await response.json()
@@ -57,7 +60,13 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/50">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-balance">
             <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
               Top Rated Products
@@ -66,13 +75,18 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
           <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
             Our most popular and highest-rated mining hardware trusted by professionals worldwide.
           </p>
-        </div>
+        </motion.div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {products.map((product) => (
-            <div
+          {products.map((product, index) => (
+            <motion.div
               key={product.id}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
               className="group relative bg-card rounded-xl border border-border overflow-hidden hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent/10"
             >
               {/* Best Seller Badge */}
@@ -103,7 +117,7 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
                   <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-accent transition-colors">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-foreground/60 mb-2">
+                  <p className="text-sm text-foreground/60 mb-2 font-mono">
                     {product.hashrate} • {product.power}
                   </p>
                 </div>
@@ -129,11 +143,11 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
 
                 {/* Price */}
                 <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-bold text-accent">
-                    {product.price.toFixed(2)} BTC
+                  <span className="text-2xl font-bold text-accent font-mono">
+                    {formatPrice(product.priceUSD)} {currency}
                   </span>
-                  <span className="text-sm text-foreground/60">
-                    ${product.priceUSD.toLocaleString()}
+                  <span className="text-sm text-foreground/60 font-mono">
+                    ${product.priceUSD.toLocaleString()} USD
                   </span>
                 </div>
 
@@ -149,29 +163,39 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
                 </Link>
 
                 {/* Action Button */}
-                <Button
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  onClick={() => onAddToCart?.(product.id)}
-                >
-                  Add to Cart
-                </Button>
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Button
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => onAddToCart?.(product.id)}
+                  >
+                    Add to Cart
+                  </Button>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* View All Link */}
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-center"
+        >
           <a href="#products">
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-accent text-accent hover:bg-accent/10 bg-transparent"
-            >
-              View All Products
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-accent text-accent hover:bg-accent/10 bg-transparent"
+              >
+                View All Products
+              </Button>
+            </motion.div>
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

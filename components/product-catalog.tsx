@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react"
 import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
-import type { Product } from "@/lib/data/local-product-store"
+import type { DisplayProduct } from "@/lib/types/product"
 
 interface ProductCatalogProps {
   onAddToCart: () => void
@@ -19,7 +19,7 @@ const SORT_OPTIONS = [
 ]
 
 export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState("All")
@@ -32,7 +32,7 @@ export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
     async function fetchProducts() {
       try {
         setLoading(true)
-        const response = await fetch("/api/products_by_id?limit=100")
+        const response = await fetch("/api/products?limit=100")
         if (!response.ok) {
           throw new Error("Failed to fetch products")
         }

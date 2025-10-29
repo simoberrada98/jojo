@@ -58,7 +58,14 @@ components/            # React components
   └── crypto-payment-form.tsx # Payment handling
 
 lib/
-  └── utils.ts         # cn() utility for className merging
+  ├── data/
+  │   ├── json/          # Shopify product JSON files (21 products)
+  │   │   ├── *.json     # Individual product data files
+  │   │   └── index.ts   # JSON loader and mapper
+  │   └── local-product-store.ts  # Product data interface and query functions
+  └── utils/
+      ├── utils.ts       # cn() utility for className merging
+      └── logger.ts      # API logging utility
 ```
 
 ### Key Patterns
@@ -74,7 +81,7 @@ import { cn } from "@/lib/utils"
 - Server components by default (no "use client" directive)
 - Client components explicitly marked with `"use client"`
 - Admin pages use client-side state management
-- Product data served via API route at `/api/products_by_id`
+- Product data served via API route at `/api/products`
 
 **Styling System**:
 - Custom CSS variables in `app/globals.css` using OKLCH color space
@@ -95,7 +102,7 @@ import { cn } from "@/lib/utils"
 
 ## API Routes
 
-### `/api/products_by_id`
+### `/api/products`
 
 Central API route for all product data operations:
 
@@ -107,7 +114,7 @@ Central API route for all product data operations:
 - `?offset={number}` - Pagination offset (default: 0)
 
 **Implementation**:
-- Located in `app/api/products_by_id/route.ts`
+- Located in `app/api/products/route.ts`
 - Depends on `@/lib/data/local-product-store` for data operations
 - Uses `@/lib/utils/logger` for logging
 - Cache-Control headers: 300s for single products, 120s for searches
@@ -120,15 +127,15 @@ Central API route for all product data operations:
 **Usage in components**:
 ```typescript
 // Fetch single product
-const res = await fetch('/api/products_by_id?id=123')
+const res = await fetch('/api/products?id=123')
 const product = await res.json()
 
 // Fetch multiple products
-const res = await fetch('/api/products_by_id?ids=1,2,3')
+const res = await fetch('/api/products?ids=1,2,3')
 const products = await res.json()
 
 // Search/paginate
-const res = await fetch('/api/products_by_id?q=miner&limit=10&offset=0')
+const res = await fetch('/api/products?q=miner&limit=10&offset=0')
 const { results, total, hasMore } = await res.json()
 ```
 
@@ -176,6 +183,14 @@ When adding components:
 5. Mark client components with `"use client"` when using hooks/state
 
 When modifying product data:
-- Edit data in `lib/data/local-product-store.ts` (the single source of truth)
-- API route at `/api/products_by_id` automatically serves updated data
-- Components fetch products via API, not hardcoded arrays
+- **Source of Truth**: JSON files in `lib/data/json/*.json` (21 Shopify product files)
+- **Format**: Standard Shopify product JSON format with images, variants, tags
+- **Loader**: `lib/data/json/index.ts` reads and maps JSON to Product interface
+- **Mapping**: Automatically extracts hashrate, power, prices, images from JSON
+- **API**: `/api/products` serves data from JSON files
+- **No Hardcoding**: All products loaded dynamically from JSON files
+
+To add/edit products:
+1. Add/edit JSON files in `lib/data/json/`
+2. Server automatically reloads on file changes
+3. No code changes needed

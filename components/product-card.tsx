@@ -1,14 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Zap, Cpu, Star } from "lucide-react"
 import ProductImage from "@/components/product-image"
+import { useCurrency } from "@/lib/contexts/currency-context"
 
 interface Product {
   id: number
   name: string
+  handle: string
   price: number
   priceUSD: number
   category: string
@@ -28,6 +31,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false)
+  const { currency, formatPrice } = useCurrency()
 
   const handleAddToCart = () => {
     onAddToCart()
@@ -36,7 +40,14 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   }
 
   return (
-    <div className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-all duration-300 glow-accent-hover">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-all duration-300 glow-accent-hover"
+    >
       <Link href={`/product/${product.handle}`} className="block">
       {/* Image Container */}
       <div className="relative h-64 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 overflow-hidden">
@@ -70,11 +81,11 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
         <div className="flex gap-4 mb-4 text-sm text-foreground/70">
           <div className="flex items-center gap-1">
             <Zap className="w-4 h-4 text-accent" />
-            {product.hashrate}
+            <span className="font-mono">{product.hashrate}</span>
           </div>
           <div className="flex items-center gap-1">
             <Cpu className="w-4 h-4 text-accent" />
-            {product.power}
+            <span className="font-mono">{product.power}</span>
           </div>
         </div>
 
@@ -91,19 +102,23 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
 
         {/* Price */}
         <div className="mb-6 pb-6 border-b border-border">
-          <div className="text-3xl font-bold text-accent mb-1">{product.price} BTC</div>
-          <div className="text-sm text-foreground/60">${product.priceUSD.toLocaleString()}</div>
+          <div className="text-3xl font-bold text-accent mb-1 font-mono">
+            {formatPrice(product.priceUSD)} {currency}
+          </div>
+          <div className="text-sm text-foreground/60 font-mono">${product.priceUSD.toLocaleString()} USD</div>
         </div>
 
         {/* Add to Cart Button */}
-        <Button
-          onClick={handleAddToCart}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2 glow-accent-hover transition-all duration-300"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          {isAdded ? "Added to Cart!" : "Add to Cart"}
-        </Button>
+        <motion.div whileTap={{ scale: 0.95 }}>
+          <Button
+            onClick={handleAddToCart}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2 glow-accent-hover transition-all duration-300"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            {isAdded ? "Added to Cart!" : "Add to Cart"}
+          </Button>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

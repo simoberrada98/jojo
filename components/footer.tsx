@@ -4,9 +4,9 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
+    <footer className="bg-card border-t border-border" role="contentinfo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8" role="navigation" aria-label="Footer navigation">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -50,23 +50,23 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-foreground">Company</h4>
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
-                <Link href="/contact" className="hover:text-accent transition">
+                <Link href="/about" className="hover:text-accent transition">
                   About Us
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-accent transition">
-                  Blog
+                  Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-accent transition">
-                  Careers
+                <Link href="/shipping" className="hover:text-accent transition">
+                  Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-accent transition">
-                  Contact
+                <Link href="/returns" className="hover:text-accent transition">
+                  Returns & Refunds
                 </Link>
               </li>
             </ul>
@@ -77,23 +77,23 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
-                <Link href="/privacy-policy" className="hover:text-accent transition">
+                <Link href="/privacy" className="hover:text-accent transition">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-service" className="hover:text-accent transition">
+                <Link href="/terms" className="hover:text-accent transition">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-accent transition">
-                  Shipping Info
+                <Link href="/returns" className="hover:text-accent transition">
+                  Returns Policy
                 </Link>
               </li>
               <li>
-                <Link href="/refunds" className="hover:text-accent transition">
-                  Refunds & Returns
+                <Link href="/shipping" className="hover:text-accent transition">
+                  Shipping Policy
                 </Link>
               </li>
             </ul>
@@ -104,14 +104,14 @@ export function Footer() {
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-foreground/60">
           <p>&copy; 2025 MineHub. All rights reserved.</p>
           <div className="flex gap-6 mt-4 sm:mt-0">
-            <Link href="/privacy-policy" className="hover:text-accent transition">
-              Privacy Policy
+            <Link href="/privacy" className="hover:text-accent transition">
+              Privacy
             </Link>
-            <Link href="/terms-of-service" className="hover:text-accent transition">
-              Terms of Service
+            <Link href="/terms" className="hover:text-accent transition">
+              Terms
             </Link>
-            <Link href="/refunds" className="hover:text-accent transition">
-              Refunds & Returns
+            <Link href="/returns" className="hover:text-accent transition">
+              Returns
             </Link>
           </div>
         </div>

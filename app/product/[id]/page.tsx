@@ -7,15 +7,18 @@ import { Button } from "@/components/ui/button"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductImage from "@/components/product-image"
-import type { Product } from "@/lib/data/local-product-store"
+import { useCurrency } from "@/lib/contexts/currency-context"
+import { generateProductSchema, serializeSchema } from "@/lib/schema"
+import type { DisplayProduct } from "@/lib/types/product"
 
 export default function ProductDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const [product, setProduct] = useState<Product | null>(null)
+  const [product, setProduct] = useState<DisplayProduct | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [cartCount, setCartCount] = useState(0)
+  const { currency, formatPrice } = useCurrency()
 
   useEffect(() => {
     async function fetchProduct() {
@@ -24,7 +27,7 @@ export default function ProductDetailPage() {
         // Try fetching by handle first, fallback to ID if it's numeric
         const isNumericId = /^\d+$/.test(params.id as string)
         const queryParam = isNumericId ? `id=${params.id}` : `handle=${params.id}`
-        const response = await fetch(`/api/products_by_id?${queryParam}`)
+        const response = await fetch(`/api/products?${queryParam}`)
         if (!response.ok) {
           throw new Error("Product not found")
         }
@@ -75,8 +78,19 @@ export default function ProductDetailPage() {
     )
   }
 
+  // Generate Product Schema
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://minehub.com"
+  const productSchema = generateProductSchema(product, baseUrl, currency)
+
   return (
     <main className="min-h-screen bg-background">
+      {/* Schema.org Product markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeSchema(productSchema),
+        }}
+      />
       <Header cartCount={cartCount} />
 
       <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
@@ -135,10 +149,10 @@ export default function ProductDetailPage() {
 
               {/* Price */}
               <div className="p-6 bg-card rounded-xl border border-border">
-                <div className="text-4xl font-bold text-accent mb-2">
-                  {product.price.toFixed(2)} BTC
+                <div className="text-4xl font-bold text-accent mb-2 font-mono">
+                  {formatPrice(product.priceUSD)} {currency}
                 </div>
-                <div className="text-xl text-foreground/70">
+                <div className="text-xl text-foreground/70 font-mono">
                   ${product.priceUSD.toLocaleString()} USD
                 </div>
               </div>
@@ -150,14 +164,14 @@ export default function ProductDetailPage() {
                     <Zap className="w-5 h-5" />
                     <span className="font-semibold">Hashrate</span>
                   </div>
-                  <div className="text-2xl font-bold text-foreground">{product.hashrate}</div>
+                  <div className="text-2xl font-bold text-foreground font-mono">{product.hashrate}</div>
                 </div>
                 <div className="p-4 bg-card rounded-xl border border-border">
                   <div className="flex items-center gap-2 text-accent mb-2">
                     <Cpu className="w-5 h-5" />
                     <span className="font-semibold">Power</span>
                   </div>
-                  <div className="text-2xl font-bold text-foreground">{product.power}</div>
+                  <div className="text-2xl font-bold text-foreground font-mono">{product.power}</div>
                 </div>
               </div>
 
@@ -190,15 +204,15 @@ export default function ProductDetailPage() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1">24/7</div>
+                  <div className="text-2xl font-bold text-accent mb-1 font-mono">24/7</div>
                   <div className="text-xs text-foreground/60">Support</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1">2 Year</div>
+                  <div className="text-2xl font-bold text-accent mb-1 font-mono">2 Year</div>
                   <div className="text-xs text-foreground/60">Warranty</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1">Free</div>
+                  <div className="text-2xl font-bold text-accent mb-1 font-mono">Free</div>
                   <div className="text-xs text-foreground/60">Shipping</div>
                 </div>
               </div>
