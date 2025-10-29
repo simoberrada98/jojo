@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
 import { ChevronRight, Truck, Globe, Clock, Shield } from "lucide-react"
 
 export default function ShippingPage() {
