@@ -95,12 +95,14 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground glow-accent-hover transition-all duration-300"
-            >
-              Shop Now
-            </Button>
+            <a href="#products">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground glow-accent-hover transition-all duration-300"
+              >
+                Shop Now
+              </Button>
+            </a>
             <Button
               size="lg"
               variant="outline"

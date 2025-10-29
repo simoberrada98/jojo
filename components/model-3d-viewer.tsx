@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react"
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, PresentationControls, Stage } from "@react-three/drei"
+import { OrbitControls } from "@react-three/drei"
 import { Loader } from "lucide-react"
 
 interface Model3DViewerProps {
@@ -14,20 +14,16 @@ function ModelContent({ modelPath }: { modelPath: string }) {
 
   return (
     <>
-      <PresentationControls speed={1.5} global zoom={1} rotation={[0, 0, 0]}>
-        <Stage environment="city" intensity={0.6}>
-          <mesh onLoad={() => setLoading(false)} scale={1}>
-            <boxGeometry args={[2, 2, 2]} />
-            <meshStandardMaterial
-              color="#66ccff"
-              metalness={0.8}
-              roughness={0.2}
-              emissive="#1a1a2e"
-              emissiveIntensity={0.3}
-            />
-          </mesh>
-        </Stage>
-      </PresentationControls>
+      <mesh onLoad={() => setLoading(false)} scale={1}>
+        <boxGeometry args={[2, 2, 2]} />
+        <meshStandardMaterial
+          color="#66ccff"
+          metalness={0.8}
+          roughness={0.2}
+          emissive="#1a1a2e"
+          emissiveIntensity={0.3}
+        />
+      </mesh>
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/50">
           <Loader className="w-6 h-6 animate-spin text-accent" />

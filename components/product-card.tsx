@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Zap, Cpu, Star } from "lucide-react"
-import Model3DViewer from "@/components/model-3d-viewer"
+import ProductImage from "@/components/product-image"
 
 interface Product {
   id: number
@@ -27,7 +27,6 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const [show3D, setShow3D] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
 
   const handleAddToCart = () => {
@@ -38,35 +37,21 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
 
   return (
     <div className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-all duration-300 glow-accent-hover">
-      {/* Image/3D Model Container */}
-      <div className="relative h-64 bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
-        {show3D ? (
-          <Model3DViewer modelPath={product.model3d} />
-        ) : (
-          <Image
-            src={product.image || "/placeholder.svg"}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
-          />
-        )}
-
-        {/* 3D Toggle Button */}
-        <button
-          onClick={() => setShow3D(!show3D)}
-          className="absolute top-3 right-3 bg-primary/80 hover:bg-primary text-white px-3 py-1 rounded-full text-sm font-medium transition"
-        >
-          {show3D ? "2D" : "3D"}
-        </button>
+      <Link href={`/product/${product.handle}`} className="block">
+      {/* Image Container */}
+      <div className="relative h-64 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 overflow-hidden">
+        <ProductImage category={product.category} />
 
         {/* Category Badge */}
         <div className="absolute top-3 left-3 bg-accent/90 text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
           {product.category}
         </div>
       </div>
+      </Link>
 
       {/* Content */}
       <div className="p-6">
+        <Link href={`/product/${product.handle}`} className="block">
         {/* Title and Rating */}
         <div className="flex items-start justify-between mb-2">
           <h3 className="text-xl font-bold text-foreground flex-1">{product.name}</h3>
@@ -102,6 +87,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
             </li>
           ))}
         </ul>
+        </Link>
 
         {/* Price */}
         <div className="mb-6 pb-6 border-b border-border">

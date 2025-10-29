@@ -46,9 +46,10 @@ app/                    # Next.js App Router pages
   ├── checkout/        # Multi-step checkout with crypto payment
   ├── collection/      # Product collections
   ├── contact/         # Contact page
+  ├── product/[id]/    # Dynamic product detail page
   ├── thank-you/       # Order confirmation
   ├── layout.tsx       # Root layout with Vercel Analytics
-  └── page.tsx         # Homepage with hero + catalog
+  └── page.tsx         # Homepage with hero + top products + catalog
 
 components/            # React components
   ├── ui/             # shadcn/ui primitives (button, card, etc.)
@@ -73,7 +74,7 @@ import { cn } from "@/lib/utils"
 - Server components by default (no "use client" directive)
 - Client components explicitly marked with `"use client"`
 - Admin pages use client-side state management
-- Product data is hardcoded in `components/product-catalog.tsx`
+- Product data served via API route at `/api/products_by_id`
 
 **Styling System**:
 - Custom CSS variables in `app/globals.css` using OKLCH color space
@@ -91,6 +92,45 @@ import { cn } from "@/lib/utils"
 - Located in `/public/assets/3d/`
 - Loaded via `@react-three/fiber` and `@react-three/drei`
 - Used in product visualization (e.g., `model-3d-viewer.tsx`)
+
+## API Routes
+
+### `/api/products_by_id`
+
+Central API route for all product data operations:
+
+**Query Parameters**:
+- `?id={productId}` - Get single product by ID
+- `?ids={id1,id2,id3}` - Get multiple products by comma-separated IDs
+- `?q={query}` or `?search={query}` - Search products
+- `?limit={number}` - Pagination limit (1-100, default: 20)
+- `?offset={number}` - Pagination offset (default: 0)
+
+**Implementation**:
+- Located in `app/api/products_by_id/route.ts`
+- Depends on `@/lib/data/local-product-store` for data operations
+- Uses `@/lib/utils/logger` for logging
+- Cache-Control headers: 300s for single products, 120s for searches
+- Revalidates every 60 seconds (`export const revalidate = 60`)
+
+**Required modules** (to be created if not present):
+- `lib/data/local-product-store.ts` - Export: `searchProducts()`, `findProductById()`, `findProductsByIds()`
+- `lib/utils/logger.ts` - Export: `logger` object with `api()` and `error()` methods
+
+**Usage in components**:
+```typescript
+// Fetch single product
+const res = await fetch('/api/products_by_id?id=123')
+const product = await res.json()
+
+// Fetch multiple products
+const res = await fetch('/api/products_by_id?ids=1,2,3')
+const products = await res.json()
+
+// Search/paginate
+const res = await fetch('/api/products_by_id?q=miner&limit=10&offset=0')
+const { results, total, hasMore } = await res.json()
+```
 
 ## Crypto Payment Flow
 
@@ -136,5 +176,6 @@ When adding components:
 5. Mark client components with `"use client"` when using hooks/state
 
 When modifying product data:
-- Edit the `PRODUCTS` array in `components/product-catalog.tsx`
-- Update categories in `CATEGORIES` constant if needed
+- Edit data in `lib/data/local-product-store.ts` (the single source of truth)
+- API route at `/api/products_by_id` automatically serves updated data
+- Components fetch products via API, not hardcoded arrays
