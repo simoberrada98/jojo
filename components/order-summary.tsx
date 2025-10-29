@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react"
 import ProductImage from "@/components/product-image"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
+import { calculatePricing } from "@/lib/utils/pricing"
 
 interface OrderSummaryProps {
   onProceed: (data: any) => void
@@ -14,10 +15,8 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
   const { items, removeItem } = useCart()
   const { currency, formatPrice } = useCurrency()
 
-  const subtotal = items.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
-  const shipping = 50
-  const tax = (subtotal + shipping) * 0.08
-  const total = subtotal + shipping + tax
+  // Calculate totals using shared utility
+  const { subtotal, shipping, tax, total } = calculatePricing(items)
 
   const handleProceed = () => {
     if (items.length === 0) return

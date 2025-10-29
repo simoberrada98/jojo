@@ -1,13 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductImage from "@/components/product-image"
 import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
+import { useCart } from "@/lib/contexts/cart-context"
 
 const collections = [
   {
@@ -61,12 +60,11 @@ const collections = [
 ]
 
 export default function CollectionPage() {
-  const router = useRouter()
-  const [cartCount, setCartCount] = useState(0)
+  const { itemCount } = useCart()
 
   return (
     <div className="min-h-screen bg-background">
-      <Header cartCount={cartCount} />
+      <Header cartCount={itemCount} />
 
       <main className="pt-20">
         {/* Breadcrumb */}

@@ -22,7 +22,7 @@ interface HeaderProps {
   cartCount?: number
 }
 
-export function Header({ cartCount = 0 }: HeaderProps) {
+export default function Header({ cartCount = 0 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [authDialogOpen, setAuthDialogOpen] = useState(false)
   const { user, profile, signOut } = useAuth()

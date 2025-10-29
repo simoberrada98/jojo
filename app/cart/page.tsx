@@ -7,19 +7,17 @@ import { ArrowLeft, Trash2, Plus, Minus, ShoppingCart } from "lucide-react"
 import ProductImage from "@/components/product-image"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
+import { calculatePricing } from "@/lib/utils/pricing"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 
 export default function CartPage() {
-  const { items: cartItems, updateQuantity, removeItem, itemCount, total: cartTotal } = useCart()
+  const { items: cartItems, updateQuantity, removeItem, itemCount } = useCart()
   const { currency, formatPrice } = useCurrency()
   const [isLoading, setIsLoading] = useState(false)
 
-  // Calculate totals in USD
-  const subtotal = cartItems.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
-  const shipping = cartItems.length > 0 ? 50 : 0
-  const tax = (subtotal + shipping) * 0.08
-  const total = subtotal + shipping + tax
+  // Calculate totals using shared utility
+  const { subtotal, shipping, tax, total } = calculatePricing(cartItems)
 
   const handleCheckout = () => {
     setIsLoading(true)

@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { Star, Zap, Cpu, Shield, ArrowLeft, ShoppingCart } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductImage from "@/components/product-image"
 import { useCurrency } from "@/lib/contexts/currency-context"
+import { useCart } from "@/lib/contexts/cart-context"
 import { generateProductSchema, serializeSchema } from "@/lib/schema"
 import type { DisplayProduct } from "@/lib/types/product"
 
@@ -17,9 +19,9 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<DisplayProduct | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [cartCount, setCartCount] = useState(0)
   const [selectedImage, setSelectedImage] = useState(0)
   const { currency, formatPrice } = useCurrency()
+  const { addItem, itemCount } = useCart()
 
   useEffect(() => {
     async function fetchProduct() {
@@ -48,13 +50,16 @@ export default function ProductDetailPage() {
   }, [params.id])
 
   const handleAddToCart = () => {
-    setCartCount((c) => c + 1)
+    if (product) {
+      addItem(product)
+      toast.success(`${product.name} added to cart!`)
+    }
   }
 
   if (loading) {
     return (
       <main className="min-h-screen bg-background">
-        <Header cartCount={cartCount} />
+        <Header cartCount={itemCount} />
         <div className="flex items-center justify-center min-h-[60vh]">
           <p className="text-foreground/60">Loading product...</p>
         </div>
@@ -66,7 +71,7 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <main className="min-h-screen bg-background">
-        <Header cartCount={cartCount} />
+        <Header cartCount={itemCount} />
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
           <p className="text-destructive text-lg">{error || "Product not found"}</p>
           <Button onClick={() => router.push("/")} variant="outline">
@@ -92,7 +97,7 @@ export default function ProductDetailPage() {
           __html: serializeSchema(productSchema),
         }}
       />
-      <Header cartCount={cartCount} />
+      <Header cartCount={itemCount} />
 
       <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

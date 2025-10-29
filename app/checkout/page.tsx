@@ -12,9 +12,10 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
+import { calculatePricing } from "@/lib/utils/pricing"
 
 export default function CheckoutPage() {
-  const { items, itemCount, total } = useCart()
+  const { items, itemCount } = useCart()
   const { currency, formatPrice } = useCurrency()
   const [paymentStep, setPaymentStep] = useState<"shipping" | "review" | "payment" | "confirmation">("shipping")
   const [orderData, setOrderData] = useState<any>(null)
@@ -70,10 +71,8 @@ export default function CheckoutPage() {
     }
   }
 
-  const subtotal = items.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
-  const shipping = items.length > 0 ? 50 : 0
-  const tax = (subtotal + shipping) * 0.08
-  const totalAmount = subtotal + shipping + tax
+  // Calculate totals using shared utility
+  const { subtotal, shipping, tax, total: totalAmount } = calculatePricing(items)
 
   return (
     <div className="min-h-screen bg-background">
