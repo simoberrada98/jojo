@@ -1,21 +1,21 @@
 "use client"
 
-import { useState } from "react"
 import Header from "@/components/header"
 import HeroSection from "@/components/hero-section"
 import TopProducts from "@/components/top-products"
 import ProductCatalog from "@/components/product-catalog"
 import Footer from "@/components/footer"
+import { useCart } from "@/lib/contexts/cart-context"
 
 export default function Home() {
-  const [cartCount, setCartCount] = useState(0)
+  const { itemCount } = useCart()
 
   return (
     <main className="min-h-screen bg-background">
-      <Header cartCount={cartCount} />
+      <Header cartCount={itemCount} />
       <HeroSection />
-      <TopProducts onAddToCart={() => setCartCount((c) => c + 1)} />
-      <ProductCatalog onAddToCart={() => setCartCount((c) => c + 1)} />
+      <TopProducts />
+      <ProductCatalog />
       <Footer />
     </main>
   )

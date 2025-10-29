@@ -5,42 +5,29 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Zap, Cpu, Star } from "lucide-react"
+import { toast } from "sonner"
 import ProductImage from "@/components/product-image"
 import { useCurrency } from "@/lib/contexts/currency-context"
-
-interface Product {
-  id: number
-  name: string
-  handle: string
-  price: number
-  priceUSD: number
-  category: string
-  hashrate: string
-  power: string
-  image: string
-  images: string[]
-  model3d: string
-  specs: string[]
-  rating?: number
-  reviews?: number
-}
+import { useCart } from "@/lib/contexts/cart-context"
+import type { DisplayProduct } from "@/lib/types/product"
 
 interface ProductCardProps {
-  product: Product
-  onAddToCart: () => void
+  product: DisplayProduct
 }
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const { currency, formatPrice } = useCurrency()
+  const { addItem } = useCart()
   
   // Get hover image (second image if available)
   const hoverImage = product.images && product.images.length > 1 ? product.images[1] : null
 
   const handleAddToCart = () => {
-    onAddToCart()
+    addItem(product)
     setIsAdded(true)
+    toast.success(`${product.name} added to cart!`)
     setTimeout(() => setIsAdded(false), 2000)
   }
 

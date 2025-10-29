@@ -2,92 +2,24 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingCart } from "lucide-react"
-
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  priceUSD: number
-  quantity: number
-  image: string
-}
-
-const AVAILABLE_PRODUCTS = [
-  {
-    id: 1,
-    name: "ProMiner X1000",
-    price: 2.5,
-    priceUSD: 85000,
-    image: "/placeholder.svg?key=vofbb",
-  },
-  {
-    id: 2,
-    name: "GPU Rig Pro",
-    price: 1.8,
-    priceUSD: 62000,
-    image: "/placeholder.svg?key=0na3z",
-  },
-  {
-    id: 3,
-    name: "UltraHash 5000",
-    price: 3.2,
-    priceUSD: 110000,
-    image: "/placeholder.svg?key=y5wp5",
-  },
-]
+import ProductImage from "@/components/product-image"
+import { useCart } from "@/lib/contexts/cart-context"
+import { useCurrency } from "@/lib/contexts/currency-context"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "ProMiner X1000",
-      price: 2.5,
-      priceUSD: 85000,
-      quantity: 1,
-      image: "/placeholder.svg?key=vofbb",
-    },
-  ])
-
+  const { items: cartItems, updateQuantity, removeItem, itemCount, total: cartTotal } = useCart()
+  const { currency, formatPrice } = useCurrency()
   const [isLoading, setIsLoading] = useState(false)
 
-  // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = cartItems.length > 0 ? 0.1 : 0
+  // Calculate totals in USD
+  const subtotal = cartItems.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
+  const shipping = cartItems.length > 0 ? 50 : 0
   const tax = (subtotal + shipping) * 0.08
   const total = subtotal + shipping + tax
-
-  const handleUpdateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      handleRemoveItem(id)
-      return
-    }
-    setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
-  }
-
-  const handleRemoveItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id))
-  }
-
-  const handleAddProduct = (productId: number) => {
-    const product = AVAILABLE_PRODUCTS.find((p) => p.id === productId)
-    if (!product) return
-
-    const existingItem = cartItems.find((item) => item.id === productId)
-    if (existingItem) {
-      handleUpdateQuantity(productId, existingItem.quantity + 1)
-    } else {
-      setCartItems([
-        ...cartItems,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ])
-    }
-  }
 
   const handleCheckout = () => {
     setIsLoading(true)
@@ -97,7 +29,9 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
+      <Header cartCount={itemCount} />
+      <main className="pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -125,27 +59,21 @@ export default function CartPage() {
               {cartItems.map((item) => (
                 <div key={item.id} className="bg-card border border-border rounded-lg p-6 flex gap-6">
                   {/* Product Image */}
-                  <div className="w-24 h-24 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.name}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                    <ProductImage category={item.category} image={item.image} />
                   </div>
 
                   {/* Product Details */}
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-foreground mb-2">{item.name}</h3>
                     <p className="text-sm text-foreground/60 mb-4">
-                      {item.price} BTC (${item.priceUSD.toLocaleString()})
+                      {formatPrice(item.priceUSD)} {currency} (${item.priceUSD.toLocaleString()} USD)
                     </p>
 
                     {/* Quantity Controls */}
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="p-2 rounded-lg bg-background border border-border hover:border-accent transition"
                       >
                         <Minus className="w-4 h-4 text-foreground" />
@@ -154,12 +82,12 @@ export default function CartPage() {
                         type="number"
                         value={item.quantity}
                         onChange={(e) =>
-                          handleUpdateQuantity(item.id, Math.max(1, Number.parseInt(e.target.value) || 1))
+                          updateQuantity(item.id, Math.max(1, Number.parseInt(e.target.value) || 1))
                         }
                         className="w-12 text-center px-2 py-1 rounded-lg bg-background border border-border text-foreground"
                       />
                       <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="p-2 rounded-lg bg-background border border-border hover:border-accent transition"
                       >
                         <Plus className="w-4 h-4 text-foreground" />
@@ -170,37 +98,22 @@ export default function CartPage() {
                   {/* Price and Remove */}
                   <div className="text-right flex flex-col justify-between">
                     <button
-                      onClick={() => handleRemoveItem(item.id)}
+                      onClick={() => removeItem(item.id)}
                       className="text-foreground/60 hover:text-destructive transition"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
                     <div>
-                      <div className="text-xl font-bold text-accent">{(item.price * item.quantity).toFixed(2)} BTC</div>
+                      <div className="text-xl font-bold text-accent">
+                        {formatPrice(item.priceUSD * item.quantity)} {currency}
+                      </div>
                       <div className="text-xs text-foreground/60">
-                        ${(item.priceUSD * item.quantity).toLocaleString()}
+                        ${(item.priceUSD * item.quantity).toLocaleString()} USD
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-
-              {/* Add More Products */}
-              <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold text-foreground mb-4">Add More Products</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {AVAILABLE_PRODUCTS.filter((p) => !cartItems.find((item) => item.id === p.id)).map((product) => (
-                    <button
-                      key={product.id}
-                      onClick={() => handleAddProduct(product.id)}
-                      className="p-4 rounded-lg border border-border hover:border-accent transition text-left"
-                    >
-                      <p className="font-semibold text-foreground mb-1">{product.name}</p>
-                      <p className="text-sm text-accent">{product.price} BTC</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Order Summary Sidebar */}
@@ -212,15 +125,15 @@ export default function CartPage() {
                 <div className="space-y-3 mb-6 pb-6 border-b border-border">
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground/70">Subtotal</span>
-                    <span className="text-foreground">{subtotal.toFixed(2)} BTC</span>
+                    <span className="text-foreground">${subtotal.toLocaleString()} USD</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground/70">Shipping</span>
-                    <span className="text-foreground">{shipping.toFixed(2)} BTC</span>
+                    <span className="text-foreground">${shipping.toLocaleString()} USD</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground/70">Tax (8%)</span>
-                    <span className="text-foreground">{tax.toFixed(2)} BTC</span>
+                    <span className="text-foreground">${tax.toFixed(2)} USD</span>
                   </div>
                 </div>
 
@@ -228,9 +141,9 @@ export default function CartPage() {
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold text-foreground">Total</span>
-                    <div>
-                      <div className="text-2xl font-bold text-accent">{total.toFixed(2)} BTC</div>
-                      <div className="text-xs text-foreground/60">≈ ${(total * 34000).toLocaleString()}</div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-accent">{formatPrice(total)} {currency}</div>
+                      <div className="text-xs text-foreground/60">${total.toLocaleString()} USD</div>
                     </div>
                   </div>
                 </div>
@@ -265,6 +178,8 @@ export default function CartPage() {
           </div>
         )}
       </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   )
 }

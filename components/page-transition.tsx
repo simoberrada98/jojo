@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
-import { ReactNode } from "react"
+import { ReactNode, useState, useEffect } from "react"
 
 interface PageTransitionProps {
   children: ReactNode
@@ -10,6 +10,11 @@ interface PageTransitionProps {
 
 export default function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <AnimatePresence mode="wait">
@@ -75,30 +80,32 @@ export default function PageTransition({ children }: PageTransitionProps) {
             ))}
           </motion.div>
 
-          {/* Glowing particles */}
-          <div className="absolute inset-0">
-            {[...Array(30)].map((_, i) => (
-              <motion.div
-                key={`particle-${i}`}
-                className="absolute w-1 h-1 bg-accent rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 1, 0],
-                  scale: [0, 1.5, 0],
-                  y: [-20, 20],
-                }}
-                transition={{
-                  duration: 0.8,
-                  delay: Math.random() * 0.3,
-                  ease: "easeOut",
-                }}
-              />
-            ))}
-          </div>
+          {/* Glowing particles - only render on client */}
+          {mounted && (
+            <div className="absolute inset-0">
+              {[...Array(30)].map((_, i) => (
+                <motion.div
+                  key={`particle-${i}`}
+                  className="absolute w-1 h-1 bg-accent rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.5, 0],
+                    y: [-20, 20],
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    delay: Math.random() * 0.3,
+                    ease: "easeOut",
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Hexagon pattern overlay */}
           <motion.div

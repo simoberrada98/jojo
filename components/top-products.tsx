@@ -4,19 +4,18 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Star } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import ProductImage from "@/components/product-image"
 import { useCurrency } from "@/lib/contexts/currency-context"
+import { useCart } from "@/lib/contexts/cart-context"
 import type { DisplayProduct } from "@/lib/types/product"
 
-interface TopProductsProps {
-  onAddToCart?: (productId: number | string) => void
-}
-
-export default function TopProducts({ onAddToCart }: TopProductsProps) {
+export default function TopProducts() {
   const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
   const { currency, formatPrice } = useCurrency()
+  const { addItem } = useCart()
 
   useEffect(() => {
     async function fetchTopProducts() {
@@ -102,7 +101,7 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
               {/* Product Visual */}
               <Link href={`/product/${product.handle}`} className="block">
               <div className="relative h-64 overflow-hidden">
-                <ProductImage category={product.category} />
+                <ProductImage category={product.category} image={product.image} />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               </Link>
@@ -166,7 +165,10 @@ export default function TopProducts({ onAddToCart }: TopProductsProps) {
                 <motion.div whileTap={{ scale: 0.95 }}>
                   <Button
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                    onClick={() => onAddToCart?.(product.id)}
+                    onClick={() => {
+                      addItem(product)
+                      toast.success(`${product.name} added to cart!`)
+                    }}
                   >
                     Add to Cart
                   </Button>

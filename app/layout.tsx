@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import { CurrencyProvider } from "@/lib/contexts/currency-context"
 import { AuthProvider } from "@/lib/contexts/auth-context"
+import { CartProvider } from "@/lib/contexts/cart-context"
 import { generateOrganizationSchema, generateWebSiteSchema, serializeSchema } from "@/lib/schema"
 import "./globals.css"
 
@@ -69,9 +70,11 @@ export default function RootLayout({
         </a>
         <AuthProvider>
           <CurrencyProvider>
-            <main id="main-content" className="flex-1" role="main">
-              {children}
-            </main>
+            <CartProvider>
+              <main id="main-content" className="flex-1" role="main">
+                {children}
+              </main>
+            </CartProvider>
           </CurrencyProvider>
         </AuthProvider>
         <Toaster />

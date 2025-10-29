@@ -7,10 +7,6 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
 import type { DisplayProduct } from "@/lib/types/product"
 
-interface ProductCatalogProps {
-  onAddToCart: () => void
-}
-
 const SORT_OPTIONS = [
   { label: "Newest", value: "newest" },
   { label: "Price: Low to High", value: "price-asc" },
@@ -19,7 +15,7 @@ const SORT_OPTIONS = [
   { label: "Most Popular", value: "popular" },
 ]
 
-export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
+export default function ProductCatalog() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
@@ -215,7 +211,7 @@ export default function ProductCatalog({ onAddToCart }: ProductCatalogProps) {
             </div>
           ) : filteredAndSortedProducts.length > 0 ? (
             filteredAndSortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+              <ProductCard key={product.id} product={product} />
             ))
           ) : (
             <div className="col-span-full text-center py-12">

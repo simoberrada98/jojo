@@ -8,8 +8,14 @@ import CryptoPaymentForm from "@/components/crypto-payment-form"
 import OrderSummary from "@/components/order-summary"
 import { ArrowLeft, Check, Truck, Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import { useCart } from "@/lib/contexts/cart-context"
+import { useCurrency } from "@/lib/contexts/currency-context"
 
 export default function CheckoutPage() {
+  const { items, itemCount, total } = useCart()
+  const { currency, formatPrice } = useCurrency()
   const [paymentStep, setPaymentStep] = useState<"shipping" | "review" | "payment" | "confirmation">("shipping")
   const [orderData, setOrderData] = useState<any>(null)
   const [shippingData, setShippingData] = useState({
@@ -64,8 +70,15 @@ export default function CheckoutPage() {
     }
   }
 
+  const subtotal = items.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
+  const shipping = items.length > 0 ? 50 : 0
+  const tax = (subtotal + shipping) * 0.08
+  const totalAmount = subtotal + shipping + tax
+
   return (
-    <main className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
+      <Header cartCount={itemCount} />
+      <main className="pt-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -370,22 +383,22 @@ export default function CheckoutPage() {
                   <div className="space-y-3 mb-6 pb-6 border-b border-border">
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/70">Subtotal</span>
-                      <span className="text-foreground">2.5 BTC</span>
+                      <span className="text-foreground">${subtotal.toLocaleString()} USD</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/70">Shipping</span>
-                      <span className="text-foreground">0.1 BTC</span>
+                      <span className="text-foreground">${shipping.toLocaleString()} USD</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/70">Tax</span>
-                      <span className="text-foreground">0.2 BTC</span>
+                      <span className="text-foreground">${tax.toFixed(2)} USD</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-foreground">Total</span>
-                    <div>
-                      <div className="text-2xl font-bold text-accent">2.8 BTC</div>
-                      <div className="text-xs text-foreground/60">≈ $95,200</div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-accent">{formatPrice(totalAmount)} {currency}</div>
+                      <div className="text-xs text-foreground/60">${totalAmount.toLocaleString()} USD</div>
                     </div>
                   </div>
                 </div>
@@ -403,6 +416,8 @@ export default function CheckoutPage() {
           )}
         </div>
       </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   )
 }
