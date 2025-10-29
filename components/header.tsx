@@ -275,5 +275,3 @@ export default function Header({ cartCount = 0 }: HeaderProps) {
     </motion.header>
   )
 }
-
-export default Header
