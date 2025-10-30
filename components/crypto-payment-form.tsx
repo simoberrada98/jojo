@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { H3, Muted } from "@/components/ui/typography"
 import { Copy, Check } from "lucide-react"
 
 interface CryptoPaymentFormProps {
@@ -42,7 +45,7 @@ export default function CryptoPaymentForm({ orderData, onComplete }: CryptoPayme
     <div className="space-y-6">
       {/* Cryptocurrency Selection */}
       <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Select Payment Method</h3>
+        <H3 className="text-lg mb-4">Select Payment Method</H3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {CRYPTOCURRENCIES.map((crypto) => (
             <button
@@ -61,10 +64,10 @@ export default function CryptoPaymentForm({ orderData, onComplete }: CryptoPayme
 
       {/* Payment Details */}
       <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Payment Details</h3>
+        <H3 className="text-lg mb-4">Payment Details</H3>
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-foreground/70 block mb-2">Amount to Send</label>
+            <Label className="block mb-2">Amount to Send</Label>
             <div className="text-3xl font-bold text-accent">
               {amount.toFixed(crypto.id === "usdc" ? 2 : 6)} {crypto.symbol}
             </div>
@@ -77,13 +80,13 @@ export default function CryptoPaymentForm({ orderData, onComplete }: CryptoPayme
 
           {/* Payment Address */}
           <div>
-            <label className="text-sm text-foreground/70 block mb-2">Send to Address</label>
+            <Label className="block mb-2">Send to Address</Label>
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={crypto.address}
                 readOnly
-                className="flex-1 px-4 py-3 rounded-lg bg-background border border-border text-foreground font-mono text-sm"
+                className="flex-1 font-mono"
               />
               <Button
                 onClick={handleCopyAddress}
@@ -97,21 +100,21 @@ export default function CryptoPaymentForm({ orderData, onComplete }: CryptoPayme
 
           {/* Important Notice */}
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-            <p className="text-sm text-foreground/80">
+            <Muted className="text-foreground/80 m-0">
               <strong>Important:</strong> Send exactly {amount.toFixed(crypto.id === "usdc" ? 2 : 6)} {crypto.symbol} to
               the address above. Do not send more or less.
-            </p>
+            </Muted>
           </div>
         </div>
       </div>
 
       {/* Confirmation */}
       <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Confirm Payment</h3>
-        <p className="text-foreground/70 mb-6">
+        <H3 className="text-lg mb-4">Confirm Payment</H3>
+        <Muted className="mb-6 m-0">
           Once you send the payment, it may take a few minutes to confirm on the blockchain. We'll notify you when we
           receive it.
-        </p>
+        </Muted>
         <Button
           onClick={handleConfirmPayment}
           disabled={paymentConfirmed}

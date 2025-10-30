@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingCart } from "lucide-react"
 import ProductImage from "@/components/product-image"
 import PriceDisplay from "@/components/ui/PriceDisplay"
@@ -34,15 +36,15 @@ export default function CartPage() {
             <ArrowLeft className="w-4 h-4" />
             Continue Shopping
           </Link>
-          <h1 className="text-4xl font-bold text-foreground">Shopping Cart</h1>
+          <H1>Shopping Cart</H1>
         </div>
 
         {cartItems.length === 0 ? (
           // Empty Cart State
           <div className="bg-card border border-border rounded-lg p-12 text-center">
             <ShoppingCart className="w-16 h-16 text-foreground/30 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Your cart is empty</h2>
-            <p className="text-foreground/70 mb-6">Add some mining hardware to get started!</p>
+            <H2 className="mb-2">Your cart is empty</H2>
+            <Muted className="mb-6 m-0">Add some mining hardware to get started!</Muted>
             <Link href="/">
               <Button className="bg-primary hover:bg-primary/90">Continue Shopping</Button>
             </Link>
@@ -60,33 +62,37 @@ export default function CartPage() {
 
                   {/* Product Details */}
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-foreground mb-2">{item.name}</h3>
-                    <p className="text-sm text-foreground/60 mb-4">
+                    <H3 className="text-lg mb-2">{item.name}</H3>
+                    <Muted className="mb-4 m-0">
                       <PriceDisplay amountUSD={item.priceUSD} className="text-sm text-foreground/60" usdClassName="text-xs text-foreground/50" />
-                    </p>
+                    </Muted>
 
                     {/* Quantity Controls */}
                     <div className="flex items-center gap-3">
-                      <button
+                      <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="p-2 rounded-lg bg-background border border-border hover:border-accent transition"
+                        className="border-border hover:border-accent"
                       >
-                        <Minus className="w-4 h-4 text-foreground" />
-                      </button>
-                      <input
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                      <Input
                         type="number"
                         value={item.quantity}
                         onChange={(e) =>
                           updateQuantity(item.id, Math.max(1, Number.parseInt(e.target.value) || 1))
                         }
-                        className="w-12 text-center px-2 py-1 rounded-lg bg-background border border-border text-foreground"
+                        className="w-12 text-center px-2 py-1"
                       />
-                      <button
+                      <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="p-2 rounded-lg bg-background border border-border hover:border-accent transition"
+                        className="border-border hover:border-accent"
                       >
-                        <Plus className="w-4 h-4 text-foreground" />
-                      </button>
+                        <Plus className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
 
@@ -107,7 +113,7 @@ export default function CartPage() {
             {/* Order Summary Sidebar */}
             <div className="lg:col-span-1">
               <div className="bg-card border border-border rounded-lg p-6 sticky top-24">
-                <h3 className="text-lg font-bold text-foreground mb-6">Order Summary</h3>
+                <H3 className="text-lg mb-6">Order Summary</H3>
 
                 {/* Pricing Breakdown */}
                 <div className="space-y-3 mb-6 pb-6 border-b border-border">
@@ -154,9 +160,9 @@ export default function CartPage() {
 
                 {/* Security Info */}
                 <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                  <p className="text-xs text-foreground/70">
+                  <Muted className="text-xs text-foreground/70 m-0">
                     All transactions are secured with crypto payment verification. Your order is protected.
-                  </p>
+                  </Muted>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { H3, H4, Muted } from "@/components/ui/typography"
 import { Trash2 } from "lucide-react"
 import ProductImage from "@/components/product-image"
 import { useCart } from "@/lib/contexts/cart-context"
@@ -35,7 +36,7 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
       {/* Cart Items */}
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="p-6 border-b border-border">
-          <h3 className="text-lg font-bold text-foreground">Order Items</h3>
+          <H3 className="text-lg">Order Items</H3>
         </div>
         <div className="divide-y divide-border">
           {items.length === 0 ? (
@@ -49,14 +50,14 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
                   <ProductImage category={item.category} image={item.image} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground mb-1">{item.name}</h4>
-                  <p className="text-sm text-foreground/60 mb-2">Quantity: {item.quantity}</p>
-                  <p className="font-semibold text-accent">
+                  <H4 className="font-semibold mb-1">{item.name}</H4>
+                  <Muted className="mb-2 m-0">Quantity: {item.quantity}</Muted>
+                  <Muted className="font-semibold text-accent m-0">
                     {formatPrice(item.priceUSD * item.quantity)} {currency}
-                  </p>
-                  <p className="text-xs text-foreground/60">
+                  </Muted>
+                  <Muted className="text-xs m-0">
                     ${(item.priceUSD * item.quantity).toLocaleString()} USD
-                  </p>
+                  </Muted>
                 </div>
                 <button
                   onClick={() => removeItem(item.id)}
@@ -72,7 +73,7 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
 
       {/* Pricing Summary */}
       <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Pricing Summary</h3>
+        <H3 className="text-lg mb-4">Pricing Summary</H3>
         <div className="space-y-3 mb-6 pb-6 border-b border-border">
           <div className="flex justify-between text-sm">
             <span className="text-foreground/70">Subtotal</span>

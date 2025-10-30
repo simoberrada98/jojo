@@ -1,5 +1,6 @@
 import Link from "next/link"
 import PageLayout from "@/components/layout/PageLayout"
+import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import { ChevronRight, RotateCcw, Clock, CheckCircle } from "lucide-react"
 
 export default function RefundsPage() {
@@ -23,10 +24,10 @@ export default function RefundsPage() {
         {/* Hero */}
         <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Refunds & Returns Policy</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <H1 className="mb-4">Refunds & Returns Policy</H1>
+            <Muted className="text-lg max-w-2xl mx-auto m-0">
               We stand behind our products. If you're not satisfied, we'll make it right.
-            </p>
+            </Muted>
           </div>
         </section>
 
@@ -58,8 +59,8 @@ export default function RefundsPage() {
                       <Icon className="w-6 h-6 text-accent" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
+                  <H3 className="text-lg mb-3">{item.title}</H3>
+                  <Muted className="m-0">{item.description}</Muted>
                 </div>
               )
             })}
@@ -69,10 +70,10 @@ export default function RefundsPage() {
         {/* Return Conditions */}
         <section className="bg-card/50 border-y border-border py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-foreground mb-8">Return Conditions</h2>
+            <H2 className="mb-8">Return Conditions</H2>
             <div className="space-y-6">
               <div className="bg-background border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">Eligible for Return</h3>
+                <H3 className="text-lg mb-3">Eligible for Return</H3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="text-accent mt-1">✓</span>
@@ -94,7 +95,7 @@ export default function RefundsPage() {
               </div>
 
               <div className="bg-background border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">Not Eligible for Return</h3>
+                <H3 className="text-lg mb-3">Not Eligible for Return</H3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="text-destructive mt-1">✕</span>
@@ -120,7 +121,7 @@ export default function RefundsPage() {
 
         {/* Return Process */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl font-bold text-foreground mb-12">How to Return an Item</h2>
+          <H2 className="mb-12">How to Return an Item</H2>
           <div className="space-y-6">
             {[
               {
@@ -151,8 +152,8 @@ export default function RefundsPage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
+                  <H3 className="text-lg mb-2">{item.title}</H3>
+                  <Muted className="m-0">{item.description}</Muted>
                 </div>
               </div>
             ))}
@@ -162,7 +163,7 @@ export default function RefundsPage() {
         {/* Refund Timeline */}
         <section className="bg-card/50 border-t border-border py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-foreground mb-8">Refund Timeline</h2>
+            <H2 className="mb-8">Refund Timeline</H2>
             <div className="bg-background border border-border rounded-lg p-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center pb-4 border-b border-border">
@@ -189,8 +190,8 @@ export default function RefundsPage() {
         {/* Contact */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="bg-card border border-border rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Questions About Returns?</h2>
-            <p className="text-muted-foreground mb-6">Our customer support team is here to help. Contact us anytime.</p>
+            <H2 className="mb-4">Questions About Returns?</H2>
+            <Muted className="mb-6 m-0">Our customer support team is here to help. Contact us anytime.</Muted>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="mailto:support@minehub.com" className="text-accent hover:text-accent/80 font-medium">
                 support@minehub.com

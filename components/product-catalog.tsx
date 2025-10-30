@@ -4,6 +4,10 @@ import { useState, useMemo, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { H2, H3, H4, Muted } from "@/components/ui/typography"
 import { ChevronDown } from "lucide-react"
 import type { DisplayProduct } from "@/lib/types/product"
 
@@ -94,17 +98,17 @@ function ProductCatalogContent() {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-balance">Premium Mining Hardware</h2>
-          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+          <H2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 text-balance">Premium Mining Hardware</H2>
+          <Muted className="text-lg max-w-2xl mx-auto m-0">
             Choose from our selection of professional-grade mining equipment. All products support crypto payments.
-          </p>
+          </Muted>
         </div>
 
         {/* Filters and Sorting */}
         <div className="mb-12 space-y-6">
           {/* Category Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-3">Category</h3>
+            <H3 className="text-sm font-semibold mb-3">Category</H3>
             <div className="flex flex-wrap gap-3">
               {categories.map((category) => (
                 <Button
@@ -138,51 +142,50 @@ function ProductCatalogContent() {
 
             {/* Sort Dropdown */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-foreground/70">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 rounded-lg bg-card border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <Muted className="m-0">Sort by:</Muted>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SORT_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           {/* Price Range Filter */}
           {showFilters && (
             <div className="p-4 rounded-lg bg-card border border-border">
-              <h4 className="text-sm font-semibold text-foreground mb-4">Price Range</h4>
+              <H4 className="text-sm font-semibold mb-4">Price Range</H4>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-1">
-                    <label className="text-xs text-foreground/60 mb-2 block">Min Price</label>
-                    <input
+                    <Label className="text-xs mb-2 block">Min Price</Label>
+                    <Input
                       type="number"
                       value={priceRange[0]}
                       onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                      className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="$0"
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-xs text-foreground/60 mb-2 block">Max Price</label>
-                    <input
+                    <Label className="text-xs mb-2 block">Max Price</Label>
+                    <Input
                       type="number"
                       value={priceRange[1]}
                       onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                      className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="$200,000"
                     />
                   </div>
                 </div>
-                <div className="text-xs text-foreground/60">
+                <Muted className="text-xs m-0">
                   Showing products between ${priceRange[0].toLocaleString()} - ${priceRange[1].toLocaleString()}
-                </div>
+                </Muted>
               </div>
             </div>
           )}

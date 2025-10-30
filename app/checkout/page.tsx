@@ -4,6 +4,10 @@ import type React from "react"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import CryptoPaymentForm from "@/components/crypto-payment-form"
 import OrderSummary from "@/components/order-summary"
 import { ArrowLeft, Check, Truck, Lock, AlertCircle } from "lucide-react"
@@ -83,7 +87,7 @@ export default function CheckoutPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Cart
           </Link>
-          <h1 className="text-4xl font-bold text-foreground">Checkout</h1>
+          <H1>Checkout</H1>
         </div>
 
         {/* Progress Indicator */}
@@ -129,156 +133,148 @@ export default function CheckoutPage() {
             {paymentStep === "shipping" && (
               <div className="bg-card border border-border rounded-lg p-8 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Shipping Address</h2>
-                  <p className="text-foreground/60">Enter your delivery address</p>
+                  <H2 className="mb-2">Shipping Address</H2>
+                  <Muted className="m-0">Enter your delivery address</Muted>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">First Name</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
                       type="text"
                       name="firstName"
                       value={shippingData.firstName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                        errors.firstName ? "border-destructive" : "border-border"
-                      } text-foreground focus:outline-none focus:border-accent transition`}
+                      aria-invalid={!!errors.firstName}
                       placeholder="John"
                     />
-                    {errors.firstName && <p className="text-destructive text-sm mt-1">{errors.firstName}</p>}
+                    {errors.firstName && <Muted className="text-destructive m-0">{errors.firstName}</Muted>}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Last Name</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
                       type="text"
                       name="lastName"
                       value={shippingData.lastName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                        errors.lastName ? "border-destructive" : "border-border"
-                      } text-foreground focus:outline-none focus:border-accent transition`}
+                      aria-invalid={!!errors.lastName}
                       placeholder="Doe"
                     />
-                    {errors.lastName && <p className="text-destructive text-sm mt-1">{errors.lastName}</p>}
+                    {errors.lastName && <Muted className="text-destructive m-0">{errors.lastName}</Muted>}
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Email</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
                     type="email"
                     name="email"
                     value={shippingData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                      errors.email ? "border-destructive" : "border-border"
-                    } text-foreground focus:outline-none focus:border-accent transition`}
+                    aria-invalid={!!errors.email}
                     placeholder="john@example.com"
                   />
-                  {errors.email && <p className="text-destructive text-sm mt-1">{errors.email}</p>}
+                  {errors.email && <Muted className="text-destructive m-0">{errors.email}</Muted>}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
                     type="tel"
                     name="phone"
                     value={shippingData.phone}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                      errors.phone ? "border-destructive" : "border-border"
-                    } text-foreground focus:outline-none focus:border-accent transition`}
+                    aria-invalid={!!errors.phone}
                     placeholder="+1 (555) 000-0000"
                   />
-                  {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone}</p>}
+                  {errors.phone && <Muted className="text-destructive m-0">{errors.phone}</Muted>}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Address</label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
                     type="text"
                     name="address"
                     value={shippingData.address}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                      errors.address ? "border-destructive" : "border-border"
-                    } text-foreground focus:outline-none focus:border-accent transition`}
+                    aria-invalid={!!errors.address}
                     placeholder="123 Main Street"
                   />
-                  {errors.address && <p className="text-destructive text-sm mt-1">{errors.address}</p>}
+                  {errors.address && <Muted className="text-destructive m-0">{errors.address}</Muted>}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">City</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
                       type="text"
                       name="city"
                       value={shippingData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                        errors.city ? "border-destructive" : "border-border"
-                      } text-foreground focus:outline-none focus:border-accent transition`}
+                      aria-invalid={!!errors.city}
                       placeholder="New York"
                     />
-                    {errors.city && <p className="text-destructive text-sm mt-1">{errors.city}</p>}
+                    {errors.city && <Muted className="text-destructive m-0">{errors.city}</Muted>}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">State</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
                       type="text"
                       name="state"
                       value={shippingData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                        errors.state ? "border-destructive" : "border-border"
-                      } text-foreground focus:outline-none focus:border-accent transition`}
+                      aria-invalid={!!errors.state}
                       placeholder="NY"
                     />
-                    {errors.state && <p className="text-destructive text-sm mt-1">{errors.state}</p>}
+                    {errors.state && <Muted className="text-destructive m-0">{errors.state}</Muted>}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">ZIP Code</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="zipCode">ZIP Code</Label>
+                    <Input
+                      id="zipCode"
                       type="text"
                       name="zipCode"
                       value={shippingData.zipCode}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                        errors.zipCode ? "border-destructive" : "border-border"
-                      } text-foreground focus:outline-none focus:border-accent transition`}
+                      aria-invalid={!!errors.zipCode}
                       placeholder="10001"
                     />
-                    {errors.zipCode && <p className="text-destructive text-sm mt-1">{errors.zipCode}</p>}
+                    {errors.zipCode && <Muted className="text-destructive m-0">{errors.zipCode}</Muted>}
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Country</label>
-                  <select
-                    name="country"
-                    value={shippingData.country}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:border-accent transition"
-                  >
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>United Kingdom</option>
-                    <option>Australia</option>
-                    <option>Germany</option>
-                    <option>France</option>
-                  </select>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select name="country" value={shippingData.country} onValueChange={(value) => handleInputChange({ target: { name: 'country', value } } as any)}>
+                    <SelectTrigger id="country">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="United States">United States</SelectItem>
+                      <SelectItem value="Canada">Canada</SelectItem>
+                      <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                      <SelectItem value="Australia">Australia</SelectItem>
+                      <SelectItem value="Germany">Germany</SelectItem>
+                      <SelectItem value="France">France</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 flex gap-3">
                   <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-foreground/80">
+                  <Muted className="text-foreground/80 m-0">
                     We'll use this address to ship your mining hardware. Ensure all details are correct.
-                  </p>
+                  </Muted>
                 </div>
 
                 <Button
@@ -295,18 +291,18 @@ export default function CheckoutPage() {
               <div className="space-y-6">
                 {/* Shipping Summary */}
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-lg font-bold text-foreground mb-4">Shipping Address</h3>
+                  <H3 className="text-lg mb-4">Shipping Address</H3>
                   <div className="text-foreground/80 space-y-1">
-                    <p>
+                    <Muted className="m-0 text-base text-foreground/80">
                       {shippingData.firstName} {shippingData.lastName}
-                    </p>
-                    <p>{shippingData.address}</p>
-                    <p>
+                    </Muted>
+                    <Muted className="m-0 text-base text-foreground/80">{shippingData.address}</Muted>
+                    <Muted className="m-0 text-base text-foreground/80">
                       {shippingData.city}, {shippingData.state} {shippingData.zipCode}
-                    </p>
-                    <p>{shippingData.country}</p>
-                    <p className="text-sm text-foreground/60 mt-3">{shippingData.email}</p>
-                    <p className="text-sm text-foreground/60">{shippingData.phone}</p>
+                    </Muted>
+                    <Muted className="m-0 text-base text-foreground/80">{shippingData.country}</Muted>
+                    <Muted className="mt-3">{shippingData.email}</Muted>
+                    <Muted className="m-0">{shippingData.phone}</Muted>
                   </div>
                   <Button
                     onClick={() => setPaymentStep("shipping")}
@@ -334,24 +330,24 @@ export default function CheckoutPage() {
                   <Check className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-foreground mb-2">Payment Received!</h2>
-                  <p className="text-foreground/70">Your order has been confirmed and will be processed shortly.</p>
+                  <H2 className="mb-2">Payment Received!</H2>
+                  <Muted className="text-foreground/70 m-0">Your order has been confirmed and will be processed shortly.</Muted>
                 </div>
 
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 text-left space-y-3">
                   <div>
-                    <p className="text-sm text-foreground/60 mb-1">Order ID</p>
-                    <p className="font-mono text-lg text-accent">{orderData?.orderId || "ORD-2025-001"}</p>
+                    <Muted className="mb-1">Order ID</Muted>
+                    <Muted className="font-mono text-lg text-accent m-0">{orderData?.orderId || "ORD-2025-001"}</Muted>
                   </div>
                   <div>
-                    <p className="text-sm text-foreground/60 mb-1">Estimated Delivery</p>
-                    <p className="text-foreground">5-7 business days</p>
+                    <Muted className="mb-1">Estimated Delivery</Muted>
+                    <Muted className="text-foreground m-0">5-7 business days</Muted>
                   </div>
                 </div>
 
                 <div className="bg-background border border-border rounded-lg p-4">
-                  <p className="text-sm text-foreground/70 mb-3">Confirmation email sent to:</p>
-                  <p className="font-semibold text-foreground">{shippingData.email}</p>
+                  <Muted className="mb-3">Confirmation email sent to:</Muted>
+                  <Muted className="font-semibold text-foreground m-0">{shippingData.email}</Muted>
                 </div>
 
                 <div className="flex gap-3">
@@ -376,7 +372,7 @@ export default function CheckoutPage() {
             <div className="lg:col-span-1">
               <div className="bg-card border border-border rounded-lg p-6 sticky top-24 space-y-6">
                 <div>
-                  <h3 className="text-lg font-bold text-foreground mb-4">Order Summary</h3>
+                  <H3 className="text-lg mb-4">Order Summary</H3>
                   <div className="space-y-3 mb-6 pb-6 border-b border-border">
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/70">Subtotal</span>
@@ -404,8 +400,8 @@ export default function CheckoutPage() {
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 flex gap-3">
                   <Lock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-semibold text-foreground mb-1">Secure Checkout</p>
-                    <p className="text-xs text-foreground/70">Crypto payments verified on blockchain</p>
+                    <Muted className="text-xs font-semibold text-foreground mb-1">Secure Checkout</Muted>
+                    <Muted className="text-xs text-foreground/70 m-0">Crypto payments verified on blockchain</Muted>
                   </div>
                 </div>
               </div>

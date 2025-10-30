@@ -1,5 +1,6 @@
 import Link from "next/link"
 import PageLayout from "@/components/layout/PageLayout"
+import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import { ChevronRight, Truck, Globe, Clock, Shield } from "lucide-react"
 
 export default function ShippingPage() {
@@ -23,16 +24,16 @@ export default function ShippingPage() {
         {/* Hero */}
         <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Shipping Information</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <H1 className="mb-4">Shipping Information</H1>
+            <Muted className="text-lg max-w-2xl mx-auto m-0">
               Fast, secure, and reliable delivery of your mining hardware worldwide
-            </p>
+            </Muted>
           </div>
         </section>
 
         {/* Shipping Options */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl font-bold text-foreground mb-12">Shipping Options</h2>
+          <H2 className="mb-12">Shipping Options</H2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {[
               {
@@ -72,12 +73,12 @@ export default function ShippingPage() {
                       <Icon className="w-6 h-6 text-accent" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-foreground">{option.name}</h3>
-                      <p className="text-sm text-accent font-semibold">{option.time}</p>
+                      <H3 className="text-lg">{option.name}</H3>
+                      <Muted className="text-sm text-accent font-semibold m-0">{option.time}</Muted>
                     </div>
                   </div>
-                  <p className="text-muted-foreground mb-4">{option.description}</p>
-                  <p className="text-lg font-semibold text-foreground">{option.cost}</p>
+                  <Muted className="mb-4 m-0">{option.description}</Muted>
+                  <Muted className="text-lg font-semibold text-foreground m-0">{option.cost}</Muted>
                 </div>
               )
             })}
@@ -87,7 +88,7 @@ export default function ShippingPage() {
         {/* Packaging & Safety */}
         <section className="bg-card/50 border-y border-border py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-foreground mb-12">Packaging & Safety</h2>
+            <H2 className="mb-12">Packaging & Safety</H2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
@@ -105,8 +106,8 @@ export default function ShippingPage() {
                 },
               ].map((item, index) => (
                 <div key={index} className="bg-background border border-border rounded-lg p-6">
-                  <h3 className="text-lg font-bold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
+                  <H3 className="text-lg mb-3">{item.title}</H3>
+                  <Muted className="m-0">{item.description}</Muted>
                 </div>
               ))}
             </div>
@@ -115,10 +116,10 @@ export default function ShippingPage() {
 
         {/* Delivery Regions */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl font-bold text-foreground mb-12">Delivery Regions</h2>
+          <H2 className="mb-12">Delivery Regions</H2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-card border border-border rounded-lg p-8">
-              <h3 className="text-xl font-bold text-foreground mb-6">Domestic Shipping</h3>
+              <H3 className="text-xl mb-6">Domestic Shipping</H3>
               <ul className="space-y-3">
                 {["United States", "Canada", "Mexico"].map((region, index) => (
                   <li key={index} className="flex items-center gap-3 text-muted-foreground">
@@ -129,7 +130,7 @@ export default function ShippingPage() {
               </ul>
             </div>
             <div className="bg-card border border-border rounded-lg p-8">
-              <h3 className="text-xl font-bold text-foreground mb-6">International Shipping</h3>
+              <H3 className="text-xl mb-6">International Shipping</H3>
               <ul className="space-y-3">
                 {["Europe", "Asia", "Australia", "Other Regions"].map((region, index) => (
                   <li key={index} className="flex items-center gap-3 text-muted-foreground">
@@ -145,7 +146,7 @@ export default function ShippingPage() {
         {/* FAQ */}
         <section className="bg-card/50 border-t border-border py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-foreground mb-12">Frequently Asked Questions</h2>
+            <H2 className="mb-12">Frequently Asked Questions</H2>
             <div className="space-y-6">
               {[
                 {
@@ -166,8 +167,8 @@ export default function ShippingPage() {
                 },
               ].map((item, index) => (
                 <div key={index} className="bg-background border border-border rounded-lg p-6">
-                  <h3 className="text-lg font-bold text-foreground mb-3">{item.q}</h3>
-                  <p className="text-muted-foreground">{item.a}</p>
+                  <H3 className="text-lg mb-3">{item.q}</H3>
+                  <Muted className="m-0">{item.a}</Muted>
                 </div>
               ))}
             </div>

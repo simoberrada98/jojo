@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Muted } from "@/components/ui/typography"
 import { useAuth } from "@/lib/contexts/auth-context"
 import { AuthDialog } from "@/components/auth-dialog"
 import CurrencyToggle from "@/components/currency-toggle"
@@ -103,14 +104,14 @@ export default function Header({ cartCount = 0 }: HeaderProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
+                <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
+                      <Muted className="text-sm font-medium leading-none m-0 text-foreground">
                         {profile?.full_name || "My Account"}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
+                      </Muted>
+                      <Muted className="text-xs leading-none m-0">
                         {user.email}
-                      </p>
+                      </Muted>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -228,8 +229,8 @@ export default function Header({ cartCount = 0 }: HeaderProps) {
               {user ? (
                 <>
                   <div className="pb-2 mb-2 border-b border-border">
-                    <p className="text-sm font-medium">{profile?.full_name || "My Account"}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <Muted className="text-sm font-medium m-0 text-foreground">{profile?.full_name || "My Account"}</Muted>
+                    <Muted className="text-xs m-0">{user.email}</Muted>
                   </div>
                   <Link href="/dashboard" className="flex items-center gap-2 py-2 text-foreground/80 hover:text-accent transition">
                     <User className="h-4 w-4" />

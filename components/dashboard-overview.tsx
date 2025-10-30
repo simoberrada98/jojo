@@ -1,5 +1,6 @@
 "use client"
 
+import { H3, Muted } from "@/components/ui/typography"
 import { Users, Package, DollarSign } from "lucide-react"
 
 const STATS = [
@@ -59,7 +60,7 @@ export default function DashboardOverview() {
 
       {/* Recent Orders */}
       <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Recent Orders</h3>
+        <H3 className="text-lg mb-4">Recent Orders</H3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

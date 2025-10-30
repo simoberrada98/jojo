@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { H4, Muted } from "@/components/ui/typography"
 
 export function Footer() {
   return (
@@ -15,12 +16,12 @@ export function Footer() {
               </div>
               <span className="text-lg font-bold">MineHub</span>
             </div>
-            <p className="text-foreground/60 text-sm">Professional mining hardware with crypto payments.</p>
+            <Muted className="m-0">Professional mining hardware with crypto payments.</Muted>
           </div>
 
           {/* Products */}
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Products</h4>
+            <H4 className="font-semibold mb-4 text-base">Products</H4>
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
                 <Link href="/collection" className="hover:text-accent transition">
@@ -47,7 +48,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
+            <H4 className="font-semibold mb-4 text-base">Company</H4>
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
                 <Link href="/about" className="hover:text-accent transition">
@@ -74,7 +75,7 @@ export function Footer() {
 
           {/* Legal & Info */}
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
+            <H4 className="font-semibold mb-4 text-base">Legal</H4>
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
                 <Link href="/privacy" className="hover:text-accent transition">
@@ -102,7 +103,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-foreground/60">
-          <p>&copy; 2025 MineHub. All rights reserved.</p>
+          <Muted className="m-0">&copy; 2025 MineHub. All rights reserved.</Muted>
           <div className="flex gap-6 mt-4 sm:mt-0">
             <Link href="/privacy" className="hover:text-accent transition">
               Privacy

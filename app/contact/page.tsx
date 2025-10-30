@@ -5,6 +5,11 @@ import type React from "react"
 import { useState } from "react"
 import PageLayout from "@/components/layout/PageLayout"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
 
 export default function ContactPage() {
@@ -37,10 +42,10 @@ export default function ContactPage() {
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Get in Touch</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <H1 className="mb-4">Get in Touch</H1>
+            <Muted className="text-lg max-w-2xl mx-auto">
               Have questions about our mining hardware? Our team is here to help you find the perfect solution.
-            </p>
+            </Muted>
           </div>
         </section>
 
@@ -53,10 +58,10 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-lg bg-accent/20 flex items-center justify-center">
                   <Mail className="w-6 h-6 text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Email</h3>
+                <H3 className="text-lg">Email</H3>
               </div>
-              <p className="text-muted-foreground mb-2">support@minehub.com</p>
-              <p className="text-sm text-muted-foreground">We'll respond within 24 hours</p>
+              <Muted className="mb-2 text-base">support@minehub.com</Muted>
+              <Muted>We'll respond within 24 hours</Muted>
             </div>
 
             <div className="bg-card border border-border rounded-lg p-8">
@@ -64,10 +69,10 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-lg bg-accent/20 flex items-center justify-center">
                   <Phone className="w-6 h-6 text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Phone</h3>
+                <H3 className="text-lg">Phone</H3>
               </div>
-              <p className="text-muted-foreground mb-2">+1 (555) 123-4567</p>
-              <p className="text-sm text-muted-foreground">Mon-Fri, 9AM-6PM EST</p>
+              <Muted className="mb-2 text-base">+1 (555) 123-4567</Muted>
+              <Muted>Mon-Fri, 9AM-6PM EST</Muted>
             </div>
 
             <div className="bg-card border border-border rounded-lg p-8">
@@ -75,74 +80,73 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-lg bg-accent/20 flex items-center justify-center">
                   <MapPin className="w-6 h-6 text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Address</h3>
+                <H3 className="text-lg">Address</H3>
               </div>
-              <p className="text-muted-foreground mb-2">123 Tech Street</p>
-              <p className="text-sm text-muted-foreground">San Francisco, CA 94105</p>
+              <Muted className="mb-2 text-base">123 Tech Street</Muted>
+              <Muted>San Francisco, CA 94105</Muted>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="max-w-2xl mx-auto">
             <div className="bg-card border border-border rounded-lg p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-foreground mb-8">Send us a Message</h2>
+            <H2 className="mb-8">Send us a Message</H2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Full Name</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="John Doe"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Email Address</label>
-                    <input
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="john@example.com"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Subject</label>
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="product-inquiry">Product Inquiry</option>
-                    <option value="technical-support">Technical Support</option>
-                    <option value="bulk-order">Bulk Order</option>
-                    <option value="partnership">Partnership</option>
-                    <option value="other">Other</option>
-                  </select>
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject</Label>
+                  <Select name="subject" value={formData.subject} onValueChange={(value) => handleChange({ target: { name: 'subject', value } } as any)} required>
+                    <SelectTrigger id="subject">
+                      <SelectValue placeholder="Select a subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="product-inquiry">Product Inquiry</SelectItem>
+                      <SelectItem value="technical-support">Technical Support</SelectItem>
+                      <SelectItem value="bulk-order">Bulk Order</SelectItem>
+                      <SelectItem value="partnership">Partnership</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Message</label>
-                  <textarea
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea
+                    id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
                     placeholder="Tell us how we can help..."
+                    className="resize-none"
                   />
                 </div>
 
@@ -155,8 +159,10 @@ export default function ContactPage() {
                 </Button>
 
                 {submitted && (
-                  <div className="p-4 bg-success/20 border border-success rounded-lg text-success">
-                    Thank you! Your message has been sent successfully.
+                  <div className="p-4 bg-success/20 border border-success rounded-lg">
+                    <Muted className="text-success m-0">
+                      Thank you! Your message has been sent successfully.
+                    </Muted>
                   </div>
                 )}
               </form>
@@ -169,7 +175,7 @@ export default function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 mb-6">
               <Clock className="w-6 h-6 text-accent" />
-              <h3 className="text-xl font-bold text-foreground">Business Hours</h3>
+              <H3 className="text-xl m-0">Business Hours</H3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {[
@@ -179,8 +185,8 @@ export default function ContactPage() {
                 { day: "Holidays", hours: "Closed" },
               ].map((item, index) => (
                 <div key={index} className="bg-background border border-border rounded-lg p-4">
-                  <p className="font-medium text-foreground">{item.day}</p>
-                  <p className="text-sm text-muted-foreground">{item.hours}</p>
+                  <Muted className="font-medium text-foreground m-0">{item.day}</Muted>
+                  <Muted className="m-0">{item.hours}</Muted>
                 </div>
               ))}
             </div>

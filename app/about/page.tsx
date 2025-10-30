@@ -1,6 +1,7 @@
 import Link from "next/link"
 import PageLayout from "@/components/layout/PageLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { H1, H2, H3, P } from "@/components/ui/typography"
 import { Shield, Zap, Users, Award } from "lucide-react"
 import { serializeSchema } from "@/lib/schema"
 
@@ -59,27 +60,27 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 py-12">
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto mb-16 text-center">
-        <h1 className="text-5xl font-bold mb-4">About MineHub</h1>
-        <p className="text-xl text-muted-foreground">
+        <H1 className="mb-4">About MineHub</H1>
+        <P className="text-xl text-muted-foreground m-0">
           Your trusted partner in cryptocurrency mining hardware since 2020
-        </p>
+        </P>
       </div>
 
       {/* Mission Section */}
       <div className="max-w-4xl mx-auto mb-16">
         <Card>
           <CardContent className="pt-6">
-            <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-            <p className="text-lg text-muted-foreground">
+            <H2 className="mb-4">Our Mission</H2>
+            <P className="text-lg text-muted-foreground m-0">
               At MineHub, we're dedicated to making cryptocurrency mining accessible to everyone. We provide high-quality ASIC miners from leading manufacturers, backed by exceptional customer service and competitive pricing. Our goal is to empower miners of all sizes to participate in blockchain networks and contribute to the decentralization of cryptocurrency.
-            </p>
+            </P>
           </CardContent>
         </Card>
       </div>
 
       {/* Values Section */}
       <div className="max-w-6xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center">Our Values</h2>
+        <H2 className="mb-8 text-center">Our Values</H2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardContent className="pt-6">
@@ -87,10 +88,10 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Trust & Transparency</h3>
-                <p className="text-sm text-muted-foreground">
+                <H3 className="font-semibold text-lg mb-2">Trust & Transparency</H3>
+                <P className="text-sm text-muted-foreground m-0">
                   We build lasting relationships through honest communication and reliable service.
-                </p>
+                </P>
               </div>
             </CardContent>
           </Card>
@@ -101,10 +102,10 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Zap className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Innovation</h3>
-                <p className="text-sm text-muted-foreground">
+                <H3 className="font-semibold text-lg mb-2">Innovation</H3>
+                <P className="text-sm text-muted-foreground m-0">
                   We stay ahead of the curve, offering the latest mining technology and solutions.
-                </p>
+                </P>
               </div>
             </CardContent>
           </Card>
@@ -115,10 +116,10 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Users className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Customer First</h3>
-                <p className="text-sm text-muted-foreground">
+                <H3 className="font-semibold text-lg mb-2">Customer First</H3>
+                <P className="text-sm text-muted-foreground m-0">
                   Your success is our success. We provide dedicated support every step of the way.
-                </p>
+                </P>
               </div>
             </CardContent>
           </Card>
@@ -129,10 +130,10 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Award className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Quality Assurance</h3>
-                <p className="text-sm text-muted-foreground">
+                <H3 className="font-semibold text-lg mb-2">Quality Assurance</H3>
+                <P className="text-sm text-muted-foreground m-0">
                   We partner with top manufacturers to ensure you receive authentic, high-performance equipment.
-                </p>
+                </P>
               </div>
             </CardContent>
           </Card>
@@ -219,10 +220,10 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto text-center">
         <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
           <CardContent className="pt-6 pb-6">
-            <h2 className="text-2xl font-bold mb-4">Ready to Start Mining?</h2>
-            <p className="text-muted-foreground mb-6">
+            <H2 className="mb-4">Ready to Start Mining?</H2>
+            <P className="text-muted-foreground mb-6 m-0">
               Browse our selection of miners or contact our team for personalized recommendations.
-            </p>
+            </P>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/collection"
