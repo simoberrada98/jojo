@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { H1, H2, H3, Muted } from "@/components/ui/typography"
 import CryptoPaymentForm from "@/components/crypto-payment-form"
+import HoodPayCheckoutForm from "@/components/hoodpay-checkout-form"
 import OrderSummary from "@/components/order-summary"
 import { ArrowLeft, Check, Truck, Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
@@ -320,7 +321,17 @@ export default function CheckoutPage() {
 
             {/* Payment */}
             {paymentStep === "payment" && (
-              <CryptoPaymentForm orderData={orderData} onComplete={handlePaymentComplete} />
+              <HoodPayCheckoutForm 
+                orderData={{
+                  ...orderData,
+                  items: items,
+                  subtotal,
+                  shipping,
+                  tax,
+                  total: totalAmount
+                }} 
+                onComplete={handlePaymentComplete} 
+              />
             )}
 
             {/* Confirmation */}
