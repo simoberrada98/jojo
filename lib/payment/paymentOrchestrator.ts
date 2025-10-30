@@ -34,7 +34,13 @@ export class PaymentOrchestrator {
   }) {
     this.apiKey = config.apiKey;
     this.businessId = config.businessId;
-    this.dbService = createDbService(config.supabaseUrl, config.supabaseKey);
+    try {
+      this.dbService = createDbService(config.supabaseUrl, config.supabaseKey);
+    } catch (error) {
+      console.warn('Failed to initialize Supabase service:', error);
+      // Create a dummy service that logs warnings instead of throwing
+      this.dbService = null as any;
+    }
     this.hooks = config.hooks;
   }
 
@@ -67,17 +73,23 @@ export class PaymentOrchestrator {
     // Initialize localStorage state
     paymentStorage.initializeSession(paymentIntent, checkoutData);
 
-    // Create payment record in Supabase
-    await this.dbService.createPayment({
-      business_id: this.businessId,
-      session_id: paymentStorage.generateSessionId(),
-      amount,
-      currency,
-      status: PaymentStatus.PENDING,
-      customer_email: options?.customerEmail,
-      metadata: options?.metadata,
-      checkout_data: checkoutData,
-    });
+    // Create payment record in Supabase (if available)
+    if (this.dbService) {
+      try {
+        await this.dbService.createPayment({
+          business_id: this.businessId,
+          session_id: paymentStorage.generateSessionId(),
+          amount,
+          currency,
+          status: PaymentStatus.PENDING,
+          customer_email: options?.customerEmail,
+          metadata: options?.metadata,
+          checkout_data: checkoutData,
+        });
+      } catch (error) {
+        console.warn('Failed to save payment to database:', error);
+      }
+    }
 
     // Trigger onCreate hook
     await this.triggerHook('onCreated', {
@@ -147,23 +159,35 @@ export class PaymentOrchestrator {
       }
 
       // Record attempt
-      await this.dbService.createPaymentAttempt({
-        payment_id: state.paymentIntent.id,
-        attempt_number: state.attemptCount + 1,
-        method,
-        status: result.status,
-        error: result.error,
-        request_data: paymentData,
-        response_data: result.metadata,
-      });
+      if (this.dbService) {
+        try {
+          await this.dbService.createPaymentAttempt({
+            payment_id: state.paymentIntent.id,
+            attempt_number: state.attemptCount + 1,
+            method,
+            status: result.status,
+            error: result.error,
+            request_data: paymentData,
+            response_data: result.metadata,
+          });
+        } catch (error) {
+          console.warn('Failed to record payment attempt:', error);
+        }
+      }
 
       // Update payment status
       if (result.success) {
         paymentStorage.markCompleted(result.transactionId);
-        await this.dbService.updatePaymentStatus(
-          state.paymentIntent.id,
-          PaymentStatus.COMPLETED
-        );
+        if (this.dbService) {
+          try {
+            await this.dbService.updatePaymentStatus(
+              state.paymentIntent.id,
+              PaymentStatus.COMPLETED
+            );
+          } catch (error) {
+            console.warn('Failed to update payment status:', error);
+          }
+        }
 
         await this.triggerHook('onCompleted', {
           type: PaymentEventType.PAYMENT_COMPLETED,
@@ -173,11 +197,17 @@ export class PaymentOrchestrator {
         });
       } else {
         paymentStorage.markFailed(result.error!);
-        await this.dbService.updatePaymentStatus(
-          state.paymentIntent.id,
-          PaymentStatus.FAILED,
-          result.error
-        );
+        if (this.dbService) {
+          try {
+            await this.dbService.updatePaymentStatus(
+              state.paymentIntent.id,
+              PaymentStatus.FAILED,
+              result.error
+            );
+          } catch (error) {
+            console.warn('Failed to update payment status:', error);
+          }
+        }
 
         await this.triggerHook('onFailed', {
           type: PaymentEventType.PAYMENT_FAILED,
@@ -250,10 +280,16 @@ export class PaymentOrchestrator {
       );
 
       // Update database with HoodPay response
-      await this.dbService.updatePayment(state.paymentIntent.id, {
-        hp_payment_id: hoodpayResponse.id,
-        hoodpay_response: hoodpayResponse,
-      });
+      if (this.dbService) {
+        try {
+          await this.dbService.updatePayment(state.paymentIntent.id, {
+            hp_payment_id: hoodpayResponse.id,
+            hoodpay_response: hoodpayResponse,
+          });
+        } catch (error) {
+          console.warn('Failed to update payment in database:', error);
+        }
+      }
 
       return {
         success: true,
@@ -292,10 +328,16 @@ export class PaymentOrchestrator {
       },
     });
 
-    await this.dbService.updatePaymentStatus(
-      state.paymentIntent.id,
-      PaymentStatus.CANCELLED
-    );
+    if (this.dbService) {
+      try {
+        await this.dbService.updatePaymentStatus(
+          state.paymentIntent.id,
+          PaymentStatus.CANCELLED
+        );
+      } catch (error) {
+        console.warn('Failed to update payment status:', error);
+      }
+    }
 
     await this.triggerHook('onCancelled', {
       type: PaymentEventType.PAYMENT_CANCELLED,
@@ -361,15 +403,19 @@ export function createPaymentOrchestrator(config: {
   supabaseKey?: string;
   hooks?: PaymentHooks;
 }): PaymentOrchestrator {
-  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY;
-  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID;
+  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY || '';
+  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID || '';
   const supabaseUrl =
-    config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseKey =
-    config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-  if (!apiKey || !businessId || !supabaseUrl || !supabaseKey) {
-    throw new Error('Missing required payment configuration');
+  if (!apiKey || !businessId) {
+    console.warn('HoodPay credentials not configured. Payment processing will not work.');
+  }
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('Supabase credentials not configured. Payment tracking will not work.');
   }
 
   return new PaymentOrchestrator({

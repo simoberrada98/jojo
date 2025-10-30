@@ -52,10 +52,29 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// Initialize Supabase client using environment variables. Casting to string to satisfy TypeScript.
-const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey: string = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+// Lazy-load Supabase client to avoid initialization errors
+let supabaseInstance: SupabaseClient | null = null;
+
+export const getSupabaseClient = (): SupabaseClient => {
+  if (!supabaseInstance) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials not configured. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+    }
+    
+    supabaseInstance = createClient(supabaseUrl, supabaseKey);
+  }
+  return supabaseInstance;
+};
+
+// For backward compatibility
+export const supabase = new Proxy({} as SupabaseClient, {
+  get: (target, prop) => {
+    return getSupabaseClient()[prop as keyof SupabaseClient];
+  }
+});
 
 // Base URL for HoodPay API
 const HOODPAY_BASE_URL = 'https://api.hoodpay.io/v1';
@@ -429,7 +448,8 @@ export async function savePaymentsToSupabase<T>(
   if (!Array.isArray(payments)) {
     throw new TypeError('payments must be an array');
   }
-  const { data, error } = await supabase.from(table).insert(payments);
+  const client = getSupabaseClient();
+  const { data, error } = await client.from(table).insert(payments);
   if (error) {
     throw error;
   }
