@@ -1,29 +1,21 @@
-import type { DisplayProduct } from "@/lib/types/product"
+/**
+ * @deprecated Use PricingService from @/lib/services/pricing.service instead
+ * This file is kept for backward compatibility
+ */
 
-export const SHIPPING_COST = 50 // USD
-export const TAX_RATE = 0.08 // 8%
+import { PRICING_CONFIG } from "@/lib/config/pricing.config"
+import { PricingService } from "@/lib/services/pricing.service"
 
-export interface CartItem extends DisplayProduct {
-  quantity: number
-}
+// Re-export from centralized config
+export const SHIPPING_COST = PRICING_CONFIG.shipping.standard
+export const TAX_RATE = PRICING_CONFIG.tax.rate
 
-export interface PricingSummary {
-  subtotal: number
-  shipping: number
-  tax: number
-  total: number
-}
+// Re-export types from centralized location
+export type { CartItem, CartSummary as PricingSummary } from "@/lib/types/cart"
 
-export function calculatePricing(items: CartItem[]): PricingSummary {
-  const subtotal = items.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
-  const shipping = items.length > 0 ? SHIPPING_COST : 0
-  const tax = (subtotal + shipping) * TAX_RATE
-  const total = subtotal + shipping + tax
-
-  return {
-    subtotal,
-    shipping,
-    tax,
-    total,
-  }
+/**
+ * @deprecated Use PricingService.calculateCartSummary instead
+ */
+export function calculatePricing(items: any[]) {
+  return PricingService.calculateCartSummary(items)
 }

@@ -2,10 +2,9 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import type { DisplayProduct } from "@/lib/types/product"
-
-export interface CartItem extends DisplayProduct {
-  quantity: number
-}
+import type { CartItem } from "@/lib/types/cart"
+import { PricingService } from "@/lib/services/pricing.service"
+import { STORAGE_KEYS } from "@/lib/config/app.config"
 
 interface CartContextType {
   items: CartItem[]
@@ -24,7 +23,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
+    const savedCart = localStorage.getItem(STORAGE_KEYS.cart)
     if (savedCart) {
       try {
         setItems(JSON.parse(savedCart))
@@ -36,7 +35,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items))
+    localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(items))
   }, [items])
 
   const addItem = (product: DisplayProduct) => {
@@ -69,8 +68,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([])
   }
 
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
-  const total = items.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0)
+  const itemCount = PricingService.calculateItemCount(items)
+  const total = PricingService.calculateSubtotal(items)
 
   return (
     <CartContext.Provider
