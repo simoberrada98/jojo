@@ -472,3 +472,90 @@ export async function paymentsApiHandler(req: NextApiRequest, res: NextApiRespon
     res.status(500).json({ error: error.message });
   }
 }
+
+/**
+ * Verify webhook signature using HMAC SHA256
+ * @param payload - Raw webhook payload
+ * @param signature - Signature from webhook headers
+ * @param secret - Webhook secret
+ */
+export function verifyWebhookSignature(
+  payload: string | Buffer,
+  signature: string,
+  secret: string
+): boolean {
+  try {
+    const crypto = require('crypto');
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(typeof payload === 'string' ? payload : payload.toString());
+    const computed = hmac.digest('hex');
+    
+    // Constant-time comparison to prevent timing attacks
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(computed)
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Webhook receiver handler for HoodPay events
+ * @param req - Next.js API request
+ * @param res - Next.js API response
+ */
+export async function webhookReceiverHandler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+  const webhookSecret = process.env.HOODPAY_WEBHOOK_SECRET;
+  
+  if (!webhookSecret) {
+    res.status(500).json({ error: 'HOODPAY_WEBHOOK_SECRET not configured' });
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  try {
+    // Get raw body for signature verification
+    const signature = req.headers['x-hoodpay-signature'] as string;
+    
+    if (!signature) {
+      res.status(401).json({ error: 'Missing signature' });
+      return;
+    }
+
+    // In production, you'd get the raw body from middleware
+    const rawBody = JSON.stringify(req.body);
+    
+    // Verify signature
+    const isValid = verifyWebhookSignature(rawBody, signature, webhookSecret);
+    
+    if (!isValid) {
+      res.status(401).json({ error: 'Invalid signature' });
+      return;
+    }
+
+    // Process webhook payload
+    const payload = req.body;
+    
+    // Log webhook receipt (in production, save to database)
+    console.log('Webhook received:', {
+      event: payload.event,
+      paymentId: payload.paymentId,
+      status: payload.status,
+    });
+
+    // Acknowledge receipt immediately
+    res.status(200).json({ received: true });
+
+    // Process webhook asynchronously (implement your business logic)
+    // Example: Update payment status in database, send notifications, etc.
+    
+  } catch (error: any) {
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+}
