@@ -1,12 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 import ProductImage from "@/components/product-image"
 import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
-import { useCart } from "@/lib/contexts/cart-context"
 
 const collections = [
   {
@@ -60,11 +58,8 @@ const collections = [
 ]
 
 export default function CollectionPage() {
-  const { itemCount } = useCart()
-
   return (
-    <div className="min-h-screen bg-background">
-      <Header cartCount={itemCount} />
+    <PageLayout>
 
       <main className="pt-20">
         {/* Breadcrumb */}
@@ -126,8 +121,6 @@ export default function CollectionPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }

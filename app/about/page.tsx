@@ -1,3 +1,5 @@
+import Link from "next/link"
+import PageLayout from "@/components/layout/PageLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, Zap, Users, Award } from "lucide-react"
 import { serializeSchema } from "@/lib/schema"
@@ -46,7 +48,7 @@ export default function AboutPage() {
   }
 
   return (
-    <>
+    <PageLayout>
       {/* Schema.org LocalBusiness markup */}
       <script
         type="application/ld+json"
@@ -222,23 +224,23 @@ export default function AboutPage() {
               Browse our selection of miners or contact our team for personalized recommendations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/collection"
                 className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
               >
                 Shop Miners
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/contact"
                 className="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary rounded-md hover:bg-primary/10 transition"
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-    </>
+    </PageLayout>
   )
 }

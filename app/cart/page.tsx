@@ -8,11 +8,10 @@ import ProductImage from "@/components/product-image"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
 import { calculatePricing } from "@/lib/utils/pricing"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 
 export default function CartPage() {
-  const { items: cartItems, updateQuantity, removeItem, itemCount } = useCart()
+  const { items: cartItems, updateQuantity, removeItem } = useCart()
   const { currency, formatPrice } = useCurrency()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -27,8 +26,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header cartCount={itemCount} />
+    <PageLayout>
       <main className="pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
@@ -177,7 +175,6 @@ export default function CartPage() {
         )}
       </div>
       </main>
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }

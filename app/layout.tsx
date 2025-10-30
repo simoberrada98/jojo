@@ -8,6 +8,7 @@ import { AuthProvider } from "@/lib/contexts/auth-context"
 import { CartProvider } from "@/lib/contexts/cart-context"
 import { generateOrganizationSchema, generateWebSiteSchema, serializeSchema } from "@/lib/schema"
 import "./globals.css"
+import Link from "next/link"
 
 // Modern, professional font for body text
 const inter = Inter({
@@ -36,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   // Get base URL - use environment variable or fallback
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://minehub.com"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com"
   
   // Generate Schema.org structured data
   const organizationSchema = generateOrganizationSchema(baseUrl)
@@ -62,12 +63,12 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         {/* Skip to main content link for accessibility */}
-        <a
+        <Link
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground focus:top-0 focus:left-0"
         >
           Skip to main content
-        </a>
+        </Link>
         <AuthProvider>
           <CurrencyProvider>
             <CartProvider>

@@ -1,12 +1,10 @@
 import Link from "next/link"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 import { ChevronRight } from "lucide-react"
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <PageLayout>
 
       <main className="pt-20">
         {/* Breadcrumb */}
@@ -107,8 +105,6 @@ export default function TermsOfServicePage() {
           </div>
         </section>
       </main>
-
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }

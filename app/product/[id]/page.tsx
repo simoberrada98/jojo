@@ -5,8 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { Star, Zap, Cpu, Shield, ArrowLeft, ShoppingCart } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 import ProductImage from "@/components/product-image"
 import { useCurrency } from "@/lib/contexts/currency-context"
 import { useCart } from "@/lib/contexts/cart-context"
@@ -21,7 +20,7 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
   const { currency, formatPrice } = useCurrency()
-  const { addItem, itemCount } = useCart()
+  const { addItem } = useCart()
 
   useEffect(() => {
     async function fetchProduct() {
@@ -58,20 +57,17 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background">
-        <Header cartCount={itemCount} />
+      <PageLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <p className="text-foreground/60">Loading product...</p>
         </div>
-        <Footer />
-      </main>
+      </PageLayout>
     )
   }
 
   if (error || !product) {
     return (
-      <main className="min-h-screen bg-background">
-        <Header cartCount={itemCount} />
+      <PageLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
           <p className="text-destructive text-lg">{error || "Product not found"}</p>
           <Button onClick={() => router.push("/")} variant="outline">
@@ -79,8 +75,7 @@ export default function ProductDetailPage() {
             Back to Home
           </Button>
         </div>
-        <Footer />
-      </main>
+      </PageLayout>
     )
   }
 
@@ -89,7 +84,7 @@ export default function ProductDetailPage() {
   const productSchema = generateProductSchema(product, baseUrl, currency)
 
   return (
-    <main className="min-h-screen bg-background">
+    <PageLayout>
       {/* Schema.org Product markup */}
       <script
         type="application/ld+json"
@@ -97,7 +92,6 @@ export default function ProductDetailPage() {
           __html: serializeSchema(productSchema),
         }}
       />
-      <Header cartCount={itemCount} />
 
       <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -249,8 +243,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
-    </main>
+    </PageLayout>
   )
 }

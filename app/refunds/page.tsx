@@ -1,12 +1,10 @@
 import Link from "next/link"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 import { ChevronRight, RotateCcw, Clock, CheckCircle } from "lucide-react"
 
 export default function RefundsPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <PageLayout>
 
       <main className="pt-20">
         {/* Breadcrumb */}
@@ -205,8 +203,6 @@ export default function RefundsPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }

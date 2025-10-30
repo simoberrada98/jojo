@@ -186,7 +186,7 @@ export default function TopProducts() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center"
         >
-          <a href="#products">
+          <Link href="#products">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 size="lg"
@@ -196,8 +196,7 @@ export default function TopProducts() {
                 View All Products
               </Button>
             </motion.div>
-          </a>
-        </motion.div>
+          </Link></motion.div>
       </div>
     </section>
   )

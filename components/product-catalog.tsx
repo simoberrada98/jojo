@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ const SORT_OPTIONS = [
   { label: "Most Popular", value: "popular" },
 ]
 
-export default function ProductCatalog() {
+function ProductCatalogContent() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState<DisplayProduct[]>([])
   const [loading, setLoading] = useState(true)
@@ -221,5 +221,19 @@ export default function ProductCatalog() {
         </div>
       </div>
     </section>
+  )
+}
+
+export default function ProductCatalog() {
+  return (
+    <Suspense fallback={
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto"></div>
+        </div>
+      </section>
+    }>
+      <ProductCatalogContent />
+    </Suspense>
   )
 }

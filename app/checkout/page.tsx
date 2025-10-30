@@ -8,14 +8,13 @@ import CryptoPaymentForm from "@/components/crypto-payment-form"
 import OrderSummary from "@/components/order-summary"
 import { ArrowLeft, Check, Truck, Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import PageLayout from "@/components/layout/PageLayout"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
 import { calculatePricing } from "@/lib/utils/pricing"
 
 export default function CheckoutPage() {
-  const { items, itemCount } = useCart()
+  const { items } = useCart()
   const { currency, formatPrice } = useCurrency()
   const [paymentStep, setPaymentStep] = useState<"shipping" | "review" | "payment" | "confirmation">("shipping")
   const [orderData, setOrderData] = useState<any>(null)
@@ -75,8 +74,7 @@ export default function CheckoutPage() {
   const { subtotal, shipping, tax, total: totalAmount } = calculatePricing(items)
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header cartCount={itemCount} />
+    <PageLayout>
       <main className="pt-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
@@ -416,7 +414,6 @@ export default function CheckoutPage() {
         </div>
       </div>
       </main>
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }
