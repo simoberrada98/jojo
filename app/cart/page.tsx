@@ -5,14 +5,13 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingCart } from "lucide-react"
 import ProductImage from "@/components/product-image"
+import PriceDisplay from "@/components/ui/PriceDisplay"
 import { useCart } from "@/lib/contexts/cart-context"
-import { useCurrency } from "@/lib/contexts/currency-context"
 import { calculatePricing } from "@/lib/utils/pricing"
 import PageLayout from "@/components/layout/PageLayout"
 
 export default function CartPage() {
   const { items: cartItems, updateQuantity, removeItem } = useCart()
-  const { currency, formatPrice } = useCurrency()
   const [isLoading, setIsLoading] = useState(false)
 
   // Calculate totals using shared utility
@@ -63,7 +62,7 @@ export default function CartPage() {
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-foreground mb-2">{item.name}</h3>
                     <p className="text-sm text-foreground/60 mb-4">
-                      {formatPrice(item.priceUSD)} {currency} (${item.priceUSD.toLocaleString()} USD)
+                      <PriceDisplay amountUSD={item.priceUSD} className="text-sm text-foreground/60" usdClassName="text-xs text-foreground/50" />
                     </p>
 
                     {/* Quantity Controls */}
@@ -99,14 +98,7 @@ export default function CartPage() {
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
-                    <div>
-                      <div className="text-xl font-bold text-accent">
-                        {formatPrice(item.priceUSD * item.quantity)} {currency}
-                      </div>
-                      <div className="text-xs text-foreground/60">
-                        ${(item.priceUSD * item.quantity).toLocaleString()} USD
-                      </div>
-                    </div>
+                    <PriceDisplay amountUSD={item.priceUSD * item.quantity} vertical />
                   </div>
                 </div>
               ))}
@@ -137,10 +129,7 @@ export default function CartPage() {
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold text-foreground">Total</span>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-accent">{formatPrice(total)} {currency}</div>
-                      <div className="text-xs text-foreground/60">${total.toLocaleString()} USD</div>
-                    </div>
+                    <PriceDisplay amountUSD={total} className="text-2xl font-bold text-accent" vertical />
                   </div>
                 </div>
 
