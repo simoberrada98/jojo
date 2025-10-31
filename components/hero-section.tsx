@@ -402,17 +402,22 @@ export default function HeroSection() {
                 </Button>
               </motion.div>
             </Link>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="hover:bg-accent/10 px-8 border border-white/20 hover:border-accent/40 rounded-full focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-accent hover:text-primary-foreground transition-all hover:-translate-y-0.5 duration-300"
+            <Link href="/learn-more" className="block">
+              <motion.div
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <span className="font-semibold uppercase tracking-wide">
-                  Learn More
-                </span>
-              </Button>
-            </motion.div>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="hover:bg-accent/10 px-8 border border-white/20 hover:border-accent/40 rounded-full focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-accent hover:text-primary-foreground transition-all hover:-translate-y-0.5 duration-300"
+                >
+                  <span className="font-semibold uppercase tracking-wide">
+                    Learn More
+                  </span>
+                </Button>
+              </motion.div>
+            </Link>
           </motion.div>
 
           <motion.div

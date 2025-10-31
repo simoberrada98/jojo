@@ -215,6 +215,51 @@ export default function PrivacyPolicyPage() {
 
             <Card>
               <CardHeader>
+                <CardTitle>How Payments Work</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  Checkout flows are handled end-to-end with Stripe, which
+                  tokenizes sensitive cardholder data and shares only the last
+                  four digits and expiration date with our team. This keeps the
+                  app responsive while preventing us from ever storing full card
+                  numbers on Jhuangnyc servers.
+                </p>
+                <ol className="list-decimal space-y-2 pl-6">
+                  <li>
+                    Review your cart, shipping details, and taxes, then choose a
+                    payment option supported by Stripe (major credit and debit
+                    cards plus any alternative methods displayed at checkout).
+                  </li>
+                  <li>
+                    Payment details are entered into Stripe-hosted fields inside
+                    the app. Stripe instantly encrypts the information and
+                    returns a secure token to our order system.
+                  </li>
+                  <li>
+                    We authorize the payment to confirm funds, generate your
+                    order confirmation, and email a detailed receipt. Large or
+                    high-risk orders may trigger a manual review before we
+                    capture funds.
+                  </li>
+                  <li>
+                    Once the payment is captured, the order status updates in
+                    your account dashboard and our fulfillment team prepares
+                    shipment or pickup logistics.
+                  </li>
+                </ol>
+                <p className="mt-4">
+                  If Stripe declines or flags a payment, we will prompt you to
+                  retry, switch to another method, or contact support for manual
+                  assistance. You can request invoices, payment confirmations,
+                  or account statements anytime by emailing{" "}
+                  <a href="mailto:contact@jhuangnyc.com">contact@jhuangnyc.com</a>.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Sharing & International Transfers</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
