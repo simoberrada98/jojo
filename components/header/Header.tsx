@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import { AuthDialog } from "@/components/auth-dialog"
-import CurrencyToggle from "@/components/currency-toggle"
-import { BrandLogo } from "@/components/brand-logo"
-import { APP_BRANDING } from "@/lib/constants/navigation"
-import { CartButton } from "./CartButton"
-import { Navigation } from "./Navigation"
-import { UserMenu } from "./UserMenu"
-import { MobileMenu } from "./MobileMenu"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { AuthDialog } from "@/components/auth-dialog";
+import CurrencyToggle from "@/components/currency-toggle";
+import { BrandLogo } from "@/components/brand-logo";
+import { APP_BRANDING } from "@/lib/constants/navigation";
+import { CartButton } from "./CartButton";
+import { Navigation } from "./Navigation";
+import { UserMenu } from "./UserMenu";
+import { MobileMenu } from "./MobileMenu";
 
 interface HeaderProps {
-  cartCount?: number
+  cartCount?: number;
 }
 
 export function Header({ cartCount = 0 }: HeaderProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [authDialogOpen, setAuthDialogOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   return (
     <motion.header
@@ -37,9 +37,8 @@ export function Header({ cartCount = 0 }: HeaderProps) {
             className="flex items-center gap-2"
             aria-label={`${APP_BRANDING.name} home`}
           >
-       
-              <BrandLogo className="text-foreground p-6" decorative />
-        
+            <BrandLogo className="text-foreground p-6" decorative />
+
             <span className="sr-only">{APP_BRANDING.name}</span>
           </Link>
 
@@ -59,16 +58,20 @@ export function Header({ cartCount = 0 }: HeaderProps) {
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         <AnimatePresence>
-          <MobileMenu 
-            isOpen={isOpen} 
-            onAuthDialogOpen={() => setAuthDialogOpen(true)} 
+          <MobileMenu
+            isOpen={isOpen}
+            onAuthDialogOpen={() => setAuthDialogOpen(true)}
           />
         </AnimatePresence>
       </div>
@@ -76,5 +79,5 @@ export function Header({ cartCount = 0 }: HeaderProps) {
       {/* Auth Dialog */}
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
     </motion.header>
-  )
+  );
 }

@@ -243,4 +243,45 @@
   .bg-info {
     @apply bg-info text-info-foreground;
   }
+
+  .animated-border {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 9999px;
+    z-index: 0;
+  }
+
+  .animated-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      var(--primary),
+      var(--accent),
+      var(--secondary),
+      var(--primary)
+    );
+    animation: gradient-orbit 8s linear infinite;
+    z-index: -2;
+  }
+
+  .animated-border::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: var(--background);
+    background: color-mix(in srgb, var(--background) 80%, var(--primary) 20%);
+    opacity: 0.9;
+    z-index: -1;
+  }
+}
+
+@keyframes gradient-orbit {
+  to {
+    transform: rotate(360deg);
+  }
 }

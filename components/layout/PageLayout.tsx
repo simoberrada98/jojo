@@ -16,7 +16,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <Header cartCount={itemCount} />
-      <main className="grow pt-24">{children}</main>
+      <main className="grow ">{children}</main>
       <Footer />
     </div>
   );
