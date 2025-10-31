@@ -51,7 +51,7 @@ export function CookieBanner({ initialStatus }: CookieBannerProps) {
               We use essential cookies to make this site work and analytics
               cookies to understand how you use it. You can learn more in our{" "}
               <Link
-                href="/privacy"
+                href="/privacy-policy"
                 className="text-accent underline underline-offset-4"
               >
                 Privacy Policy

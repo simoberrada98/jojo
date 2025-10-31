@@ -86,12 +86,18 @@ export function Footer() {
             <H4 className="mb-4 font-semibold text-base">Legal</H4>
             <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link href="/privacy" className="hover:text-accent transition">
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-accent transition"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-accent transition">
+                <Link
+                  href="/terms-of-service"
+                  className="hover:text-accent transition"
+                >
                   Terms of Service
                 </Link>
               </li>
@@ -115,10 +121,16 @@ export function Footer() {
             &copy; 2025 Jhuangnyc. All rights reserved.
           </Muted>
           <div className="flex gap-6 mt-4 sm:mt-0">
-            <Link href="/privacy" className="hover:text-accent transition">
+            <Link
+              href="/privacy-policy"
+              className="hover:text-accent transition"
+            >
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-accent transition">
+            <Link
+              href="/terms-of-service"
+              className="hover:text-accent transition"
+            >
               Terms
             </Link>
             <Link href="/returns" className="hover:text-accent transition">

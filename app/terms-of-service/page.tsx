@@ -1,157 +1,380 @@
+import Image from "next/image";
 import Link from "next/link";
-import PageLayout from "@/components/layout/PageLayout";
+import type { Metadata } from "next";
 import { ChevronRight } from "lucide-react";
+import PageLayout from "@/components/layout/PageLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { serializeSchema } from "@/lib/schema";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com";
+const canonicalUrl = `${baseUrl}/terms-of-service`;
+const ogImageUrl = `${baseUrl}/assets/images/Terms.png`;
+const lastUpdatedDisplay = "October 15, 2024";
+const lastUpdatedISO = "2024-10-15";
+const description =
+  "Review the Jhuangnyc Terms of Service to understand your responsibilities, order policies, and legal rights when purchasing cryptocurrency mining hardware.";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | Jhuangnyc",
+  description,
+  alternates: { canonical: "/terms-of-service" },
+  openGraph: {
+    title: "Jhuangnyc Terms of Service",
+    description,
+    url: canonicalUrl,
+    type: "article",
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Graphic depicting contractual agreement and handshake for Jhuangnyc terms",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jhuangnyc Terms of Service",
+    description,
+    images: [ogImageUrl],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function TermsOfServicePage() {
+  const termsSchema = {
+    "@context": "https://schema.org",
+    "@type": "TermsOfService",
+    name: "Jhuangnyc Terms of Service",
+    url: canonicalUrl,
+    dateModified: lastUpdatedISO,
+    inLanguage: "en-US",
+    description,
+    publisher: {
+      "@type": "Organization",
+      name: "Jhuangnyc",
+      url: baseUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseUrl}/logo.png`,
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "Customer Support",
+        email: "contact@jhuangnyc.com",
+        telephone: "+1-631-224-3534",
+      },
+    },
+    mainEntityOfPage: canonicalUrl,
+  };
+
   return (
     <PageLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeSchema(termsSchema),
+        }}
+      />
+
       <main className="pt-20">
-        {/* Breadcrumb */}
-        <div className="border-border border-b">
-          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 max-w-4xl">
-            <div className="flex items-center gap-2 text-sm">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Home
-              </Link>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium text-foreground">
-                Terms of Service
-              </span>
+        {/* Hero */}
+        <section className="border-border border-b bg-background">
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0">
+              <Image
+                src="/assets/images/Terms.png"
+                alt="Graphic illustrating legal agreement and contract review"
+                fill
+                priority
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-background/80 backdrop-blur" />
+            </div>
+            <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Link
+                  href="/"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Home
+                </Link>
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium text-foreground">
+                  Terms of Service
+                </span>
+              </div>
+              <div className="mt-8 max-w-3xl">
+                <h1 className="font-bold text-4xl sm:text-5xl">
+                  Terms of Service
+                </h1>
+                <p className="mt-4 text-muted-foreground text-lg">
+                  These terms outline how you can access, purchase from, and
+                  interact with Jhuangnyc. Please read them carefully so you
+                  understand your obligations and our commitments before placing
+                  an order.
+                </p>
+                <p className="mt-6 text-muted-foreground">
+                  Last updated: <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Content */}
-        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-4xl">
-          <h1 className="mb-2 font-bold text-foreground text-4xl">
-            Terms of Service
-          </h1>
-          <p className="mb-8 text-muted-foreground">
-            Last updated: October 2024
-          </p>
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+          <div className="space-y-10">
+            <Card>
+              <CardHeader>
+                <CardTitle>Key Takeaways</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <ul>
+                  <li>
+                    Using our site means you accept these terms and agree to
+                    comply with applicable laws.
+                  </li>
+                  <li>
+                    Orders are subject to availability, verification, and our
+                    fraud-prevention checks.
+                  </li>
+                  <li>
+                    Cryptocurrency mining involves inherent risks; hardware
+                    performance and profitability are not guaranteed.
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
 
-          <div className="space-y-8 prose-invert max-w-none prose">
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                1. Agreement to Terms
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                By accessing and using this website, you accept and agree to be
-                bound by the terms and provision of this agreement. If you do
-                not agree to abide by the above, please do not use this service.
-              </p>
-            </section>
+            <div className="gap-6 grid md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Account Responsibilities</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <ul>
+                    <li>
+                      Provide accurate, current, and complete registration
+                      details.
+                    </li>
+                    <li>
+                      Maintain the confidentiality of login credentials and
+                      notify us of any unauthorized use.
+                    </li>
+                    <li>
+                      Ensure you meet the minimum age and legal requirements in
+                      your jurisdiction.
+                    </li>
+                    <li>
+                      Accept liability for all activity conducted through your
+                      account.
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                2. Use License
-              </h2>
-              <p className="mb-4 text-muted-foreground leading-relaxed">
-                Permission is granted to temporarily download one copy of the
-                materials (information or software) on MineHub's website for
-                personal, non-commercial transitory viewing only. This is the
-                grant of a license, not a transfer of title, and under this
-                license you may not:
-              </p>
-              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
-                <li>Modifying or copying the materials</li>
-                <li>
-                  Using the materials for any commercial purpose or for any
-                  public display
-                </li>
-                <li>
-                  Attempting to decompile or reverse engineer any software
-                  contained on the website
-                </li>
-                <li>
-                  Removing any copyright or other proprietary notations from the
-                  materials
-                </li>
-                <li>
-                  Transferring the materials to another person or "mirroring"
-                  the materials on any other server
-                </li>
-              </ul>
-            </section>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Orders, Payments & Verification</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <ul>
+                    <li>
+                      Prices are quoted in USD and may change without prior
+                      notice.
+                    </li>
+                    <li>
+                      We authorize payment methods at checkout and capture funds
+                      when an order is confirmed.
+                    </li>
+                    <li>
+                      Taxes, duties, and import fees are the customer’s
+                      responsibility unless otherwise noted.
+                    </li>
+                    <li>
+                      Orders may be declined or cancelled if suspicious activity
+                      or pricing errors are detected.
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                3. Disclaimer
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                The materials on MineHub's website are provided on an 'as is'
-                basis. MineHub makes no warranties, expressed or implied, and
-                hereby disclaims and negates all other warranties including,
-                without limitation, implied warranties or conditions of
-                merchantability, fitness for a particular purpose, or
-                non-infringement of intellectual property or other violation of
-                rights.
-              </p>
-            </section>
+            <Card>
+              <CardHeader>
+                <CardTitle>Products, Availability & Accuracy</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  We strive to present accurate product specifications, lead
+                  times, and pricing. However, mining hardware can change
+                  rapidly as manufacturers issue updates. Specifications, hash
+                  rates, and efficiencies may vary from the published
+                  information, and availability is not guaranteed until an order
+                  is accepted.
+                </p>
+                <p className="mt-4">
+                  We reserve the right to limit quantities, substitute
+                  equivalent models, or discontinue items at our discretion. If
+                  a material change affects your order, we will contact you with
+                  available options or provide a refund.
+                </p>
+              </CardContent>
+            </Card>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                4. Limitations
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                In no event shall MineHub or its suppliers be liable for any
-                damages (including, without limitation, damages for loss of data
-                or profit, or due to business interruption) arising out of the
-                use or inability to use the materials on MineHub's website.
-              </p>
-            </section>
+            <Card>
+              <CardHeader>
+                <CardTitle>Shipping, Delivery & Risk of Loss</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <ul>
+                  <li>
+                    Shipping estimates are provided during checkout and may vary
+                    due to carrier constraints or customs clearance.
+                  </li>
+                  <li>
+                    Risk of loss transfers to you once the carrier confirms
+                    delivery to the address provided at checkout.
+                  </li>
+                  <li>
+                    Inspect packages on arrival and report shipping damage or
+                    shortages within 48 hours so we can file carrier claims.
+                  </li>
+                  <li>
+                    For international deliveries, you authorize us to designate
+                    carriers and customs brokers on your behalf.
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                5. Accuracy of Materials
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                The materials appearing on MineHub's website could include
-                technical, typographical, or photographic errors. MineHub does
-                not warrant that any of the materials on its website are
-                accurate, complete, or current. MineHub may make changes to the
-                materials contained on its website at any time without notice.
-              </p>
-            </section>
+            <Card>
+              <CardHeader>
+                <CardTitle>Acceptable Use & Restrictions</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  You agree not to misuse the site or any products purchased
+                  from us. Prohibited conduct includes:
+                </p>
+                <ul>
+                  <li>
+                    Violating applicable laws or export regulations, including
+                    sanctions programs.
+                  </li>
+                  <li>
+                    Attempting to gain unauthorized access to our systems or
+                    other customer accounts.
+                  </li>
+                  <li>
+                    Uploading malicious code, interfering with site performance,
+                    or engaging in fraudulent mining schemes.
+                  </li>
+                  <li>
+                    Infringing the intellectual property rights of Jhuangnyc or
+                    third parties.
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                6. Links
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                MineHub has not reviewed all of the sites linked to its website
-                and is not responsible for the contents of any such linked site.
-                The inclusion of any link does not imply endorsement by MineHub
-                of the site. Use of any such linked website is at the user's own
-                risk.
-              </p>
-            </section>
+            <div className="gap-6 grid md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Risk Disclosure & Warranties</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <p>
+                    Cryptocurrency mining carries operational and financial
+                    risks, including hardware failure, network difficulty
+                    changes, and price volatility. Jhuangnyc provides hardware
+                    “as is” with no implied warranty of profitability or uptime.
+                    Manufacturer warranties, when available, are passed through
+                    to you and may require direct coordination with the supplier.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                7. Modifications
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                MineHub may revise these terms of service for its website at any
-                time without notice. By using this website, you are agreeing to
-                be bound by the then current version of these terms of service.
-              </p>
-            </section>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Limitation of Liability</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <p>
+                    To the fullest extent permitted by law, Jhuangnyc and its
+                    affiliates are not liable for indirect, incidental, special,
+                    consequential, or punitive damages, including lost profits,
+                    revenue, or data. Aggregate liability for claims relating to
+                    a purchase will not exceed the amount you paid for the
+                    product giving rise to the claim.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
 
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                8. Governing Law
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                These terms and conditions are governed by and construed in
-                accordance with the laws of the United States, and you
-                irrevocably submit to the exclusive jurisdiction of the courts
-                in that location.
-              </p>
-            </section>
+            <Card>
+              <CardHeader>
+                <CardTitle>Indemnification</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  You agree to defend, indemnify, and hold harmless Jhuangnyc,
+                  its officers, employees, and partners from any claims,
+                  damages, losses, or expenses (including reasonable attorney
+                  fees) arising out of your breach of these terms, misuse of the
+                  site, or violation of any law or third-party rights.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Governing Law & Dispute Resolution</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  These terms are governed by the laws of the State of New York,
+                  United States, without regard to conflict-of-law rules. You
+                  agree to submit to the exclusive jurisdiction of the state and
+                  federal courts located in Suffolk County, New York, for any
+                  dispute that is not subject to informal resolution or binding
+                  arbitration agreed upon by the parties.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Changes & Contact</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  We may update these Terms of Service to reflect changes in our
+                  products, legal requirements, or operational practices. When
+                  material updates occur, we will adjust the “Last updated” date
+                  and may provide additional notice on our site. Continued use
+                  of the services after changes take effect constitutes
+                  acceptance of the revised terms.
+                </p>
+                <p className="mt-4">
+                  Questions about these terms? Our support team is ready to help:
+                </p>
+                <ul>
+                  <li>Email: <a href="mailto:contact@jhuangnyc.com">contact@jhuangnyc.com</a></li>
+                  <li>Phone: +1-631-224-3534</li>
+                  <li>Mail: 26 Laurel Ave, East Islip, NY 11730, United States</li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>

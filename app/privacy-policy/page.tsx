@@ -1,142 +1,364 @@
+import Image from "next/image";
 import Link from "next/link";
-import PageLayout from "@/components/layout/PageLayout";
+import type { Metadata } from "next";
 import { ChevronRight } from "lucide-react";
+import PageLayout from "@/components/layout/PageLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { serializeSchema } from "@/lib/schema";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com";
+const canonicalUrl = `${baseUrl}/privacy-policy`;
+const ogImageUrl = `${baseUrl}/assets/images/Privacy.png`;
+const lastUpdatedDisplay = "October 15, 2024";
+const lastUpdatedISO = "2024-10-15";
+const description =
+  "Understand how Jhuangnyc collects, uses, and protects your personal data when you shop for cryptocurrency mining hardware.";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | Jhuangnyc",
+  description,
+  alternates: { canonical: "/privacy-policy" },
+  openGraph: {
+    title: "Jhuangnyc Privacy Policy",
+    description,
+    url: canonicalUrl,
+    type: "article",
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Illustration representing data protection for Jhuangnyc customers",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jhuangnyc Privacy Policy",
+    description,
+    images: [ogImageUrl],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function PrivacyPolicyPage() {
+  const privacyPolicySchema = {
+    "@context": "https://schema.org",
+    "@type": "PrivacyPolicy",
+    name: "Jhuangnyc Privacy Policy",
+    url: canonicalUrl,
+    dateModified: lastUpdatedISO,
+    inLanguage: "en-US",
+    description,
+    publisher: {
+      "@type": "Organization",
+      name: "Jhuangnyc",
+      url: baseUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseUrl}/logo.png`,
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "Customer Support",
+        email: "contact@jhuangnyc.com",
+        telephone: "+1-631-224-3534",
+      },
+    },
+    mainEntityOfPage: canonicalUrl,
+  };
+
   return (
     <PageLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeSchema(privacyPolicySchema),
+        }}
+      />
+
       <main className="pt-20">
-        {/* Breadcrumb */}
-        <div className="border-border border-b">
-          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 max-w-4xl">
-            <div className="flex items-center gap-2 text-sm">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Home
-              </Link>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium text-foreground">
-                Privacy Policy
-              </span>
+        {/* Hero */}
+        <section className="border-border border-b bg-background">
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0">
+              <Image
+                src="/assets/images/Privacy.png"
+                alt="Abstract illustration representing privacy and data protection"
+                fill
+                priority
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-background/80 backdrop-blur" />
             </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-4xl">
-          <h1 className="mb-2 font-bold text-foreground text-4xl">
-            Privacy Policy
-          </h1>
-          <p className="mb-8 text-muted-foreground">
-            Last updated: October 2024
-          </p>
-
-          <div className="space-y-8 prose-invert max-w-none prose">
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                1. Introduction
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                Jhuangnyc ("we," "us," "our," or "Company") operates the
-                website. This page informs you of our policies regarding the
-                collection, use, and disclosure of personal data when you use
-                our Service and the choices you have associated with that data.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                2. Information Collection and Use
-              </h2>
-              <p className="mb-4 text-muted-foreground leading-relaxed">
-                We collect several different types of information for various
-                purposes to provide and improve our Service to you.
-              </p>
-              <h3 className="mb-3 font-semibold text-foreground text-lg">
-                Types of Data Collected:
-              </h3>
-              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
-                <li>
-                  Personal Data: Name, email address, phone number, shipping
-                  address, payment information
-                </li>
-                <li>
-                  Usage Data: Browser type, IP address, pages visited, time and
-                  date of visits
-                </li>
-                <li>
-                  Cookies and Tracking: We use cookies to track activity on our
-                  Service
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                3. Use of Data
-              </h2>
-              <p className="mb-4 text-muted-foreground leading-relaxed">
-                Jhuangnyc uses the collected data for various purposes:
-              </p>
-              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
-                <li>To provide and maintain our Service</li>
-                <li>To notify you about changes to our Service</li>
-                <li>
-                  To allow you to participate in interactive features of our
-                  Service
-                </li>
-                <li>To provide customer support</li>
-                <li>
-                  To gather analysis or valuable information so we can improve
-                  our Service
-                </li>
-                <li>To monitor the usage of our Service</li>
-                <li>To detect, prevent and address technical issues</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                4. Security of Data
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                The security of your data is important to us but remember that
-                no method of transmission over the Internet or method of
-                electronic storage is 100% secure. While we strive to use
-                commercially acceptable means to protect your Personal Data, we
-                cannot guarantee its absolute security.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                5. Changes to This Privacy Policy
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                We may update our Privacy Policy from time to time. We will
-                notify you of any changes by posting the new Privacy Policy on
-                this page and updating the "Last updated" date at the top of
-                this Privacy Policy.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-4 font-bold text-foreground text-2xl">
-                6. Contact Us
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                If you have any questions about this Privacy Policy, please
-                contact us at:
-              </p>
-              <div className="bg-card mt-4 p-4 border border-border rounded-lg">
-                <p className="text-foreground">Email: contact@jhuangnyc.com</p>
-                <p className="text-foreground">
-                  Address: 26 Laurel Ave, East Islip, NY 11730, US
+            <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Link
+                  href="/"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Home
+                </Link>
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium text-foreground">
+                  Privacy Policy
+                </span>
+              </div>
+              <div className="mt-8 max-w-3xl">
+                <h1 className="font-bold text-4xl sm:text-5xl">
+                  Privacy Policy
+                </h1>
+                <p className="mt-4 text-muted-foreground text-lg">
+                  Transparency, security, and trust are at the core of
+                  everything we do. This policy explains how we collect, use,
+                  and protect your data when you explore or purchase mining
+                  hardware from Jhuangnyc.
+                </p>
+                <p className="mt-6 text-muted-foreground">
+                  Last updated: <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
                 </p>
               </div>
-            </section>
+            </div>
+          </div>
+        </section>
+
+        {/* Content */}
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+          <div className="space-y-10">
+            <Card>
+              <CardHeader>
+                <CardTitle>At a Glance</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <ul>
+                  <li>
+                    We only collect the information we need to process orders,
+                    support customers, and improve our services.
+                  </li>
+                  <li>
+                    We never sell personal data and only share it with trusted
+                    partners who help us operate the business.
+                  </li>
+                  <li>
+                    You stay in control: request access, updates, deletion, or
+                    marketing preferences at any time.
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <div className="gap-6 grid md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Information We Collect</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <h3>Information you give us</h3>
+                  <ul>
+                    <li>Account details such as name, email, and password</li>
+                    <li>Billing, shipping, and contact information</li>
+                    <li>Order history, support requests, and survey responses</li>
+                    <li>
+                      Payment details processed securely by vetted third parties
+                    </li>
+                  </ul>
+                  <h3 className="mt-4">Information we collect automatically</h3>
+                  <ul>
+                    <li>
+                      Device and browser data, IP address, and approximate
+                      location
+                    </li>
+                    <li>Usage analytics, interaction logs, and referral URLs</li>
+                    <li>
+                      Cookie identifiers, pixels, and similar technologies used
+                      to remember your preferences
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>How We Use Your Information</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <ul>
+                    <li>Process purchases, deliver products, and provide invoices</li>
+                    <li>Authenticate logins and safeguard accounts</li>
+                    <li>Respond to support requests and warranty claims</li>
+                    <li>Improve site performance, navigation, and security</li>
+                    <li>
+                      Send service updates, product announcements, and
+                      promotions when you opt in
+                    </li>
+                    <li>
+                      Meet legal, tax, and compliance obligations in the
+                      jurisdictions where we operate
+                    </li>
+                  </ul>
+                  <p className="mt-4">
+                    Our legal bases for processing include performing a
+                    contract, legitimate business interests, obtaining your
+                    consent, and fulfilling legal requirements.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Sharing & International Transfers</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  We only share personal data with vendors that enable core
+                  operations such as payment processing, logistics, analytics,
+                  and customer support. Each partner is bound by confidentiality
+                  and data processing agreements.
+                </p>
+                <ul>
+                  <li>
+                    <strong>Service providers:</strong> Stripe, shipping
+                    carriers, analytics platforms, and cloud infrastructure
+                  </li>
+                  <li>
+                    <strong>Business transitions:</strong> If we sell or merge
+                    part of the company, your information may transfer with the
+                    business assets
+                  </li>
+                  <li>
+                    <strong>Legal disclosures:</strong> When required to comply
+                    with applicable laws, court orders, or to protect our rights
+                  </li>
+                </ul>
+                <p className="mt-4">
+                  Because we operate in the United States, your data may be
+                  processed outside of your country. We implement safeguards such
+                  as Standard Contractual Clauses and vendor due diligence to
+                  protect international transfers.
+                </p>
+              </CardContent>
+            </Card>
+
+            <div className="gap-6 grid md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Data Retention & Security</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <p>
+                    We keep personal information only for as long as needed to
+                    deliver products, resolve disputes, comply with legal
+                    obligations, and maintain business records.
+                  </p>
+                  <ul>
+                    <li>Encryption in transit and at rest for sensitive data</li>
+                    <li>Strict access controls and audit logging</li>
+                    <li>Regular security assessments and vendor reviews</li>
+                    <li>Employee training focused on privacy best practices</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cookies & Tracking Technologies</CardTitle>
+                </CardHeader>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                  <p>
+                    We use cookies to remember your preferences, keep you signed
+                    in, analyze traffic, and measure marketing performance.
+                  </p>
+                  <ul>
+                    <li>
+                      Essential cookies keep the store secure and functional
+                    </li>
+                    <li>
+                      Analytics cookies help us understand how visitors use the
+                      site
+                    </li>
+                    <li>
+                      Marketing cookies personalize offers when you opt in
+                    </li>
+                  </ul>
+                  <p className="mt-4">
+                    You can manage cookies in your browser settings or through
+                    our cookie banner. Disabling certain cookies may limit site
+                    functionality.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Privacy Choices & Rights</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  Depending on where you live, you may have the right to access,
+                  correct, delete, or restrict the processing of your personal
+                  data. These rights include:
+                </p>
+                <ul>
+                  <li>Requesting a copy of the data we hold about you</li>
+                  <li>Updating inaccurate or incomplete information</li>
+                  <li>Asking us to delete your account or order history</li>
+                  <li>
+                    Opting out of marketing emails and analytics where
+                    applicable
+                  </li>
+                  <li>
+                    Objecting to processing based on legitimate interests
+                  </li>
+                  <li>
+                    Lodging a complaint with your local data protection
+                    authority
+                  </li>
+                </ul>
+                <p className="mt-4">
+                  If you are located in the EEA, UK, or Switzerland, we process
+                  personal data in alignment with GDPR requirements. California
+                  residents can exercise rights under the CCPA, including
+                  requesting information about data sharing and opting out of
+                  sale or sharing (which we do not perform).
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact & Updates</CardTitle>
+              </CardHeader>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+                <p>
+                  We review this policy regularly to reflect changes in our
+                  services, legal obligations, or best practices. When we make
+                  material updates, we will adjust the date above and share a
+                  notice on our site.
+                </p>
+                <p className="mt-4">
+                  Reach out anytime with questions or to exercise your privacy
+                  rights:
+                </p>
+                <ul>
+                  <li>Email: <a href="mailto:contact@jhuangnyc.com">contact@jhuangnyc.com</a></li>
+                  <li>Phone: +1-631-224-3534</li>
+                  <li>
+                    Mailing address: 26 Laurel Ave, East Islip, NY 11730, United
+                    States
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>

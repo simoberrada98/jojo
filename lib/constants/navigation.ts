@@ -70,8 +70,8 @@ export const FOOTER_NAV = {
     { label: "Returns & Refunds", href: "/returns" },
   ],
   legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Service", href: "/terms-of-service" },
     { label: "Returns Policy", href: "/returns" },
     { label: "Shipping Policy", href: "/shipping" },
   ],
@@ -81,8 +81,8 @@ export const FOOTER_NAV = {
  * Footer bottom links
  */
 export const FOOTER_BOTTOM_LINKS: NavigationItem[] = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "/privacy-policy" },
+  { label: "Terms", href: "/terms-of-service" },
   { label: "Returns", href: "/returns" },
 ];
 
