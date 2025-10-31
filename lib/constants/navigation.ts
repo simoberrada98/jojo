@@ -14,16 +14,20 @@ export interface NavigationItem {
  */
 export const MAIN_NAV_ITEMS: NavigationItem[] = [
   {
-    label: "Collections",
-    href: "/collection",
+    label: "Home",
+    href: "/",
+  },
+  {
+    label: "Shop",
+    href: "/collections/all",
   },
   {
     label: "Contact",
     href: "/contact",
   },
   {
-    label: "Shipping",
-    href: "/shipping",
+    label: "About Us",
+    href: "/about",
   },
 ];
 

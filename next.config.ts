@@ -14,6 +14,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/collections/all',
+        destination: '/collection',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/shop',
+        destination: '/collections/all',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);
