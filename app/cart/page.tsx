@@ -66,7 +66,7 @@ export default function CartPage() {
                     className="flex gap-6 bg-card p-6 border border-border rounded-lg"
                   >
                     {/* Product Image */}
-                    <div className="flex-shrink-0 rounded-lg w-24 h-24 overflow-hidden">
+                    <div className="rounded-lg w-24 h-24 overflow-hidden shrink-0">
                       <ProductImage
                         category={item.category}
                         image={item.image}

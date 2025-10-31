@@ -436,21 +436,16 @@ export function createPaymentOrchestrator(config: {
   const supabaseKey =
     config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-  if (!apiKey || !businessId) {
-    console.warn(
-      "HoodPay credentials not configured. Payment processing will not work."
-    );
+  if (!apiKey) {
+    throw new Error("HOODPAY_API_KEY is not configured.");
   }
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.warn(
-      "Supabase credentials not configured. Payment tracking will not work."
-    );
+  if (!businessId) {
+    throw new Error("HOODPAY_BUSINESS_ID is not configured.");
   }
 
   return new PaymentOrchestrator({
-    apiKey,
-    businessId,
+    apiKey: apiKey as string,
+    businessId: businessId as string,
     supabaseUrl,
     supabaseKey,
     hooks: config.hooks,

@@ -160,7 +160,7 @@ export default function RefundsPage() {
               },
             ].map((item, index) => (
               <div key={index} className="flex gap-6">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="flex justify-center items-center bg-accent rounded-full w-10 h-10 font-bold text-accent-foreground">
                     {item.step}
                   </div>

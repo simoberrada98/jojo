@@ -1,5 +1,0 @@
-fix(db): add if not exists to create table statements
-
-The previous migration failed because the `orders` and `order_items` tables already existed in the database. This commit resolves the issue by adding the `IF NOT EXISTS` clause to the `CREATE TABLE` statements in the migration file.
-
-This will ensure that the migration can be run multiple times without causing errors.

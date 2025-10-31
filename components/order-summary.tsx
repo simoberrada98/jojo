@@ -51,7 +51,7 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
           ) : (
             items.map((item) => (
               <div key={item.id} className="flex gap-4 p-6">
-                <div className="flex-shrink-0 rounded-lg w-20 h-20 overflow-hidden">
+                <div className="rounded-lg w-20 h-20 overflow-hidden shrink-0">
                   <ProductImage category={item.category} image={item.image} />
                 </div>
                 <div className="flex-1">

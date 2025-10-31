@@ -157,10 +157,10 @@ export default function CheckoutPage() {
       <PageLayout>
         <main className="pt-20">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-6xl">
-            <div className="mb-8 space-y-4">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-10 w-48" />
-              <Skeleton className="h-4 w-64" />
+            <div className="space-y-4 mb-8">
+              <Skeleton className="w-28 h-4" />
+              <Skeleton className="w-48 h-10" />
+              <Skeleton className="w-64 h-4" />
             </div>
 
             <div className="gap-8 grid lg:grid-cols-3">
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
             {/* Restored data notification */}
             {hasRestoredData && (
               <div className="flex gap-3 bg-primary/10 slide-in-from-top-2 mt-4 p-4 border border-primary/20 rounded-lg animate-in duration-500 fade-in">
-                <Check className="flex-shrink-0 mt-0.5 w-5 h-5 text-primary" />
+                <Check className="mt-0.5 w-5 h-5 text-primary shrink-0" />
                 <div>
                   <Muted className="mb-1 font-semibold text-foreground text-sm">
                     Your progress has been restored
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
               return (
                 <div
                   key={item.step}
-                  className="flex flex-shrink-0 items-center gap-2 sm:gap-4"
+                  className="flex items-center gap-2 sm:gap-4 shrink-0"
                 >
                   <div
                     className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold transition ${
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
                   </span>
                   {index < 3 && (
                     <div
-                      className={`w-8 sm:w-12 h-1 flex-shrink-0 ${
+                      className={`w-8 sm:w-12 h-1 shrink-0 ${
                         isCompleted ? "bg-primary" : "bg-border"
                       }`}
                     />
@@ -444,7 +444,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
-                    <AlertCircle className="flex-shrink-0 mt-0.5 w-5 h-5 text-primary" />
+                    <AlertCircle className="mt-0.5 w-5 h-5 text-primary shrink-0" />
                     <Muted className="m-0 text-foreground/80">
                       We'll use this address to ship your mining hardware.
                       Ensure all details are correct.
@@ -636,7 +636,7 @@ export default function CheckoutPage() {
 
                   {/* Security Badge */}
                   <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
-                    <Lock className="flex-shrink-0 mt-0.5 w-5 h-5 text-primary" />
+                    <Lock className="mt-0.5 w-5 h-5 text-primary shrink-0" />
                     <div>
                       <Muted className="mb-1 font-semibold text-foreground text-xs">
                         Secure Checkout

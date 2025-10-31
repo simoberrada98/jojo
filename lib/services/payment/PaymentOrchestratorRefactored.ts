@@ -36,7 +36,11 @@ export class PaymentOrchestratorRefactored {
     supabaseKey?: string;
     hooks?: PaymentHooks;
   }) {
-    this.businessId = config.businessId || PAYMENT_CONFIG.hoodpay.businessId;
+    const businessId = config.businessId || PAYMENT_CONFIG.hoodpay.businessId;
+    if (!businessId) {
+      throw new Error("HOODPAY_BUSINESS_ID is not configured.");
+    }
+    this.businessId = businessId;
 
     // Initialize storage
     const storage = createPaymentStorage();

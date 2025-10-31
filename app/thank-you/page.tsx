@@ -119,7 +119,7 @@ function ThankYouContent() {
                 <div className="space-y-4">
                   {items.map((item) => (
                     <div key={item.id} className="flex gap-4">
-                      <div className="flex-shrink-0 rounded-lg w-20 h-20 overflow-hidden">
+                      <div className="rounded-lg w-20 h-20 overflow-hidden shrink-0">
                         <ProductImage
                           category={item.category}
                           image={item.image}
@@ -202,7 +202,7 @@ function ThankYouContent() {
             </h3>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="flex justify-center items-center bg-accent rounded-full w-8 h-8 font-semibold text-sm text-accent-foreground">
                     1
                   </div>
@@ -217,7 +217,7 @@ function ThankYouContent() {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="flex justify-center items-center bg-accent rounded-full w-8 h-8 font-semibold text-sm text-accent-foreground">
                     2
                   </div>
@@ -231,7 +231,7 @@ function ThankYouContent() {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="flex justify-center items-center bg-accent rounded-full w-8 h-8 font-semibold text-sm text-accent-foreground">
                     3
                   </div>

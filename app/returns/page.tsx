@@ -77,7 +77,7 @@ export default function ReturnsPage() {
                 <li>Ship to the address provided in your RMA email</li>
               </ol>
               <div className="flex gap-3 bg-amber-50 dark:bg-amber-950 mt-4 p-4 border border-amber-200 dark:border-amber-800 rounded-lg">
-                <AlertCircle className="flex-shrink-0 mt-0.5 w-5 h-5 text-amber-600" />
+                <AlertCircle className="mt-0.5 w-5 h-5 text-amber-600 shrink-0" />
                 <Muted className="m-0 text-sm">
                   <strong>Important:</strong> Returns without an RMA number will
                   be refused. Please do not ship items back without

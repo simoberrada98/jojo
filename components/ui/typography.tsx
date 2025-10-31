@@ -50,12 +50,7 @@ function H4({ className, ...props }: React.ComponentProps<"h4">) {
 }
 
 function P({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("[&:not(:first-child)]:mt-6 leading-7", className)}
-      {...props}
-    />
-  );
+  return <p className={cn("not-first:mt-6 leading-7", className)} {...props} />;
 }
 
 function Lead({ className, ...props }: React.ComponentProps<"p">) {

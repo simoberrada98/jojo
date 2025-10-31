@@ -135,7 +135,7 @@ export default function ProductDetailPage() {
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
-                      className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                      className={`relative shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                         selectedImage === idx
                           ? "border-accent scale-105"
                           : "border-border hover:border-accent/50"

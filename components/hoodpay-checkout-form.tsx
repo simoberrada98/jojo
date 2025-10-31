@@ -312,7 +312,7 @@ export default function HoodPayCheckoutForm({
       {/* Error Message */}
       {error && (
         <div className="flex gap-3 bg-destructive/10 p-4 border border-destructive/20 rounded-lg">
-          <XCircle className="flex-shrink-0 mt-0.5 w-5 h-5 text-destructive" />
+          <XCircle className="mt-0.5 w-5 h-5 text-destructive shrink-0" />
           <div>
             <Muted className="mb-1 font-semibold text-destructive">
               Payment Error
@@ -325,7 +325,7 @@ export default function HoodPayCheckoutForm({
       {/* Status Messages */}
       {paymentStatus === "processing" && (
         <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
-          <Loader2 className="flex-shrink-0 mt-0.5 w-5 h-5 text-primary animate-spin" />
+          <Loader2 className="mt-0.5 w-5 h-5 text-primary animate-spin shrink-0" />
           <div>
             <Muted className="mb-1 font-semibold text-foreground/80">
               Processing Payment
@@ -339,7 +339,7 @@ export default function HoodPayCheckoutForm({
 
       {paymentStatus === "success" && (
         <div className="flex gap-3 bg-green-500/10 p-4 border border-green-500/20 rounded-lg">
-          <CheckCircle className="flex-shrink-0 mt-0.5 w-5 h-5 text-green-500" />
+          <CheckCircle className="mt-0.5 w-5 h-5 text-green-500 shrink-0" />
           <div>
             <Muted className="mb-1 font-semibold text-green-500">
               Payment Successful!
