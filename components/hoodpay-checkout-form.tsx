@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { H3, Muted } from "@/components/ui/typography";
 import {
@@ -17,6 +17,7 @@ import {
   type CheckoutData,
 } from "@/lib/payment";
 import { useCurrency } from "@/lib/contexts/currency-context";
+import { APP_CONFIG } from "@/lib/config/app.config";
 
 interface HoodPayCheckoutFormProps {
   orderData: {
@@ -47,8 +48,10 @@ export default function HoodPayCheckoutForm({
   onComplete,
 }: HoodPayCheckoutFormProps) {
   const { currency } = useCurrency();
-  const [selectedMethod, setSelectedMethod] =
-    useState<PaymentMethodOption>("hoodpay");
+  const hoodPayEnabled = APP_CONFIG.features.enableHoodPay;
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodOption>(
+    hoodPayEnabled ? "hoodpay" : "web-payment"
+  );
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<
@@ -59,9 +62,55 @@ export default function HoodPayCheckoutForm({
   useEffect(() => {
     // Check if Web Payment API is available
     if (typeof window !== "undefined" && "PaymentRequest" in window) {
-      setWebPaymentSupported(false);
+      setWebPaymentSupported(true);
     }
   }, []);
+
+  const paymentMethods = useMemo(
+    () =>
+      [
+        {
+          id: "hoodpay" as const,
+          name: "Crypto Payment",
+          description: "Pay with crypto",
+          icon: Wallet,
+          available: hoodPayEnabled,
+        },
+        {
+          id: "web-payment" as const,
+          name: "Card / Digital Wallet",
+          description: "Apple Pay, Google Pay, or Card",
+          icon: CreditCard,
+          available: webPaymentSupported,
+        },
+      ] satisfies Array<{
+        id: PaymentMethodOption;
+        name: string;
+        description: string;
+        icon: typeof Wallet | typeof CreditCard;
+        available: boolean;
+      }>,
+    [hoodPayEnabled, webPaymentSupported]
+  );
+
+  const activeMethod = useMemo(
+    () => paymentMethods.find((method) => method.id === selectedMethod),
+    [paymentMethods, selectedMethod]
+  );
+
+  const hasAvailableMethod = paymentMethods.some((method) => method.available);
+
+  useEffect(() => {
+    const firstAvailable = paymentMethods.find((method) => method.available);
+    if (
+      firstAvailable &&
+      !paymentMethods.some(
+        (method) => method.id === selectedMethod && method.available
+      )
+    ) {
+      setSelectedMethod(firstAvailable.id);
+    }
+  }, [paymentMethods, selectedMethod]);
 
   const handleHoodPayPayment = async () => {
     setProcessing(true);
@@ -205,49 +254,13 @@ export default function HoodPayCheckoutForm({
     }
   };
 
-  const getPaymentMethods = (): Array<{
-    id: PaymentMethodOption;
-    name: string;
-    description: string;
-    icon: typeof Wallet | typeof CreditCard;
-    available: boolean;
-  }> => {
-    const methods: Array<{
-      id: PaymentMethodOption;
-      name: string;
-      description: string;
-      icon: typeof Wallet | typeof CreditCard;
-      available: boolean;
-    }> = [
-      {
-        id: "hoodpay",
-        name: "Crypto Payment",
-        description: "Pay with crypto",
-        icon: Wallet,
-        available: true,
-      },
-    ];
-
-    if (webPaymentSupported) {
-      methods.push({
-        id: "web-payment",
-        name: "Card / Digital Wallet",
-        description: "Apple Pay, Google Pay, or Card",
-        icon: CreditCard,
-        available: true,
-      });
-    }
-
-    return methods;
-  };
-
   return (
     <div className="space-y-6">
       {/* Payment Method Selection */}
       <div className="bg-card p-6 border border-border rounded-lg">
         <H3 className="mb-4 text-lg">Select Payment Method</H3>
         <div className="gap-4 grid grid-cols-1">
-          {getPaymentMethods().map((method) => {
+          {paymentMethods.map((method) => {
             const Icon = method.icon;
             return (
               <button
@@ -278,6 +291,18 @@ export default function HoodPayCheckoutForm({
             );
           })}
         </div>
+        {!hoodPayEnabled && (
+          <Muted className="mt-3 text-xs text-foreground/60">
+            Crypto payments are currently unavailable. Choose another method or
+            contact support to enable HoodPay.
+          </Muted>
+        )}
+        {!hasAvailableMethod && (
+          <Muted className="mt-3 text-xs text-destructive">
+            No payment methods are currently available. Please reach out to
+            support for assistance.
+          </Muted>
+        )}
       </div>
 
       {/* Payment Summary */}
@@ -356,7 +381,9 @@ export default function HoodPayCheckoutForm({
         onClick={
           selectedMethod === "hoodpay" ? handleHoodPayPayment : handleWebPayment
         }
-        disabled={processing || paymentStatus === "success"}
+        disabled={
+          processing || paymentStatus === "success" || !activeMethod?.available
+        }
         className="bg-primary hover:bg-primary/90 py-6 w-full font-semibold text-primary-foreground text-lg"
       >
         {processing ? (

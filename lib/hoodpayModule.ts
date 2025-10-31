@@ -422,6 +422,12 @@ export async function createPayment(
   businessId: string | number,
   payment: PaymentCreationRequest
 ): Promise<any> {
+  if (!token) {
+    throw new Error("HoodPay API key (token) is missing. Ensure HOODPAY_API_KEY is configured and accessible.");
+  }
+  if (!businessId) {
+    throw new Error("HoodPay Business ID is missing. Ensure HOODPAY_BUSINESS_ID is configured and accessible.");
+  }
   const url = `${HOODPAY_BASE_URL}/businesses/${businessId}/payments`;
   const response = await fetch(url, {
     method: "POST",

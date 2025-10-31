@@ -21,19 +21,23 @@ import {
 
 export class PaymentOrchestrator {
   private dbService: ReturnType<typeof createDbService>;
-  private apiKey: string;
-  private businessId: string;
+  private apiKey: string | null;
+  private businessId: string | null;
+  private hoodpayEnabled: boolean;
   private hooks?: PaymentHooks;
 
   constructor(config: {
-    apiKey: string;
-    businessId: string;
+    apiKey?: string | null;
+    businessId?: string | null;
     supabaseUrl: string;
     supabaseKey: string;
     hooks?: PaymentHooks;
+    hoodpayEnabled?: boolean;
   }) {
-    this.apiKey = config.apiKey;
-    this.businessId = config.businessId;
+    this.apiKey = config.apiKey ?? null;
+    this.businessId = config.businessId ?? null;
+    this.hoodpayEnabled =
+      config.hoodpayEnabled ?? Boolean(this.apiKey && this.businessId);
     try {
       this.dbService = createDbService(config.supabaseUrl, config.supabaseKey);
     } catch (error) {
@@ -59,7 +63,7 @@ export class PaymentOrchestrator {
   ): Promise<PaymentIntent> {
     const paymentIntent: PaymentIntent = {
       id: `intent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      businessId: this.businessId,
+      businessId: this.businessId ?? "28981",
       amount,
       currency,
       description: options?.description,
@@ -77,7 +81,7 @@ export class PaymentOrchestrator {
     if (this.dbService) {
       try {
         await this.dbService.createPayment({
-          business_id: this.businessId,
+          business_id: this.businessId ?? "28981",
           session_id: paymentStorage.generateSessionId(),
           amount,
           currency,
@@ -266,6 +270,20 @@ export class PaymentOrchestrator {
     state: any,
     paymentData: any
   ): Promise<PaymentResult> {
+    if (!this.hoodpayEnabled || !this.apiKey || !this.businessId) {
+      return {
+        success: false,
+        paymentId: state.paymentIntent.id,
+        status: PaymentStatus.FAILED,
+        error: {
+          code: "HOODPAY_DISABLED",
+          message:
+            "HoodPay payment method is not configured. Please choose another payment option or contact support.",
+          retryable: false,
+        },
+      };
+    }
+
     try {
       const hoodpayResponse = await createPayment(
         this.apiKey,
@@ -417,6 +435,13 @@ export class PaymentOrchestrator {
 
     return state.paymentIntent;
   }
+
+  /**
+   * Indicates whether HoodPay payments are currently available.
+   */
+  isHoodPayEnabled() {
+    return this.hoodpayEnabled;
+  }
 }
 
 /**
@@ -435,19 +460,20 @@ export function createPaymentOrchestrator(config: {
     config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey =
     config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  const hoodpayEnabled = Boolean(apiKey && businessId);
 
-  if (!apiKey) {
-    throw new Error("HOODPAY_API_KEY is not configured.");
-  }
-  if (!businessId) {
-    throw new Error("HOODPAY_BUSINESS_ID is not configured.");
+  if (!hoodpayEnabled) {
+    console.warn(
+      "HoodPay credentials missing. HoodPay payments are disabled until HOODPAY_API_KEY and HOODPAY_BUSINESS_ID are configured."
+    );
   }
 
   return new PaymentOrchestrator({
-    apiKey: apiKey as string,
-    businessId: businessId as string,
+    apiKey: apiKey ?? null,
+    businessId: businessId ?? null,
     supabaseUrl,
     supabaseKey,
     hooks: config.hooks,
+    hoodpayEnabled,
   });
 }
