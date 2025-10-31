@@ -27,30 +27,30 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
 
   return (
     <motion.nav
-      initial={{ height: 0, opacity: 0 }}
-      animate={{ height: "auto", opacity: 1 }}
-      exit={{ height: 0, opacity: 0 }}
+      initial={{ y: "-100%", opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: "-100%", opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="md:hidden flex flex-col gap-4 pb-4 overflow-hidden"
+      className="md:hidden flex flex-col gap-4 pb-4"
       aria-label="Mobile navigation"
     >
       {/* Currency Toggle */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ duration: 0.2 }}
         className="pb-2 border-border border-b"
       >
         <CurrencyToggle />
       </motion.div>
 
       {/* Main Navigation */}
-      {MAIN_NAV_ITEMS.map((item, index) => (
+      {MAIN_NAV_ITEMS.map((item) => (
         <motion.div
           key={item.href}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.15 + index * 0.05 }}
+          transition={{ duration: 0.2 }}
         >
           <Link
             href={item.href}
@@ -65,7 +65,7 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ duration: 0.2 }}
         className="pt-2 border-border border-t"
       >
         {user ? (

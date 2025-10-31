@@ -1,5 +1,6 @@
 "use client";
 
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCurrency, Currency } from "@/lib/contexts/currency-context";
 
 const CURRENCIES: { value: Currency; label: string; icon: string }[] = [
@@ -17,7 +18,7 @@ export default function CurrencyToggle() {
       <span className="hidden sm:inline mr-2 text-foreground/60 text-xs">
         Currency:
       </span>
-      <div className="flex gap-1 bg-card p-1 border border-border rounded-lg">
+      <div className="hidden sm:flex gap-1 bg-card p-1 border border-border rounded-lg">
         {CURRENCIES.map((curr) => (
           <button
             key={curr.value}
@@ -32,6 +33,25 @@ export default function CurrencyToggle() {
             {curr.label}
           </button>
         ))}
+      </div>
+
+      {/* Mobile dropdown */}
+      <div className="sm:hidden">
+        <Select onValueChange={(value: Currency) => setCurrency(value)} value={currency}>
+          <SelectTrigger className="w-[100px]">
+            <SelectValue placeholder="Select currency" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Currencies</SelectLabel>
+              {CURRENCIES.map((curr) => (
+                <SelectItem key={curr.value} value={curr.value}>
+                  {curr.icon} {curr.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
