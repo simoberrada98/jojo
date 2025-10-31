@@ -27,11 +27,11 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
 
   return (
     <motion.nav
-      initial={{ y: "-100%", opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: "-100%", opacity: 0 }}
+      initial={{ y: "-100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-100%" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="md:hidden flex flex-col gap-4 pb-4"
+      className="md:hidden fixed inset-0 bg-background z-50 flex flex-col gap-4 p-4 overflow-y-auto"
       aria-label="Mobile navigation"
     >
       {/* Currency Toggle */}

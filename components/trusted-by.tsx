@@ -12,184 +12,43 @@ type Brand = {
   logo: ReactElement;
 };
 
+import BitmainLogo from "@/public/svgs/bitmain.svg";
+import MicroBTLogo from "@/public/svgs/microbt.svg";
+import NVIDIALogo from "@/public/svgs/nvidia.svg";
+import AMDLogo from "@/public/svgs/amd.svg";
+import IntelLogo from "@/public/svgs/intel.svg";
+import CoinbaseLogo from "@/public/svgs/coinbase.svg";
+
 const brands: Brand[] = [
   {
     name: "Bitmain",
     subtitle: "ASIC Innovators",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-sky-400"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <rect
-          x="4"
-          y="6"
-          width="112"
-          height="36"
-          rx="12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={4}
-          strokeOpacity={0.4}
-        />
-        <path
-          d="M34 16h14c5.5 0 9 2.7 9 7s-3.5 7-9 7h-5v6H34V16Zm9 10c1.8 0 3-1 3-3s-1.2-3-3-3h-3v6h3Z"
-          fill="currentColor"
-        />
-        <path
-          d="M66 16h22v6h-7v14h-8V22h-7z"
-          fill="currentColor"
-          className="opacity-90"
-        />
-      </svg>
-    ),
+    logo: <BitmainLogo />,
   },
   {
     name: "MicroBT",
     subtitle: "WhatsMiner Specialists",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-emerald-400"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <rect
-          x="6"
-          y="8"
-          width="108"
-          height="32"
-          rx="10"
-          fill="currentColor"
-          opacity={0.1}
-        />
-        <path
-          d="M24 32V16h6l4 6 4-6h6v16h-6v-7l-4 6h-0.1l-4-6v7z"
-          fill="currentColor"
-        />
-        <circle
-          cx="78"
-          cy="24"
-          r="10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={3}
-        />
-        <path d="M88 16h8v16h-8z" fill="currentColor" opacity={0.8} />
-      </svg>
-    ),
+    logo: <MicroBTLogo />,
   },
   {
     name: "NVIDIA",
     subtitle: "GPU Performance",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-lime-300"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path d="M8 14h64l16 10-16 10H8z" fill="currentColor" opacity={0.15} />
-        <path d="M28 16h10l5 8-5 8H28l5-8z" fill="currentColor" />
-        <path
-          d="M64 24c0 7.3 5.7 13 13 13s13-5.7 13-13-5.7-13-13-13-13 5.7-13 13Zm18 0a5 5 0 1 1-5-5 5 5 0 0 1 5 5Z"
-          fill="currentColor"
-        />
-      </svg>
-    ),
+    logo: <NVIDIALogo />,
   },
   {
     name: "AMD",
     subtitle: "Efficient Hashing",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-rose-400"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <rect
-          x="8"
-          y="10"
-          width="104"
-          height="28"
-          rx="8"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={3}
-          strokeOpacity={0.5}
-        />
-        <path
-          d="M30 32 36 16h8l6 16h-6l-1-3h-6l-1 3zm9-8 2 5 2-5z"
-          fill="currentColor"
-        />
-        <path
-          d="M56 16h6l6 8-6 8h-6l6-8zM76 16h10c6.6 0 11 3.8 11 9s-4.4 9-11 9H76z"
-          fill="currentColor"
-          opacity={0.9}
-        />
-      </svg>
-    ),
+    logo: <AMDLogo />,
   },
   {
     name: "Intel",
     subtitle: "Server-Grade Reliability",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-sky-300"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <circle
-          cx="60"
-          cy="24"
-          r="18"
-          fill="none"
-          stroke="currentColor"
-          strokeOpacity={0.6}
-          strokeWidth={3}
-        />
-        <path
-          d="M52 24c0-4.4 3.6-8 8-8h10v6h-8a2 2 0 0 0 0 4h6c3.3 0 6 2.7 6 6s-2.7 6-6 6H60c-4.4 0-8-3.6-8-8Z"
-          fill="currentColor"
-        />
-      </svg>
-    ),
+    logo: <IntelLogo />,
   },
   {
     name: "Coinbase",
     subtitle: "Global Exchange Partner",
-    logo: (
-      <svg
-        viewBox="0 0 120 48"
-        className="w-full h-12 text-blue-400"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <rect
-          x="12"
-          y="8"
-          width="96"
-          height="32"
-          rx="16"
-          fill="currentColor"
-          opacity={0.12}
-        />
-        <circle cx="44" cy="24" r="8" fill="currentColor" />
-        <rect
-          x="76"
-          y="16"
-          width="20"
-          height="16"
-          rx="8"
-          fill="currentColor"
-          opacity={0.85}
-        />
-      </svg>
-    ),
+    logo: <CoinbaseLogo />,
   },
 ];
 
