@@ -1,6 +1,5 @@
 import { PRICING_CONFIG } from "@/lib/config/pricing.config";
 import {
-  CONVERSION_RATES,
   getCurrencyDecimals,
   type Currency,
 } from "@/lib/config/currency.config";
@@ -14,15 +13,15 @@ export class PricingService {
   /**
    * Convert USD price to specified currency
    */
-  static convertPrice(usdPrice: number, currency: Currency): number {
-    return usdPrice * CONVERSION_RATES[currency];
+  static convertPrice(usdPrice: number, currency: Currency, conversionRates: Record<Currency, number>): number {
+    return usdPrice * conversionRates[currency];
   }
 
   /**
    * Format price with proper decimals and symbol
    */
-  static formatPrice(usdPrice: number, currency: Currency): string {
-    const converted = this.convertPrice(usdPrice, currency);
+  static formatPrice(usdPrice: number, currency: Currency, conversionRates: Record<Currency, number>): string {
+    const converted = this.convertPrice(usdPrice, currency, conversionRates);
     const decimals = getCurrencyDecimals(currency);
 
     if (currency === "USDC") {
@@ -84,15 +83,16 @@ export class PricingService {
    */
   static calculateCartSummaryInCurrency(
     items: CartItem[],
-    currency: Currency
+    currency: Currency,
+    conversionRates: Record<Currency, number>
   ): CartSummary & { currency: Currency } {
     const summary = this.calculateCartSummary(items);
 
     return {
-      subtotal: this.convertPrice(summary.subtotal, currency),
-      shipping: this.convertPrice(summary.shipping, currency),
-      tax: this.convertPrice(summary.tax, currency),
-      total: this.convertPrice(summary.total, currency),
+      subtotal: this.convertPrice(summary.subtotal, currency, conversionRates),
+      shipping: this.convertPrice(summary.shipping, currency, conversionRates),
+      tax: this.convertPrice(summary.tax, currency, conversionRates),
+      total: this.convertPrice(summary.total, currency, conversionRates),
       itemCount: summary.itemCount,
       currency,
     };
@@ -101,8 +101,8 @@ export class PricingService {
   /**
    * Format cart total as string
    */
-  static formatCartTotal(items: CartItem[], currency: Currency): string {
+  static formatCartTotal(items: CartItem[], currency: Currency, conversionRates: Record<Currency, number>): string {
     const summary = this.calculateCartSummary(items);
-    return this.formatPrice(summary.total, currency);
+    return this.formatPrice(summary.total, currency, conversionRates);
   }
 }
