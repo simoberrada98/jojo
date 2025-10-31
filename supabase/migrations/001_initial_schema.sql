@@ -68,40 +68,7 @@ CREATE TABLE public.cart (
   UNIQUE(user_id, product_id)
 );
 
--- Orders table
-CREATE TABLE public.orders (
-  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-  user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  order_number TEXT UNIQUE NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending', -- pending, processing, shipped, delivered, cancelled
-  payment_status TEXT NOT NULL DEFAULT 'pending', -- pending, completed, failed, refunded
-  payment_method TEXT, -- crypto, card, etc.
-  payment_transaction_id TEXT,
-  subtotal DECIMAL(10, 2) NOT NULL,
-  tax DECIMAL(10, 2) DEFAULT 0,
-  shipping DECIMAL(10, 2) DEFAULT 0,
-  total DECIMAL(10, 2) NOT NULL,
-  currency TEXT DEFAULT 'USD',
-  crypto_currency TEXT, -- BTC, ETH, etc. if paid with crypto
-  crypto_amount DECIMAL(18, 8), -- amount in crypto
-  shipping_address_id UUID REFERENCES public.addresses(id),
-  billing_address_id UUID REFERENCES public.addresses(id),
-  notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
 
--- Order items table
-CREATE TABLE public.order_items (
-  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-  order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE NOT NULL,
-  product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
-  product_name TEXT NOT NULL, -- Snapshot of product name
-  product_price DECIMAL(10, 2) NOT NULL, -- Snapshot of product price
-  quantity INTEGER NOT NULL,
-  subtotal DECIMAL(10, 2) NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
 
 -- Payment methods table (for saved crypto addresses, etc.)
 CREATE TABLE public.payment_methods (
@@ -124,10 +91,7 @@ CREATE INDEX idx_products_is_featured ON public.products(is_featured);
 CREATE INDEX idx_wishlist_user_id ON public.wishlist(user_id);
 CREATE INDEX idx_wishlist_product_id ON public.wishlist(product_id);
 CREATE INDEX idx_cart_user_id ON public.cart(user_id);
-CREATE INDEX idx_orders_user_id ON public.orders(user_id);
-CREATE INDEX idx_orders_order_number ON public.orders(order_number);
-CREATE INDEX idx_orders_status ON public.orders(status);
-CREATE INDEX idx_order_items_order_id ON public.order_items(order_id);
+
 CREATE INDEX idx_payment_methods_user_id ON public.payment_methods(user_id);
 
 -- Create function to update updated_at timestamp
@@ -166,8 +130,7 @@ ALTER TABLE public.addresses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.wishlist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cart ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE public.payment_methods ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
@@ -235,25 +198,7 @@ CREATE POLICY "Users can remove from their own cart"
   ON public.cart FOR DELETE
   USING (auth.uid() = user_id);
 
--- Orders policies
-CREATE POLICY "Users can view their own orders"
-  ON public.orders FOR SELECT
-  USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create their own orders"
-  ON public.orders FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Order items policies
-CREATE POLICY "Users can view their own order items"
-  ON public.order_items FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.orders
-      WHERE orders.id = order_items.order_id
-      AND orders.user_id = auth.uid()
-    )
-  );
 
 -- Payment methods policies
 CREATE POLICY "Users can view their own payment methods"

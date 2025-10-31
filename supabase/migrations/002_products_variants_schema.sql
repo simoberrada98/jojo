@@ -1,62 +1,31 @@
--- Drop existing products table and recreate with enhanced schema
-DROP TABLE IF EXISTS public.products CASCADE;
+ALTER TABLE public.products
+  RENAME COLUMN price TO base_price;
 
--- Products table (base product information)
-CREATE TABLE public.products (
-  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-  sku TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  description TEXT,
-  short_description TEXT,
-  category TEXT NOT NULL,
-  brand TEXT,
-  tags TEXT[], -- Array of tags for filtering
-  
-  -- Pricing (base price, can be overridden by variants)
-  base_price DECIMAL(10, 2) NOT NULL,
-  compare_at_price DECIMAL(10, 2), -- Original price for showing discounts
-  cost_price DECIMAL(10, 2), -- Cost for profit calculations
-  
-  -- Mining-specific attributes
-  hash_rate TEXT,
-  power_consumption TEXT,
-  algorithm TEXT,
-  efficiency TEXT, -- e.g., "J/TH", "W/MH"
-  
-  -- Physical attributes
-  weight DECIMAL(10, 2), -- in kg
-  dimensions_length DECIMAL(10, 2), -- in cm
-  dimensions_width DECIMAL(10, 2),
-  dimensions_height DECIMAL(10, 2),
-  
-  -- Media
-  featured_image_url TEXT,
-  images TEXT[], -- Array of image URLs
-  video_url TEXT,
-  model_3d_url TEXT,
-  
-  -- Inventory
-  track_inventory BOOLEAN DEFAULT true,
-  stock_quantity INTEGER DEFAULT 0,
-  low_stock_threshold INTEGER DEFAULT 5,
-  allow_backorder BOOLEAN DEFAULT false,
-  
-  -- SEO
-  meta_title TEXT,
-  meta_description TEXT,
-  meta_keywords TEXT[],
-  
-  -- Status
-  is_featured BOOLEAN DEFAULT false,
-  is_active BOOLEAN DEFAULT true,
-  is_archived BOOLEAN DEFAULT false,
-  published_at TIMESTAMPTZ,
-  
-  -- Timestamps
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+ALTER TABLE public.products
+  ADD COLUMN sku TEXT UNIQUE NOT NULL,
+  ADD COLUMN slug TEXT UNIQUE NOT NULL,
+  ADD COLUMN short_description TEXT,
+  ADD COLUMN brand TEXT,
+  ADD COLUMN tags TEXT[],
+  ADD COLUMN compare_at_price DECIMAL(10, 2),
+  ADD COLUMN cost_price DECIMAL(10, 2),
+  ADD COLUMN algorithm TEXT,
+  ADD COLUMN efficiency TEXT,
+  ADD COLUMN weight DECIMAL(10, 2),
+  ADD COLUMN dimensions_length DECIMAL(10, 2),
+  ADD COLUMN dimensions_width DECIMAL(10, 2),
+  ADD COLUMN dimensions_height DECIMAL(10, 2),
+  ADD COLUMN featured_image_url TEXT,
+  ADD COLUMN images TEXT[],
+  ADD COLUMN video_url TEXT,
+  ADD COLUMN track_inventory BOOLEAN DEFAULT true,
+  ADD COLUMN low_stock_threshold INTEGER DEFAULT 5,
+  ADD COLUMN allow_backorder BOOLEAN DEFAULT false,
+  ADD COLUMN meta_title TEXT,
+  ADD COLUMN meta_description TEXT,
+  ADD COLUMN meta_keywords TEXT[],
+  ADD COLUMN is_archived BOOLEAN DEFAULT false,
+  ADD COLUMN published_at TIMESTAMPTZ;
 
 -- Product variants table (different options of the same product)
 CREATE TABLE public.product_variants (
