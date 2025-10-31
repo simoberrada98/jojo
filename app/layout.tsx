@@ -19,6 +19,7 @@ import { ServiceWorkerProvider } from "@/components/service-worker-provider";
 import "./globals.css";
 import Link from "next/link";
 import { env } from "@/lib/env";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Modern, professional font for body text
 const bodyTextFont = Inter({
@@ -212,6 +213,7 @@ export default async function RootLayout({
           <ServiceWorkerProvider />
           <CookieBanner initialStatus={cookieConsent} />
           <Analytics />
+          <SpeedInsights />
         </div>
       </body>
     </html>
