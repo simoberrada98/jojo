@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { H3, H4, Muted } from "@/components/ui/typography";
 import { Trash2 } from "lucide-react";
 import ProductImage from "@/components/product-image";
+import { OrderSummarySkeleton } from "@/components/checkout-skeleton";
 import { useCart } from "@/lib/contexts/cart-context";
 import { useCurrency } from "@/lib/contexts/currency-context";
 import { calculatePricing } from "@/lib/utils/pricing";
@@ -13,8 +14,12 @@ interface OrderSummaryProps {
 }
 
 export default function OrderSummary({ onProceed }: OrderSummaryProps) {
-  const { items, removeItem } = useCart();
+  const { items, removeItem, isHydrated } = useCart();
   const { currency, formatPrice } = useCurrency();
+
+  if (!isHydrated) {
+    return <OrderSummarySkeleton />;
+  }
 
   // Calculate totals using shared utility
   const { subtotal, shipping, tax, total } = calculatePricing(items);

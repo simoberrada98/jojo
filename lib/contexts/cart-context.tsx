@@ -22,12 +22,14 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   total: number;
+  isHydrated: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -39,6 +41,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.error("Failed to load cart:", e);
       }
     }
+    setIsHydrated(true);
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -93,6 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         itemCount,
         total,
+        isHydrated,
       }}
     >
       {children}

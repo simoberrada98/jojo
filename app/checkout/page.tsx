@@ -14,9 +14,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { H1, H2, H3, Muted } from "@/components/ui/typography";
-import CryptoPaymentForm from "@/components/crypto-payment-form";
 import HoodPayCheckoutForm from "@/components/hoodpay-checkout-form";
 import OrderSummary from "@/components/order-summary";
+import {
+  CheckoutFormSkeleton,
+  OrderSummarySkeleton,
+  PaymentStepSkeleton,
+  ReviewStepSkeleton,
+} from "@/components/checkout-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Check, Truck, Lock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import PageLayout from "@/components/layout/PageLayout";
@@ -30,7 +36,7 @@ import {
 } from "@/lib/utils/checkout-storage";
 
 export default function CheckoutPage() {
-  const { items } = useCart();
+  const { items, isHydrated: isCartHydrated } = useCart();
   const { currency, formatPrice } = useCurrency();
   const [paymentStep, setPaymentStep] = useState<
     "shipping" | "review" | "payment" | "confirmation"
@@ -134,6 +140,42 @@ export default function CheckoutPage() {
     tax,
     total: totalAmount,
   } = PricingService.calculateCartSummary(items);
+
+  const showInitialSkeleton = !isLoaded || !isCartHydrated;
+
+  const primarySkeleton =
+    paymentStep === "review"
+      ? ReviewStepSkeleton
+      : paymentStep === "payment"
+      ? PaymentStepSkeleton
+      : CheckoutFormSkeleton;
+
+  if (showInitialSkeleton) {
+    const PrimarySkeletonComponent = primarySkeleton;
+
+    return (
+      <PageLayout>
+        <main className="pt-20">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-6xl">
+            <div className="mb-8 space-y-4">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+
+            <div className="gap-8 grid lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <PrimarySkeletonComponent />
+              </div>
+              <div className="lg:col-span-1">
+                <OrderSummarySkeleton />
+              </div>
+            </div>
+          </div>
+        </main>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>
@@ -479,19 +521,22 @@ export default function CheckoutPage() {
               )}
 
               {/* Payment */}
-              {paymentStep === "payment" && (
-                <HoodPayCheckoutForm
-                  orderData={{
-                    ...orderData,
-                    items: items,
-                    subtotal,
-                    shipping,
-                    tax,
-                    total: totalAmount,
-                  }}
-                  onComplete={handlePaymentComplete}
-                />
-              )}
+              {paymentStep === "payment" &&
+                (orderData ? (
+                  <HoodPayCheckoutForm
+                    orderData={{
+                      ...orderData,
+                      items: items,
+                      subtotal,
+                      shipping,
+                      tax,
+                      total: totalAmount,
+                    }}
+                    onComplete={handlePaymentComplete}
+                  />
+                ) : (
+                  <PaymentStepSkeleton />
+                ))}
 
               {/* Confirmation */}
               {paymentStep === "confirmation" && (
