@@ -9,13 +9,13 @@ import { PAYMENT_CONFIG } from "@/lib/config/payment.config";
 import type { PaymentResult, PaymentLocalState } from "@/lib/payment/types";
 
 export class HoodPayStrategy extends BasePaymentStrategy {
-  private apiKey: string;
-  private businessId: string;
+  private apiKey: string | undefined;
+  private businessId: string | undefined;
 
   constructor(apiKey?: string, businessId?: string) {
     super();
-    this.apiKey = apiKey || PAYMENT_CONFIG.hoodpay.apiKey;
-    this.businessId = businessId || PAYMENT_CONFIG.hoodpay.businessId;
+    this.apiKey = apiKey ?? PAYMENT_CONFIG.hoodpay.apiKey;
+    this.businessId = businessId ?? PAYMENT_CONFIG.hoodpay.businessId;
   }
 
   getName(): string {
@@ -41,7 +41,7 @@ export class HoodPayStrategy extends BasePaymentStrategy {
     paymentData?: any
   ): Promise<PaymentResult> {
     const validation = this.validate(paymentData);
-    if (!validation.valid) {
+    if (!validation.valid || !this.apiKey || !this.businessId) {
       return this.createErrorResult(
         state.paymentIntent.id,
         "HOODPAY_NOT_CONFIGURED",

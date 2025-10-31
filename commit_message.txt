@@ -1,10 +1,11 @@
-fix(payment): resolve hoodpay api error by enforcing env variables
+fix(payment): handle undefined credentials in hoodpaystrategy
 
-The previous implementation resulted in a HoodPay API error 500 due to a malformed JWT. This was caused by the `HOODPAY_API_KEY` environment variable not being set, which led to an empty string being sent as the API key.
+Previously, the `HoodPayStrategy` class did not correctly handle the case where the `apiKey` or `businessId` were `undefined`. This resulted in a TypeScript error when the environment variables were not set.
 
 This commit resolves the issue by:
 
-1.  Removing the fallback to an empty string for HoodPay credentials in `lib/config/payment.config.ts` and `lib/payment/paymentOrchestrator.ts`. This ensures that the application will fail fast if the required environment variables are not set.
-2.  Updating the `HoodPayStrategy` to explicitly pass the `apiKey` and `businessId` to the `createPayment` function, ensuring that the correct credentials are used.
+1.  Changing the type of `apiKey` and `businessId` to `string | undefined`.
+2.  Using the nullish coalescing operator (`??`) to assign the values in the constructor.
+3.  Adding a check in the `process` method to ensure that the `apiKey` and `businessId` are available before making a payment.
 
-These changes will prevent similar errors in the future and make it easier to debug issues related to missing environment variables.
+These changes make the code more robust and prevent TypeScript errors when the HoodPay credentials are not configured.
