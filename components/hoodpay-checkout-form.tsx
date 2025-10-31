@@ -59,7 +59,7 @@ export default function HoodPayCheckoutForm({
   useEffect(() => {
     // Check if Web Payment API is available
     if (typeof window !== "undefined" && "PaymentRequest" in window) {
-      setWebPaymentSupported(true);
+      setWebPaymentSupported(false);
     }
   }, []);
 
@@ -221,8 +221,8 @@ export default function HoodPayCheckoutForm({
     }> = [
       {
         id: "hoodpay",
-        name: "HoodPay",
-        description: "Pay with crypto via HoodPay",
+        name: "Crypto Payment",
+        description: "Pay with crypto",
         icon: Wallet,
         available: true,
       },

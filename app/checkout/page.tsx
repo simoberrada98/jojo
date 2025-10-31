@@ -22,7 +22,7 @@ import Link from "next/link";
 import PageLayout from "@/components/layout/PageLayout";
 import { useCart } from "@/lib/contexts/cart-context";
 import { useCurrency } from "@/lib/contexts/currency-context";
-import { calculatePricing } from "@/lib/utils/pricing";
+import { PricingService } from "@/lib/services/pricing.service";
 import {
   loadCheckoutState,
   saveCheckoutState,
@@ -133,7 +133,7 @@ export default function CheckoutPage() {
     shipping,
     tax,
     total: totalAmount,
-  } = calculatePricing(items);
+  } = PricingService.calculateCartSummary(items);
 
   return (
     <PageLayout>
