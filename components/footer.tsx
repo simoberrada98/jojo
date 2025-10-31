@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { BrandLogo } from "@/components/brand-logo"
 import { H4, Muted } from "@/components/ui/typography"
 
 export function Footer() {
@@ -10,13 +11,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8" role="navigation" aria-label="Footer navigation">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">J</span>
-              </div>
-              <span className="text-lg font-bold">Jhuangnyc</span>
-            </div>
-            <Muted className="m-0">Premium cryptocurrency mining hardware solutions.</Muted>
+            <BrandLogo className="w-48 text-white" title="Jhuangnyc" />
           </div>
 
           {/* Products */}

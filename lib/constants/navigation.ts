@@ -91,6 +91,5 @@ export const FOOTER_BOTTOM_LINKS: NavigationItem[] = [
  */
 export const APP_BRANDING = {
   name: "Jhuangnyc",
-  icon: "J",
   tagline: "Premium cryptocurrency mining hardware solutions.",
 } as const;

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,10 @@ import { ChevronDown, Zap, Shield, Cpu } from "lucide-react"
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 })
+  const [deviceTilt, setDeviceTilt] = useState({ x: 0, y: 0 })
+
+  const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -18,11 +21,37 @@ export default function HeroSection() {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
+      const x = (e.clientX / window.innerWidth) * 2 - 1
+      const y = (e.clientY / window.innerHeight) * 2 - 1
+      setPointerPosition({ x: clamp(x, -1, 1), y: clamp(y, -1, 1) })
     }
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
+
+  useEffect(() => {
+    const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
+      if (event.gamma == null || event.beta == null) return
+      const x = clamp(event.gamma / 45, -1, 1) // left/right tilt
+      const y = clamp(event.beta / 45, -1, 1) // front/back tilt
+      setDeviceTilt({ x, y })
+    }
+
+    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+      window.addEventListener("deviceorientation", handleDeviceOrientation)
+      return () => window.removeEventListener("deviceorientation", handleDeviceOrientation)
+    }
+    return undefined
+  }, [])
+
+  const parallax = useMemo(() => {
+    const combinedX = pointerPosition.x * 0.6 + deviceTilt.x * 0.4
+    const combinedY = pointerPosition.y * 0.6 + deviceTilt.y * 0.4
+    return {
+      x: clamp(combinedX, -1, 1),
+      y: clamp(combinedY, -1, 1),
+    }
+  }, [deviceTilt.x, deviceTilt.y, pointerPosition.x, pointerPosition.y])
 
   return (
     <section className="relative w-full h-screen overflow-hidden pt-16">
@@ -44,7 +73,18 @@ export default function HeroSection() {
               linear-gradient(90deg, transparent 24%, rgba(102, 204, 255, 0.05) 25%, rgba(102, 204, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(102, 204, 255, 0.05) 75%, rgba(102, 204, 255, 0.05) 76%, transparent 77%, transparent)
             `,
             backgroundSize: "50px 50px",
-            transform: `translateY(${scrollY * 0.3}px)`,
+            transform: `translate3d(${parallax.x * 20}px, ${scrollY * 0.3}px, 0)`,
+          }}
+        />
+      </div>
+
+      {/* Dynamic Glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0 mix-blend-screen opacity-60 transition-transform duration-300 ease-out"
+          style={{
+            background: `radial-gradient(circle at ${50 + parallax.x * 25}% ${50 + parallax.y * 25}%, rgba(56, 189, 248, 0.35), transparent 55%)`,
+            transform: `scale(${1 + Math.abs(parallax.x) * 0.05})`,
           }}
         />
       </div>
@@ -56,7 +96,7 @@ export default function HeroSection() {
           style={{
             top: "10%",
             left: "10%",
-            transform: `translate(${mousePosition.x * 0.02}px, ${scrollY * 0.4}px)`,
+            transform: `translate3d(${parallax.x * 40}px, ${scrollY * 0.4 + parallax.y * 20}px, 0)`,
             transition: "transform 0.3s ease-out",
           }}
         />
@@ -65,7 +105,7 @@ export default function HeroSection() {
           style={{
             bottom: "10%",
             right: "10%",
-            transform: `translate(${-mousePosition.x * 0.02}px, ${-scrollY * 0.4}px)`,
+            transform: `translate3d(${-parallax.x * 40}px, ${-scrollY * 0.4 + -parallax.y * 20}px, 0)`,
             transition: "transform 0.3s ease-out",
           }}
         />

@@ -1,4 +1,6 @@
 "use client"
+
+import { BrandLogo } from "@/components/brand-logo"
 import { BarChart3, Package, ShoppingCart, Settings, LogOut, LayoutDashboard } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -22,9 +24,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, isOpen }: AdminS
     >
       {/* Logo */}
       <div className="p-6 border-b border-border">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold">J</span>
-        </div>
+        <BrandLogo className="block w-10 text-foreground" title="Jhuangnyc Admin" />
         {isOpen && <p className="text-sm font-semibold text-foreground mt-2">Jhuangnyc Admin</p>}
       </div>
 

@@ -13,16 +13,17 @@ import { CookieBanner } from "@/components/cookie-banner"
 import { ServiceWorkerProvider } from "@/components/service-worker-provider"
 import "./globals.css"
 import Link from "next/link"
+import { env } from "@/lib/env"
 
 // Modern, professional font for body text
-const inter = Inter({
+const bodyTextFont = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 })
 
 // Monospace font for technical specs and numbers
-const jetbrainsMono = JetBrains_Mono({
+const technicalSpecsNumbersFont = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
@@ -67,11 +68,11 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/favicon.ico" }],
+    icon: [{ url: "/favicon-96x96.png" }],
+    apple: [{ url: "/apple-touch-icon.png" }],
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    google: env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
   },
 }
 
@@ -82,14 +83,14 @@ export default async function RootLayout({
 }>) {
   const cookieConsent = await getCookieConsentStatus()
   // Get base URL - use environment variable or fallback
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com"
+  const baseUrl = env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com"
   
   // Generate Schema.org structured data
   const organizationSchema = generateOrganizationSchema(baseUrl)
   const websiteSchema = generateWebSiteSchema(baseUrl)
 
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${bodyTextFont.variable} ${technicalSpecsNumbersFont.variable}`}>
       <head>
         <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

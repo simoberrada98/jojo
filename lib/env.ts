@@ -35,6 +35,8 @@ export const env = createEnv({
     // Feature Flags
     NEXT_PUBLIC_ENABLE_HOODPAY: z.string().transform(val => val === "true").default("false"),
     NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: z.string().transform(val => val === "true").default("false"),
+    // Verification
+    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional(),
   },
 
   /**
@@ -57,6 +59,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENABLE_HOODPAY: process.env.NEXT_PUBLIC_ENABLE_HOODPAY,
     NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: process.env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
+    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 
   /**
