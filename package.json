@@ -89,6 +89,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.0.1",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/jspdf": "^2.0.0",
     "@types/node": "^22",
