@@ -244,15 +244,21 @@
     @apply bg-info text-info-foreground;
   }
 
-  .animated-border {
+  .animated-border,
+  .animated-border-hover {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: 9999px;
+    border-radius: inherit;
     z-index: 0;
   }
 
-  .animated-border::before {
+  .animated-border {
+    --animated-border-fill: color-mix(in srgb, var(--background) 80%, var(--primary) 20%);
+  }
+
+  .animated-border::before,
+  .animated-border-hover::before {
     content: "";
     position: absolute;
     inset: -2px;
@@ -265,18 +271,59 @@
       var(--primary)
     );
     animation: gradient-orbit 8s linear infinite;
+    filter: brightness(1);
+    transition: filter var(--transition-base), opacity var(--transition-base);
     z-index: -2;
   }
 
-  .animated-border::after {
+  .animated-border::before {
+    opacity: 1;
+  }
+
+  .animated-border-hover::before {
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  .animated-border-hover:hover::before,
+  .animated-border-hover:focus-visible::before {
+    opacity: 1;
+  }
+
+  .animated-border::after,
+  .animated-border-hover::after {
     content: "";
     position: absolute;
     inset: 1px;
     border-radius: inherit;
-    background: var(--background);
-    background: color-mix(in srgb, var(--background) 80%, var(--primary) 20%);
-    opacity: 0.9;
+    background: var(
+      --animated-border-fill,
+      color-mix(in srgb, var(--background) 80%, var(--primary) 20%)
+    );
     z-index: -1;
+  }
+
+  .pauses-on-hover::before {
+    animation-play-state: running;
+  }
+
+  .pauses-on-hover:hover::before,
+  .pauses-on-hover:focus-visible::before {
+    animation-play-state: paused;
+  }
+
+  .border-pop {
+    transition: box-shadow var(--transition-base);
+  }
+
+  .border-pop:hover,
+  .border-pop:focus-visible {
+    box-shadow: 0 0 35px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .border-pop:hover::before,
+  .border-pop:focus-visible::before {
+    filter: brightness(1.25);
   }
 }
 

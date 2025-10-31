@@ -1,6 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { motion, useInView } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -299,14 +306,14 @@ export default function HeroSection() {
                   <span
                     className={
                       isGradient
-                        ? "bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent"
+                        ? "bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent"
                         : "text-foreground"
                     }
                   >
                     {typedLines[idx]}
                   </span>
                   {isActive ? (
-                    <span className="inline-block h-8 w-[2px] animate-pulse bg-accent sm:h-10" />
+                    <span className="inline-block h-8 w-2.5 animate-pulse bg-accent sm:h-10" />
                   ) : null}
                 </div>
               )
@@ -332,9 +339,15 @@ export default function HeroSection() {
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   size="lg"
-                  className="group relative overflow-hidden border border-white/20 bg-primary/80 px-8 text-primary-foreground backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-xl"
+                  className="animated-border-hover group relative overflow-hidden rounded-full border border-white/20 bg-primary/80 px-8 text-primary-foreground backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl focus-visible:border-transparent"
+                  style={
+                    {
+                      "--animated-border-fill":
+                        "color-mix(in srgb, var(--primary) 85%, transparent 15%)",
+                    } as CSSProperties
+                  }
                 >
-                  <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <span className="pointer-events-none absolute inset-0 bg-linear-to-r from-accent/0 via-accent/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   <span className="relative font-semibold uppercase tracking-wide">Shop Now</span>
                 </Button>
               </motion.div>
@@ -343,9 +356,15 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="group relative overflow-hidden border border-white/15 bg-transparent px-8 text-accent transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/60 hover:bg-accent/10 hover:text-primary-foreground"
+                className="animated-border border-pop pauses-on-hover group relative overflow-hidden border border-white/15 bg-transparent px-8 text-accent transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:bg-accent/10 hover:text-primary-foreground focus-visible:border-transparent"
+                style={
+                  {
+                    "--animated-border-fill":
+                      "color-mix(in srgb, var(--background) 88%, transparent 12%)",
+                  } as CSSProperties
+                }
               >
-                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <span className="pointer-events-none absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <span className="relative font-semibold uppercase tracking-wide">Learn More</span>
               </Button>
             </motion.div>
@@ -378,7 +397,13 @@ export default function HeroSection() {
                     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
                   }}
                   whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                  className="group overflow-hidden rounded-xl border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40"
+                  className="animated-border-hover group overflow-hidden rounded-xl border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-sm transition-colors duration-300 hover:border-transparent"
+                  style={
+                    {
+                      "--animated-border-fill":
+                        "color-mix(in srgb, var(--background) 92%, transparent 8%)",
+                    } as CSSProperties
+                  }
                 >
                   <div className="mb-3 flex justify-center">
                     <div className="rounded-lg bg-primary/10 p-3 transition-colors duration-300 group-hover:bg-primary/20">
