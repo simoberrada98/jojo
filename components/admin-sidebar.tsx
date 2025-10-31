@@ -1,12 +1,19 @@
-"use client"
+"use client";
 
-import { BrandLogo } from "@/components/brand-logo"
-import { BarChart3, Package, ShoppingCart, Settings, LogOut, LayoutDashboard } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo";
+import {
+  BarChart3,
+  Package,
+  ShoppingCart,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
 
 interface AdminSidebarProps {
-  activeTab: string
-  setActiveTab: (tab: string) => void
-  isOpen: boolean
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  isOpen: boolean;
 }
 
 const MENU_ITEMS = [
@@ -15,23 +22,36 @@ const MENU_ITEMS = [
   { id: "products", label: "Products", icon: Package },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "settings", label: "Settings", icon: Settings },
-]
+];
 
-export default function AdminSidebar({ activeTab, setActiveTab, isOpen }: AdminSidebarProps) {
+export default function AdminSidebar({
+  activeTab,
+  setActiveTab,
+  isOpen,
+}: AdminSidebarProps) {
   return (
     <aside
-      className={`bg-card border-r border-border transition-all duration-300 ${isOpen ? "w-64" : "w-20"} flex flex-col`}
+      className={`bg-card border-r border-border transition-all duration-300 ${
+        isOpen ? "w-64" : "w-20"
+      } flex flex-col`}
     >
       {/* Logo */}
-      <div className="p-6 border-b border-border">
-        <BrandLogo className="block w-10 text-foreground" title="Jhuangnyc Admin" />
-        {isOpen && <p className="text-sm font-semibold text-foreground mt-2">Jhuangnyc Admin</p>}
+      <div className="p-6 border-border border-b">
+        <BrandLogo
+          className="block w-10 text-foreground"
+          title="Jhuangnyc Admin"
+        />
+        {isOpen && (
+          <p className="mt-2 font-semibold text-foreground text-sm">
+            Jhuangnyc Admin
+          </p>
+        )}
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 space-y-2 p-4">
         {MENU_ITEMS.map((item) => {
-          const Icon = item.icon
+          const Icon = item.icon;
           return (
             <button
               key={item.id}
@@ -42,20 +62,22 @@ export default function AdminSidebar({ activeTab, setActiveTab, isOpen }: AdminS
                   : "text-foreground/70 hover:bg-background"
               }`}
             >
-              <Icon className="w-5 h-5 flex-shrink-0" />
-              {isOpen && <span className="text-sm font-medium">{item.label}</span>}
+              <Icon className="flex-shrink-0 w-5 h-5" />
+              {isOpen && (
+                <span className="font-medium text-sm">{item.label}</span>
+              )}
             </button>
-          )
+          );
         })}
       </nav>
 
       {/* Logout */}
-      <div className="p-4 border-t border-border">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-foreground/70 hover:bg-background transition">
-          <LogOut className="w-5 h-5 flex-shrink-0" />
-          {isOpen && <span className="text-sm font-medium">Logout</span>}
+      <div className="p-4 border-border border-t">
+        <button className="flex items-center gap-3 hover:bg-background px-4 py-3 rounded-lg w-full text-foreground/70 transition">
+          <LogOut className="flex-shrink-0 w-5 h-5" />
+          {isOpen && <span className="font-medium text-sm">Logout</span>}
         </button>
       </div>
     </aside>
-  )
+  );
 }

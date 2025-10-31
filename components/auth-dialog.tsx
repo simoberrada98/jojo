@@ -1,65 +1,65 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AuthDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const supabase = createClient()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const supabase = createClient();
 
   const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     } else {
-      onOpenChange(false)
-      router.refresh()
+      onOpenChange(false);
+      router.refresh();
       // Reset form
-      setEmail("")
-      setPassword("")
+      setEmail("");
+      setPassword("");
     }
-  }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setLoading(false)
-      return
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
     }
 
     const { error } = await supabase.auth.signUp({
@@ -68,22 +68,22 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
-    })
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     } else {
-      setError(null)
+      setError(null);
       // Show success message
-      alert("Check your email to confirm your account!")
-      onOpenChange(false)
+      alert("Check your email to confirm your account!");
+      onOpenChange(false);
       // Reset form
-      setEmail("")
-      setPassword("")
-      setConfirmPassword("")
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,7 +96,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         </DialogHeader>
 
         <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
@@ -104,7 +104,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <TabsContent value="signin">
             <form onSubmit={handleSignIn} className="space-y-4">
               {error && (
-                <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+                <div className="bg-destructive/10 p-3 rounded-md text-destructive text-sm">
                   {error}
                 </div>
               )}
@@ -138,7 +138,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <TabsContent value="signup">
             <form onSubmit={handleSignUp} className="space-y-4">
               {error && (
-                <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+                <div className="bg-destructive/10 p-3 rounded-md text-destructive text-sm">
                   {error}
                 </div>
               )}
@@ -183,5 +183,5 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         </Tabs>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

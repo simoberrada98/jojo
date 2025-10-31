@@ -10,9 +10,9 @@ import {
   PaymentStatus,
   CheckoutData,
   PaymentError,
-} from './types';
+} from "./types";
 
-const STORAGE_PREFIX = 'hoodpay_payment_';
+const STORAGE_PREFIX = "jhuangnyc_hp_payment_";
 const STATE_KEY = `${STORAGE_PREFIX}state`;
 const SESSION_KEY = `${STORAGE_PREFIX}session`;
 const RECOVERY_KEY = `${STORAGE_PREFIX}recovery`;
@@ -42,7 +42,7 @@ export class PaymentStorage {
    */
   private isAvailable(): boolean {
     try {
-      const test = '__storage_test__';
+      const test = "__storage_test__";
       localStorage.setItem(test, test);
       localStorage.removeItem(test);
       return true;
@@ -63,7 +63,7 @@ export class PaymentStorage {
    */
   saveState(state: PaymentLocalState): boolean {
     if (!this.isAvailable()) {
-      console.warn('localStorage not available');
+      console.warn("localStorage not available");
       return false;
     }
 
@@ -74,13 +74,13 @@ export class PaymentStorage {
       };
 
       localStorage.setItem(STATE_KEY, JSON.stringify(stateWithTimestamp));
-      
+
       // Save to recovery backup
       this.saveRecoveryPoint(stateWithTimestamp);
-      
+
       return true;
     } catch (error) {
-      console.error('Failed to save payment state:', error);
+      console.error("Failed to save payment state:", error);
       return false;
     }
   }
@@ -100,17 +100,17 @@ export class PaymentStorage {
       }
 
       const state: PaymentLocalState = JSON.parse(stored);
-      
+
       // Check if session has expired
       if (this.isSessionExpired(state.timestamp)) {
-        console.warn('Payment session expired');
+        console.warn("Payment session expired");
         this.clearState();
         return null;
       }
 
       return state;
     } catch (error) {
-      console.error('Failed to load payment state:', error);
+      console.error("Failed to load payment state:", error);
       return this.loadRecoveryPoint();
     }
   }
@@ -191,7 +191,7 @@ export class PaymentStorage {
     try {
       localStorage.removeItem(STATE_KEY);
     } catch (error) {
-      console.error('Failed to clear payment state:', error);
+      console.error("Failed to clear payment state:", error);
     }
   }
 
@@ -215,7 +215,7 @@ export class PaymentStorage {
       };
       localStorage.setItem(RECOVERY_KEY, JSON.stringify(recoveryData));
     } catch (error) {
-      console.error('Failed to save recovery point:', error);
+      console.error("Failed to save recovery point:", error);
     }
   }
 
@@ -230,7 +230,7 @@ export class PaymentStorage {
       }
 
       const recoveryData = JSON.parse(stored);
-      
+
       if (this.isSessionExpired(recoveryData.savedAt)) {
         localStorage.removeItem(RECOVERY_KEY);
         return null;
@@ -238,7 +238,7 @@ export class PaymentStorage {
 
       return recoveryData.state;
     } catch (error) {
-      console.error('Failed to load recovery point:', error);
+      console.error("Failed to load recovery point:", error);
       return null;
     }
   }
@@ -258,7 +258,7 @@ export class PaymentStorage {
       keys.forEach((key) => {
         if (key.startsWith(STORAGE_PREFIX)) {
           try {
-            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            const data = JSON.parse(localStorage.getItem(key) || "{}");
             if (data.timestamp) {
               const timestamp = new Date(data.timestamp).getTime();
               if (now - timestamp > SESSION_TIMEOUT_MS) {
@@ -272,14 +272,18 @@ export class PaymentStorage {
         }
       });
     } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
+      console.error("Failed to cleanup expired sessions:", error);
     }
   }
 
   /**
    * Get session info
    */
-  getSessionInfo(): { active: boolean; sessionId?: string; expiresAt?: string } {
+  getSessionInfo(): {
+    active: boolean;
+    sessionId?: string;
+    expiresAt?: string;
+  } {
     const state = this.loadState();
     if (!state) {
       return { active: false };
@@ -303,7 +307,7 @@ export class PaymentStorage {
     checkoutData?: CheckoutData
   ): PaymentLocalState {
     const sessionId = this.generateSessionId();
-    
+
     const initialState: PaymentLocalState = {
       sessionId,
       paymentIntent,
@@ -325,12 +329,9 @@ export class PaymentStorage {
     checkoutData?: CheckoutData
   ): PaymentLocalState {
     const existingState = this.loadState();
-    
+
     // If existing session is valid and for the same payment, resume it
-    if (
-      existingState &&
-      existingState.paymentIntent.id === paymentIntent.id
-    ) {
+    if (existingState && existingState.paymentIntent.id === paymentIntent.id) {
       return existingState;
     }
 
@@ -402,7 +403,7 @@ export class PaymentStorage {
       const state: PaymentLocalState = JSON.parse(stateJson);
       return this.saveState(state);
     } catch (error) {
-      console.error('Failed to import state:', error);
+      console.error("Failed to import state:", error);
       return false;
     }
   }

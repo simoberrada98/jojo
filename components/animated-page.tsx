@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ReactNode } from "react"
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface AnimatedPageProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 const pageVariants = {
@@ -29,9 +29,12 @@ const pageVariants = {
       ease: "easeIn" as const,
     },
   },
-}
+};
 
-export default function AnimatedPage({ children, className = "" }: AnimatedPageProps) {
+export default function AnimatedPage({
+  children,
+  className = "",
+}: AnimatedPageProps) {
   return (
     <motion.div
       initial="initial"
@@ -42,5 +45,5 @@ export default function AnimatedPage({ children, className = "" }: AnimatedPageP
     >
       {children}
     </motion.div>
-  )
+  );
 }

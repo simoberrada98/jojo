@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import PageLayout from "@/components/layout/PageLayout"
-import ProductImage from "@/components/product-image"
-import { Button } from "@/components/ui/button"
-import { ChevronRight } from "lucide-react"
+import Link from "next/link";
+import PageLayout from "@/components/layout/PageLayout";
+import ProductImage from "@/components/product-image";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
 
 const collections = [
   {
     id: "asic-miners",
     name: "ASIC Miners",
     category: "ASIC",
-    description: "Professional ASIC mining hardware for Bitcoin and other cryptocurrencies",
+    description:
+      "Professional ASIC mining hardware for Bitcoin and other cryptocurrencies",
     productCount: 12,
     featured: true,
   },
@@ -27,7 +28,8 @@ const collections = [
     id: "compact-miners",
     name: "Compact Miners",
     category: "Compact",
-    description: "Space-efficient mining solutions for home and small operations",
+    description:
+      "Space-efficient mining solutions for home and small operations",
     productCount: 6,
     featured: false,
   },
@@ -51,68 +53,82 @@ const collections = [
     id: "software-tools",
     name: "Software & Tools",
     category: "GPU",
-    description: "Mining software, monitoring tools, and optimization utilities",
+    description:
+      "Mining software, monitoring tools, and optimization utilities",
     productCount: 10,
     featured: false,
   },
-]
+];
 
 export default function CollectionPage() {
   return (
     <PageLayout>
-
       <main className="pt-20">
         {/* Breadcrumb */}
-        <div className="border-b border-border ">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="border-border border-b">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 max-w-7xl">
             <div className="flex items-center gap-2 text-sm">
-              <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Home
               </Link>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <span className="text-foreground font-medium">Collections</span>
+              <span className="font-medium text-foreground">Collections</span>
             </div>
           </div>
         </div>
 
         {/* Hero Section */}
         <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Mining Hardware Collections</h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore our curated collections of mining hardware, from entry-level to enterprise-grade solutions
+              <h1 className="mb-4 font-bold text-foreground text-4xl md:text-5xl">
+                Mining Hardware Collections
+              </h1>
+              <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+                Explore our curated collections of mining hardware, from
+                entry-level to enterprise-grade solutions
               </p>
             </div>
           </div>
         </section>
 
         {/* Collections Grid */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-7xl">
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {collections.map((collection) => (
               <Link
                 key={collection.id}
                 href="/#products"
                 className="group block"
               >
-                <div className="relative overflow-hidden rounded-lg mb-4 h-64 border border-border group-hover:border-accent transition-all duration-300">
-                  <div className="group-hover:scale-105 transition-transform duration-500 h-full">
+                <div className="relative mb-4 border border-border group-hover:border-accent rounded-lg h-64 overflow-hidden transition-all duration-300">
+                  <div className="h-full group-hover:scale-105 transition-transform duration-500">
                     <ProductImage category={collection.category} />
                   </div>
                   {collection.featured && (
-                    <div className="absolute top-4 right-4 bg-accent/90 backdrop-blur-sm text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold z-10">
+                    <div className="top-4 right-4 z-10 absolute bg-accent/90 backdrop-blur-sm px-3 py-1 rounded-full font-semibold text-xs text-accent-foreground">
                       Featured
                     </div>
                   )}
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-accent transition-colors">
+                <h3 className="mb-2 font-bold text-foreground group-hover:text-accent text-xl transition-colors">
                   {collection.name}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">{collection.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-accent">{collection.productCount} Products</span>
-                  <Button variant="ghost" size="sm" className="text-accent hover:text-accent hover:bg-accent/10">
+                <p className="mb-4 text-muted-foreground text-sm">
+                  {collection.description}
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-accent text-xs">
+                    {collection.productCount} Products
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-accent/10 text-accent hover:text-accent"
+                  >
                     Explore →
                   </Button>
                 </div>
@@ -122,5 +138,5 @@ export default function CollectionPage() {
         </section>
       </main>
     </PageLayout>
-  )
+  );
 }

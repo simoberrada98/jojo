@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function TermsOfServicePage() {
   return (
     <PageLayout>
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="mx-auto px-4 py-12 max-w-4xl container">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Terms of Service</h1>
+          <h1 className="mb-2 font-bold text-4xl">Terms of Service</h1>
           <p className="text-muted-foreground">
             Last updated: {new Date().toLocaleDateString()}
           </p>
@@ -17,7 +17,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Agreement to Terms</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 By accessing and using Jhuangnyc, you agree to be bound by these
                 Terms of Service and all applicable laws and regulations. If you
@@ -31,7 +31,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Use License</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Permission is granted to temporarily access the materials on
                 Jhuangnyc for personal, non-commercial transitory viewing only.
@@ -64,7 +64,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Account Registration</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 To access certain features, you may need to create an account.
                 You agree to:
@@ -83,7 +83,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Product Information & Pricing</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We strive to provide accurate product descriptions and pricing.
                 However:
@@ -110,7 +110,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Orders and Payment</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>By placing an order, you:</p>
               <ul>
                 <li>
@@ -135,7 +135,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Shipping and Delivery</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Shipping times are estimates and not guaranteed. We are not
                 responsible for delays caused by customs, weather, or carrier
@@ -148,7 +148,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Returns and Refunds</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Our return policy is outlined in our Returns & Refunds page.
                 Please review it carefully before making a purchase. Mining
@@ -162,7 +162,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Prohibited Uses</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>You may not use our site:</p>
               <ul>
                 <li>For any unlawful purpose</li>
@@ -182,12 +182,12 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Intellectual Property</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 All content on this website, including text, graphics, logos,
-                images, and software, is the property of Jhuangnyc or its content
-                suppliers and is protected by copyright and trademark laws.
-                Unauthorized use may violate these laws.
+                images, and software, is the property of Jhuangnyc or its
+                content suppliers and is protected by copyright and trademark
+                laws. Unauthorized use may violate these laws.
               </p>
             </CardContent>
           </Card>
@@ -196,7 +196,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Disclaimer of Warranties</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 The materials on Jhuangnyc are provided on an 'as is' basis. We
                 make no warranties, expressed or implied, and hereby disclaim
@@ -217,7 +217,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Limitation of Liability</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 In no event shall Jhuangnyc or its suppliers be liable for any
                 damages (including, without limitation, damages for loss of data
@@ -231,7 +231,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Indemnification</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 You agree to indemnify and hold harmless Jhuangnyc and its
                 affiliates from any claims, damages, or expenses arising from
@@ -244,7 +244,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Governing Law</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 These terms shall be governed by and construed in accordance
                 with the laws of New York, United States, without regard to its
@@ -257,7 +257,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Changes to Terms</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We reserve the right to modify these terms at any time. Your
                 continued use of the website following any changes constitutes
@@ -270,7 +270,7 @@ export default function TermsOfServicePage() {
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>For questions about these Terms of Service, contact us at:</p>
               <ul>
                 <li>Email: contact@jhuangnyc.com</li>

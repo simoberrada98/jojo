@@ -10,9 +10,9 @@ import {
 export default function PrivacyPolicyPage() {
   return (
     <PageLayout>
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="mx-auto px-4 py-12 max-w-4xl container">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
+          <h1 className="mb-2 font-bold text-4xl">Privacy Policy</h1>
           <p className="text-muted-foreground">
             Last updated: {new Date().toLocaleDateString()}
           </p>
@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Introduction</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Jhuangnyc ("we," "our," or "us") is committed to protecting your
                 privacy. This Privacy Policy explains how we collect, use,
@@ -37,8 +37,8 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Information We Collect</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
-              <h3 className="font-semibold mt-4">Personal Information</h3>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
+              <h3 className="mt-4 font-semibold">Personal Information</h3>
               <p>
                 We may collect personal information that you provide to us,
                 including:
@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
                 <li>Order history and preferences</li>
               </ul>
 
-              <h3 className="font-semibold mt-4">
+              <h3 className="mt-4 font-semibold">
                 Automatically Collected Information
               </h3>
               <ul>
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>How We Use Your Information</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>We use the collected information for:</p>
               <ul>
                 <li>Processing and fulfilling your orders</li>
@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Information Sharing</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>We may share your information with:</p>
               <ul>
                 <li>
@@ -121,7 +121,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Data Security</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We implement appropriate technical and organizational measures
                 to protect your personal information against unauthorized
@@ -140,7 +140,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Your Rights</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>You have the right to:</p>
               <ul>
                 <li>Access your personal information</li>
@@ -161,7 +161,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Cookies and Tracking</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We use cookies and similar technologies to enhance your
                 experience. You can control cookies through your browser
@@ -175,7 +175,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Children's Privacy</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Our services are not intended for individuals under 18 years of
                 age. We do not knowingly collect personal information from
@@ -188,7 +188,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Changes to This Policy</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We may update this Privacy Policy from time to time. We will
                 notify you of any changes by posting the new policy on this page
@@ -201,7 +201,7 @@ export default function PrivacyPolicyPage() {
             <CardHeader>
               <CardTitle>Contact Us</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 If you have questions about this Privacy Policy, please contact
                 us at:

@@ -1,42 +1,46 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, ReactNode } from "react"
-import { PricingService } from "@/lib/services/pricing.service"
-import { DEFAULT_CURRENCY, type Currency } from "@/lib/config/currency.config"
+import { createContext, useContext, useState, ReactNode } from "react";
+import { PricingService } from "@/lib/services/pricing.service";
+import { DEFAULT_CURRENCY, type Currency } from "@/lib/config/currency.config";
 
-export type { Currency }
+export type { Currency };
 
 interface CurrencyContextType {
-  currency: Currency
-  setCurrency: (currency: Currency) => void
-  convertPrice: (usdPrice: number) => number
-  formatPrice: (usdPrice: number) => string
+  currency: Currency;
+  setCurrency: (currency: Currency) => void;
+  convertPrice: (usdPrice: number) => number;
+  formatPrice: (usdPrice: number) => string;
 }
 
-const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
+const CurrencyContext = createContext<CurrencyContextType | undefined>(
+  undefined
+);
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>(DEFAULT_CURRENCY)
+  const [currency, setCurrency] = useState<Currency>(DEFAULT_CURRENCY);
 
   const convertPrice = (usdPrice: number): number => {
-    return PricingService.convertPrice(usdPrice, currency)
-  }
+    return PricingService.convertPrice(usdPrice, currency);
+  };
 
   const formatPrice = (usdPrice: number): string => {
-    return PricingService.formatPrice(usdPrice, currency)
-  }
+    return PricingService.formatPrice(usdPrice, currency);
+  };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, convertPrice, formatPrice }}>
+    <CurrencyContext.Provider
+      value={{ currency, setCurrency, convertPrice, formatPrice }}
+    >
       {children}
     </CurrencyContext.Provider>
-  )
+  );
 }
 
 export function useCurrency() {
-  const context = useContext(CurrencyContext)
+  const context = useContext(CurrencyContext);
   if (context === undefined) {
-    throw new Error("useCurrency must be used within a CurrencyProvider")
+    throw new Error("useCurrency must be used within a CurrencyProvider");
   }
-  return context
+  return context;
 }

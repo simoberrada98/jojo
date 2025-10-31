@@ -1,24 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAuth } from "@/lib/contexts/auth-context"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
-  const { profile, refreshProfile } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [fullName, setFullName] = useState(profile?.full_name || "")
-  const [phone, setPhone] = useState(profile?.phone || "")
-  const supabase = createClient()
+  const { profile, refreshProfile } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [phone, setPhone] = useState(profile?.phone || "");
+  const supabase = createClient();
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     const { error } = await supabase
       .from("profiles")
@@ -26,21 +32,21 @@ export default function ProfilePage() {
         full_name: fullName,
         phone,
       })
-      .eq("id", profile?.id)
+      .eq("id", profile?.id);
 
     if (error) {
-      toast.error("Failed to update profile")
+      toast.error("Failed to update profile");
     } else {
-      toast.success("Profile updated successfully")
-      await refreshProfile()
+      toast.success("Profile updated successfully");
+      await refreshProfile();
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold mb-8">Profile</h1>
+      <h1 className="mb-8 font-bold text-3xl">Profile</h1>
 
       <Card>
         <CardHeader>
@@ -58,7 +64,7 @@ export default function ProfilePage() {
                 disabled
                 className="bg-muted"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Email cannot be changed
               </p>
             </div>
@@ -88,5 +94,5 @@ export default function ProfilePage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }

@@ -10,18 +10,18 @@
  */
 export function getInitials(input?: string): string {
   if (!input) return "U";
-  
+
   // If it's an email, take first 2 characters
   if (input.includes("@")) {
     return input.substring(0, 2).toUpperCase();
   }
-  
+
   // If it's a name with spaces, take first letter of each word
   const parts = input.trim().split(/\s+/);
   if (parts.length >= 2) {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
-  
+
   // Otherwise take first 2 characters
   return input.substring(0, 2).toUpperCase();
 }
@@ -48,7 +48,7 @@ export function capitalize(text: string): string {
 export function snakeToTitle(text: string): string {
   return text
     .split("_")
-    .map(word => capitalize(word))
+    .map((word) => capitalize(word))
     .join(" ");
 }
 

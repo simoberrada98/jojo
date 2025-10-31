@@ -3,10 +3,10 @@
  * Combines HoodPay, Web Payment API, Supabase, and localStorage
  */
 
-import { createPayment } from '../hoodpayModule';
-import { paymentStorage } from './localStorage';
-import { webPaymentService } from './webPaymentApi';
-import { createPaymentService as createDbService } from './supabaseService';
+import { createPayment } from "../hoodpayModule";
+import { paymentStorage } from "./localStorage";
+import { webPaymentService } from "./webPaymentApi";
+import { createPaymentService as createDbService } from "./supabaseService";
 import {
   PaymentIntent,
   PaymentResult,
@@ -17,7 +17,7 @@ import {
   PaymentHooks,
   PaymentEventType,
   PaymentError,
-} from './types';
+} from "./types";
 
 export class PaymentOrchestrator {
   private dbService: ReturnType<typeof createDbService>;
@@ -37,7 +37,7 @@ export class PaymentOrchestrator {
     try {
       this.dbService = createDbService(config.supabaseUrl, config.supabaseKey);
     } catch (error) {
-      console.warn('Failed to initialize Supabase service:', error);
+      console.warn("Failed to initialize Supabase service:", error);
       // Create a dummy service that logs warnings instead of throwing
       this.dbService = null as any;
     }
@@ -87,12 +87,12 @@ export class PaymentOrchestrator {
           checkout_data: checkoutData,
         });
       } catch (error) {
-        console.warn('Failed to save payment to database:', error);
+        console.warn("Failed to save payment to database:", error);
       }
     }
 
     // Trigger onCreate hook
-    await this.triggerHook('onCreated', {
+    await this.triggerHook("onCreated", {
       type: PaymentEventType.PAYMENT_CREATED,
       paymentId: paymentIntent.id,
       timestamp: new Date().toISOString(),
@@ -113,11 +113,11 @@ export class PaymentOrchestrator {
     if (!state) {
       return {
         success: false,
-        paymentId: '',
+        paymentId: "",
         status: PaymentStatus.FAILED,
         error: {
-          code: 'NO_SESSION',
-          message: 'No active payment session',
+          code: "NO_SESSION",
+          message: "No active payment session",
           retryable: false,
         },
       };
@@ -127,7 +127,7 @@ export class PaymentOrchestrator {
     paymentStorage.updateStep(PaymentStep.PROCESSING);
 
     // Trigger processing hook
-    await this.triggerHook('onProcessing', {
+    await this.triggerHook("onProcessing", {
       type: PaymentEventType.PAYMENT_PROCESSING,
       paymentId: state.paymentIntent.id,
       timestamp: new Date().toISOString(),
@@ -151,7 +151,7 @@ export class PaymentOrchestrator {
             paymentId: state.paymentIntent.id,
             status: PaymentStatus.FAILED,
             error: {
-              code: 'UNSUPPORTED_METHOD',
+              code: "UNSUPPORTED_METHOD",
               message: `Payment method ${method} not supported`,
               retryable: false,
             },
@@ -171,7 +171,7 @@ export class PaymentOrchestrator {
             response_data: result.metadata,
           });
         } catch (error) {
-          console.warn('Failed to record payment attempt:', error);
+          console.warn("Failed to record payment attempt:", error);
         }
       }
 
@@ -185,11 +185,11 @@ export class PaymentOrchestrator {
               PaymentStatus.COMPLETED
             );
           } catch (error) {
-            console.warn('Failed to update payment status:', error);
+            console.warn("Failed to update payment status:", error);
           }
         }
 
-        await this.triggerHook('onCompleted', {
+        await this.triggerHook("onCompleted", {
           type: PaymentEventType.PAYMENT_COMPLETED,
           paymentId: state.paymentIntent.id,
           timestamp: new Date().toISOString(),
@@ -205,11 +205,11 @@ export class PaymentOrchestrator {
               result.error
             );
           } catch (error) {
-            console.warn('Failed to update payment status:', error);
+            console.warn("Failed to update payment status:", error);
           }
         }
 
-        await this.triggerHook('onFailed', {
+        await this.triggerHook("onFailed", {
           type: PaymentEventType.PAYMENT_FAILED,
           paymentId: state.paymentIntent.id,
           timestamp: new Date().toISOString(),
@@ -220,8 +220,8 @@ export class PaymentOrchestrator {
       return result;
     } catch (error: any) {
       const paymentError: PaymentError = {
-        code: 'PROCESSING_ERROR',
-        message: error.message || 'Payment processing failed',
+        code: "PROCESSING_ERROR",
+        message: error.message || "Payment processing failed",
         details: error,
         retryable: true,
       };
@@ -246,11 +246,11 @@ export class PaymentOrchestrator {
     if (!webPaymentService.isAvailable()) {
       return {
         success: false,
-        paymentId: '',
+        paymentId: "",
         status: PaymentStatus.FAILED,
         error: {
-          code: 'WEB_PAYMENT_NOT_AVAILABLE',
-          message: 'Web Payment API not available',
+          code: "WEB_PAYMENT_NOT_AVAILABLE",
+          message: "Web Payment API not available",
           retryable: false,
         },
       };
@@ -288,22 +288,25 @@ export class PaymentOrchestrator {
             hoodpay_response: hoodpayResponse,
           });
         } catch (error) {
-          console.warn('Failed to update payment in database:', error);
+          console.warn("Failed to update payment in database:", error);
         }
       }
 
       // HoodPay returns a payment URL in the response (typically hoodpayResponse.url or hoodpayResponse.payment_url)
-      const paymentUrl = hoodpayResponse.url || hoodpayResponse.payment_url || hoodpayResponse.redirect_url;
-      
+      const paymentUrl =
+        hoodpayResponse.url ||
+        hoodpayResponse.payment_url ||
+        hoodpayResponse.redirect_url;
+
       if (!paymentUrl) {
-        console.error('HoodPay response missing payment URL:', hoodpayResponse);
+        console.error("HoodPay response missing payment URL:", hoodpayResponse);
         return {
           success: false,
           paymentId: state.paymentIntent.id,
           status: PaymentStatus.FAILED,
           error: {
-            code: 'MISSING_PAYMENT_URL',
-            message: 'HoodPay did not return a payment URL',
+            code: "MISSING_PAYMENT_URL",
+            message: "HoodPay did not return a payment URL",
             details: hoodpayResponse,
             retryable: false,
           },
@@ -321,14 +324,14 @@ export class PaymentOrchestrator {
         },
       };
     } catch (error: any) {
-      console.error('HoodPay payment error:', error);
+      console.error("HoodPay payment error:", error);
       return {
         success: false,
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: 'HOODPAY_ERROR',
-          message: error.message || 'HoodPay payment failed',
+          code: "HOODPAY_ERROR",
+          message: error.message || "HoodPay payment failed",
           details: error,
           retryable: true,
         },
@@ -358,11 +361,11 @@ export class PaymentOrchestrator {
           PaymentStatus.CANCELLED
         );
       } catch (error) {
-        console.warn('Failed to update payment status:', error);
+        console.warn("Failed to update payment status:", error);
       }
     }
 
-    await this.triggerHook('onCancelled', {
+    await this.triggerHook("onCancelled", {
       type: PaymentEventType.PAYMENT_CANCELLED,
       paymentId: state.paymentIntent.id,
       timestamp: new Date().toISOString(),
@@ -426,19 +429,23 @@ export function createPaymentOrchestrator(config: {
   supabaseKey?: string;
   hooks?: PaymentHooks;
 }): PaymentOrchestrator {
-  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY || '';
-  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID || '';
+  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY || "";
+  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID || "";
   const supabaseUrl =
-    config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey =
-    config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+    config.supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
   if (!apiKey || !businessId) {
-    console.warn('HoodPay credentials not configured. Payment processing will not work.');
+    console.warn(
+      "HoodPay credentials not configured. Payment processing will not work."
+    );
   }
-  
+
   if (!supabaseUrl || !supabaseKey) {
-    console.warn('Supabase credentials not configured. Payment tracking will not work.');
+    console.warn(
+      "Supabase credentials not configured. Payment tracking will not work."
+    );
   }
 
   return new PaymentOrchestrator({

@@ -1,12 +1,12 @@
-import type { MetadataRoute } from "next"
-import { fetchActiveProductsForSeo } from "@/lib/data/seo-products"
-import { siteMetadata } from "@/lib/seo/site-metadata"
+import type { MetadataRoute } from "next";
+import { fetchActiveProductsForSeo } from "@/lib/data/seo-products";
+import { siteMetadata } from "@/lib/seo/site-metadata";
 
-export const revalidate = 3600 // 1 hour
+export const revalidate = 3600; // 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = siteMetadata.baseUrl.toString().replace(/\/$/, "")
-  const lastModified = new Date()
+  const base = siteMetadata.baseUrl.toString().replace(/\/$/, "");
+  const lastModified = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -75,17 +75,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.3,
     },
-  ]
+  ];
 
-  const products = await fetchActiveProductsForSeo()
+  const products = await fetchActiveProductsForSeo();
 
   const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${base}/product/${product.slug}`,
-    lastModified: product.updated_at ? new Date(product.updated_at) : lastModified,
+    lastModified: product.updated_at
+      ? new Date(product.updated_at)
+      : lastModified,
     changeFrequency: "weekly",
     priority: 0.8,
-  }))
+  }));
 
-  return [...staticPages, ...productRoutes]
+  return [...staticPages, ...productRoutes];
 }
-

@@ -7,26 +7,26 @@ import { env } from "@/lib/env";
 export const APP_CONFIG = {
   name: env.NEXT_PUBLIC_APP_NAME,
   baseUrl: env.NEXT_PUBLIC_BASE_URL,
-  
+
   // Session and storage settings
   session: {
     timeoutMs: 30 * 60 * 1000, // 30 minutes
-    storagePrefix: "hoodpay_payment_",
+    storagePrefix: "jhuangnyc_hp_payment_",
   },
-  
+
   // Retry configuration
   retry: {
     maxAttempts: 3,
     delayMs: 1000,
     backoffMultiplier: 2,
   },
-  
+
   // Pagination defaults
   pagination: {
     defaultPageSize: 20,
     maxPageSize: 100,
   },
-  
+
   // Feature flags
   features: {
     enableHoodPay: env.NEXT_PUBLIC_ENABLE_HOODPAY,

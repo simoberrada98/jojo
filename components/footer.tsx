@@ -1,14 +1,18 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { BrandLogo } from "@/components/brand-logo"
-import { H4, Muted } from "@/components/ui/typography"
+import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
+import { H4, Muted } from "@/components/ui/typography";
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border" role="contentinfo">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8" role="navigation" aria-label="Footer navigation">
+    <footer className="bg-card border-border border-t" role="contentinfo">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
+        <div
+          className="gap-8 grid grid-cols-1 md:grid-cols-4 mb-8"
+          role="navigation"
+          aria-label="Footer navigation"
+        >
           {/* Brand */}
           <div>
             <BrandLogo className="w-48 text-white" title="Jhuangnyc" />
@@ -16,20 +20,29 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <H4 className="font-semibold mb-4 text-base">Products</H4>
-            <ul className="space-y-2 text-sm text-foreground/60">
+            <H4 className="mb-4 font-semibold text-base">Products</H4>
+            <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
-                <Link href="/collection" className="hover:text-accent transition">
+                <Link
+                  href="/collection"
+                  className="hover:text-accent transition"
+                >
                   Collections
                 </Link>
               </li>
               <li>
-                <Link href="/collection" className="hover:text-accent transition">
+                <Link
+                  href="/collection"
+                  className="hover:text-accent transition"
+                >
                   ASIC Miners
                 </Link>
               </li>
               <li>
-                <Link href="/collection" className="hover:text-accent transition">
+                <Link
+                  href="/collection"
+                  className="hover:text-accent transition"
+                >
                   GPU Rigs
                 </Link>
               </li>
@@ -43,8 +56,8 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <H4 className="font-semibold mb-4 text-base">Company</H4>
-            <ul className="space-y-2 text-sm text-foreground/60">
+            <H4 className="mb-4 font-semibold text-base">Company</H4>
+            <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
                 <Link href="/about" className="hover:text-accent transition">
                   About Us
@@ -70,8 +83,8 @@ export function Footer() {
 
           {/* Legal & Info */}
           <div>
-            <H4 className="font-semibold mb-4 text-base">Legal</H4>
-            <ul className="space-y-2 text-sm text-foreground/60">
+            <H4 className="mb-4 font-semibold text-base">Legal</H4>
+            <ul className="space-y-2 text-foreground/60 text-sm">
               <li>
                 <Link href="/privacy" className="hover:text-accent transition">
                   Privacy Policy
@@ -97,8 +110,10 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-foreground/60">
-          <Muted className="m-0">&copy; 2025 Jhuangnyc. All rights reserved.</Muted>
+        <div className="flex sm:flex-row flex-col justify-between items-center pt-8 border-border border-t text-foreground/60 text-sm">
+          <Muted className="m-0">
+            &copy; 2025 Jhuangnyc. All rights reserved.
+          </Muted>
           <div className="flex gap-6 mt-4 sm:mt-0">
             <Link href="/privacy" className="hover:text-accent transition">
               Privacy
@@ -113,7 +128,7 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

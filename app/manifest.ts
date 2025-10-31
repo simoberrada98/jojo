@@ -1,5 +1,5 @@
-import type { MetadataRoute } from "next"
-import { siteMetadata } from "@/lib/seo/site-metadata"
+import type { MetadataRoute } from "next";
+import { siteMetadata } from "@/lib/seo/site-metadata";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -20,6 +20,5 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/x-icon",
       },
     ],
-  }
+  };
 }
-

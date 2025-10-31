@@ -1,87 +1,94 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Star, Zap, Cpu, Shield, ArrowLeft, ShoppingCart } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import PageLayout from "@/components/layout/PageLayout"
-import ProductImage from "@/components/product-image"
-import { useCurrency } from "@/lib/contexts/currency-context"
-import { useCart } from "@/lib/contexts/cart-context"
-import { generateProductSchema, serializeSchema } from "@/lib/schema"
-import type { DisplayProduct } from "@/lib/types/product"
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Star, Zap, Cpu, Shield, ArrowLeft, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import PageLayout from "@/components/layout/PageLayout";
+import ProductImage from "@/components/product-image";
+import { useCurrency } from "@/lib/contexts/currency-context";
+import { useCart } from "@/lib/contexts/cart-context";
+import { generateProductSchema, serializeSchema } from "@/lib/schema";
+import type { DisplayProduct } from "@/lib/types/product";
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [product, setProduct] = useState<DisplayProduct | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const { currency, formatPrice } = useCurrency()
-  const { addItem } = useCart()
+  const params = useParams();
+  const router = useRouter();
+  const [product, setProduct] = useState<DisplayProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const { currency, formatPrice } = useCurrency();
+  const { addItem } = useCart();
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        setLoading(true)
+        setLoading(true);
         // Try fetching by handle first, fallback to ID if it's numeric
-        const isNumericId = /^\d+$/.test(params.id as string)
-        const queryParam = isNumericId ? `id=${params.id}` : `handle=${params.id}`
-        const response = await fetch(`/api/products?${queryParam}`)
+        const isNumericId = /^\d+$/.test(params.id as string);
+        const queryParam = isNumericId
+          ? `id=${params.id}`
+          : `handle=${params.id}`;
+        const response = await fetch(`/api/products?${queryParam}`);
         if (!response.ok) {
-          throw new Error("Product not found")
+          throw new Error("Product not found");
         }
-        const data = await response.json()
-        setProduct(data)
-        setError(null)
+        const data = await response.json();
+        setProduct(data);
+        setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load product")
+        setError(err instanceof Error ? err.message : "Failed to load product");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
     if (params.id) {
-      fetchProduct()
+      fetchProduct();
     }
-  }, [params.id])
+  }, [params.id]);
 
   const handleAddToCart = () => {
     if (product) {
-      addItem(product)
-      toast.success(`${product.name} added to cart!`)
+      addItem(product);
+      toast.success(`${product.name} added to cart!`);
     }
-  }
+  };
 
   if (loading) {
     return (
       <PageLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex justify-center items-center min-h-[60vh]">
           <p className="text-foreground/60">Loading product...</p>
         </div>
       </PageLayout>
-    )
+    );
   }
 
   if (error || !product) {
     return (
       <PageLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <p className="text-destructive text-lg">{error || "Product not found"}</p>
+        <div className="flex flex-col justify-center items-center gap-4 min-h-[60vh]">
+          <p className="text-destructive text-lg">
+            {error || "Product not found"}
+          </p>
           <Button onClick={() => router.push("/")} variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="mr-2 w-4 h-4" />
             Back to Home
           </Button>
         </div>
       </PageLayout>
-    )
+    );
   }
 
   // Generate Product Schema
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://jhuangnyc.com"
-  const productSchema = generateProductSchema(product, baseUrl, currency)
+  const baseUrl =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://jhuangnyc.com";
+  const productSchema = generateProductSchema(product, baseUrl, currency);
 
   return (
     <PageLayout>
@@ -93,37 +100,37 @@ export default function ProductDetailPage() {
         }}
       />
 
-      <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="px-4 sm:px-6 lg:px-8 pt-24 pb-20">
+        <div className="mx-auto max-w-7xl">
           {/* Back Button */}
           <Button
             onClick={() => router.back()}
             variant="outline"
-            className="mb-8 border-accent text-accent hover:bg-accent/10"
+            className="hover:bg-accent/10 mb-8 border-accent text-accent"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="mr-2 w-4 h-4" />
             Back
           </Button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="gap-12 grid grid-cols-1 lg:grid-cols-2">
             {/* Product Visual */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative h-96 lg:h-[600px] rounded-xl overflow-hidden border border-border">
-                <ProductImage 
-                  category={product.category} 
-                  image={product.images?.[selectedImage] || product.image} 
+              <div className="relative border border-border rounded-xl h-96 lg:h-[600px] overflow-hidden">
+                <ProductImage
+                  category={product.category}
+                  image={product.images?.[selectedImage] || product.image}
                 />
-                
+
                 {/* Category Badge */}
-                <div className="absolute top-4 left-4 bg-accent/90 backdrop-blur-sm text-accent-foreground px-4 py-2 rounded-lg font-semibold z-10">
+                <div className="top-4 left-4 z-10 absolute bg-accent/90 backdrop-blur-sm px-4 py-2 rounded-lg font-semibold text-accent-foreground">
                   {product.category}
                 </div>
               </div>
-              
+
               {/* Thumbnail Gallery */}
               {product.images && product.images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2">
+                <div className="flex gap-3 pb-2 overflow-x-auto">
                   {product.images.map((img, idx) => (
                     <button
                       key={idx}
@@ -145,7 +152,9 @@ export default function ProductDetailPage() {
             <div className="space-y-6">
               {/* Title and Rating */}
               <div>
-                <h1 className="text-4xl font-bold text-foreground mb-4">{product.name}</h1>
+                <h1 className="mb-4 font-bold text-foreground text-4xl">
+                  {product.name}
+                </h1>
                 {product.rating && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -161,53 +170,64 @@ export default function ProductDetailPage() {
                           />
                         ))}
                       </div>
-                      <span className="text-lg font-semibold text-accent">{product.rating}</span>
+                      <span className="font-semibold text-accent text-lg">
+                        {product.rating}
+                      </span>
                     </div>
                     {product.reviews && (
-                      <span className="text-foreground/60">({product.reviews} reviews)</span>
+                      <span className="text-foreground/60">
+                        ({product.reviews} reviews)
+                      </span>
                     )}
                   </div>
                 )}
               </div>
 
               {/* Price */}
-              <div className="p-6 bg-card rounded-xl border border-border">
-                <div className="text-4xl font-bold text-accent mb-2 font-mono">
+              <div className="bg-card p-6 border border-border rounded-xl">
+                <div className="mb-2 font-mono font-bold text-accent text-4xl">
                   {formatPrice(product.priceUSD)} {currency}
                 </div>
-                <div className="text-xl text-foreground/70 font-mono">
+                <div className="font-mono text-foreground/70 text-xl">
                   ${product.priceUSD.toLocaleString()} USD
                 </div>
               </div>
 
               {/* Key Specs */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-card rounded-xl border border-border">
-                  <div className="flex items-center gap-2 text-accent mb-2">
+              <div className="gap-4 grid grid-cols-2">
+                <div className="bg-card p-4 border border-border rounded-xl">
+                  <div className="flex items-center gap-2 mb-2 text-accent">
                     <Zap className="w-5 h-5" />
                     <span className="font-semibold">Hashrate</span>
                   </div>
-                  <div className="text-2xl font-bold text-foreground font-mono">{product.hashrate}</div>
+                  <div className="font-mono font-bold text-foreground text-2xl">
+                    {product.hashrate}
+                  </div>
                 </div>
-                <div className="p-4 bg-card rounded-xl border border-border">
-                  <div className="flex items-center gap-2 text-accent mb-2">
+                <div className="bg-card p-4 border border-border rounded-xl">
+                  <div className="flex items-center gap-2 mb-2 text-accent">
                     <Cpu className="w-5 h-5" />
                     <span className="font-semibold">Power</span>
                   </div>
-                  <div className="text-2xl font-bold text-foreground font-mono">{product.power}</div>
+                  <div className="font-mono font-bold text-foreground text-2xl">
+                    {product.power}
+                  </div>
                 </div>
               </div>
 
               {/* Specifications */}
-              <div className="p-6 bg-card rounded-xl border border-border">
-                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+              <div className="bg-card p-6 border border-border rounded-xl">
+                <h3 className="flex items-center gap-2 mb-4 font-bold text-foreground text-xl">
                   <Shield className="w-5 h-5 text-accent" />
                   Specifications
                 </h3>
                 <ul className="space-y-3">
                   {product.specs.map((spec, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-foreground/80">
-                      <span className="text-accent mt-1">•</span>
+                    <li
+                      key={idx}
+                      className="flex items-start gap-3 text-foreground/80"
+                    >
+                      <span className="mt-1 text-accent">•</span>
                       <span>{spec}</span>
                     </li>
                   ))}
@@ -218,25 +238,31 @@ export default function ProductDetailPage() {
               <Button
                 onClick={handleAddToCart}
                 size="lg"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
+                className="bg-primary hover:bg-primary/90 py-6 w-full font-semibold text-primary-foreground text-lg"
               >
-                <ShoppingCart className="w-5 h-5 mr-2" />
+                <ShoppingCart className="mr-2 w-5 h-5" />
                 Add to Cart
               </Button>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="gap-4 grid grid-cols-3 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1 font-mono">24/7</div>
-                  <div className="text-xs text-foreground/60">Support</div>
+                  <div className="mb-1 font-mono font-bold text-accent text-2xl">
+                    24/7
+                  </div>
+                  <div className="text-foreground/60 text-xs">Support</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1 font-mono">2 Year</div>
-                  <div className="text-xs text-foreground/60">Warranty</div>
+                  <div className="mb-1 font-mono font-bold text-accent text-2xl">
+                    2 Year
+                  </div>
+                  <div className="text-foreground/60 text-xs">Warranty</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1 font-mono">Free</div>
-                  <div className="text-xs text-foreground/60">Shipping</div>
+                  <div className="mb-1 font-mono font-bold text-accent text-2xl">
+                    Free
+                  </div>
+                  <div className="text-foreground/60 text-xs">Shipping</div>
                 </div>
               </div>
             </div>
@@ -244,5 +270,5 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }

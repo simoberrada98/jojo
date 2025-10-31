@@ -1,5 +1,5 @@
 -- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
 
 -- User profiles table (extends Supabase auth.users)
 CREATE TABLE public.profiles (
@@ -14,7 +14,7 @@ CREATE TABLE public.profiles (
 
 -- Addresses table
 CREATE TABLE public.addresses (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   label TEXT NOT NULL, -- e.g., "Home", "Work", "Billing"
   full_name TEXT NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE public.addresses (
 
 -- Products table
 CREATE TABLE public.products (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   name TEXT NOT NULL,
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE public.products (
 
 -- Wishlist table
 CREATE TABLE public.wishlist (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -59,7 +59,7 @@ CREATE TABLE public.wishlist (
 
 -- Cart table
 CREATE TABLE public.cart (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 1,
@@ -70,7 +70,7 @@ CREATE TABLE public.cart (
 
 -- Orders table
 CREATE TABLE public.orders (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   order_number TEXT UNIQUE NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending', -- pending, processing, shipped, delivered, cancelled
@@ -93,7 +93,7 @@ CREATE TABLE public.orders (
 
 -- Order items table
 CREATE TABLE public.order_items (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE NOT NULL,
   product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
   product_name TEXT NOT NULL, -- Snapshot of product name
@@ -105,7 +105,7 @@ CREATE TABLE public.order_items (
 
 -- Payment methods table (for saved crypto addresses, etc.)
 CREATE TABLE public.payment_methods (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   type TEXT NOT NULL, -- crypto_wallet, card
   label TEXT NOT NULL,

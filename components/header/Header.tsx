@@ -26,10 +26,10 @@ export function Header({ cartCount = 0 }: HeaderProps) {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-md border-b border-border"
+      className="top-0 z-50 fixed bg-background/60 backdrop-blur-md border-border border-b w-full"
       role="banner"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
@@ -37,7 +37,7 @@ export function Header({ cartCount = 0 }: HeaderProps) {
             className="flex items-center gap-2"
             aria-label={`${APP_BRANDING.name} home`}
           >
-            <BrandLogo className="text-foreground p-6" decorative />
+            <BrandLogo className="p-6 text-foreground" decorative />
 
             <span className="sr-only">{APP_BRANDING.name}</span>
           </Link>

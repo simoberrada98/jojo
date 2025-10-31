@@ -11,20 +11,20 @@ export const PAYMENT_CONFIG = {
     businessId: env.HOODPAY_BUSINESS_ID || "",
     webhookSecret: env.HOODPAY_WEBHOOK_SECRET || "",
   },
-  
+
   // Payment timeouts
   timeouts: {
     sessionMs: 30 * 60 * 1000, // 30 minutes
     processingMs: 5 * 60 * 1000, // 5 minutes
   },
-  
+
   // Retry settings
   retry: {
     maxAttempts: 3,
     delayMs: 1000,
     backoffMultiplier: 2,
   },
-  
+
   // Supported payment methods
   methods: {
     hoodpay: "HOODPAY",

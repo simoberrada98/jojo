@@ -9,14 +9,16 @@ export const env = createEnv({
   server: {
     // Supabase
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-    
+
     // HoodPay
     HOODPAY_API_KEY: z.string().optional(),
     HOODPAY_BUSINESS_ID: z.string().optional(),
     HOODPAY_WEBHOOK_SECRET: z.string().optional(),
-    
+
     // Node Environment
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
   },
 
   /**
@@ -27,14 +29,20 @@ export const env = createEnv({
     // Supabase
     NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-    
+
     // App Configuration
     NEXT_PUBLIC_BASE_URL: z.string().url().default("https://jhuangnyc.com"),
     NEXT_PUBLIC_APP_NAME: z.string().default("Jhuangnyc"),
-    
+
     // Feature Flags
-    NEXT_PUBLIC_ENABLE_HOODPAY: z.string().transform(val => val === "true").default("false"),
-    NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: z.string().transform(val => val === "true").default("false"),
+    NEXT_PUBLIC_ENABLE_HOODPAY: z
+      .string()
+      .transform((val) => val === "true")
+      .default("false"),
+    NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: z
+      .string()
+      .transform((val) => val === "true")
+      .default("false"),
     // Verification
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional(),
   },
@@ -51,15 +59,17 @@ export const env = createEnv({
     HOODPAY_BUSINESS_ID: process.env.HOODPAY_BUSINESS_ID,
     HOODPAY_WEBHOOK_SECRET: process.env.HOODPAY_WEBHOOK_SECRET,
     NODE_ENV: process.env.NODE_ENV,
-    
+
     // Client
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENABLE_HOODPAY: process.env.NEXT_PUBLIC_ENABLE_HOODPAY,
-    NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: process.env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
-    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API:
+      process.env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
+    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 
   /**

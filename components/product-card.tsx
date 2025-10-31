@@ -1,35 +1,36 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ShoppingCart, Zap, Cpu, Star } from "lucide-react"
-import { toast } from "sonner"
-import ProductImage from "@/components/product-image"
-import { useCurrency } from "@/lib/contexts/currency-context"
-import { useCart } from "@/lib/contexts/cart-context"
-import type { DisplayProduct } from "@/lib/types/product"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Zap, Cpu, Star } from "lucide-react";
+import { toast } from "sonner";
+import ProductImage from "@/components/product-image";
+import { useCurrency } from "@/lib/contexts/currency-context";
+import { useCart } from "@/lib/contexts/cart-context";
+import type { DisplayProduct } from "@/lib/types/product";
 
 interface ProductCardProps {
-  product: DisplayProduct
+  product: DisplayProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isAdded, setIsAdded] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const { currency, formatPrice } = useCurrency()
-  const { addItem } = useCart()
-  
+  const [isAdded, setIsAdded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const { currency, formatPrice } = useCurrency();
+  const { addItem } = useCart();
+
   // Get hover image (second image if available)
-  const hoverImage = product.images && product.images.length > 1 ? product.images[1] : null
+  const hoverImage =
+    product.images && product.images.length > 1 ? product.images[1] : null;
 
   const handleAddToCart = () => {
-    addItem(product)
-    setIsAdded(true)
-    toast.success(`${product.name} added to cart!`)
-    setTimeout(() => setIsAdded(false), 2000)
-  }
+    addItem(product);
+    setIsAdded(true);
+    toast.success(`${product.name} added to cart!`);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
 
   return (
     <motion.div
@@ -40,24 +41,24 @@ export default function ProductCard({ product }: ProductCardProps) {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-lg border border-border transition-all duration-300 hover:border-accent hover:shadow-2xl hover:shadow-accent/20"
+      className="group relative hover:shadow-2xl hover:shadow-accent/20 border border-border hover:border-accent rounded-lg overflow-hidden transition-all duration-300"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-card/25 backdrop-blur-xl transition-all duration-500 group-hover:bg-card/35"
+        className="absolute inset-0 bg-card/25 group-hover:bg-card/35 backdrop-blur-xl transition-all duration-500 pointer-events-none"
       />
 
-      <Link href={`/product/${product.handle}`} className="relative z-10 block">
+      <Link href={`/product/${product.handle}`} className="block z-10 relative">
         {/* Image Container */}
         <div className="relative h-64 overflow-hidden">
           {/* Primary Image */}
           <div className="absolute inset-0 transition-opacity duration-500 ease-in-out">
             <ProductImage category={product.category} image={product.image} />
           </div>
-          
+
           {/* Secondary Image (shown on hover) */}
           {hoverImage && (
-            <div 
+            <div
               className="absolute inset-0 transition-opacity duration-500 ease-in-out"
               style={{ opacity: isHovered ? 1 : 0 }}
             >
@@ -66,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
 
           {/* Category Badge */}
-          <div className="absolute top-3 left-3 bg-accent/90 backdrop-blur-sm text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold z-10 transition-all duration-300 group-hover:bg-accent">
+          <div className="top-3 left-3 z-10 absolute bg-accent/90 group-hover:bg-accent backdrop-blur-sm px-3 py-1 rounded-full font-semibold text-xs transition-all duration-300 text-accent-foreground">
             {product.category}
           </div>
         </div>
@@ -74,21 +75,29 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Content */}
         <div className="p-6">
           {/* Title and Rating */}
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="text-xl font-bold text-foreground flex-1">{product.name}</h3>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="flex-1 font-bold text-foreground text-xl">
+              {product.name}
+            </h3>
             {product.rating && (
               <div className="flex items-center gap-1 ml-2">
-                <Star className="w-4 h-4 fill-accent text-accent" />
-                <span className="text-sm font-semibold text-accent">{product.rating}</span>
+                <Star className="fill-accent w-4 h-4 text-accent" />
+                <span className="font-semibold text-accent text-sm">
+                  {product.rating}
+                </span>
               </div>
             )}
           </div>
 
           {/* Reviews Count */}
-          {product.reviews && <p className="text-xs text-foreground/60 mb-4">({product.reviews} reviews)</p>}
+          {product.reviews && (
+            <p className="mb-4 text-foreground/60 text-xs">
+              ({product.reviews} reviews)
+            </p>
+          )}
 
           {/* Specs */}
-          <div className="flex gap-4 mb-4 text-sm text-foreground/70">
+          <div className="flex gap-4 mb-4 text-foreground/70 text-sm">
             <div className="flex items-center gap-1">
               <Zap className="w-4 h-4 text-accent" />
               <span className="font-mono">{product.hashrate}</span>
@@ -102,8 +111,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Features List */}
           <ul className="space-y-2 mb-6">
             {product.specs.slice(0, 2).map((spec, idx) => (
-              <li key={idx} className="text-sm text-foreground/60 flex items-start gap-2">
-                <span className="text-accent mt-1">•</span>
+              <li
+                key={idx}
+                className="flex items-start gap-2 text-foreground/60 text-sm"
+              >
+                <span className="mt-1 text-accent">•</span>
                 {spec}
               </li>
             ))}
@@ -112,20 +124,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Price and Action */}
-      <div className="relative z-10 p-6 pt-0">
+      <div className="z-10 relative p-6 pt-0">
         {/* Price */}
-        <div className="mb-6 pb-6 border-b border-border">
-          <div className="text-3xl font-bold text-accent mb-1 font-mono">
+        <div className="mb-6 pb-6 border-border border-b">
+          <div className="mb-1 font-mono font-bold text-accent text-3xl">
             {formatPrice(product.priceUSD)} {currency}
           </div>
-          <div className="text-sm text-foreground/60 font-mono">${product.priceUSD.toLocaleString()} USD</div>
+          <div className="font-mono text-foreground/60 text-sm">
+            ${product.priceUSD.toLocaleString()} USD
+          </div>
         </div>
 
         {/* Add to Cart Button */}
         <motion.div whileTap={{ scale: 0.95 }}>
           <Button
             onClick={handleAddToCart}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2 glow-accent-hover transition-all duration-300"
+            className="gap-2 bg-primary hover:bg-primary/90 w-full font-semibold text-primary-foreground transition-all duration-300 glow-accent-hover"
           >
             <ShoppingCart className="w-4 h-4" />
             {isAdded ? "Added to Cart!" : "Add to Cart"}
@@ -133,5 +147,5 @@ export default function ProductCard({ product }: ProductCardProps) {
         </motion.div>
       </div>
     </motion.div>
-  )
+  );
 }

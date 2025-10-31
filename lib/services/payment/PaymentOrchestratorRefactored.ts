@@ -42,9 +42,10 @@ export class PaymentOrchestratorRefactored {
     const storage = createPaymentStorage();
 
     // Initialize database service (optional)
-    const dbService = config.supabaseUrl && config.supabaseKey
-      ? createPaymentDbService(config.supabaseUrl, config.supabaseKey)
-      : undefined;
+    const dbService =
+      config.supabaseUrl && config.supabaseKey
+        ? createPaymentDbService(config.supabaseUrl, config.supabaseKey)
+        : undefined;
 
     // Initialize specialized services
     this.stateManager = new PaymentStateManager(storage);

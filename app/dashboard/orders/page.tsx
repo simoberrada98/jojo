@@ -1,59 +1,65 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/contexts/auth-context"
-import { createClient } from "@/lib/supabase/client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import type { Order } from "@/lib/types/database"
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { createClient } from "@/lib/supabase/client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { Order } from "@/lib/types/database";
 
 export default function OrdersPage() {
-  const { user } = useAuth()
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!user) return
+      if (!user) return;
 
       const { data, error } = await supabase
         .from("orders")
         .select("*")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false });
 
       if (!error && data) {
-        setOrders(data)
+        setOrders(data);
       }
-      setLoading(false)
-    }
+      setLoading(false);
+    };
 
-    fetchOrders()
-  }, [user])
+    fetchOrders();
+  }, [user]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "delivered":
-        return "bg-green-500"
+        return "bg-green-500";
       case "shipped":
-        return "bg-blue-500"
+        return "bg-blue-500";
       case "processing":
-        return "bg-yellow-500"
+        return "bg-yellow-500";
       case "cancelled":
-        return "bg-red-500"
+        return "bg-red-500";
       default:
-        return "bg-gray-500"
+        return "bg-gray-500";
     }
-  }
+  };
 
   if (loading) {
-    return <p>Loading orders...</p>
+    return <p>Loading orders...</p>;
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">My Orders</h1>
+      <h1 className="mb-8 font-bold text-3xl">My Orders</h1>
 
       {orders.length === 0 ? (
         <Card>
@@ -66,7 +72,7 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Card key={order.id}>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <div>
                     <CardTitle>Order {order.order_number}</CardTitle>
                     <CardDescription>
@@ -81,17 +87,17 @@ export default function OrdersPage() {
               <CardContent>
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-muted-foreground text-sm">Total</p>
+                    <p className="font-bold text-2xl">
                       ${order.total.toFixed(2)}
                     </p>
                   </div>
                   {order.crypto_currency && (
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Paid with {order.crypto_currency}
                       </p>
-                      <p className="text-sm font-mono">
+                      <p className="font-mono text-sm">
                         {order.crypto_amount} {order.crypto_currency}
                       </p>
                     </div>
@@ -103,5 +109,5 @@ export default function OrdersPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

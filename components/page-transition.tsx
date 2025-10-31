@@ -1,51 +1,51 @@
-"use client"
+"use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { usePathname } from "next/navigation"
-import { ReactNode, useEffect, useMemo, useState } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 
 interface PageTransitionProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function PageTransition({ children }: PageTransitionProps) {
-  const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
-  const prefersReducedMotion = useReducedMotion()
+  const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const [viewportWidth, setViewportWidth] = useState(() =>
-    typeof window === "undefined" ? 1024 : window.innerWidth,
-  )
+    typeof window === "undefined" ? 1024 : window.innerWidth
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setViewportWidth(window.innerWidth)
-    }
+      setViewportWidth(window.innerWidth);
+    };
 
-    handleResize()
-    window.addEventListener("resize", handleResize)
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  const isMobile = viewportWidth < 768
-  const lineCount = isMobile ? 8 : 16
-  const particleCount = isMobile ? 12 : 24
+  const isMobile = viewportWidth < 768;
+  const lineCount = isMobile ? 8 : 16;
+  const particleCount = isMobile ? 12 : 24;
 
   const pseudoRandom = (seed: number) => {
-    const x = Math.sin(seed) * 10_000
-    return x - Math.floor(x)
-  }
+    const x = Math.sin(seed) * 10_000;
+    return x - Math.floor(x);
+  };
 
   const horizontalLines = useMemo(
     () => Array.from({ length: 16 }, (_, i) => i),
-    [],
-  )
+    []
+  );
 
-  const verticalLines = horizontalLines
+  const verticalLines = horizontalLines;
 
   const particleData = useMemo(
     () =>
@@ -55,11 +55,11 @@ export default function PageTransition({ children }: PageTransitionProps) {
         top: `${pseudoRandom(i + 3) * 100}%`,
         delay: pseudoRandom(i + 5) * 0.25,
       })),
-    [],
-  )
+    []
+  );
 
-  const overlayDuration = isMobile ? 0.4 : 0.5
-  const gridLineDelay = isMobile ? 0.015 : 0.01
+  const overlayDuration = isMobile ? 0.4 : 0.5;
+  const gridLineDelay = isMobile ? 0.015 : 0.01;
 
   return (
     <AnimatePresence mode="wait">
@@ -76,7 +76,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
         {/* Animated overlay layers - kept lightweight for responsiveness */}
         {!prefersReducedMotion && (
           <motion.div
-            className="fixed inset-0 pointer-events-none z-50"
+            className="z-50 fixed inset-0 pointer-events-none"
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
             transition={{ duration: overlayDuration }}
@@ -99,7 +99,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               {horizontalLines.slice(0, lineCount).map((i) => (
                 <motion.div
                   key={`h-${i}`}
-                  className="absolute w-full h-px bg-linear-to-r from-transparent via-accent/30 to-transparent"
+                  className="absolute bg-linear-to-r from-transparent via-accent/30 to-transparent w-full h-px"
                   style={{ top: `${i * (100 / lineCount)}%` }}
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: [0, 1, 0] }}
@@ -113,7 +113,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               {verticalLines.slice(0, lineCount).map((i) => (
                 <motion.div
                   key={`v-${i}`}
-                  className="absolute h-full w-px bg-linear-to-b from-transparent via-accent/20 to-transparent"
+                  className="absolute bg-linear-to-b from-transparent via-accent/20 to-transparent w-px h-full"
                   style={{ left: `${i * (100 / lineCount)}%` }}
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: 1, opacity: [0, 1, 0] }}
@@ -132,7 +132,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
                 {particleData.slice(0, particleCount).map((particle) => (
                   <motion.div
                     key={`particle-${particle.id}`}
-                    className="absolute h-1 w-1 rounded-full bg-accent"
+                    className="absolute bg-accent rounded-full w-1 h-1"
                     style={{
                       left: particle.left,
                       top: particle.top,
@@ -160,7 +160,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               animate={{ scale: 1, rotate: 4 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern
                     id="hexagons"
@@ -185,7 +185,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
             {/* Scan line effect */}
             <motion.div
-              className="absolute inset-x-0 h-px bg-linear-to-r from-transparent via-accent to-transparent"
+              className="absolute inset-x-0 bg-linear-to-r from-transparent via-accent to-transparent h-px"
               initial={{ top: "0%", opacity: 1 }}
               animate={{ top: "100%", opacity: 0 }}
               transition={{ duration: overlayDuration, ease: "linear" }}
@@ -197,5 +197,5 @@ export default function PageTransition({ children }: PageTransitionProps) {
         {children}
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

@@ -1,5 +1,9 @@
 import { PRICING_CONFIG } from "@/lib/config/pricing.config";
-import { CONVERSION_RATES, getCurrencyDecimals, type Currency } from "@/lib/config/currency.config";
+import {
+  CONVERSION_RATES,
+  getCurrencyDecimals,
+  type Currency,
+} from "@/lib/config/currency.config";
 import type { CartItem, CartSummary } from "@/lib/types/cart";
 
 /**
@@ -20,11 +24,11 @@ export class PricingService {
   static formatPrice(usdPrice: number, currency: Currency): string {
     const converted = this.convertPrice(usdPrice, currency);
     const decimals = getCurrencyDecimals(currency);
-    
+
     if (currency === "USDC") {
       return `$${converted.toFixed(decimals)}`;
     }
-    
+
     return converted.toFixed(decimals);
   }
 
@@ -83,7 +87,7 @@ export class PricingService {
     currency: Currency
   ): CartSummary & { currency: Currency } {
     const summary = this.calculateCartSummary(items);
-    
+
     return {
       subtotal: this.convertPrice(summary.subtotal, currency),
       shipping: this.convertPrice(summary.shipping, currency),

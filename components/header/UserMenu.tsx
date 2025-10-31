@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { User, Settings, LogOut, Package, Heart } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { User, Settings, LogOut, Package, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +10,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Muted } from "@/components/ui/typography"
-import { useAuth } from "@/lib/contexts/auth-context"
-import { getInitials } from "@/lib/utils/string"
-import { USER_DASHBOARD_NAV } from "@/lib/constants/navigation"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Muted } from "@/components/ui/typography";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { getInitials } from "@/lib/utils/string";
+import { USER_DASHBOARD_NAV } from "@/lib/constants/navigation";
 
 interface UserMenuProps {
-  onAuthDialogOpen: () => void
+  onAuthDialogOpen: () => void;
 }
 
 const iconMap = {
@@ -26,10 +26,10 @@ const iconMap = {
   Package,
   Heart,
   Settings,
-}
+};
 
 export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut } = useAuth();
 
   if (!user) {
     return (
@@ -39,9 +39,9 @@ export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
         onClick={onAuthDialogOpen}
         className="rounded-full"
       >
-        <User className="h-5 w-5" />
+        <User className="w-5 h-5" />
       </Button>
-    )
+    );
   }
 
   return (
@@ -59,33 +59,35 @@ export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <Muted className="text-sm font-medium leading-none m-0 text-foreground">
+            <Muted className="m-0 font-medium text-foreground text-sm leading-none">
               {profile?.full_name || "My Account"}
             </Muted>
-            <Muted className="text-xs leading-none m-0">{user.email}</Muted>
+            <Muted className="m-0 text-xs leading-none">{user.email}</Muted>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {USER_DASHBOARD_NAV.map((item) => {
-          const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : User
+          const Icon = item.icon
+            ? iconMap[item.icon as keyof typeof iconMap]
+            : User;
           return (
             <DropdownMenuItem key={item.href} asChild>
               <Link href={item.href} className="cursor-pointer">
-                <Icon className="mr-2 h-4 w-4" />
+                <Icon className="mr-2 w-4 h-4" />
                 <span>{item.label}</span>
               </Link>
             </DropdownMenuItem>
-          )
+          );
         })}
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="cursor-pointer text-destructive focus:text-destructive"
+          className="text-destructive focus:text-destructive cursor-pointer"
           onClick={() => signOut()}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 w-4 h-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

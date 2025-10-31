@@ -1,11 +1,14 @@
-const CACHE_VERSION = "jhuangnyc-cache-v1"
-const ASSETS_TO_CACHE = ["/", "/manifest.webmanifest", "/favicon.ico"]
+const CACHE_VERSION = "jhuangnyc-cache-v1";
+const ASSETS_TO_CACHE = ["/", "/manifest.webmanifest", "/favicon.ico"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(ASSETS_TO_CACHE)).then(() => self.skipWaiting())
-  )
-})
+    caches
+      .open(CACHE_VERSION)
+      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+      .then(() => self.skipWaiting())
+  );
+});
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
@@ -19,18 +22,18 @@ self.addEventListener("activate", (event) => {
         )
       )
       .then(() => self.clients.claim())
-  )
-})
+  );
+});
 
 self.addEventListener("fetch", (event) => {
-  const { request } = event
+  const { request } = event;
 
   if (
     request.method !== "GET" ||
     !request.url.startsWith(self.location.origin) ||
     request.headers.get("range")
   ) {
-    return
+    return;
   }
 
   event.respondWith(
@@ -42,17 +45,16 @@ self.addEventListener("fetch", (event) => {
             networkResponse.status === 200 &&
             networkResponse.type === "basic"
           ) {
-            const responseClone = networkResponse.clone()
+            const responseClone = networkResponse.clone();
             caches.open(CACHE_VERSION).then((cache) => {
-              cache.put(request, responseClone)
-            })
+              cache.put(request, responseClone);
+            });
           }
-          return networkResponse
+          return networkResponse;
         })
-        .catch(() => cachedResponse)
+        .catch(() => cachedResponse);
 
-      return cachedResponse || fetchPromise
+      return cachedResponse || fetchPromise;
     })
-  )
-})
-
+  );
+});

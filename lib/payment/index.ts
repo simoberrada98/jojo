@@ -4,19 +4,19 @@
  */
 
 // Core types
-export * from './types';
+export * from "./types";
 
 // Storage management
-export * from './localStorage';
+export * from "./localStorage";
 
 // Web Payment API
-export * from './webPaymentApi';
+export * from "./webPaymentApi";
 
 // Supabase service
-export * from './supabaseService';
+export * from "./supabaseService";
 
 // Main orchestrator
-export * from './paymentOrchestrator';
+export * from "./paymentOrchestrator";
 
 // Re-export HoodPay module functions
 export {
@@ -32,4 +32,4 @@ export {
   webhooksApiHandler,
   webhookReceiverHandler,
   verifyWebhookSignature,
-} from '../hoodpayModule';
+} from "../hoodpayModule";

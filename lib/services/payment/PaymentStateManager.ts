@@ -18,10 +18,7 @@ export class PaymentStateManager {
   /**
    * Initialize a new payment session
    */
-  initializeSession(
-    paymentIntent: PaymentIntent,
-    checkoutData?: CheckoutData
-  ) {
+  initializeSession(paymentIntent: PaymentIntent, checkoutData?: CheckoutData) {
     return this.storage.initializeSession(paymentIntent, checkoutData);
   }
 

@@ -3,7 +3,7 @@
  * Handles all database operations for payments with retry logic and error handling
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import {
   PaymentRecord,
   WebhookEvent,
@@ -14,7 +14,7 @@ import {
   ServiceResponse,
   PaginatedResponse,
   CheckoutData,
-} from './types';
+} from "./types";
 
 /**
  * PaymentSupabaseService - Manages payment data in Supabase
@@ -58,14 +58,14 @@ export class PaymentSupabaseService {
    * Create a new payment record
    */
   async createPayment(
-    payment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'>
+    payment: Omit<PaymentRecord, "id" | "created_at" | "updated_at">
   ): Promise<ServiceResponse<PaymentRecord>> {
     const startTime = Date.now();
 
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payments')
+          .from("payments")
           .insert({
             ...payment,
             created_at: new Date().toISOString(),
@@ -89,8 +89,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_CREATE_ERROR',
-          message: error.message || 'Failed to create payment record',
+          code: "DB_CREATE_ERROR",
+          message: error.message || "Failed to create payment record",
           details: error,
           retryable: true,
         },
@@ -114,12 +114,12 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payments')
+          .from("payments")
           .update({
             ...updates,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', paymentId)
+          .eq("id", paymentId)
           .select()
           .single();
       });
@@ -138,8 +138,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_UPDATE_ERROR',
-          message: error.message || 'Failed to update payment record',
+          code: "DB_UPDATE_ERROR",
+          message: error.message || "Failed to update payment record",
           details: error,
           retryable: true,
         },
@@ -160,9 +160,9 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payments')
-          .select('*')
-          .eq('id', paymentId)
+          .from("payments")
+          .select("*")
+          .eq("id", paymentId)
           .single();
       });
 
@@ -180,8 +180,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_READ_ERROR',
-          message: error.message || 'Failed to fetch payment record',
+          code: "DB_READ_ERROR",
+          message: error.message || "Failed to fetch payment record",
           details: error,
           retryable: true,
         },
@@ -204,9 +204,9 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payments')
-          .select('*')
-          .eq('hp_payment_id', hpPaymentId)
+          .from("payments")
+          .select("*")
+          .eq("hp_payment_id", hpPaymentId)
           .single();
       });
 
@@ -224,8 +224,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_READ_ERROR',
-          message: error.message || 'Failed to fetch payment by HoodPay ID',
+          code: "DB_READ_ERROR",
+          message: error.message || "Failed to fetch payment by HoodPay ID",
           details: error,
           retryable: true,
         },
@@ -254,29 +254,29 @@ export class PaymentSupabaseService {
     const startTime = Date.now();
 
     try {
-      let query = this.client.from('payments').select('*', { count: 'exact' });
+      let query = this.client.from("payments").select("*", { count: "exact" });
 
       // Apply filters
       if (filters.businessId) {
-        query = query.eq('business_id', filters.businessId);
+        query = query.eq("business_id", filters.businessId);
       }
       if (filters.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
       if (filters.method) {
-        query = query.eq('method', filters.method);
+        query = query.eq("method", filters.method);
       }
       if (filters.startDate) {
-        query = query.gte('created_at', filters.startDate);
+        query = query.gte("created_at", filters.startDate);
       }
       if (filters.endDate) {
-        query = query.lte('created_at', filters.endDate);
+        query = query.lte("created_at", filters.endDate);
       }
 
       // Apply pagination
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
-      query = query.range(from, to).order('created_at', { ascending: false });
+      query = query.range(from, to).order("created_at", { ascending: false });
 
       const { data, error, count } = await this.withRetry(async () => {
         return await query;
@@ -306,8 +306,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_QUERY_ERROR',
-          message: error.message || 'Failed to fetch payments',
+          code: "DB_QUERY_ERROR",
+          message: error.message || "Failed to fetch payments",
           details: error,
           retryable: true,
         },
@@ -323,14 +323,14 @@ export class PaymentSupabaseService {
    * Record webhook event
    */
   async createWebhookEvent(
-    event: Omit<WebhookEvent, 'id' | 'received_at'>
+    event: Omit<WebhookEvent, "id" | "received_at">
   ): Promise<ServiceResponse<WebhookEvent>> {
     const startTime = Date.now();
 
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('webhook_events')
+          .from("webhook_events")
           .insert({
             ...event,
             received_at: new Date().toISOString(),
@@ -353,8 +353,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_CREATE_ERROR',
-          message: error.message || 'Failed to create webhook event',
+          code: "DB_CREATE_ERROR",
+          message: error.message || "Failed to create webhook event",
           details: error,
           retryable: true,
         },
@@ -378,9 +378,9 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('webhook_events')
+          .from("webhook_events")
           .update(updates)
-          .eq('id', eventId)
+          .eq("id", eventId)
           .select()
           .single();
       });
@@ -399,8 +399,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_UPDATE_ERROR',
-          message: error.message || 'Failed to update webhook event',
+          code: "DB_UPDATE_ERROR",
+          message: error.message || "Failed to update webhook event",
           details: error,
           retryable: true,
         },
@@ -416,14 +416,14 @@ export class PaymentSupabaseService {
    * Record payment attempt
    */
   async createPaymentAttempt(
-    attempt: Omit<PaymentAttempt, 'id' | 'created_at'>
+    attempt: Omit<PaymentAttempt, "id" | "created_at">
   ): Promise<ServiceResponse<PaymentAttempt>> {
     const startTime = Date.now();
 
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payment_attempts')
+          .from("payment_attempts")
           .insert({
             ...attempt,
             created_at: new Date().toISOString(),
@@ -446,8 +446,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_CREATE_ERROR',
-          message: error.message || 'Failed to create payment attempt',
+          code: "DB_CREATE_ERROR",
+          message: error.message || "Failed to create payment attempt",
           details: error,
           retryable: true,
         },
@@ -470,10 +470,10 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payment_attempts')
-          .select('*')
-          .eq('payment_id', paymentId)
-          .order('attempt_number', { ascending: true });
+          .from("payment_attempts")
+          .select("*")
+          .eq("payment_id", paymentId)
+          .order("attempt_number", { ascending: true });
       });
 
       if (error) throw error;
@@ -490,8 +490,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_QUERY_ERROR',
-          message: error.message || 'Failed to fetch payment attempts',
+          code: "DB_QUERY_ERROR",
+          message: error.message || "Failed to fetch payment attempts",
           details: error,
           retryable: true,
         },
@@ -540,7 +540,7 @@ export class PaymentSupabaseService {
     try {
       const { data, error } = await this.withRetry(async () => {
         return await this.client
-          .from('payments')
+          .from("payments")
           .upsert(
             {
               hp_payment_id: hpPaymentId,
@@ -548,7 +548,7 @@ export class PaymentSupabaseService {
               updated_at: new Date().toISOString(),
             },
             {
-              onConflict: 'hp_payment_id',
+              onConflict: "hp_payment_id",
             }
           )
           .select()
@@ -569,8 +569,8 @@ export class PaymentSupabaseService {
       return {
         success: false,
         error: {
-          code: 'DB_UPSERT_ERROR',
-          message: error.message || 'Failed to upsert payment',
+          code: "DB_UPSERT_ERROR",
+          message: error.message || "Failed to upsert payment",
           details: error,
           retryable: true,
         },
@@ -601,7 +601,7 @@ export function createPaymentService(
   const key = supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    throw new Error('Supabase credentials are required');
+    throw new Error("Supabase credentials are required");
   }
 
   return new PaymentSupabaseService(url, key);

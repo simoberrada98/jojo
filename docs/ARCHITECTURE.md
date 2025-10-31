@@ -1,12 +1,13 @@
 # Project Architecture
 
 ## Overview
+
 This document outlines the refactored architecture following SOLID, DRY, and KISS principles.
 
 ## Directory Structure
 
 ```
-mintyos/
+jhuangnyc/
 ├── lib/
 │   ├── config/                    # Centralized configuration
 │   │   ├── app.config.ts          # App-wide settings
@@ -66,6 +67,7 @@ mintyos/
 ## Layer Architecture
 
 ### 1. Configuration Layer
+
 **Purpose**: Single source of truth for all configuration
 
 ```
@@ -77,6 +79,7 @@ Used by services and components
 ```
 
 **Files**:
+
 - `lib/env.ts` - Environment variable validation
 - `lib/config/app.config.ts` - General app settings
 - `lib/config/currency.config.ts` - Currency configuration
@@ -84,6 +87,7 @@ Used by services and components
 - `lib/config/pricing.config.ts` - Pricing rules
 
 **Principles**:
+
 - ✅ DRY - One place for each config value
 - ✅ Type-safe via Zod schemas
 - ✅ Validated at build time
@@ -91,6 +95,7 @@ Used by services and components
 ---
 
 ### 2. Service Layer
+
 **Purpose**: Business logic and data operations
 
 ```
@@ -104,13 +109,15 @@ Components (UI)
 **Services**:
 
 #### `PricingService` (Static Methods)
+
 ```typescript
-PricingService.convertPrice(usdPrice, currency)
-PricingService.formatPrice(usdPrice, currency)
-PricingService.calculateCartSummary(items)
+PricingService.convertPrice(usdPrice, currency);
+PricingService.formatPrice(usdPrice, currency);
+PricingService.calculateCartSummary(items);
 ```
 
 #### `PaymentDatabaseService` (Class)
+
 ```typescript
 const dbService = new PaymentDatabaseService(url, key);
 await dbService.createPayment(paymentData);
@@ -119,6 +126,7 @@ await dbService.updatePaymentStatus(id, status);
 ```
 
 #### `PaymentStorageService` (Class with DI)
+
 ```typescript
 const storage = createPaymentStorage(storageAdapter);
 storage.initializeSession(paymentIntent, checkoutData);
@@ -127,12 +135,14 @@ storage.markCompleted(transactionId);
 ```
 
 #### Payment Strategies (Strategy Pattern)
+
 ```typescript
 const strategy = paymentStrategyRegistry.getStrategy(method);
 const result = await strategy.process(state, paymentData);
 ```
 
 **Principles**:
+
 - ✅ SRP - Each service has one responsibility
 - ✅ DIP - Depends on interfaces, not concrete implementations
 - ✅ OCP - Easy to extend (e.g., add payment strategies)
@@ -140,6 +150,7 @@ const result = await strategy.process(state, paymentData);
 ---
 
 ### 3. Data Access Layer
+
 **Purpose**: Database operations with retry logic
 
 ```
@@ -153,6 +164,7 @@ Supabase client
 ```
 
 **Flow**:
+
 1. Service method calls `dbOperation()`
 2. `dbOperation()` wraps Supabase query
 3. Automatic retry with exponential backoff
@@ -160,6 +172,7 @@ Supabase client
 5. Returns `ServiceResponse<T>`
 
 **Benefits**:
+
 - ✅ DRY - No repetitive try-catch blocks
 - ✅ Consistent error handling
 - ✅ Centralized retry logic
@@ -168,21 +181,25 @@ Supabase client
 ---
 
 ### 4. React Context Layer
+
 **Purpose**: State management for React components
 
 **Contexts**:
 
 #### `AuthContext`
+
 ```typescript
 const { user, profile, signOut } = useAuth();
 ```
 
 #### `CartContext`
+
 ```typescript
 const { items, addItem, removeItem, itemCount, total } = useCart();
 ```
 
 #### `CurrencyContext`
+
 ```typescript
 const { currency, setCurrency, formatPrice } = useCurrency();
 ```
@@ -202,6 +219,7 @@ const total = PricingService.calculateSubtotal(items);
 ```
 
 **Principles**:
+
 - ✅ SRP - Contexts only manage React state
 - ✅ DRY - Business logic in services, not contexts
 - ✅ Testable - Services can be tested independently
@@ -211,11 +229,13 @@ const total = PricingService.calculateSubtotal(items);
 ## Design Patterns Used
 
 ### 1. Strategy Pattern
+
 **Location**: `lib/services/payment-strategies/`
 
 **Problem**: Switch statement for payment methods was hard to extend
 
 **Solution**:
+
 ```typescript
 interface PaymentStrategy {
   process(state, data): Promise<PaymentResult>;
@@ -232,6 +252,7 @@ registry.register(PaymentMethod.STRIPE, new StripeStrategy());
 ```
 
 **Benefits**:
+
 - Open/Closed Principle
 - Easy to test each strategy
 - No code changes needed to add new methods
@@ -239,6 +260,7 @@ registry.register(PaymentMethod.STRIPE, new StripeStrategy());
 ---
 
 ### 2. Factory Pattern
+
 **Location**: Multiple places
 
 ```typescript
@@ -254,6 +276,7 @@ export function createPaymentStrategyRegistry() { ... }
 ```
 
 **Benefits**:
+
 - Dependency injection
 - Easier testing (inject mocks)
 - Consistent instantiation
@@ -261,6 +284,7 @@ export function createPaymentStrategyRegistry() { ... }
 ---
 
 ### 3. Adapter Pattern
+
 **Location**: `PaymentStorageService`
 
 ```typescript
@@ -281,6 +305,7 @@ class MockStorageAdapter implements StorageAdapter {
 ```
 
 **Benefits**:
+
 - Testable storage operations
 - Can swap implementations
 - Abstracts storage mechanism
@@ -288,14 +313,17 @@ class MockStorageAdapter implements StorageAdapter {
 ---
 
 ### 4. Service Layer Pattern
+
 **Location**: `lib/services/`
 
 Business logic extracted into services:
+
 - `PricingService` - All pricing calculations
 - `PaymentDatabaseService` - Payment persistence
 - `PaymentStorageService` - Session state
 
 Components and contexts use services:
+
 ```typescript
 // Component
 const total = PricingService.calculateCartTotal(items, currency);
@@ -305,6 +333,7 @@ const itemCount = PricingService.calculateItemCount(items);
 ```
 
 **Benefits**:
+
 - Reusable business logic
 - Testable without React
 - Consistent behavior
@@ -355,18 +384,20 @@ const itemCount = PricingService.calculateItemCount(items);
 ### Unit Tests
 
 #### Services (Easy to test)
+
 ```typescript
-describe('PricingService', () => {
-  it('converts USD to BTC', () => {
-    const result = PricingService.convertPrice(1000, 'BTC');
+describe("PricingService", () => {
+  it("converts USD to BTC", () => {
+    const result = PricingService.convertPrice(1000, "BTC");
     expect(result).toBeCloseTo(0.029);
   });
 });
 ```
 
 #### Storage with Mock
+
 ```typescript
-describe('PaymentStorageService', () => {
+describe("PaymentStorageService", () => {
   const mockStorage = {
     getItem: jest.fn(),
     setItem: jest.fn(),
@@ -375,8 +406,8 @@ describe('PaymentStorageService', () => {
   };
 
   const storage = createPaymentStorage(mockStorage);
-  
-  it('saves payment state', () => {
+
+  it("saves payment state", () => {
     storage.saveState(testState);
     expect(mockStorage.setItem).toHaveBeenCalled();
   });
@@ -384,11 +415,12 @@ describe('PaymentStorageService', () => {
 ```
 
 #### Strategies
+
 ```typescript
-describe('HoodPayStrategy', () => {
-  const strategy = new HoodPayStrategy('test-key', 'test-id');
-  
-  it('processes payment', async () => {
+describe("HoodPayStrategy", () => {
+  const strategy = new HoodPayStrategy("test-key", "test-id");
+
+  it("processes payment", async () => {
     const result = await strategy.process(mockState, mockData);
     expect(result.success).toBe(true);
   });
@@ -396,6 +428,7 @@ describe('HoodPayStrategy', () => {
 ```
 
 ### Integration Tests
+
 - Test contexts with services
 - Test payment flow end-to-end
 - Test database operations with test DB
@@ -407,30 +440,36 @@ describe('HoodPayStrategy', () => {
 ### SOLID
 
 ✅ **Single Responsibility Principle**
+
 - Each service has one clear purpose
 - Contexts only manage React state
 - Components only handle UI
 
 ✅ **Open/Closed Principle**
+
 - Easy to add new payment strategies
 - Easy to add new storage adapters
 - Configuration extensible
 
 ✅ **Liskov Substitution Principle**
+
 - Any `PaymentStrategy` can be used interchangeably
 - Any `StorageAdapter` can be swapped
 
 ✅ **Interface Segregation Principle**
+
 - Services expose only needed methods
 - Interfaces are focused and minimal
 
 ✅ **Dependency Inversion Principle**
+
 - Services depend on interfaces (StorageAdapter)
 - High-level modules don't depend on low-level details
 
 ### DRY
 
 ✅ **No Code Duplication**
+
 - Pricing logic: `PricingService`
 - String utilities: `lib/utils/string.ts`
 - Navigation: `lib/constants/navigation.ts`
@@ -439,6 +478,7 @@ describe('HoodPayStrategy', () => {
 ### KISS
 
 ✅ **Keep It Simple**
+
 - Small, focused services
 - Clear naming conventions
 - Minimal abstractions
@@ -449,17 +489,20 @@ describe('HoodPayStrategy', () => {
 ## Migration Path
 
 1. ✅ **Phase 1: Infrastructure** (Completed)
+
    - Environment validation
    - Configuration centralization
    - Shared utilities
 
 2. ✅ **Phase 2: Services** (Completed)
+
    - Pricing service
    - Database service
    - Storage service
    - Payment strategies
 
 3. 🔄 **Phase 3: Components** (In Progress)
+
    - Refactor Header component
    - Simplify Product Catalog
    - Extract hooks
@@ -476,15 +519,21 @@ describe('HoodPayStrategy', () => {
 ### Adding New Payment Method
 
 1. Create strategy class:
+
 ```typescript
 // lib/services/payment-strategies/new-method.strategy.ts
 export class NewMethodStrategy extends BasePaymentStrategy {
-  getName() { return "New Method"; }
-  async process(state, data) { /* implementation */ }
+  getName() {
+    return "New Method";
+  }
+  async process(state, data) {
+    /* implementation */
+  }
 }
 ```
 
 2. Register strategy:
+
 ```typescript
 // lib/services/payment-strategies/strategy-registry.ts
 private registerDefaults() {
@@ -497,6 +546,7 @@ private registerDefaults() {
 ### Adding New Configuration
 
 1. Add to appropriate config file:
+
 ```typescript
 // lib/config/app.config.ts
 export const APP_CONFIG = {
@@ -509,6 +559,7 @@ export const APP_CONFIG = {
 ```
 
 2. Use throughout app:
+
 ```typescript
 import { APP_CONFIG } from '@/lib/config/app.config';
 if (APP_CONFIG.newFeature.enabled) { ... }
@@ -527,8 +578,10 @@ if (APP_CONFIG.newFeature.enabled) { ... }
  */
 export class MyService {
   constructor(private dependency: SomeDependency) {}
-  
-  doSomething() { /* ... */ }
+
+  doSomething() {
+    /* ... */
+  }
 }
 
 export function createMyService(dep?: SomeDependency) {
@@ -541,6 +594,7 @@ export function createMyService(dep?: SomeDependency) {
 ## Questions?
 
 For more details:
+
 - See `docs/REFACTORING_SUMMARY.md` for migration guide
 - Check individual service files for JSDoc comments
 - Review test files for usage examples

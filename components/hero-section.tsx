@@ -236,10 +236,10 @@ export default function HeroSection() {
   );
 
   return (
-    <section className="relative h-screen w-full overflow-hidden pt-16">
+    <section className="relative pt-16 w-full h-screen overflow-hidden">
       <video
         ref={backgroundVideoRef}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         src="/assets/videos/rigs_loop.mp4"
         autoPlay
         loop
@@ -271,9 +271,9 @@ export default function HeroSection() {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute inset-0 mix-blend-screen opacity-60 transition-transform duration-300 ease-out"
+          className="absolute inset-0 opacity-60 transition-transform duration-300 ease-out mix-blend-screen"
           style={{
             background: `radial-gradient(circle at ${50 + parallax.x * 25}% ${
               50 + parallax.y * 25
@@ -285,7 +285,7 @@ export default function HeroSection() {
 
       <div className="absolute inset-0 overflow-hidden">
         <div
-          className="absolute h-96 w-96 rounded-full bg-primary/10 blur-3xl"
+          className="absolute bg-primary/10 blur-3xl rounded-full w-96 h-96"
           style={{
             top: "10%",
             left: "10%",
@@ -296,7 +296,7 @@ export default function HeroSection() {
           }}
         />
         <div
-          className="absolute h-96 w-96 rounded-full bg-accent/10 blur-3xl"
+          className="absolute bg-accent/10 blur-3xl rounded-full w-96 h-96"
           style={{
             bottom: "10%",
             right: "10%",
@@ -308,15 +308,15 @@ export default function HeroSection() {
         />
       </div>
 
-      <div className="relative flex h-full flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="relative flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 h-full">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="animated-border mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 backdrop-blur-sm"
+            className="inline-block bg-primary/10 backdrop-blur-sm mb-6 px-4 py-2 animated-border rounded-full"
           >
-            <span className="relative z-10 flex items-center gap-2 text-sm font-semibold text-accent">
+            <span className="z-10 relative flex items-center gap-2 font-semibold text-accent text-sm">
               <motion.div
                 animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
                 transition={{
@@ -326,7 +326,7 @@ export default function HeroSection() {
                 }}
                 className="inline-flex"
               >
-                <Zap className="h-4 w-4" />
+                <Zap className="w-4 h-4" />
               </motion.div>
               Next Generation Mining Hardware
             </span>
@@ -336,7 +336,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="font-tech text-4xl font-bold leading-tight text-balance sm:text-5xl lg:text-7xl"
+            className="font-tech font-bold text-4xl sm:text-5xl lg:text-7xl text-balance leading-tight"
           >
             {headingLines.map((line, idx) => {
               const isGradient = idx === 1;
@@ -345,7 +345,7 @@ export default function HeroSection() {
               return (
                 <div
                   key={line}
-                  className="flex items-center justify-center gap-2 leading-tight"
+                  className="flex justify-center items-center gap-2 leading-tight"
                 >
                   <span
                     className={
@@ -357,7 +357,7 @@ export default function HeroSection() {
                     {typedLines[idx]}
                   </span>
                   {isActive ? (
-                    <span className="inline-block h-8 w-2.5 animate-pulse bg-accent sm:h-10" />
+                    <span className="inline-block bg-accent w-2.5 h-8 sm:h-10 animate-pulse" />
                   ) : null}
                 </div>
               );
@@ -368,7 +368,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.6 }}
-            className="mx-auto mb-8 max-w-2xl text-balance text-lg leading-relaxed text-foreground/70 sm:text-xl"
+            className="mx-auto mb-8 max-w-2xl text-foreground/70 text-lg sm:text-xl text-balance leading-relaxed"
           >
             Professional-grade mining hardware with cutting-edge technology. Pay
             with crypto, mine with confidence.
@@ -378,7 +378,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8 }}
-            className="mb-12 flex flex-col justify-center gap-4 sm:flex-row"
+            className="flex sm:flex-row flex-col justify-center gap-4 mb-12"
           >
             <Link href="#products" className="block">
               <motion.div
@@ -387,7 +387,7 @@ export default function HeroSection() {
               >
                 <Button
                   size="lg"
-                  className="animated-border-hover group relative overflow-hidden rounded-full border border-white/20 bg-primary/80 px-8 text-primary-foreground backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl focus-visible:border-transparent"
+                  className="group relative bg-primary/80 hover:shadow-xl backdrop-blur-sm px-8 border animated-border-hover border-white/20 hover:border-transparent focus-visible:border-transparent rounded-full overflow-hidden text-primary-foreground transition-all hover:-translate-y-0.5 duration-300"
                   style={
                     {
                       "--animated-border-fill":
@@ -395,7 +395,7 @@ export default function HeroSection() {
                     } as CSSProperties
                   }
                 >
-                  <span className="pointer-events-none absolute inset-0 bg-linear-to-r from-accent/0 via-accent/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <span className="absolute inset-0 bg-linear-to-r from-accent/0 via-accent/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   <span className="relative font-semibold uppercase tracking-wide">
                     Shop Now
                   </span>
@@ -406,7 +406,7 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full border border-white/20 px-8 text-accent transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-accent/10 hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="hover:bg-accent/10 px-8 border border-white/20 hover:border-accent/40 rounded-full focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-accent hover:text-primary-foreground transition-all hover:-translate-y-0.5 duration-300"
               >
                 <span className="font-semibold uppercase tracking-wide">
                   Learn More
@@ -427,12 +427,11 @@ export default function HeroSection() {
               },
             }}
             ref={statsRef}
-            className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-8"
+            className="gap-4 sm:gap-8 grid grid-cols-1 sm:grid-cols-3 mt-12"
           >
             {stats.map((stat, idx) => {
               const Icon = stat.icon;
               const value = formattedStats[idx];
-              
 
               return (
                 <motion.div
@@ -446,19 +445,17 @@ export default function HeroSection() {
                     },
                   }}
                   whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-md transition-all duration-300 hover:border-accent/50 hover:bg-white/10 hover:shadow-[0_0_35px_rgba(102,204,255,0.2)]"
+                  className="group bg-white/5 hover:bg-white/10 hover:shadow-[0_0_35px_rgba(102,204,255,0.2)] backdrop-blur-md px-6 py-5 border border-white/10 hover:border-accent/50 rounded-2xl overflow-hidden transition-all duration-300"
                 >
-                  <div className="mb-3 flex justify-center">
-                    <div className="rounded-xl bg-primary/10 p-3 transition-colors duration-300 group-hover:bg-primary/20 ">
-                    
-                        <Icon className="h-10 w-10 text-accent" />
-                    
+                  <div className="flex justify-center mb-3">
+                    <div className="bg-primary/10 group-hover:bg-primary/20 p-3 rounded-xl transition-colors duration-300">
+                      <Icon className="w-10 h-10 text-accent" />
                     </div>
                   </div>
-                  <div className="font-tech text-2xl font-bold text-accent sm:text-3xl">
+                  <div className="font-tech font-bold text-accent text-2xl sm:text-3xl">
                     {value}
                   </div>
-                  <div className="text-sm text-foreground/60">{stat.label}</div>
+                  <div className="text-foreground/60 text-sm">{stat.label}</div>
                 </motion.div>
               );
             })}
@@ -466,12 +463,12 @@ export default function HeroSection() {
         </div>
 
         <div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
+          className="bottom-8 left-1/2 absolute -translate-x-1/2 animate-bounce"
           style={{
             opacity: 1 - scrollY / 300,
           }}
         >
-          <ChevronDown className="h-6 w-6 text-accent" />
+          <ChevronDown className="w-6 h-6 text-accent" />
         </div>
       </div>
     </section>

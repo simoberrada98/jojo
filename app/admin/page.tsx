@@ -1,38 +1,48 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import AdminSidebar from "@/components/admin-sidebar"
-import DashboardOverview from "@/components/dashboard-overview"
-import OrdersManagement from "@/components/orders-management"
-import ProductsManagement from "@/components/products-management"
-import AnalyticsSection from "@/components/analytics-section"
-import { Menu, X } from "lucide-react"
+import { useState } from "react";
+import AdminSidebar from "@/components/admin-sidebar";
+import DashboardOverview from "@/components/dashboard-overview";
+import OrdersManagement from "@/components/orders-management";
+import ProductsManagement from "@/components/products-management";
+import AnalyticsSection from "@/components/analytics-section";
+import { Menu, X } from "lucide-react";
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("overview")
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [activeTab, setActiveTab] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex bg-background h-screen">
       {/* Sidebar */}
-      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} isOpen={sidebarOpen} />
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isOpen={sidebarOpen}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
+        <header className="flex justify-between items-center bg-card px-6 py-4 border-border border-b">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-background transition"
+              className="hover:bg-background p-2 rounded-lg transition"
             >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {sidebarOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
-            <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+            <h1 className="font-bold text-foreground text-2xl">
+              Admin Dashboard
+            </h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-sm font-semibold text-accent">AD</span>
+            <div className="flex justify-center items-center bg-primary/20 rounded-full w-10 h-10">
+              <span className="font-semibold text-accent text-sm">AD</span>
             </div>
           </div>
         </header>
@@ -48,5 +58,5 @@ export default function AdminPage() {
         </main>
       </div>
     </div>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
 /**
  * Lightweight brand logo component providing the inline SVG across the app.
  */
 
-import type { SVGProps } from "react"
+import type { SVGProps } from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface BrandLogoProps extends SVGProps<SVGSVGElement> {
-  description?: string
-  decorative?: boolean
-  title?: string
+  description?: string;
+  decorative?: boolean;
+  title?: string;
 }
 
 export function BrandLogo({
@@ -24,7 +24,7 @@ export function BrandLogo({
   return (
     <svg
       viewBox="0 0 2048 648"
-      className={cn("h-auto w-48 text-foreground", className)}
+      className={cn("w-48 h-auto text-foreground", className)}
       role={decorative ? undefined : "img"}
       aria-hidden={decorative ? true : undefined}
       focusable="false"
@@ -48,9 +48,8 @@ export function BrandLogo({
         transform="matrix(3.20652 0 0 3.16978 -4446.43 -3664.114)"
         fill="currentColor"
         className="uppercase"
-        
       >
-        <tspan x={1773.98} y={1258.412} fontWeight={700} >
+        <tspan x={1773.98} y={1258.412} fontWeight={700}>
           Jhuangnyc
         </tspan>
       </text>
@@ -69,5 +68,5 @@ export function BrandLogo({
         </tspan>
       </text>
     </svg>
-  )
+  );
 }

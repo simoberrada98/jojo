@@ -1,6 +1,6 @@
-# MintyOS Deployment Guide
+# Jhuangnyc Deployment Guide
 
-This guide covers deploying MintyOS to production (Vercel + Supabase).
+This guide covers deploying Jhuangnyc to production (Vercel + Supabase).
 
 ## 📋 Pre-Deployment Checklist
 
@@ -49,17 +49,19 @@ pnpm studio
 ### Production Supabase
 
 1. **Create Project**
+
    - Go to https://supabase.com/dashboard
    - Click "New Project"
-   - Name it (e.g., "mintyos-prod")
+   - Name it (e.g., "jhuangnyc-prod")
    - Choose region
    - Set strong database password
 
 2. **Apply Migrations**
+
    ```bash
    # Link to production project
    supabase link --project-ref <your-project-ref>
-   
+
    # Push migrations
    pnpm db:push
    ```
@@ -112,6 +114,7 @@ pnpm db:seed
 ### Option 2: Using CSV Import
 
 1. Generate CSV files:
+
    ```bash
    pnpm json-to-csv
    ```
@@ -132,16 +135,19 @@ See `lib/data/csv/README.md` for SQL import commands.
 ### Initial Setup
 
 1. **Install Vercel CLI**
+
    ```bash
    pnpm add -g vercel
    ```
 
 2. **Login**
+
    ```bash
    vercel login
    ```
 
 3. **Link Project**
+
    ```bash
    vercel link
    ```
@@ -157,16 +163,19 @@ See `lib/data/csv/README.md` for SQL import commands.
 ### Deploy
 
 #### Staging/Preview
+
 ```bash
 vercel
 ```
 
 #### Production
+
 ```bash
 vercel --prod
 ```
 
 Or use the automated script:
+
 ```bash
 pnpm deploy:production
 ```
@@ -185,16 +194,19 @@ For automatic deployments:
 ## 📊 Post-Deployment Verification
 
 1. **Check Build**
+
    ```bash
    pnpm build
    ```
 
 2. **Verify Database Connection**
+
    - Visit your deployed URL
    - Check if products load
    - Test authentication
 
 3. **Check Logs**
+
    ```bash
    vercel logs <deployment-url>
    ```
@@ -212,6 +224,7 @@ For automatic deployments:
 ### Build Fails
 
 **Problem:** TypeScript errors
+
 ```bash
 # Check errors locally
 pnpm type-check
@@ -222,6 +235,7 @@ pnpm type-check
 ```
 
 **Solution:**
+
 ```bash
 # Install missing UI components
 npx shadcn@latest add input label card badge
@@ -232,11 +246,13 @@ npx shadcn@latest add input label card badge
 ### Database Connection Issues
 
 **Problem:** Can't connect to Supabase
+
 - Verify environment variables are set correctly
 - Check Project URL format: `https://<project-ref>.supabase.co`
 - Ensure anon key starts with `eyJ...`
 
 **Problem:** RLS (Row Level Security) blocks queries
+
 - Check RLS policies in migrations
 - Verify service role key for admin operations
 - Test with `anon` key for public operations
@@ -244,6 +260,7 @@ npx shadcn@latest add input label card badge
 ### Migration Errors
 
 **Problem:** Migrations fail to apply
+
 ```bash
 # Reset local database
 pnpm db:reset
@@ -253,6 +270,7 @@ supabase migration list
 ```
 
 **Problem:** Production migration conflicts
+
 ```bash
 # Create new migration to fix
 pnpm db:migrate fix_issue
@@ -265,11 +283,13 @@ pnpm db:push
 ### Import Errors
 
 **Problem:** Seed script fails
+
 - Check environment variables
 - Verify JSON files exist in `lib/data/json-optimized/`
 - Check Supabase service role key has permission
 
 **Problem:** CSV import fails
+
 - Ensure schema matches CSV columns
 - Check for data type mismatches
 - Verify array format: `{"item1","item2"}`
@@ -290,6 +310,7 @@ Already integrated via `@vercel/analytics` package.
 ### Error Tracking
 
 Consider adding:
+
 - Sentry for error tracking
 - LogRocket for session replay
 - Hotjar for user behavior
@@ -314,31 +335,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'pnpm'
-      
+          cache: "pnpm"
+
       - run: pnpm install
-      
+
       - run: pnpm type-check
-      
+
       - run: pnpm lint
-      
+
       - run: pnpm build
-      
+
       - uses: amondnet/vercel-action@v25
         if: github.ref == 'refs/heads/main'
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ## 🛡️ Security Checklist
@@ -363,12 +384,13 @@ jobs:
 
 - GitHub Issues: [Link to your repo issues]
 - Documentation: This file
-- Supabase Support: support@supabase.com
-- Vercel Support: support@vercel.com
+- Supabase Support: contact@supabase.com
+- Vercel Support: contact@vercel.com
 
 ## 📝 Changelog
 
 ### v1.0.0 - Initial Release
+
 - Database schema with products and variants
 - Product import and optimization scripts
 - CSV export for data migration

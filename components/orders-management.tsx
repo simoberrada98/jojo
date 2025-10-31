@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Search, Download } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Search, Download } from "lucide-react";
 
 export default function OrdersManagement() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const orders = [
     {
@@ -41,43 +41,47 @@ export default function OrdersManagement() {
       status: "Cancelled",
       date: "2025-01-12",
     },
-  ]
+  ];
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterStatus === "all" || order.status.toLowerCase() === filterStatus.toLowerCase()
-    return matchesSearch && matchesFilter
-  })
+      order.customer.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filterStatus === "all" ||
+      order.status.toLowerCase() === filterStatus.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <h2 className="text-2xl font-bold text-foreground">Orders Management</h2>
-        <Button className="bg-primary hover:bg-primary/90 gap-2">
+      <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-4">
+        <h2 className="font-bold text-foreground text-2xl">
+          Orders Management
+        </h2>
+        <Button className="gap-2 bg-primary hover:bg-primary/90">
           <Download className="w-4 h-4" />
           Export
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-foreground/50" />
+      <div className="flex sm:flex-row flex-col gap-4">
+        <div className="relative flex-1">
+          <Search className="top-3 left-3 absolute w-5 h-5 text-foreground/50" />
           <input
             type="text"
             placeholder="Search orders..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-card border border-border text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent"
+            className="bg-card py-2 pr-4 pl-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent w-full text-foreground placeholder-foreground/50"
           />
         </div>
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 rounded-lg bg-card border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+          className="bg-card px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground"
         >
           <option value="all">All Status</option>
           <option value="completed">Completed</option>
@@ -91,45 +95,68 @@ export default function OrdersManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-background">
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Order ID</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Customer</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Amount</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Status</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Date</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Action</th>
+              <tr className="bg-background border-border border-b">
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Order ID
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Customer
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Amount
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Status
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Date
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="border-b border-border hover:bg-background transition">
-                  <td className="py-4 px-6 text-foreground font-mono">{order.id}</td>
-                  <td className="py-4 px-6">
+                <tr
+                  key={order.id}
+                  className="hover:bg-background border-border border-b transition"
+                >
+                  <td className="px-6 py-4 font-mono text-foreground">
+                    {order.id}
+                  </td>
+                  <td className="px-6 py-4">
                     <div>
-                      <p className="text-foreground font-medium">{order.customer}</p>
-                      <p className="text-foreground/60 text-xs">{order.email}</p>
+                      <p className="font-medium text-foreground">
+                        {order.customer}
+                      </p>
+                      <p className="text-foreground/60 text-xs">
+                        {order.email}
+                      </p>
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-accent font-semibold">{order.amount}</td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 font-semibold text-accent">
+                    {order.amount}
+                  </td>
+                  <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         order.status === "Completed"
                           ? "bg-primary/20 text-primary"
                           : order.status === "Pending"
-                            ? "bg-accent/20 text-accent"
-                            : "bg-destructive/20 text-destructive"
+                          ? "bg-accent/20 text-accent"
+                          : "bg-destructive/20 text-destructive"
                       }`}
                     >
                       {order.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-foreground/70">{order.date}</td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 text-foreground/70">{order.date}</td>
+                  <td className="px-6 py-4">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-accent text-accent hover:bg-accent/10 bg-transparent"
+                      className="bg-transparent hover:bg-accent/10 border-accent text-accent"
                     >
                       View
                     </Button>
@@ -141,5 +168,5 @@ export default function OrdersManagement() {
         </div>
       </div>
     </div>
-  )
+  );
 }

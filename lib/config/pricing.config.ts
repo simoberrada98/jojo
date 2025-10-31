@@ -9,13 +9,13 @@ export const PRICING_CONFIG = {
     express: 100, // USD
     free: false,
   },
-  
+
   // Tax rates
   tax: {
     rate: 0.08, // 8%
     includedInPrice: false,
   },
-  
+
   // Discounts
   discounts: {
     bulkThreshold: 5, // items

@@ -1,34 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAuth } from "@/lib/contexts/auth-context"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
-  const { user, profile, refreshProfile } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [passwordLoading, setPasswordLoading] = useState(false)
-  
+  const { user, profile, refreshProfile } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
   // Profile form
-  const [fullName, setFullName] = useState(profile?.full_name || "")
-  const [phone, setPhone] = useState(profile?.phone || "")
-  
+  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [phone, setPhone] = useState(profile?.phone || "");
+
   // Password form
-  const [currentPassword, setCurrentPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  
-  const supabase = createClient()
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const supabase = createClient();
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     const { error } = await supabase
       .from("profiles")
@@ -36,55 +42,55 @@ export default function SettingsPage() {
         full_name: fullName,
         phone,
       })
-      .eq("id", profile?.id)
+      .eq("id", profile?.id);
 
     if (error) {
-      toast.error("Failed to update profile")
+      toast.error("Failed to update profile");
     } else {
-      toast.success("Profile updated successfully")
-      await refreshProfile()
+      toast.success("Profile updated successfully");
+      await refreshProfile();
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPasswordLoading(true)
+    e.preventDefault();
+    setPasswordLoading(true);
 
     if (newPassword !== confirmPassword) {
-      toast.error("New passwords do not match")
-      setPasswordLoading(false)
-      return
+      toast.error("New passwords do not match");
+      setPasswordLoading(false);
+      return;
     }
 
     if (newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters")
-      setPasswordLoading(false)
-      return
+      toast.error("Password must be at least 6 characters");
+      setPasswordLoading(false);
+      return;
     }
 
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
-    })
+    });
 
     if (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     } else {
-      toast.success("Password updated successfully")
-      setCurrentPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
+      toast.success("Password updated successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     }
 
-    setPasswordLoading(false)
-  }
+    setPasswordLoading(false);
+  };
 
   return (
     <div className="max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-bold text-3xl">Settings</h1>
+        <p className="mt-2 text-muted-foreground">
           Manage your account settings and preferences
         </p>
       </div>
@@ -107,7 +113,7 @@ export default function SettingsPage() {
                   disabled
                   className="bg-muted"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Email cannot be changed
                 </p>
               </div>
@@ -142,7 +148,9 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Change Password</CardTitle>
-            <CardDescription>Update your password to keep your account secure</CardDescription>
+            <CardDescription>
+              Update your password to keep your account secure
+            </CardDescription>
           </CardHeader>
           <form onSubmit={handleChangePassword}>
             <CardContent className="space-y-4">
@@ -182,26 +190,28 @@ export default function SettingsPage() {
             <CardDescription>Manage your account settings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Account Status</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Your account is active
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full" />
-                <span className="text-sm text-muted-foreground">Active</span>
+                <div className="bg-green-500 rounded-full w-2 h-2" />
+                <span className="text-muted-foreground text-sm">Active</span>
               </div>
             </div>
-            
+
             <Separator />
-            
-            <div className="flex items-center justify-between">
+
+            <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Member Since</p>
-                <p className="text-sm text-muted-foreground">
-                  {user?.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A"}
+                <p className="text-muted-foreground text-sm">
+                  {user?.created_at
+                    ? new Date(user.created_at).toLocaleDateString()
+                    : "N/A"}
                 </p>
               </div>
             </div>
@@ -209,9 +219,10 @@ export default function SettingsPage() {
             <Separator />
 
             <div>
-              <p className="font-medium mb-2">Danger Zone</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Once you delete your account, there is no going back. Please be certain.
+              <p className="mb-2 font-medium">Danger Zone</p>
+              <p className="mb-4 text-muted-foreground text-sm">
+                Once you delete your account, there is no going back. Please be
+                certain.
               </p>
               <Button variant="destructive" disabled>
                 Delete Account
@@ -221,5 +232,5 @@ export default function SettingsPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

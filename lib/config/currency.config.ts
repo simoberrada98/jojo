@@ -12,19 +12,22 @@ export type Currency = "BTC" | "ETH" | "BNB" | "USDC";
  */
 export const CONVERSION_RATES: Record<Currency, number> = {
   BTC: 0.000029, // ~$34,000 per BTC
-  ETH: 0.00042,  // ~$2,400 per ETH
-  BNB: 0.00165,  // ~$606 per BNB
-  USDC: 1.0,     // 1:1 with USD
+  ETH: 0.00042, // ~$2,400 per ETH
+  BNB: 0.00165, // ~$606 per BNB
+  USDC: 1.0, // 1:1 with USD
 } as const;
 
 /**
  * Currency display configuration
  */
-export const CURRENCY_CONFIG: Record<Currency, { 
-  symbol: string;
-  decimals: number;
-  name: string;
-}> = {
+export const CURRENCY_CONFIG: Record<
+  Currency,
+  {
+    symbol: string;
+    decimals: number;
+    name: string;
+  }
+> = {
   BTC: {
     symbol: "₿",
     decimals: 8,

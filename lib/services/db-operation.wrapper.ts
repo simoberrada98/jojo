@@ -12,13 +12,13 @@ export async function withRetry<T>(
   backoffMultiplier: number = APP_CONFIG.retry.backoffMultiplier
 ): Promise<T> {
   let lastError: Error | undefined;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error as Error;
-      
+
       if (attempt < maxRetries) {
         // Exponential backoff
         const delay = delayMs * Math.pow(backoffMultiplier, attempt);
@@ -26,7 +26,7 @@ export async function withRetry<T>(
       }
     }
   }
-  
+
   throw lastError;
 }
 
@@ -35,24 +35,30 @@ export async function withRetry<T>(
  * Wraps Supabase operations with consistent error handling and timing
  */
 export async function dbOperation<T>(
-  operation: () => Promise<{ data: T | null; error: any }> | { then: (onfulfilled: (value: { data: T | null; error: any }) => any) => any },
+  operation: () =>
+    | Promise<{ data: T | null; error: any }>
+    | {
+        then: (
+          onfulfilled: (value: { data: T | null; error: any }) => any
+        ) => any;
+      },
   errorCode: string,
   errorMessage: string,
   useRetry: boolean = true
 ): Promise<ServiceResponse<T>> {
   const startTime = Date.now();
-  
+
   try {
     const executeOperation = async () => {
       const { data, error } = await operation();
       if (error) throw error;
       return data;
     };
-    
-    const data = useRetry 
+
+    const data = useRetry
       ? await withRetry(executeOperation)
       : await executeOperation();
-    
+
     if (!data) {
       return {
         success: false,
@@ -67,7 +73,7 @@ export async function dbOperation<T>(
         },
       };
     }
-    
+
     return {
       success: true,
       data,
@@ -97,7 +103,7 @@ export async function dbOperation<T>(
  * Helper to sleep for specified milliseconds
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -108,7 +114,7 @@ export async function batchDbOperations<T>(
   continueOnError: boolean = false
 ): Promise<Array<{ success: boolean; data?: T; error?: Error }>> {
   const results: Array<{ success: boolean; data?: T; error?: Error }> = [];
-  
+
   for (const operation of operations) {
     try {
       const data = await operation();
@@ -118,6 +124,6 @@ export async function batchDbOperations<T>(
       if (!continueOnError) break;
     }
   }
-  
+
   return results;
 }

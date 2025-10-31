@@ -1,39 +1,48 @@
-"use client"
+"use client";
 
-import { useCart } from "@/lib/hooks/use-cart"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Trash2, Plus, Minus } from "lucide-react"
-import { toast } from "sonner"
+import { useCart } from "@/lib/hooks/use-cart";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Trash2, Plus, Minus } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CartPage() {
-  const { cart, loading, updateQuantity, removeFromCart, total } = useCart()
+  const { cart, loading, updateQuantity, removeFromCart, total } = useCart();
 
-  const handleQuantityChange = async (cartItemId: string, newQuantity: number) => {
+  const handleQuantityChange = async (
+    cartItemId: string,
+    newQuantity: number
+  ) => {
     try {
-      await updateQuantity(cartItemId, newQuantity)
+      await updateQuantity(cartItemId, newQuantity);
     } catch (error) {
-      toast.error("Failed to update quantity")
+      toast.error("Failed to update quantity");
     }
-  }
+  };
 
   const handleRemove = async (cartItemId: string) => {
     try {
-      await removeFromCart(cartItemId)
-      toast.success("Removed from cart")
+      await removeFromCart(cartItemId);
+      toast.success("Removed from cart");
     } catch (error) {
-      toast.error("Failed to remove from cart")
+      toast.error("Failed to remove from cart");
     }
-  }
+  };
 
   if (loading) {
-    return <p>Loading cart...</p>
+    return <p>Loading cart...</p>;
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <h1 className="mb-8 font-bold text-3xl">Shopping Cart</h1>
 
       {cart.length === 0 ? (
         <Card>
@@ -42,8 +51,8 @@ export default function CartPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-4">
+        <div className="gap-6 grid grid-cols-1 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
             {cart.map((item) => (
               <Card key={item.id}>
                 <CardContent className="p-6">
@@ -52,14 +61,14 @@ export default function CartPage() {
                       <img
                         src={item.product.image_url}
                         alt={item.product.name}
-                        className="w-24 h-24 object-cover rounded-lg"
+                        className="rounded-lg w-24 h-24 object-cover"
                       />
                     )}
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">
+                      <h3 className="mb-1 font-semibold text-lg">
                         {item.product?.name}
                       </h3>
-                      <p className="text-muted-foreground mb-2">
+                      <p className="mb-2 text-muted-foreground">
                         ${item.product?.price.toFixed(2)}
                       </p>
                       <div className="flex items-center gap-2">
@@ -70,7 +79,7 @@ export default function CartPage() {
                             handleQuantityChange(item.id, item.quantity - 1)
                           }
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="w-4 h-4" />
                         </Button>
                         <Input
                           type="number"
@@ -91,20 +100,23 @@ export default function CartPage() {
                             handleQuantityChange(item.id, item.quantity + 1)
                           }
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-bold mb-2">
-                        ${((item.product?.price || 0) * item.quantity).toFixed(2)}
+                      <p className="mb-2 font-bold text-xl">
+                        $
+                        {((item.product?.price || 0) * item.quantity).toFixed(
+                          2
+                        )}
                       </p>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleRemove(item.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
@@ -131,7 +143,7 @@ export default function CartPage() {
                   <span>Tax</span>
                   <span>$0.00</span>
                 </div>
-                <div className="border-t pt-2 mt-2">
+                <div className="mt-2 pt-2 border-t">
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
@@ -148,5 +160,5 @@ export default function CartPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

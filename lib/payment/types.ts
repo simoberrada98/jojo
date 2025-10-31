@@ -8,21 +8,21 @@
 // ============================================================================
 
 export enum PaymentStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  EXPIRED = 'expired',
-  REFUNDED = 'refunded',
+  PENDING = "pending",
+  PROCESSING = "processing",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
+  EXPIRED = "expired",
+  REFUNDED = "refunded",
 }
 
 export enum PaymentMethod {
-  CARD = 'card',
-  CRYPTO = 'crypto',
-  BANK_TRANSFER = 'bank_transfer',
-  HOODPAY = 'hoodpay',
-  WEB_PAYMENT_API = 'web_payment_api',
+  CARD = "card",
+  CRYPTO = "crypto",
+  BANK_TRANSFER = "bank_transfer",
+  HOODPAY = "hoodpay",
+  WEB_PAYMENT_API = "web_payment_api",
 }
 
 // ============================================================================
@@ -80,13 +80,13 @@ export interface PaymentLocalState {
 }
 
 export enum PaymentStep {
-  INIT = 'init',
-  METHOD_SELECTION = 'method_selection',
-  DETAILS_ENTRY = 'details_entry',
-  PROCESSING = 'processing',
-  VERIFICATION = 'verification',
-  COMPLETE = 'complete',
-  ERROR = 'error',
+  INIT = "init",
+  METHOD_SELECTION = "method_selection",
+  DETAILS_ENTRY = "details_entry",
+  PROCESSING = "processing",
+  VERIFICATION = "verification",
+  COMPLETE = "complete",
+  ERROR = "error",
 }
 
 export interface CheckoutData {
@@ -230,7 +230,7 @@ export interface PaymentOptions {
   requestPayerEmail?: boolean;
   requestPayerPhone?: boolean;
   requestShipping?: boolean;
-  shippingType?: 'shipping' | 'delivery' | 'pickup';
+  shippingType?: "shipping" | "delivery" | "pickup";
 }
 
 // ============================================================================
@@ -319,14 +319,14 @@ export interface PaginatedResponse<T> {
 // ============================================================================
 
 export enum PaymentEventType {
-  PAYMENT_CREATED = 'payment:created',
-  PAYMENT_METHOD_SELECTED = 'payment:method_selected',
-  PAYMENT_PROCESSING = 'payment:processing',
-  PAYMENT_COMPLETED = 'payment:completed',
-  PAYMENT_FAILED = 'payment:failed',
-  PAYMENT_CANCELLED = 'payment:cancelled',
-  PAYMENT_EXPIRED = 'payment:expired',
-  PAYMENT_REFUNDED = 'payment:refunded',
+  PAYMENT_CREATED = "payment:created",
+  PAYMENT_METHOD_SELECTED = "payment:method_selected",
+  PAYMENT_PROCESSING = "payment:processing",
+  PAYMENT_COMPLETED = "payment:completed",
+  PAYMENT_FAILED = "payment:failed",
+  PAYMENT_CANCELLED = "payment:cancelled",
+  PAYMENT_EXPIRED = "payment:expired",
+  PAYMENT_REFUNDED = "payment:refunded",
 }
 
 export interface PaymentEvent {

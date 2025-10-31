@@ -46,7 +46,10 @@ export class PaymentStrategyRegistry {
   /**
    * Get all available strategies
    */
-  getAvailableStrategies(): Array<{ method: PaymentMethod; strategy: PaymentStrategy }> {
+  getAvailableStrategies(): Array<{
+    method: PaymentMethod;
+    strategy: PaymentStrategy;
+  }> {
     return Array.from(this.strategies.entries())
       .filter(([_, strategy]) => strategy.isAvailable())
       .map(([method, strategy]) => ({ method, strategy }));

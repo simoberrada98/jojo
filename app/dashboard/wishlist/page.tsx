@@ -1,41 +1,41 @@
-"use client"
+"use client";
 
-import { useWishlist } from "@/lib/hooks/use-wishlist"
-import { useCart } from "@/lib/hooks/use-cart"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Trash2, ShoppingCart } from "lucide-react"
-import { toast } from "sonner"
+import { useWishlist } from "@/lib/hooks/use-wishlist";
+import { useCart } from "@/lib/hooks/use-cart";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Trash2, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 export default function WishlistPage() {
-  const { wishlist, loading, removeFromWishlist } = useWishlist()
-  const { addToCart } = useCart()
+  const { wishlist, loading, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
 
   const handleRemove = async (productId: string) => {
     try {
-      await removeFromWishlist(productId)
-      toast.success("Removed from wishlist")
+      await removeFromWishlist(productId);
+      toast.success("Removed from wishlist");
     } catch (error) {
-      toast.error("Failed to remove from wishlist")
+      toast.error("Failed to remove from wishlist");
     }
-  }
+  };
 
   const handleAddToCart = async (productId: string) => {
     try {
-      await addToCart(productId)
-      toast.success("Added to cart")
+      await addToCart(productId);
+      toast.success("Added to cart");
     } catch (error) {
-      toast.error("Failed to add to cart")
+      toast.error("Failed to add to cart");
     }
-  }
+  };
 
   if (loading) {
-    return <p>Loading wishlist...</p>
+    return <p>Loading wishlist...</p>;
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
+      <h1 className="mb-8 font-bold text-3xl">My Wishlist</h1>
 
       {wishlist.length === 0 ? (
         <Card>
@@ -44,7 +44,7 @@ export default function WishlistPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {wishlist.map((item) => (
             <Card key={item.id}>
               <CardContent className="p-6">
@@ -52,13 +52,13 @@ export default function WishlistPage() {
                   <img
                     src={item.product.image_url}
                     alt={item.product.name}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
+                    className="mb-4 rounded-lg w-full h-48 object-cover"
                   />
                 )}
-                <h3 className="font-semibold text-lg mb-2">
+                <h3 className="mb-2 font-semibold text-lg">
                   {item.product?.name}
                 </h3>
-                <p className="text-2xl font-bold mb-4">
+                <p className="mb-4 font-bold text-2xl">
                   ${item.product?.price.toFixed(2)}
                 </p>
                 <div className="flex gap-2">
@@ -67,7 +67,7 @@ export default function WishlistPage() {
                     className="flex-1"
                     onClick={() => handleAddToCart(item.product_id)}
                   >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    <ShoppingCart className="mr-2 w-4 h-4" />
                     Add to Cart
                   </Button>
                   <Button
@@ -75,7 +75,7 @@ export default function WishlistPage() {
                     size="icon"
                     onClick={() => handleRemove(item.product_id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -84,5 +84,5 @@ export default function WishlistPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

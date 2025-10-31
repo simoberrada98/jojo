@@ -15,12 +15,12 @@ export interface CheckoutState {
     zipCode: string;
     country: string;
   };
-  paymentStep?: 'shipping' | 'review' | 'payment' | 'confirmation';
+  paymentStep?: "shipping" | "review" | "payment" | "confirmation";
   orderData?: any;
   timestamp?: string;
 }
 
-const STORAGE_KEY = 'mintyos_checkout_state';
+const STORAGE_KEY = "mintyos_checkout_state";
 const EXPIRY_HOURS = 24; // Clear data after 24 hours
 
 /**
@@ -34,7 +34,7 @@ export function saveCheckoutState(state: CheckoutState): void {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
   } catch (error) {
-    console.warn('Failed to save checkout state:', error);
+    console.warn("Failed to save checkout state:", error);
   }
 }
 
@@ -48,13 +48,13 @@ export function loadCheckoutState(): CheckoutState | null {
     if (!stored) return null;
 
     const data = JSON.parse(stored) as CheckoutState & { timestamp: string };
-    
+
     // Check if data is expired
     if (data.timestamp) {
       const savedTime = new Date(data.timestamp).getTime();
       const now = new Date().getTime();
       const hoursPassed = (now - savedTime) / (1000 * 60 * 60);
-      
+
       if (hoursPassed > EXPIRY_HOURS) {
         clearCheckoutState();
         return null;
@@ -63,7 +63,7 @@ export function loadCheckoutState(): CheckoutState | null {
 
     return data;
   } catch (error) {
-    console.warn('Failed to load checkout state:', error);
+    console.warn("Failed to load checkout state:", error);
     return null;
   }
 }
@@ -75,7 +75,7 @@ export function clearCheckoutState(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.warn('Failed to clear checkout state:', error);
+    console.warn("Failed to clear checkout state:", error);
   }
 }
 
@@ -83,7 +83,7 @@ export function clearCheckoutState(): void {
  * Update only shipping data in the stored state
  */
 export function updateShippingData(
-  shippingData: CheckoutState['shippingData']
+  shippingData: CheckoutState["shippingData"]
 ): void {
   const currentState = loadCheckoutState();
   saveCheckoutState({

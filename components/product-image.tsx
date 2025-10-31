@@ -1,13 +1,17 @@
-import { Cpu, Zap } from "lucide-react"
-import Image from "next/image"
+import { Cpu, Zap } from "lucide-react";
+import Image from "next/image";
 
 interface ProductImageProps {
-  category: string
-  image?: string
-  className?: string
+  category: string;
+  image?: string;
+  className?: string;
 }
 
-export default function ProductImage({ category, image, className = "" }: ProductImageProps) {
+export default function ProductImage({
+  category,
+  image,
+  className = "",
+}: ProductImageProps) {
   // Color schemes based on category
   const colorSchemes = {
     ASIC: {
@@ -38,14 +42,17 @@ export default function ProductImage({ category, image, className = "" }: Produc
       icon: "text-violet-400/60",
       glow: "bg-violet-400/30",
     },
-  }
+  };
 
-  const colors = colorSchemes[category as keyof typeof colorSchemes] || colorSchemes.ASIC
+  const colors =
+    colorSchemes[category as keyof typeof colorSchemes] || colorSchemes.ASIC;
 
   return (
     <div className={`relative w-full h-full overflow-hidden ${className}`}>
       {/* Background Gradient */}
-      <div className={`absolute inset-0 bg-linear-to-br ${colors.from} ${colors.via} ${colors.to}`} />
+      <div
+        className={`absolute inset-0 bg-linear-to-br ${colors.from} ${colors.via} ${colors.to}`}
+      />
 
       {/* Product Image or Icon */}
       {image ? (
@@ -64,22 +71,55 @@ export default function ProductImage({ category, image, className = "" }: Produc
           <div className="absolute inset-0 bg-linear-to-bl from-transparent via-transparent to-background/50 mix-blend-soft-light" />
         </>
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex justify-center items-center">
           <div className="relative">
-            <div className={`absolute inset-0 ${colors.glow} blur-3xl rounded-full`} />
-            <Cpu className={`w-32 h-32 md:w-48 md:h-48 ${colors.icon} relative z-10`} />
+            <div
+              className={`absolute inset-0 ${colors.glow} blur-3xl rounded-full`}
+            />
+            <Cpu
+              className={`w-32 h-32 md:w-48 md:h-48 ${colors.icon} relative z-10`}
+            />
           </div>
         </div>
       )}
 
       {/* Circuit Pattern Overlay with blend mode */}
-      <div className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none">
+      <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id={`circuit-${category}`} x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="20" r="1.5" fill="currentColor" className="text-accent" />
-              <line x1="20" y1="0" x2="20" y2="15" stroke="currentColor" strokeWidth="0.5" className="text-accent/50" />
-              <line x1="0" y1="20" x2="15" y2="20" stroke="currentColor" strokeWidth="0.5" className="text-accent/50" />
+            <pattern
+              id={`circuit-${category}`}
+              x="0"
+              y="0"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle
+                cx="20"
+                cy="20"
+                r="1.5"
+                fill="currentColor"
+                className="text-accent"
+              />
+              <line
+                x1="20"
+                y1="0"
+                x2="20"
+                y2="15"
+                stroke="currentColor"
+                strokeWidth="0.5"
+                className="text-accent/50"
+              />
+              <line
+                x1="0"
+                y1="20"
+                x2="15"
+                y2="20"
+                stroke="currentColor"
+                strokeWidth="0.5"
+                className="text-accent/50"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill={`url(#circuit-${category})`} />
@@ -87,7 +127,7 @@ export default function ProductImage({ category, image, className = "" }: Produc
       </div>
 
       {/* Animated Grid with blend mode */}
-      <div className="absolute inset-0 opacity-10 mix-blend-soft-light pointer-events-none">
+      <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-soft-light">
         <div
           className="absolute inset-0"
           style={{
@@ -101,15 +141,15 @@ export default function ProductImage({ category, image, className = "" }: Produc
       </div>
 
       {/* Corner Accents with blend mode */}
-      <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-accent/60 mix-blend-screen" />
-      <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-accent/60 mix-blend-screen" />
-      <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-accent/60 mix-blend-screen" />
-      <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-accent/60 mix-blend-screen" />
+      <div className="top-4 left-4 absolute border-accent/60 border-t-2 border-l-2 w-8 h-8 mix-blend-screen" />
+      <div className="top-4 right-4 absolute border-accent/60 border-t-2 border-r-2 w-8 h-8 mix-blend-screen" />
+      <div className="bottom-4 left-4 absolute border-accent/60 border-b-2 border-l-2 w-8 h-8 mix-blend-screen" />
+      <div className="right-4 bottom-4 absolute border-accent/60 border-r-2 border-b-2 w-8 h-8 mix-blend-screen" />
 
       {/* Power Icon Accent with blend mode */}
-      <div className="absolute top-1/4 right-8 opacity-40 mix-blend-overlay">
+      <div className="top-1/4 right-8 absolute opacity-40 mix-blend-overlay">
         <Zap className="w-12 h-12 text-accent" />
       </div>
     </div>
-  )
+  );
 }

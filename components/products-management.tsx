@@ -1,23 +1,53 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Edit2, Trash2 } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, Edit2, Trash2 } from "lucide-react";
 
 export default function ProductsManagement() {
   const [products] = useState([
-    { id: 1, name: "ProMiner X1000", category: "ASIC", price: "2.5 BTC", stock: 45, status: "Active" },
-    { id: 2, name: "GPU Rig Pro", category: "GPU", price: "1.8 BTC", stock: 28, status: "Active" },
-    { id: 3, name: "UltraHash 5000", category: "ASIC", price: "3.2 BTC", stock: 12, status: "Active" },
-    { id: 4, name: "MiniMiner Compact", category: "Compact", price: "0.8 BTC", stock: 0, status: "Out of Stock" },
-  ])
+    {
+      id: 1,
+      name: "ProMiner X1000",
+      category: "ASIC",
+      price: "2.5 BTC",
+      stock: 45,
+      status: "Active",
+    },
+    {
+      id: 2,
+      name: "GPU Rig Pro",
+      category: "GPU",
+      price: "1.8 BTC",
+      stock: 28,
+      status: "Active",
+    },
+    {
+      id: 3,
+      name: "UltraHash 5000",
+      category: "ASIC",
+      price: "3.2 BTC",
+      stock: 12,
+      status: "Active",
+    },
+    {
+      id: 4,
+      name: "MiniMiner Compact",
+      category: "Compact",
+      price: "0.8 BTC",
+      stock: 0,
+      status: "Out of Stock",
+    },
+  ]);
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <h2 className="text-2xl font-bold text-foreground">Products Management</h2>
-        <Button className="bg-primary hover:bg-primary/90 gap-2">
+      <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-4">
+        <h2 className="font-bold text-foreground text-2xl">
+          Products Management
+        </h2>
+        <Button className="gap-2 bg-primary hover:bg-primary/90">
           <Plus className="w-4 h-4" />
           Add Product
         </Button>
@@ -28,23 +58,44 @@ export default function ProductsManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-background">
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Product Name</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Category</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Price</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Stock</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Status</th>
-                <th className="text-left py-4 px-6 text-foreground/70 font-semibold">Actions</th>
+              <tr className="bg-background border-border border-b">
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Product Name
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Category
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Price
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Stock
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Status
+                </th>
+                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-b border-border hover:bg-background transition">
-                  <td className="py-4 px-6 text-foreground font-medium">{product.name}</td>
-                  <td className="py-4 px-6 text-foreground/70">{product.category}</td>
-                  <td className="py-4 px-6 text-accent font-semibold">{product.price}</td>
-                  <td className="py-4 px-6 text-foreground">{product.stock}</td>
-                  <td className="py-4 px-6">
+                <tr
+                  key={product.id}
+                  className="hover:bg-background border-border border-b transition"
+                >
+                  <td className="px-6 py-4 font-medium text-foreground">
+                    {product.name}
+                  </td>
+                  <td className="px-6 py-4 text-foreground/70">
+                    {product.category}
+                  </td>
+                  <td className="px-6 py-4 font-semibold text-accent">
+                    {product.price}
+                  </td>
+                  <td className="px-6 py-4 text-foreground">{product.stock}</td>
+                  <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         product.status === "Active"
@@ -55,11 +106,19 @@ export default function ProductsManagement() {
                       {product.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6 flex gap-2">
-                    <Button variant="ghost" size="sm" className="text-accent hover:bg-accent/10">
+                  <td className="flex gap-2 px-6 py-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-accent/10 text-accent"
+                    >
                       <Edit2 className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-destructive/10 text-destructive"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </td>
@@ -70,5 +129,5 @@ export default function ProductsManagement() {
         </div>
       </div>
     </div>
-  )
+  );
 }

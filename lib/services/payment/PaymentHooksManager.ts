@@ -11,7 +11,10 @@ export class PaymentHooksManager {
   /**
    * Trigger a specific hook
    */
-  async trigger(hookName: keyof PaymentHooks, event: PaymentEvent): Promise<void> {
+  async trigger(
+    hookName: keyof PaymentHooks,
+    event: PaymentEvent
+  ): Promise<void> {
     const hook = this.hooks?.[hookName];
     if (!hook) return;
 

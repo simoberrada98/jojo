@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS public.products CASCADE;
 
 -- Products table (base product information)
 CREATE TABLE public.products (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   sku TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE public.products (
 
 -- Product variants table (different options of the same product)
 CREATE TABLE public.product_variants (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   sku TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL, -- e.g., "8GB RAM / 256GB SSD"
@@ -99,7 +99,7 @@ CREATE TABLE public.product_variants (
 
 -- Product options table (defines available options like "Color", "Size", "Memory")
 CREATE TABLE public.product_options (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL, -- e.g., "Color", "Memory", "Storage"
   display_name TEXT NOT NULL, -- e.g., "Choose Color"
@@ -111,7 +111,7 @@ CREATE TABLE public.product_options (
 
 -- Product option values table (defines specific values like "Red", "8GB", etc.)
 CREATE TABLE public.product_option_values (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   option_id UUID REFERENCES public.product_options(id) ON DELETE CASCADE NOT NULL,
   value TEXT NOT NULL, -- e.g., "8GB", "Red", "256GB"
   display_value TEXT, -- e.g., "8 Gigabytes", if different from value
@@ -124,7 +124,7 @@ CREATE TABLE public.product_option_values (
 
 -- Product collections table (for grouping products)
 CREATE TABLE public.collections (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
@@ -137,7 +137,7 @@ CREATE TABLE public.collections (
 
 -- Product collection mapping (many-to-many)
 CREATE TABLE public.product_collections (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   collection_id UUID REFERENCES public.collections(id) ON DELETE CASCADE NOT NULL,
   position INTEGER DEFAULT 0,
@@ -147,7 +147,7 @@ CREATE TABLE public.product_collections (
 
 -- Product reviews table
 CREATE TABLE public.product_reviews (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
   user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),

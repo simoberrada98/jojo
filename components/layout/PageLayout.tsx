@@ -14,10 +14,10 @@ export default function PageLayout({ children }: PageLayoutProps) {
   const { itemCount } = useCart();
 
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex flex-col min-h-screen">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-background/60 backdrop-blur-2xl"
+        className="-z-10 absolute inset-0 bg-background/60 backdrop-blur-2xl pointer-events-none"
       />
       <Header cartCount={itemCount} />
       <main className="grow">{children}</main>

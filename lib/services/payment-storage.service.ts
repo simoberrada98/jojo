@@ -329,7 +329,11 @@ export class PaymentStorageService {
   /**
    * Get session info
    */
-  getSessionInfo(): { active: boolean; sessionId?: string; expiresAt?: string } {
+  getSessionInfo(): {
+    active: boolean;
+    sessionId?: string;
+    expiresAt?: string;
+  } {
     const state = this.loadState();
     if (!state) {
       return { active: false };
@@ -377,10 +381,7 @@ export class PaymentStorageService {
     const existingState = this.loadState();
 
     // If existing session is valid and for the same payment, resume it
-    if (
-      existingState &&
-      existingState.paymentIntent.id === paymentIntent.id
-    ) {
+    if (existingState && existingState.paymentIntent.id === paymentIntent.id) {
       return existingState;
     }
 

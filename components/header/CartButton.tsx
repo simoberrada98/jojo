@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { ShoppingCart } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CartButtonProps {
-  cartCount: number
+  cartCount: number;
 }
 
 export function CartButton({ cartCount }: CartButtonProps) {
@@ -21,7 +21,7 @@ export function CartButton({ cartCount }: CartButtonProps) {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                className="-top-2 -right-2 absolute flex justify-center items-center bg-accent rounded-full w-5 h-5 text-xs text-accent-foreground"
               >
                 {cartCount}
               </motion.span>
@@ -30,5 +30,5 @@ export function CartButton({ cartCount }: CartButtonProps) {
         </Button>
       </motion.div>
     </Link>
-  )
+  );
 }

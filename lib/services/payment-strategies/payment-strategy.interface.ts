@@ -17,10 +17,7 @@ export interface PaymentStrategy {
   /**
    * Process payment using this strategy
    */
-  process(
-    state: PaymentLocalState,
-    paymentData?: any
-  ): Promise<PaymentResult>;
+  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>;
 
   /**
    * Check if this strategy is available

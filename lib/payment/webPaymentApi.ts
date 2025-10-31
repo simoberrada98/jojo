@@ -12,13 +12,13 @@ import {
   PaymentResult,
   PaymentStatus,
   PaymentError,
-} from './types';
+} from "./types";
 
 /**
  * Check if Web Payment API is supported
  */
 export function isPaymentRequestSupported(): boolean {
-  return typeof window !== 'undefined' && 'PaymentRequest' in window;
+  return typeof window !== "undefined" && "PaymentRequest" in window;
 }
 
 /**
@@ -34,8 +34,8 @@ export async function canMakePayment(
   try {
     const details: PaymentDetailsInit = {
       total: {
-        label: 'Test',
-        amount: { currency: 'USD', value: '0.00' },
+        label: "Test",
+        amount: { currency: "USD", value: "0.00" },
       },
     };
 
@@ -64,7 +64,7 @@ export function convertCheckoutToPaymentDetails(
   // Add subtotal, tax, shipping as display items
   if (checkoutData.subtotal > 0) {
     displayItems.push({
-      label: 'Subtotal',
+      label: "Subtotal",
       amount: {
         currency: checkoutData.currency,
         value: checkoutData.subtotal.toFixed(2),
@@ -74,7 +74,7 @@ export function convertCheckoutToPaymentDetails(
 
   if (checkoutData.tax > 0) {
     displayItems.push({
-      label: 'Tax',
+      label: "Tax",
       amount: {
         currency: checkoutData.currency,
         value: checkoutData.tax.toFixed(2),
@@ -84,7 +84,7 @@ export function convertCheckoutToPaymentDetails(
 
   if (checkoutData.shipping > 0) {
     displayItems.push({
-      label: 'Shipping',
+      label: "Shipping",
       amount: {
         currency: checkoutData.currency,
         value: checkoutData.shipping.toFixed(2),
@@ -94,7 +94,7 @@ export function convertCheckoutToPaymentDetails(
 
   return {
     total: {
-      label: 'Total',
+      label: "Total",
       amount: {
         currency: checkoutData.currency,
         value: checkoutData.total.toFixed(2),
@@ -108,22 +108,22 @@ export function convertCheckoutToPaymentDetails(
  * Create payment method data for supported methods
  */
 export function createPaymentMethodData(
-  supportedNetworks: string[] = ['visa', 'mastercard', 'amex']
+  supportedNetworks: string[] = ["visa", "mastercard", "amex"]
 ): PaymentMethodData[] {
   return [
     {
-      supportedMethods: 'basic-card',
+      supportedMethods: "basic-card",
       data: {
         supportedNetworks,
-        supportedTypes: ['credit', 'debit'],
+        supportedTypes: ["credit", "debit"],
       },
     },
     // Add support for digital wallets
     {
-      supportedMethods: 'https://apple.com/apple-pay',
+      supportedMethods: "https://apple.com/apple-pay",
     },
     {
-      supportedMethods: 'https://google.com/pay',
+      supportedMethods: "https://google.com/pay",
     },
   ];
 }
@@ -136,8 +136,8 @@ export class WebPaymentService {
   private supportedNetworks: string[];
 
   constructor(
-    merchantName: string = 'HoodPay Merchant',
-    supportedNetworks: string[] = ['visa', 'mastercard', 'amex']
+    merchantName: string = "HoodPay Merchant",
+    supportedNetworks: string[] = ["visa", "mastercard", "amex"]
   ) {
     this.merchantName = merchantName;
     this.supportedNetworks = supportedNetworks;
@@ -160,11 +160,11 @@ export class WebPaymentService {
     if (!this.isAvailable()) {
       return {
         success: false,
-        paymentId: '',
+        paymentId: "",
         status: PaymentStatus.FAILED,
         error: {
-          code: 'WEB_PAYMENT_NOT_SUPPORTED',
-          message: 'Web Payment API is not supported in this browser',
+          code: "WEB_PAYMENT_NOT_SUPPORTED",
+          message: "Web Payment API is not supported in this browser",
           retryable: false,
         },
       };
@@ -179,11 +179,11 @@ export class WebPaymentService {
       if (!canPay) {
         return {
           success: false,
-          paymentId: '',
+          paymentId: "",
           status: PaymentStatus.FAILED,
           error: {
-            code: 'NO_PAYMENT_METHOD',
-            message: 'No supported payment method available',
+            code: "NO_PAYMENT_METHOD",
+            message: "No supported payment method available",
             retryable: false,
           },
         };
@@ -211,7 +211,7 @@ export class WebPaymentService {
 
       // Complete the payment
       await paymentResponse.complete(
-        processResult.success ? 'success' : 'fail'
+        processResult.success ? "success" : "fail"
       );
 
       return processResult;
@@ -234,7 +234,9 @@ export class WebPaymentService {
 
       // In production, send this to your backend for processing
       // For now, we'll simulate a successful payment
-      const paymentId = `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const paymentId = `web_${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
 
       // Simulate backend processing
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -255,11 +257,11 @@ export class WebPaymentService {
     } catch (error: any) {
       return {
         success: false,
-        paymentId: '',
+        paymentId: "",
         status: PaymentStatus.FAILED,
         error: {
-          code: 'PROCESSING_ERROR',
-          message: error.message || 'Failed to process payment',
+          code: "PROCESSING_ERROR",
+          message: error.message || "Failed to process payment",
           retryable: true,
         },
       };
@@ -270,25 +272,25 @@ export class WebPaymentService {
    * Handle payment errors
    */
   private handlePaymentError(error: any): PaymentResult {
-    let errorCode = 'UNKNOWN_ERROR';
-    let errorMessage = 'An unknown error occurred';
+    let errorCode = "UNKNOWN_ERROR";
+    let errorMessage = "An unknown error occurred";
     let retryable = true;
 
-    if (error.name === 'AbortError') {
-      errorCode = 'USER_CANCELLED';
-      errorMessage = 'Payment was cancelled by user';
+    if (error.name === "AbortError") {
+      errorCode = "USER_CANCELLED";
+      errorMessage = "Payment was cancelled by user";
       retryable = false;
-    } else if (error.name === 'InvalidStateError') {
-      errorCode = 'INVALID_STATE';
-      errorMessage = 'Payment request is in an invalid state';
+    } else if (error.name === "InvalidStateError") {
+      errorCode = "INVALID_STATE";
+      errorMessage = "Payment request is in an invalid state";
       retryable = false;
-    } else if (error.name === 'NotSupportedError') {
-      errorCode = 'NOT_SUPPORTED';
-      errorMessage = 'Payment method not supported';
+    } else if (error.name === "NotSupportedError") {
+      errorCode = "NOT_SUPPORTED";
+      errorMessage = "Payment method not supported";
       retryable = false;
-    } else if (error.name === 'SecurityError') {
-      errorCode = 'SECURITY_ERROR';
-      errorMessage = 'Security error during payment';
+    } else if (error.name === "SecurityError") {
+      errorCode = "SECURITY_ERROR";
+      errorMessage = "Security error during payment";
       retryable = false;
     } else if (error.message) {
       errorMessage = error.message;
@@ -296,7 +298,7 @@ export class WebPaymentService {
 
     return {
       success: false,
-      paymentId: '',
+      paymentId: "",
       status: PaymentStatus.FAILED,
       error: {
         code: errorCode,
@@ -314,7 +316,7 @@ export class WebPaymentService {
     try {
       await request.abort();
     } catch (error) {
-      console.error('Failed to abort payment:', error);
+      console.error("Failed to abort payment:", error);
     }
   }
 }
@@ -333,8 +335,8 @@ export function createWebPaymentRequest(
   } = {}
 ): WebPaymentRequest {
   const {
-    merchantName = 'HoodPay Merchant',
-    supportedNetworks = ['visa', 'mastercard', 'amex'],
+    merchantName = "HoodPay Merchant",
+    supportedNetworks = ["visa", "mastercard", "amex"],
     requestPayerEmail = true,
     requestPayerName = true,
     requestPayerPhone = false,
@@ -378,24 +380,20 @@ export async function getAvailablePaymentMethods(): Promise<string[]> {
   const methods: string[] = [];
 
   // Check for basic card
-  if (await canMakePayment([{ supportedMethods: 'basic-card' }])) {
-    methods.push('basic-card');
+  if (await canMakePayment([{ supportedMethods: "basic-card" }])) {
+    methods.push("basic-card");
   }
 
   // Check for Apple Pay
   if (
-    await canMakePayment([
-      { supportedMethods: 'https://apple.com/apple-pay' },
-    ])
+    await canMakePayment([{ supportedMethods: "https://apple.com/apple-pay" }])
   ) {
-    methods.push('apple-pay');
+    methods.push("apple-pay");
   }
 
   // Check for Google Pay
-  if (
-    await canMakePayment([{ supportedMethods: 'https://google.com/pay' }])
-  ) {
-    methods.push('google-pay');
+  if (await canMakePayment([{ supportedMethods: "https://google.com/pay" }])) {
+    methods.push("google-pay");
   }
 
   return methods;

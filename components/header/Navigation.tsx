@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { MAIN_NAV_ITEMS } from "@/lib/constants/navigation"
+import Link from "next/link";
+import { MAIN_NAV_ITEMS } from "@/lib/constants/navigation";
 
 export function Navigation() {
   return (
-    <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+    <nav
+      className="hidden md:flex items-center gap-8"
+      aria-label="Main navigation"
+    >
       {MAIN_NAV_ITEMS.map((item) => (
         <Link
           key={item.href}
@@ -16,5 +19,5 @@ export function Navigation() {
         </Link>
       ))}
     </nav>
-  )
+  );
 }

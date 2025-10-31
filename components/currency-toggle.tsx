@@ -1,21 +1,23 @@
-"use client"
+"use client";
 
-import { useCurrency, Currency } from "@/lib/contexts/currency-context"
+import { useCurrency, Currency } from "@/lib/contexts/currency-context";
 
 const CURRENCIES: { value: Currency; label: string; icon: string }[] = [
   { value: "BTC", label: "BTC", icon: "₿" },
   { value: "ETH", label: "ETH", icon: "Ξ" },
   { value: "BNB", label: "BNB", icon: "⚡" },
   { value: "USDC", label: "USDC", icon: "$" },
-]
+];
 
 export default function CurrencyToggle() {
-  const { currency, setCurrency } = useCurrency()
+  const { currency, setCurrency } = useCurrency();
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-foreground/60 mr-2 hidden sm:inline">Currency:</span>
-      <div className="flex gap-1 bg-card border border-border rounded-lg p-1">
+      <span className="hidden sm:inline mr-2 text-foreground/60 text-xs">
+        Currency:
+      </span>
+      <div className="flex gap-1 bg-card p-1 border border-border rounded-lg">
         {CURRENCIES.map((curr) => (
           <button
             key={curr.value}
@@ -32,5 +34,5 @@ export default function CurrencyToggle() {
         ))}
       </div>
     </div>
-  )
+  );
 }
