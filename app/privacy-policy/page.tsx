@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
 
       <main className="pt-20">
         {/* Breadcrumb */}
-        <div className="border-b border-border bg-card/50">
+        <div className="border-b border-border ">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center gap-2 text-sm">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">

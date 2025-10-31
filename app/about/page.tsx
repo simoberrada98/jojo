@@ -221,7 +221,7 @@ export default function AboutPage() {
 
       {/* CTA Section */}
       <div className="max-w-4xl mx-auto text-center">
-        <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
+        <Card className="bg-linear-to-br from-primary/10 to-accent/10 border-primary/20">
           <CardContent className="pt-6 pb-6">
             <H2 className="mb-4">Ready to Start Mining?</H2>
             <P className="text-muted-foreground mb-6 m-0">

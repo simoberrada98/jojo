@@ -43,7 +43,7 @@ export default function TopProducts() {
 
   if (loading) {
     return (
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <p className="text-foreground/60">Loading top products...</p>
@@ -56,7 +56,7 @@ export default function TopProducts() {
   if (products.length === 0) return null
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/50">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 ">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div
@@ -67,7 +67,7 @@ export default function TopProducts() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-balance">
-            <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
               Top Rated Products
             </span>
           </h2>

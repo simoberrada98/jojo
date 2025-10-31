@@ -45,7 +45,7 @@ export default function ProductImage({ category, image, className = "" }: Produc
   return (
     <div className={`relative w-full h-full overflow-hidden ${className}`}>
       {/* Background Gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${colors.from} ${colors.via} ${colors.to}`} />
+      <div className={`absolute inset-0 bg-linear-to-br ${colors.from} ${colors.via} ${colors.to}`} />
 
       {/* Product Image or Icon */}
       {image ? (
@@ -59,9 +59,9 @@ export default function ProductImage({ category, image, className = "" }: Produc
             priority
           />
           {/* Multi-layered gradient overlays for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-accent/20 to-secondary/30 mix-blend-overlay" />
-          <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-transparent to-background/50 mix-blend-soft-light" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/60 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-lienear-to-tr from-primary/30 via-accent/20 to-secondary/30 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-linear-to-bl from-transparent via-transparent to-background/50 mix-blend-soft-light" />
         </>
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">

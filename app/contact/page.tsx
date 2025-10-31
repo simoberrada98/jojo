@@ -40,7 +40,7 @@ export default function ContactPage() {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
+        <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <H1 className="mb-4">Get in Touch</H1>
             <Muted className="text-lg max-w-2xl mx-auto">
@@ -171,7 +171,7 @@ export default function ContactPage() {
         </section>
 
         {/* Business Hours */}
-        <section className="bg-card/50 border-t border-border py-12">
+        <section className=" border-t border-border py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 mb-6">
               <Clock className="w-6 h-6 text-accent" />

@@ -40,9 +40,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-all duration-300 hover:shadow-2xl hover:shadow-accent/20"
+      className="group relative overflow-hidden rounded-lg border border-border transition-all duration-300 hover:border-accent hover:shadow-2xl hover:shadow-accent/20"
     >
-      <Link href={`/product/${product.handle}`} className="block">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-card/25 backdrop-blur-xl transition-all duration-500 group-hover:bg-card/35"
+      />
+
+      <Link href={`/product/${product.handle}`} className="relative z-10 block">
         {/* Image Container */}
         <div className="relative h-64 overflow-hidden">
           {/* Primary Image */}
@@ -107,7 +112,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Price and Action */}
-      <div className="p-6 pt-0">
+      <div className="relative z-10 p-6 pt-0">
         {/* Price */}
         <div className="mb-6 pb-6 border-b border-border">
           <div className="text-3xl font-bold text-accent mb-1 font-mono">

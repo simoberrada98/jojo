@@ -1,4 +1,5 @@
 import type React from "react"
+import type { CSSProperties } from "react"
 import type { Metadata } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
@@ -29,6 +30,50 @@ const technicalSpecsNumbersFont = JetBrains_Mono({
   display: "swap",
 })
 
+const gridOverlayStyle: CSSProperties = {
+  backgroundImage: `
+    linear-gradient(
+      0deg,
+      transparent 24%,
+      rgba(102, 204, 255, 0.05) 25%,
+      rgba(102, 204, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(102, 204, 255, 0.05) 75%,
+      rgba(102, 204, 255, 0.05) 76%,
+      transparent 77%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      rgba(102, 204, 255, 0.05) 25%,
+      rgba(102, 204, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(102, 204, 255, 0.05) 75%,
+      rgba(102, 204, 255, 0.05) 76%,
+      transparent 77%,
+      transparent
+    )
+  `,
+  backgroundSize: "50px 50px",
+}
+
+const glowOverlayStyle: CSSProperties = {
+  background: `
+    radial-gradient(
+      circle at 25% 20%,
+      rgba(56, 189, 248, 0.35),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 75% 80%,
+      rgba(147, 51, 234, 0.3),
+      transparent 60%
+    )
+  `,
+}
 
 export const metadata: Metadata = {
   metadataBase: siteMetadata.baseUrl,
@@ -113,27 +158,45 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">
-        {/* Skip to main content link for accessibility */}
-        <Link
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground focus:top-0 focus:left-0"
+      <body className="relative overflow-x-hidden bg-background font-sans antialiased">
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
         >
-          Skip to main content
-        </Link>
-        <AuthProvider>
-          <CurrencyProvider>
-            <CartProvider>
-              <main id="main-content" className="flex-1" role="main">
-                {children}
-              </main>
-            </CartProvider>
-          </CurrencyProvider>
-        </AuthProvider>
-        <Toaster />
-        <ServiceWorkerProvider />
-        <CookieBanner initialStatus={cookieConsent} />
-        <Analytics />
+          <div className="absolute inset-0 bg-linear-to-b from-primary/25 via-background/85 to-background" />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={gridOverlayStyle}
+          />
+          <div
+            className="absolute inset-0 mix-blend-screen opacity-40 transition-transform duration-500 ease-out"
+            style={glowOverlayStyle}
+          />
+          <div className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
+          <div className="absolute bottom-[-260px] right-[-180px] h-[520px] w-[520px] rounded-full bg-accent/25 blur-3xl" />
+        </div>
+        <div className="relative z-10 flex min-h-screen flex-col">
+          {/* Skip to main content link for accessibility */}
+          <Link
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-0 focus:left-0 focus:bg-primary focus:p-4 focus:text-primary-foreground"
+          >
+            Skip to main content
+          </Link>
+          <AuthProvider>
+            <CurrencyProvider>
+              <CartProvider>
+                <main id="main-content" className="flex-1" role="main">
+                  {children}
+                </main>
+              </CartProvider>
+            </CurrencyProvider>
+          </AuthProvider>
+          <Toaster />
+          <ServiceWorkerProvider />
+          <CookieBanner initialStatus={cookieConsent} />
+          <Analytics />
+        </div>
       </body>
     </html>
   )

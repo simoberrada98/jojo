@@ -83,7 +83,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
           >
             {/* Diagonal wipe effect */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-accent/20 via-primary/10 to-transparent"
+              className="absolute inset-0 bg-linear-to-br from-accent/20 via-primary/10 to-transparent"
               initial={{ x: "-100%", skewX: -10 }}
               animate={{ x: "100%" }}
               transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
@@ -99,7 +99,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               {horizontalLines.slice(0, lineCount).map((i) => (
                 <motion.div
                   key={`h-${i}`}
-                  className="absolute w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"
+                  className="absolute w-full h-px bg-linear-to-r from-transparent via-accent/30 to-transparent"
                   style={{ top: `${i * (100 / lineCount)}%` }}
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: [0, 1, 0] }}
@@ -113,7 +113,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               {verticalLines.slice(0, lineCount).map((i) => (
                 <motion.div
                   key={`v-${i}`}
-                  className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent"
+                  className="absolute h-full w-px bg-linear-to-b from-transparent via-accent/20 to-transparent"
                   style={{ left: `${i * (100 / lineCount)}%` }}
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: 1, opacity: [0, 1, 0] }}
@@ -185,7 +185,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
             {/* Scan line effect */}
             <motion.div
-              className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent"
+              className="absolute inset-x-0 h-px bg-linear-to-r from-transparent via-accent to-transparent"
               initial={{ top: "0%", opacity: 1 }}
               animate={{ top: "100%", opacity: 0 }}
               transition={{ duration: overlayDuration, ease: "linear" }}

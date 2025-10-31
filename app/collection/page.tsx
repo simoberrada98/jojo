@@ -63,7 +63,7 @@ export default function CollectionPage() {
 
       <main className="pt-20">
         {/* Breadcrumb */}
-        <div className="border-b border-border bg-card/50">
+        <div className="border-b border-border ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center gap-2 text-sm">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -76,7 +76,7 @@ export default function CollectionPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
+        <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Mining Hardware Collections</h1>

@@ -155,7 +155,7 @@ function ThankYouContent() {
           <OrderTracking orderNumber={orderNumber} />
 
           {/* Next Steps */}
-          <div className="bg-card/50 border border-border rounded-lg p-8 mb-8">
+          <div className=" border border-border rounded-lg p-8 mb-8">
             <h3 className="text-lg font-semibold text-foreground mb-6">What's Next?</h3>
             <div className="space-y-4">
               <div className="flex gap-4">

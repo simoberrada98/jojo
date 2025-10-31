@@ -9,7 +9,7 @@ export default function RefundsPage() {
 
       <main className="pt-20">
         {/* Breadcrumb */}
-        <div className="border-b border-border bg-card/50">
+        <div className="border-b border-border ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center gap-2 text-sm">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -22,7 +22,7 @@ export default function RefundsPage() {
         </div>
 
         {/* Hero */}
-        <section className="bg-gradient-to-b from-card/50 to-background py-12 md:py-16">
+        <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <H1 className="mb-4">Refunds & Returns Policy</H1>
             <Muted className="text-lg max-w-2xl mx-auto m-0">
@@ -68,7 +68,7 @@ export default function RefundsPage() {
         </section>
 
         {/* Return Conditions */}
-        <section className="bg-card/50 border-y border-border py-16">
+        <section className=" border-y border-border py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <H2 className="mb-8">Return Conditions</H2>
             <div className="space-y-6">
@@ -161,7 +161,7 @@ export default function RefundsPage() {
         </section>
 
         {/* Refund Timeline */}
-        <section className="bg-card/50 border-t border-border py-16">
+        <section className=" border-t border-border py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <H2 className="mb-8">Refund Timeline</H2>
             <div className="bg-background border border-border rounded-lg p-8">
