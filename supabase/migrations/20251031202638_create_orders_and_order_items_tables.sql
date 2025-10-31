@@ -1,5 +1,5 @@
 -- Create the orders table
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   total_amount NUMERIC(10, 2) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE orders (
 );
 
 -- Create the order_items table
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   order_id BIGINT REFERENCES orders(id) ON DELETE CASCADE,
   product_id BIGINT NOT NULL,

@@ -1,11 +1,5 @@
-fix(payment): handle undefined credentials in hoodpaystrategy
+fix(db): add if not exists to create table statements
 
-Previously, the `HoodPayStrategy` class did not correctly handle the case where the `apiKey` or `businessId` were `undefined`. This resulted in a TypeScript error when the environment variables were not set.
+The previous migration failed because the `orders` and `order_items` tables already existed in the database. This commit resolves the issue by adding the `IF NOT EXISTS` clause to the `CREATE TABLE` statements in the migration file.
 
-This commit resolves the issue by:
-
-1.  Changing the type of `apiKey` and `businessId` to `string | undefined`.
-2.  Using the nullish coalescing operator (`??`) to assign the values in the constructor.
-3.  Adding a check in the `process` method to ensure that the `apiKey` and `businessId` are available before making a payment.
-
-These changes make the code more robust and prevent TypeScript errors when the HoodPay credentials are not configured.
+This will ensure that the migration can be run multiple times without causing errors.
