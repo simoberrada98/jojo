@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,6 +17,7 @@ import PageLayout from "@/components/layout/PageLayout"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useCurrency } from "@/lib/contexts/currency-context"
 import { calculatePricing } from "@/lib/utils/pricing"
+import { loadCheckoutState, saveCheckoutState, clearCheckoutState } from "@/lib/utils/checkout-storage"
 
 export default function CheckoutPage() {
   const { items } = useCart()
@@ -35,6 +36,37 @@ export default function CheckoutPage() {
     country: "United States",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [hasRestoredData, setHasRestoredData] = useState(false)
+
+  // Load saved checkout state on mount
+  useEffect(() => {
+    const savedState = loadCheckoutState()
+    if (savedState) {
+      setShippingData(savedState.shippingData)
+      if (savedState.paymentStep && savedState.paymentStep !== 'confirmation') {
+        setPaymentStep(savedState.paymentStep)
+      }
+      if (savedState.orderData) {
+        setOrderData(savedState.orderData)
+      }
+      setHasRestoredData(true)
+      // Hide the notification after 5 seconds
+      setTimeout(() => setHasRestoredData(false), 5000)
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // Save checkout state whenever it changes
+  useEffect(() => {
+    if (isLoaded && paymentStep !== 'confirmation') {
+      saveCheckoutState({
+        shippingData,
+        paymentStep,
+        orderData,
+      })
+    }
+  }, [shippingData, paymentStep, orderData, isLoaded])
 
   const validateShipping = () => {
     const newErrors: Record<string, string> = {}
@@ -65,6 +97,8 @@ export default function CheckoutPage() {
 
   const handlePaymentComplete = () => {
     setPaymentStep("confirmation")
+    // Clear saved checkout data after successful payment
+    clearCheckoutState()
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -89,6 +123,17 @@ export default function CheckoutPage() {
             Back to Cart
           </Link>
           <H1>Checkout</H1>
+          
+          {/* Restored data notification */}
+          {hasRestoredData && (
+            <div className="mt-4 bg-primary/10 border border-primary/20 rounded-lg p-4 flex gap-3 animate-in fade-in slide-in-from-top-2 duration-500">
+              <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <Muted className="text-sm font-semibold text-foreground mb-1">Your progress has been restored</Muted>
+                <Muted className="text-xs text-foreground/70 m-0">We've saved your information from your previous session</Muted>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Progress Indicator */}
@@ -278,12 +323,35 @@ export default function CheckoutPage() {
                   </Muted>
                 </div>
 
-                <Button
-                  onClick={handleShippingSubmit}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3"
-                >
-                  Continue to Review
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => {
+                      setShippingData({
+                        firstName: "",
+                        lastName: "",
+                        email: "",
+                        phone: "",
+                        address: "",
+                        city: "",
+                        state: "",
+                        zipCode: "",
+                        country: "United States",
+                      })
+                      setErrors({})
+                      clearCheckoutState()
+                    }}
+                    variant="outline"
+                    className="border-border text-foreground/70 hover:bg-accent/10 bg-transparent"
+                  >
+                    Clear Form
+                  </Button>
+                  <Button
+                    onClick={handleShippingSubmit}
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3"
+                  >
+                    Continue to Review
+                  </Button>
+                </div>
               </div>
             )}
 

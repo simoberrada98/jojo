@@ -47,7 +47,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
-          <CardDescription>Join MineHub to start shopping</CardDescription>
+          <CardDescription>Join Jhuangnyc to start shopping</CardDescription>
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">

@@ -35,7 +35,7 @@ export async function withRetry<T>(
  * Wraps Supabase operations with consistent error handling and timing
  */
 export async function dbOperation<T>(
-  operation: () => Promise<{ data: T | null; error: any }>,
+  operation: () => Promise<{ data: T | null; error: any }> | { then: (onfulfilled: (value: { data: T | null; error: any }) => any) => any },
   errorCode: string,
   errorMessage: string,
   useRetry: boolean = true

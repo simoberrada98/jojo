@@ -89,7 +89,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Welcome to MineHub</DialogTitle>
+          <DialogTitle>Welcome to Jhuangnyc</DialogTitle>
           <DialogDescription>
             Sign in to your account or create a new one to get started
           </DialogDescription>

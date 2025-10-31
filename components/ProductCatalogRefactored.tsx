@@ -111,7 +111,7 @@ function ProductCatalogContent() {
             {/* Sort Dropdown */}
             <div className="flex items-center gap-2">
               <Muted className="m-0">Sort by:</Muted>
-              <Select value={sortBy} onValueChange={setSortBy}>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue />
                 </SelectTrigger>

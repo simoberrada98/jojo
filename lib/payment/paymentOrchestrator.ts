@@ -275,7 +275,8 @@ export class PaymentOrchestrator {
           amount: state.paymentIntent.amount,
           description: state.paymentIntent.description,
           customerEmail: state.paymentIntent.customerEmail,
-          ...paymentData,
+          redirectUrl: paymentData?.redirectUrl,
+          notifyUrl: paymentData?.notifyUrl,
         }
       );
 
@@ -291,14 +292,36 @@ export class PaymentOrchestrator {
         }
       }
 
+      // HoodPay returns a payment URL in the response (typically hoodpayResponse.url or hoodpayResponse.payment_url)
+      const paymentUrl = hoodpayResponse.url || hoodpayResponse.payment_url || hoodpayResponse.redirect_url;
+      
+      if (!paymentUrl) {
+        console.error('HoodPay response missing payment URL:', hoodpayResponse);
+        return {
+          success: false,
+          paymentId: state.paymentIntent.id,
+          status: PaymentStatus.FAILED,
+          error: {
+            code: 'MISSING_PAYMENT_URL',
+            message: 'HoodPay did not return a payment URL',
+            details: hoodpayResponse,
+            retryable: false,
+          },
+        };
+      }
+
       return {
         success: true,
         paymentId: state.paymentIntent.id,
-        status: PaymentStatus.COMPLETED,
+        status: PaymentStatus.PENDING,
         transactionId: hoodpayResponse.id,
-        metadata: hoodpayResponse,
+        metadata: {
+          ...hoodpayResponse,
+          paymentUrl,
+        },
       };
     } catch (error: any) {
+      console.error('HoodPay payment error:', error);
       return {
         success: false,
         paymentId: state.paymentIntent.id,

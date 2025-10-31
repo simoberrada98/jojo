@@ -60,7 +60,7 @@ export default function ContactPage() {
                 </div>
                 <H3 className="text-lg">Email</H3>
               </div>
-              <Muted className="mb-2 text-base">support@minehub.com</Muted>
+              <Muted className="mb-2 text-base">contact@jhuangnyc.com</Muted>
               <Muted>We'll respond within 24 hours</Muted>
             </div>
 
@@ -71,7 +71,7 @@ export default function ContactPage() {
                 </div>
                 <H3 className="text-lg">Phone</H3>
               </div>
-              <Muted className="mb-2 text-base">+1 (555) 123-4567</Muted>
+              <Muted className="mb-2 text-base">+1 (631) 224-3534</Muted>
               <Muted>Mon-Fri, 9AM-6PM EST</Muted>
             </div>
 
@@ -82,8 +82,8 @@ export default function ContactPage() {
                 </div>
                 <H3 className="text-lg">Address</H3>
               </div>
-              <Muted className="mb-2 text-base">123 Tech Street</Muted>
-              <Muted>San Francisco, CA 94105</Muted>
+              <Muted className="mb-2 text-base">26 Laurel Ave</Muted>
+              <Muted>East Islip, NY 11730, US</Muted>
             </div>
           </div>
 

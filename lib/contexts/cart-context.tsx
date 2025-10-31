@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import type { DisplayProduct } from "@/lib/types/product"
 import type { CartItem } from "@/lib/types/cart"
+
+export type { CartItem }
 import { PricingService } from "@/lib/services/pricing.service"
 import { STORAGE_KEYS } from "@/lib/config/app.config"
 

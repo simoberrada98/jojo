@@ -4,7 +4,7 @@
  */
 
 import { PaymentStorageService } from "@/lib/services/payment-storage.service";
-import type { PaymentIntent, PaymentStatus } from "@/lib/payment/types";
+import { PaymentStatus, type PaymentIntent } from "@/lib/payment/types";
 
 export class PaymentRecoveryService {
   constructor(private storage: PaymentStorageService) {}

@@ -25,7 +25,7 @@ export default function PrivacyPolicyPage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
-                MineHub ("we," "our," or "us") is committed to protecting your
+                Jhuangnyc ("we," "our," or "us") is committed to protecting your
                 privacy. This Privacy Policy explains how we collect, use,
                 disclose, and safeguard your information when you visit our
                 website and use our services.
@@ -152,7 +152,7 @@ export default function PrivacyPolicyPage() {
               </ul>
               <p className="mt-4">
                 To exercise these rights, please contact us at
-                privacy@minehub.com
+                contact@jhuangnyc.com
               </p>
             </CardContent>
           </Card>
@@ -207,8 +207,8 @@ export default function PrivacyPolicyPage() {
                 us at:
               </p>
               <ul>
-                <li>Email: privacy@minehub.com</li>
-                <li>Address: [Your Business Address]</li>
+                <li>Email: contact@jhuangnyc.com</li>
+                <li>Address: 26 Laurel Ave, East Islip, NY 11730, US</li>
               </ul>
             </CardContent>
           </Card>

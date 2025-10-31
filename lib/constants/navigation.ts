@@ -90,7 +90,7 @@ export const FOOTER_BOTTOM_LINKS: NavigationItem[] = [
  * App branding
  */
 export const APP_BRANDING = {
-  name: "MineHub",
-  icon: "⚙",
-  tagline: "Professional mining hardware with crypto payments.",
+  name: "Jhuangnyc",
+  icon: "J",
+  tagline: "Premium cryptocurrency mining hardware solutions.",
 } as const;

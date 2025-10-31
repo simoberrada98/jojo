@@ -7,6 +7,10 @@ import { CurrencyProvider } from "@/lib/contexts/currency-context"
 import { AuthProvider } from "@/lib/contexts/auth-context"
 import { CartProvider } from "@/lib/contexts/cart-context"
 import { generateOrganizationSchema, generateWebSiteSchema, serializeSchema } from "@/lib/schema"
+import { siteMetadata } from "@/lib/seo/site-metadata"
+import { getCookieConsentStatus } from "@/lib/cookies/preferences"
+import { CookieBanner } from "@/components/cookie-banner"
+import { ServiceWorkerProvider } from "@/components/service-worker-provider"
 import "./globals.css"
 import Link from "next/link"
 
@@ -26,16 +30,57 @@ const jetbrainsMono = JetBrains_Mono({
 
 
 export const metadata: Metadata = {
-  title: "MineHub - Crypto Mining Hardware Store",
-  description: "Premium mining hardware with crypto payment support. ASIC miners, GPU rigs, and enterprise solutions.",
-
+  metadataBase: siteMetadata.baseUrl,
+  title: {
+    default: siteMetadata.title,
+    template: `%s | ${siteMetadata.siteName}`,
+  },
+  description: siteMetadata.description,
+  applicationName: siteMetadata.name,
+  keywords: siteMetadata.keywords,
+  category: siteMetadata.category,
+  authors: [{ name: siteMetadata.creator }],
+  publisher: siteMetadata.publisher,
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/",
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: siteMetadata.locale,
+    url: siteMetadata.baseUrl.toString(),
+    title: siteMetadata.title,
+    description: siteMetadata.description,
+    siteName: siteMetadata.siteName,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: siteMetadata.twitterHandle,
+    title: siteMetadata.title,
+    description: siteMetadata.description,
+  },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/favicon.ico" }],
+    apple: [{ url: "/favicon.ico" }],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+  },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieConsent = await getCookieConsentStatus()
   // Get base URL - use environment variable or fallback
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com"
   
@@ -46,6 +91,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
+        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="JhuangNYC" />
+        <link rel="manifest" href="/site.webmanifest" />
         {/* Schema.org Organization markup */}
         <script
           type="application/ld+json"
@@ -79,6 +130,8 @@ export default function RootLayout({
           </CurrencyProvider>
         </AuthProvider>
         <Toaster />
+        <ServiceWorkerProvider />
+        <CookieBanner initialStatus={cookieConsent} />
         <Analytics />
       </body>
     </html>

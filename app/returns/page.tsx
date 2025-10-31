@@ -70,7 +70,7 @@ export default function ReturnsPage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <ol>
-                <li>Contact our support team at returns@minehub.com</li>
+                <li>Contact our support team at contact@jhuangnyc.com</li>
                 <li>Provide your order number and reason for return</li>
                 <li>Wait for return authorization (RMA) number</li>
                 <li>Package item securely with all original materials</li>
@@ -182,8 +182,8 @@ export default function ReturnsPage() {
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>For questions about returns or refunds:</p>
               <ul>
-                <li>Email: returns@minehub.com</li>
-                <li>Phone: [Your Phone Number]</li>
+                <li>Email: contact@jhuangnyc.com</li>
+                <li>Phone: +1 (631) 224-3534</li>
                 <li>Business Hours: Monday-Friday, 9 AM - 5 PM EST</li>
               </ul>
             </CardContent>

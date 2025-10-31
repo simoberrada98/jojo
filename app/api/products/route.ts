@@ -7,8 +7,6 @@ const DETAIL_CACHE_MAX_AGE_SECONDS = 300
 const LIST_CACHE_MAX_AGE_SECONDS = 120
 const STALE_WHILE_REVALIDATE_SECONDS = 600
 
-export const revalidate = 60
-
 function jsonWithCache<T>(payload: T, maxAgeSeconds: number) {
   const response = NextResponse.json(payload)
   response.headers.set(

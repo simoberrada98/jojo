@@ -127,7 +127,7 @@ export default function RefundsPage() {
               {
                 step: 1,
                 title: "Contact Support",
-                description: "Email support@minehub.com with your order number and reason for return",
+                description: "Email contact@jhuangnyc.com with your order number and reason for return",
               },
               {
                 step: 2,
@@ -193,12 +193,12 @@ export default function RefundsPage() {
             <H2 className="mb-4">Questions About Returns?</H2>
             <Muted className="mb-6 m-0">Our customer support team is here to help. Contact us anytime.</Muted>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="mailto:support@minehub.com" className="text-accent hover:text-accent/80 font-medium">
-                support@minehub.com
+              <a href="mailto:contact@jhuangnyc.com" className="text-accent hover:text-accent/80 font-medium">
+                contact@jhuangnyc.com
               </a>
               <span className="text-muted-foreground">•</span>
-              <a href="tel:+15551234567" className="text-accent hover:text-accent/80 font-medium">
-                +1 (555) 123-4567
+              <a href="tel:+16312243534" className="text-accent hover:text-accent/80 font-medium">
+                +1 (631) 224-3534
               </a>
             </div>
           </div>

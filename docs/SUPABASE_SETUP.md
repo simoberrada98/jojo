@@ -7,7 +7,7 @@ This guide will walk you through setting up Supabase for your MineHub ecommerce 
 1. Go to [supabase.com](https://supabase.com) and sign up/login
 2. Click "New Project"
 3. Fill in your project details:
-   - Project Name: `minehub` (or your preferred name)
+   - Project Name: `jhuangnyc` (or your preferred name)
    - Database Password: (save this securely)
    - Region: Choose closest to your users
 4. Wait for the project to be provisioned (~2 minutes)

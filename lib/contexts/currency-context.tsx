@@ -4,6 +4,8 @@ import { createContext, useContext, useState, ReactNode } from "react"
 import { PricingService } from "@/lib/services/pricing.service"
 import { DEFAULT_CURRENCY, type Currency } from "@/lib/config/currency.config"
 
+export type { Currency }
+
 interface CurrencyContextType {
   currency: Currency
   setCurrency: (currency: Currency) => void

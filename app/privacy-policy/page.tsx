@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">1. Introduction</h2>
               <p className="text-muted-foreground leading-relaxed">
-                MineHub ("we," "us," "our," or "Company") operates the website. This page informs you of our policies
+                Jhuangnyc ("we," "us," "our," or "Company") operates the website. This page informs you of our policies
                 regarding the collection, use, and disclosure of personal data when you use our Service and the choices
                 you have associated with that data.
               </p>
@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">3. Use of Data</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                MineHub uses the collected data for various purposes:
+                Jhuangnyc uses the collected data for various purposes:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>To provide and maintain our Service</li>
@@ -88,8 +88,8 @@ export default function PrivacyPolicyPage() {
                 If you have any questions about this Privacy Policy, please contact us at:
               </p>
               <div className="mt-4 p-4 bg-card border border-border rounded-lg">
-                <p className="text-foreground">Email: privacy@minehub.com</p>
-                <p className="text-foreground">Address: 123 Tech Street, San Francisco, CA 94105</p>
+                <p className="text-foreground">Email: contact@jhuangnyc.com</p>
+                <p className="text-foreground">Address: 26 Laurel Ave, East Islip, NY 11730, US</p>
               </div>
             </section>
           </div>

@@ -19,7 +19,7 @@ export default function TermsOfServicePage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
-                By accessing and using MineHub, you agree to be bound by these
+                By accessing and using Jhuangnyc, you agree to be bound by these
                 Terms of Service and all applicable laws and regulations. If you
                 do not agree with any of these terms, you are prohibited from
                 using this site.
@@ -34,7 +34,7 @@ export default function TermsOfServicePage() {
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
                 Permission is granted to temporarily access the materials on
-                MineHub for personal, non-commercial transitory viewing only.
+                Jhuangnyc for personal, non-commercial transitory viewing only.
                 This is the grant of a license, not a transfer of title, and
                 under this license you may not:
               </p>
@@ -185,7 +185,7 @@ export default function TermsOfServicePage() {
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
                 All content on this website, including text, graphics, logos,
-                images, and software, is the property of MineHub or its content
+                images, and software, is the property of Jhuangnyc or its content
                 suppliers and is protected by copyright and trademark laws.
                 Unauthorized use may violate these laws.
               </p>
@@ -198,7 +198,7 @@ export default function TermsOfServicePage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
-                The materials on MineHub are provided on an 'as is' basis. We
+                The materials on Jhuangnyc are provided on an 'as is' basis. We
                 make no warranties, expressed or implied, and hereby disclaim
                 all other warranties including, without limitation, implied
                 warranties of merchantability, fitness for a particular purpose,
@@ -219,7 +219,7 @@ export default function TermsOfServicePage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
-                In no event shall MineHub or its suppliers be liable for any
+                In no event shall Jhuangnyc or its suppliers be liable for any
                 damages (including, without limitation, damages for loss of data
                 or profit, or due to business interruption) arising out of the
                 use or inability to use the materials on our website.
@@ -233,7 +233,7 @@ export default function TermsOfServicePage() {
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
-                You agree to indemnify and hold harmless MineHub and its
+                You agree to indemnify and hold harmless Jhuangnyc and its
                 affiliates from any claims, damages, or expenses arising from
                 your use of our services or violation of these terms.
               </p>
@@ -247,7 +247,7 @@ export default function TermsOfServicePage() {
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>
                 These terms shall be governed by and construed in accordance
-                with the laws of [Your Jurisdiction], without regard to its
+                with the laws of New York, United States, without regard to its
                 conflict of law provisions.
               </p>
             </CardContent>
@@ -273,8 +273,8 @@ export default function TermsOfServicePage() {
             <CardContent className="prose prose-sm max-w-none dark:prose-invert">
               <p>For questions about these Terms of Service, contact us at:</p>
               <ul>
-                <li>Email: legal@minehub.com</li>
-                <li>Address: [Your Business Address]</li>
+                <li>Email: contact@jhuangnyc.com</li>
+                <li>Address: 26 Laurel Ave, East Islip, NY 11730, US</li>
               </ul>
             </CardContent>
           </Card>

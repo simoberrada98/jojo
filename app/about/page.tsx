@@ -6,24 +6,28 @@ import { Shield, Zap, Users, Award } from "lucide-react"
 import { serializeSchema } from "@/lib/schema"
 
 export default function AboutPage() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://minehub.com"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://jhuangnyc.com"
   
   // LocalBusiness schema for the about page
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${baseUrl}/about`,
-    name: "MineHub",
+    name: "Jhuangnyc",
     description: "Your trusted partner in cryptocurrency mining hardware since 2020. We provide high-quality ASIC miners from leading manufacturers, backed by exceptional customer service and competitive pricing.",
     url: baseUrl,
     foundingDate: "2020",
     image: `${baseUrl}/logo.png`,
     address: {
       "@type": "PostalAddress",
+      streetAddress: "26 Laurel Ave",
+      addressLocality: "East Islip",
+      addressRegion: "NY",
+      postalCode: "11730",
       addressCountry: "US",
     },
-    telephone: "+1-800-MINEHUB",
-    email: "support@minehub.com",
+    telephone: "+1-631-224-3534",
+    email: "contact@jhuangnyc.com",
     priceRange: "$$$$",
     openingHoursSpecification: [
       {
@@ -42,9 +46,8 @@ export default function AboutPage() {
       },
     ],
     sameAs: [
-      "https://twitter.com/minehub",
-      "https://github.com/minehub",
-      "https://discord.gg/minehub",
+      "https://twitter.com/jhuangnyc",
+      "https://github.com/jhuangnyc",
     ],
   }
 
@@ -60,7 +63,7 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 py-12">
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto mb-16 text-center">
-        <H1 className="mb-4">About MineHub</H1>
+        <H1 className="mb-4">About Jhuangnyc</H1>
         <P className="text-xl text-muted-foreground m-0">
           Your trusted partner in cryptocurrency mining hardware since 2020
         </P>
@@ -72,7 +75,7 @@ export default function AboutPage() {
           <CardContent className="pt-6">
             <H2 className="mb-4">Our Mission</H2>
             <P className="text-lg text-muted-foreground m-0">
-              At MineHub, we're dedicated to making cryptocurrency mining accessible to everyone. We provide high-quality ASIC miners from leading manufacturers, backed by exceptional customer service and competitive pricing. Our goal is to empower miners of all sizes to participate in blockchain networks and contribute to the decentralization of cryptocurrency.
+              At Jhuangnyc, we're dedicated to making cryptocurrency mining accessible to everyone. We provide high-quality ASIC miners from leading manufacturers, backed by exceptional customer service and competitive pricing. Our goal is to empower miners of all sizes to participate in blockchain networks and contribute to the decentralization of cryptocurrency.
             </P>
           </CardContent>
         </Card>
@@ -148,7 +151,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none dark:prose-invert">
             <p>
-              Founded in 2020 by a team of cryptocurrency enthusiasts and hardware experts, MineHub was born from a simple observation: miners needed a reliable, transparent source for quality mining equipment.
+              Founded in 2020 by a team of cryptocurrency enthusiasts and hardware experts, Jhuangnyc was born from a simple observation: miners needed a reliable, transparent source for quality mining equipment.
             </p>
             <p>
               What started as a small operation has grown into a trusted name in the cryptocurrency mining community. We've helped thousands of miners—from hobbyists setting up their first rig to large-scale operations managing hundreds of machines.
@@ -204,7 +207,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none dark:prose-invert">
             <p>
-              MineHub is more than just a store—we're a community of miners supporting each other's success. Stay connected with us:
+              Jhuangnyc is more than just a store—we're a community of miners supporting each other's success. Stay connected with us:
             </p>
             <ul>
               <li>Subscribe to our newsletter for industry news and exclusive offers</li>

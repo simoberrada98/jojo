@@ -12,11 +12,11 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">⚙</span>
+                <span className="text-white font-bold">J</span>
               </div>
-              <span className="text-lg font-bold">MineHub</span>
+              <span className="text-lg font-bold">Jhuangnyc</span>
             </div>
-            <Muted className="m-0">Professional mining hardware with crypto payments.</Muted>
+            <Muted className="m-0">Premium cryptocurrency mining hardware solutions.</Muted>
           </div>
 
           {/* Products */}
@@ -103,7 +103,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-foreground/60">
-          <Muted className="m-0">&copy; 2025 MineHub. All rights reserved.</Muted>
+          <Muted className="m-0">&copy; 2025 Jhuangnyc. All rights reserved.</Muted>
           <div className="flex gap-6 mt-4 sm:mt-0">
             <Link href="/privacy" className="hover:text-accent transition">
               Privacy

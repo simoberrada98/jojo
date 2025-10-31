@@ -12,15 +12,15 @@ import { PaymentStateManager } from "./PaymentStateManager";
 import { PaymentHooksManager } from "./PaymentHooksManager";
 import { PaymentProcessor } from "./PaymentProcessor";
 import { PaymentRecoveryService } from "./PaymentRecoveryService";
-import type {
-  PaymentIntent,
-  PaymentResult,
-  PaymentMethod,
+import {
   PaymentStatus,
   PaymentStep,
-  CheckoutData,
-  PaymentHooks,
   PaymentEventType,
+  type PaymentIntent,
+  type PaymentResult,
+  type PaymentMethod,
+  type CheckoutData,
+  type PaymentHooks,
 } from "@/lib/payment/types";
 
 export class PaymentOrchestratorRefactored {

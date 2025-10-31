@@ -30,7 +30,7 @@ export const env = createEnv({
     
     // App Configuration
     NEXT_PUBLIC_BASE_URL: z.string().url().default("https://jhuangnyc.com"),
-    NEXT_PUBLIC_APP_NAME: z.string().default("MineHub"),
+    NEXT_PUBLIC_APP_NAME: z.string().default("Jhuangnyc"),
     
     // Feature Flags
     NEXT_PUBLIC_ENABLE_HOODPAY: z.string().transform(val => val === "true").default("false"),

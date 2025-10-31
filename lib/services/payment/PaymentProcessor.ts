@@ -5,12 +5,11 @@
 
 import { paymentStrategyRegistry } from "@/lib/services/payment-strategies";
 import { PaymentDatabaseService } from "@/lib/services/payment-db.service";
-import type {
-  PaymentMethod,
-  PaymentResult,
-  PaymentLocalState,
+import {
   PaymentStatus,
-  PaymentStep,
+  type PaymentMethod,
+  type PaymentResult,
+  type PaymentLocalState,
 } from "@/lib/payment/types";
 
 export class PaymentProcessor {

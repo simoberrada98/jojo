@@ -5,13 +5,13 @@
  */
 
 import { APP_CONFIG, STORAGE_KEYS } from "@/lib/config/app.config";
-import type {
-  PaymentLocalState,
-  PaymentIntent,
+import {
   PaymentStep,
   PaymentStatus,
-  CheckoutData,
-  PaymentError,
+  type PaymentLocalState,
+  type PaymentIntent,
+  type CheckoutData,
+  type PaymentError,
 } from "@/lib/payment/types";
 import { generateId } from "@/lib/utils/string";
 

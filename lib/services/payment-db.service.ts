@@ -6,15 +6,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { dbOperation } from './db-operation.wrapper';
-import type {
-  PaymentRecord,
-  WebhookEvent,
-  PaymentAttempt,
+import {
   PaymentStatus,
-  PaymentMethod,
-  PaymentError,
-  ServiceResponse,
-  PaginatedResponse,
+  type PaymentRecord,
+  type WebhookEvent,
+  type PaymentAttempt,
+  type PaymentMethod,
+  type PaymentError,
+  type ServiceResponse,
+  type PaginatedResponse,
 } from '@/lib/payment/types';
 
 /**
@@ -25,7 +25,7 @@ export class PaymentDatabaseService {
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     const url = supabaseUrl || supabaseConfig.url;
-    const key = supabaseKey || supabaseConfig.serviceRoleKey;
+    const key = supabaseKey || supabaseConfig.serviceRoleKey || supabaseConfig.anonKey;
     
     if (!url || !key) {
       throw new Error('Supabase credentials are required');

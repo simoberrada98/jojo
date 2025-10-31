@@ -9,12 +9,17 @@ export interface OrganizationSchema {
   description?: string
   address?: {
     "@type": "PostalAddress"
+    streetAddress?: string
+    addressLocality?: string
+    addressRegion?: string
+    postalCode?: string
     addressCountry?: string
   }
   contactPoint?: {
     "@type": "ContactPoint"
     contactType: string
     email?: string
+    telephone?: string
   }
   sameAs?: string[]
 }
@@ -72,23 +77,24 @@ export function generateOrganizationSchema(baseUrl: string): OrganizationSchema 
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "MineHub",
+    name: "Jhuangnyc",
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
     description: "Premium cryptocurrency mining hardware store offering ASIC miners, GPU rigs, and enterprise solutions with crypto payment support.",
     address: {
       "@type": "PostalAddress",
+      streetAddress: "26 Laurel Ave",
+      addressLocality: "East Islip",
+      addressRegion: "NY",
+      postalCode: "11730",
       addressCountry: "US",
     },
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Service",
-      email: "support@minehub.com",
+      email: "contact@jhuangnyc.com",
+      telephone: "+1-631-224-3534",
     },
-    sameAs: [
-      "https://twitter.com/minehub",
-      "https://github.com/minehub",
-    ],
   }
 }
 
@@ -107,7 +113,7 @@ export function generateProductSchema(
   priceValidUntil.setFullYear(priceValidUntil.getFullYear() + 1)
 
   // Extract brand from product name (e.g., "Bitmain Antminer S19" -> "Bitmain")
-  const brandName = product.name.split(" ")[0] || "MineHub"
+  const brandName = product.name.split(" ")[0] || "Jhuangnyc"
 
   const schema: ProductSchema = {
     "@context": "https://schema.org",
@@ -152,7 +158,7 @@ export function generateWebSiteSchema(baseUrl: string): WebSiteSchema {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "MineHub - Crypto Mining Hardware Store",
+    name: "Jhuangnyc - Crypto Mining Hardware Store",
     url: baseUrl,
     description: "Premium mining hardware with crypto payment support. ASIC miners, GPU rigs, and enterprise solutions.",
     potentialAction: {

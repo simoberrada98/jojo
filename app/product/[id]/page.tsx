@@ -80,7 +80,7 @@ export default function ProductDetailPage() {
   }
 
   // Generate Product Schema
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://minehub.com"
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://jhuangnyc.com"
   const productSchema = generateProductSchema(product, baseUrl, currency)
 
   return (
