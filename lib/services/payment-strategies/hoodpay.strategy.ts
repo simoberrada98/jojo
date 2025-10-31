@@ -52,8 +52,8 @@ export class HoodPayStrategy extends BasePaymentStrategy {
 
     try {
       const hoodpayResponse = await createPayment(
-        this.apiKey,
-        this.businessId,
+        this.apiKey, // Pass API key
+        this.businessId, // Pass Business ID
         {
           currency: state.paymentIntent.currency,
           amount: state.paymentIntent.amount,

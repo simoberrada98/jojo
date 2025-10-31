@@ -7,9 +7,9 @@ import { env } from "@/lib/env";
 export const PAYMENT_CONFIG = {
   // HoodPay credentials
   hoodpay: {
-    apiKey: env.HOODPAY_API_KEY || "",
-    businessId: env.HOODPAY_BUSINESS_ID || "",
-    webhookSecret: env.HOODPAY_WEBHOOK_SECRET || "",
+    apiKey: env.HOODPAY_API_KEY,
+    businessId: env.HOODPAY_BUSINESS_ID,
+    webhookSecret: env.HOODPAY_WEBHOOK_SECRET,
   },
 
   // Payment timeouts

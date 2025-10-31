@@ -1,0 +1,10 @@
+fix(payment): resolve hoodpay api error by enforcing env variables
+
+The previous implementation resulted in a HoodPay API error 500 due to a malformed JWT. This was caused by the `HOODPAY_API_KEY` environment variable not being set, which led to an empty string being sent as the API key.
+
+This commit resolves the issue by:
+
+1.  Removing the fallback to an empty string for HoodPay credentials in `lib/config/payment.config.ts` and `lib/payment/paymentOrchestrator.ts`. This ensures that the application will fail fast if the required environment variables are not set.
+2.  Updating the `HoodPayStrategy` to explicitly pass the `apiKey` and `businessId` to the `createPayment` function, ensuring that the correct credentials are used.
+
+These changes will prevent similar errors in the future and make it easier to debug issues related to missing environment variables.

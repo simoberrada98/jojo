@@ -429,8 +429,8 @@ export function createPaymentOrchestrator(config: {
   supabaseKey?: string;
   hooks?: PaymentHooks;
 }): PaymentOrchestrator {
-  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY || "";
-  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID || "";
+  const apiKey = config.apiKey || process.env.HOODPAY_API_KEY;
+  const businessId = config.businessId || process.env.HOODPAY_BUSINESS_ID;
   const supabaseUrl =
     config.supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey =
