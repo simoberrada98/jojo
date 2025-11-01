@@ -208,7 +208,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
         <div className="space-y-4">
           {events.map((event, index) => (
             <div key={event.id} className="flex gap-4">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div
                   className={`w-2 h-2 rounded-full mt-2 ${
                     index === 0 ? "bg-accent" : "bg-border"

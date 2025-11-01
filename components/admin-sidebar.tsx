@@ -62,7 +62,7 @@ export default function AdminSidebar({
                   : "text-foreground/70 hover:bg-background"
               }`}
             >
-              <Icon className="flex-shrink-0 w-5 h-5" />
+              <Icon className="w-5 h-5 shrink-0" />
               {isOpen && (
                 <span className="font-medium text-sm">{item.label}</span>
               )}
@@ -74,7 +74,7 @@ export default function AdminSidebar({
       {/* Logout */}
       <div className="p-4 border-border border-t">
         <button className="flex items-center gap-3 hover:bg-background px-4 py-3 rounded-lg w-full text-foreground/70 transition">
-          <LogOut className="flex-shrink-0 w-5 h-5" />
+          <LogOut className="w-5 h-5 shrink-0" />
           {isOpen && <span className="font-medium text-sm">Logout</span>}
         </button>
       </div>

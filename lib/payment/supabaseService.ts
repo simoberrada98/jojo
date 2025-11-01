@@ -593,6 +593,16 @@ export class PaymentSupabaseService {
 /**
  * Create payment service instance
  */
+type PaymentServiceCache = {
+  service: PaymentSupabaseService;
+  supabaseUrl: string;
+  supabaseKey: string;
+};
+
+const globalForPaymentService = globalThis as typeof globalThis & {
+  __paymentServiceCache?: PaymentServiceCache;
+};
+
 export function createPaymentService(
   supabaseUrl?: string,
   supabaseKey?: string
@@ -604,5 +614,21 @@ export function createPaymentService(
     throw new Error("Supabase credentials are required");
   }
 
-  return new PaymentSupabaseService(url, key);
+  const cache = globalForPaymentService.__paymentServiceCache;
+  if (cache && cache.supabaseUrl === url && cache.supabaseKey === key) {
+    return cache.service;
+  }
+
+  const service = new PaymentSupabaseService(url, key);
+
+  // Cache the singleton instance outside of tests to avoid cross-test state bleed
+  if (process.env.NODE_ENV !== "test") {
+    globalForPaymentService.__paymentServiceCache = {
+      service,
+      supabaseUrl: url,
+      supabaseKey: key,
+    };
+  }
+
+  return service;
 }
