@@ -50,14 +50,14 @@ export class PricingService {
    * Calculate shipping cost
    */
   static calculateShipping(items: CartItem[]): number {
-    return items.length > 0 ? PRICING_CONFIG.shipping.standard : 0;
+    return 0;
   }
 
   /**
    * Calculate tax
    */
   static calculateTax(subtotal: number, shipping: number): number {
-    return (subtotal + shipping) * PRICING_CONFIG.tax.rate;
+    return 0;
   }
 
   /**
