@@ -4,25 +4,25 @@
  * Testable and follows SOLID principles
  */
 
-import { APP_CONFIG, STORAGE_KEYS } from "@/lib/config/app.config";
+import { APP_CONFIG, STORAGE_KEYS } from '@/lib/config/app.config'
 import {
   PaymentStep,
   PaymentStatus,
   type PaymentLocalState,
   type PaymentIntent,
   type CheckoutData,
-  type PaymentError,
-} from "@/lib/payment/types";
-import { generateId } from "@/lib/utils/string";
+  type PaymentError
+} from '@/types/payment'
+import { generateId } from '@/lib/utils/string'
 
 /**
  * Storage interface for dependency injection
  */
 export interface StorageAdapter {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-  keys(): string[];
+  getItem(key: string): string | null
+  setItem(key: string, value: string): void
+  removeItem(key: string): void
+  keys(): string[]
 }
 
 /**
@@ -31,33 +31,33 @@ export interface StorageAdapter {
 class BrowserStorageAdapter implements StorageAdapter {
   getItem(key: string): string | null {
     try {
-      return localStorage.getItem(key);
+      return localStorage.getItem(key)
     } catch {
-      return null;
+      return null
     }
   }
 
   setItem(key: string, value: string): void {
     try {
-      localStorage.setItem(key, value);
+      localStorage.setItem(key, value)
     } catch (error) {
-      console.error("Failed to save to storage:", error);
+      console.error('Failed to save to storage:', error)
     }
   }
 
   removeItem(key: string): void {
     try {
-      localStorage.removeItem(key);
+      localStorage.removeItem(key)
     } catch (error) {
-      console.error("Failed to remove from storage:", error);
+      console.error('Failed to remove from storage:', error)
     }
   }
 
   keys(): string[] {
     try {
-      return Object.keys(localStorage);
+      return Object.keys(localStorage)
     } catch {
-      return [];
+      return []
     }
   }
 }
@@ -67,16 +67,16 @@ class BrowserStorageAdapter implements StorageAdapter {
  * Accepts storage adapter for testability
  */
 export class PaymentStorageService {
-  private storage: StorageAdapter;
-  private sessionTimeout: number;
+  private storage: StorageAdapter
+  private sessionTimeout: number
 
   constructor(
     storage: StorageAdapter = new BrowserStorageAdapter(),
     sessionTimeout: number = APP_CONFIG.session.timeoutMs
   ) {
-    this.storage = storage;
-    this.sessionTimeout = sessionTimeout;
-    this.cleanupExpiredSessions();
+    this.storage = storage
+    this.sessionTimeout = sessionTimeout
+    this.cleanupExpiredSessions()
   }
 
   /**
@@ -84,12 +84,12 @@ export class PaymentStorageService {
    */
   isAvailable(): boolean {
     try {
-      const test = "__storage_test__";
-      this.storage.setItem(test, test);
-      this.storage.removeItem(test);
-      return true;
+      const test = '__storage_test__'
+      this.storage.setItem(test, test)
+      this.storage.removeItem(test)
+      return true
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -97,7 +97,7 @@ export class PaymentStorageService {
    * Generate a unique session ID
    */
   generateSessionId(): string {
-    return generateId("session");
+    return generateId('session')
   }
 
   /**
@@ -105,28 +105,28 @@ export class PaymentStorageService {
    */
   saveState(state: PaymentLocalState): boolean {
     if (!this.isAvailable()) {
-      console.warn("Storage not available");
-      return false;
+      console.warn('Storage not available')
+      return false
     }
 
     try {
       const stateWithTimestamp = {
         ...state,
-        timestamp: new Date().toISOString(),
-      };
+        timestamp: new Date().toISOString()
+      }
 
       this.storage.setItem(
         STORAGE_KEYS.paymentState,
         JSON.stringify(stateWithTimestamp)
-      );
+      )
 
       // Save to recovery backup
-      this.saveRecoveryPoint(stateWithTimestamp);
+      this.saveRecoveryPoint(stateWithTimestamp)
 
-      return true;
+      return true
     } catch (error) {
-      console.error("Failed to save payment state:", error);
-      return false;
+      console.error('Failed to save payment state:', error)
+      return false
     }
   }
 
@@ -135,28 +135,28 @@ export class PaymentStorageService {
    */
   loadState(): PaymentLocalState | null {
     if (!this.isAvailable()) {
-      return null;
+      return null
     }
 
     try {
-      const stored = this.storage.getItem(STORAGE_KEYS.paymentState);
+      const stored = this.storage.getItem(STORAGE_KEYS.paymentState)
       if (!stored) {
-        return null;
+        return null
       }
 
-      const state: PaymentLocalState = JSON.parse(stored);
+      const state: PaymentLocalState = JSON.parse(stored)
 
       // Check if session has expired
       if (this.isSessionExpired(state.timestamp)) {
-        console.warn("Payment session expired");
-        this.clearState();
-        return null;
+        console.warn('Payment session expired')
+        this.clearState()
+        return null
       }
 
-      return state;
+      return state
     } catch (error) {
-      console.error("Failed to load payment state:", error);
-      return this.loadRecoveryPoint();
+      console.error('Failed to load payment state:', error)
+      return this.loadRecoveryPoint()
     }
   }
 
@@ -164,65 +164,65 @@ export class PaymentStorageService {
    * Update specific fields in the payment state
    */
   updateState(updates: Partial<PaymentLocalState>): boolean {
-    const currentState = this.loadState();
+    const currentState = this.loadState()
     if (!currentState) {
-      return false;
+      return false
     }
 
     const newState: PaymentLocalState = {
       ...currentState,
       ...updates,
-      timestamp: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString()
+    }
 
-    return this.saveState(newState);
+    return this.saveState(newState)
   }
 
   /**
    * Update payment intent within the state
    */
   updatePaymentIntent(updates: Partial<PaymentIntent>): boolean {
-    const currentState = this.loadState();
+    const currentState = this.loadState()
     if (!currentState) {
-      return false;
+      return false
     }
 
     const updatedIntent: PaymentIntent = {
       ...currentState.paymentIntent,
       ...updates,
-      updatedAt: new Date().toISOString(),
-    };
+      updatedAt: new Date().toISOString()
+    }
 
-    return this.updateState({ paymentIntent: updatedIntent });
+    return this.updateState({ paymentIntent: updatedIntent })
   }
 
   /**
    * Update current payment step
    */
   updateStep(step: PaymentStep): boolean {
-    return this.updateState({ currentStep: step });
+    return this.updateState({ currentStep: step })
   }
 
   /**
    * Update checkout data
    */
   updateCheckoutData(data: CheckoutData): boolean {
-    return this.updateState({ checkoutData: data });
+    return this.updateState({ checkoutData: data })
   }
 
   /**
    * Record a payment error
    */
   recordError(error: PaymentError): boolean {
-    const currentState = this.loadState();
+    const currentState = this.loadState()
     if (!currentState) {
-      return false;
+      return false
     }
 
     return this.updateState({
       lastError: error,
-      attemptCount: currentState.attemptCount + 1,
-    });
+      attemptCount: currentState.attemptCount + 1
+    })
   }
 
   /**
@@ -230,14 +230,14 @@ export class PaymentStorageService {
    */
   clearState(): void {
     if (!this.isAvailable()) {
-      return;
+      return
     }
 
     try {
-      this.storage.removeItem(STORAGE_KEYS.paymentState);
-      this.storage.removeItem(STORAGE_KEYS.paymentRecovery);
+      this.storage.removeItem(STORAGE_KEYS.paymentState)
+      this.storage.removeItem(STORAGE_KEYS.paymentRecovery)
     } catch (error) {
-      console.error("Failed to clear payment state:", error);
+      console.error('Failed to clear payment state:', error)
     }
   }
 
@@ -245,9 +245,9 @@ export class PaymentStorageService {
    * Check if session has expired
    */
   private isSessionExpired(timestamp: string): boolean {
-    const sessionTime = new Date(timestamp).getTime();
-    const now = Date.now();
-    return now - sessionTime > this.sessionTimeout;
+    const sessionTime = new Date(timestamp).getTime()
+    const now = Date.now()
+    return now - sessionTime > this.sessionTimeout
   }
 
   /**
@@ -257,14 +257,14 @@ export class PaymentStorageService {
     try {
       const recoveryData = {
         state,
-        savedAt: new Date().toISOString(),
-      };
+        savedAt: new Date().toISOString()
+      }
       this.storage.setItem(
         STORAGE_KEYS.paymentRecovery,
         JSON.stringify(recoveryData)
-      );
+      )
     } catch (error) {
-      console.error("Failed to save recovery point:", error);
+      console.error('Failed to save recovery point:', error)
     }
   }
 
@@ -273,22 +273,22 @@ export class PaymentStorageService {
    */
   private loadRecoveryPoint(): PaymentLocalState | null {
     try {
-      const stored = this.storage.getItem(STORAGE_KEYS.paymentRecovery);
+      const stored = this.storage.getItem(STORAGE_KEYS.paymentRecovery)
       if (!stored) {
-        return null;
+        return null
       }
 
-      const recoveryData = JSON.parse(stored);
+      const recoveryData = JSON.parse(stored)
 
       if (this.isSessionExpired(recoveryData.savedAt)) {
-        this.storage.removeItem(STORAGE_KEYS.paymentRecovery);
-        return null;
+        this.storage.removeItem(STORAGE_KEYS.paymentRecovery)
+        return null
       }
 
-      return recoveryData.state;
+      return recoveryData.state
     } catch (error) {
-      console.error("Failed to load recovery point:", error);
-      return null;
+      console.error('Failed to load recovery point:', error)
+      return null
     }
   }
 
@@ -297,32 +297,32 @@ export class PaymentStorageService {
    */
   private cleanupExpiredSessions(): void {
     if (!this.isAvailable()) {
-      return;
+      return
     }
 
     try {
-      const keys = this.storage.keys();
-      const now = Date.now();
-      const prefix = APP_CONFIG.session.storagePrefix;
+      const keys = this.storage.keys()
+      const now = Date.now()
+      const prefix = APP_CONFIG.session.storagePrefix
 
       keys.forEach((key) => {
         if (key.startsWith(prefix)) {
           try {
-            const data = JSON.parse(this.storage.getItem(key) || "{}");
+            const data = JSON.parse(this.storage.getItem(key) || '{}')
             if (data.timestamp) {
-              const timestamp = new Date(data.timestamp).getTime();
+              const timestamp = new Date(data.timestamp).getTime()
               if (now - timestamp > this.sessionTimeout) {
-                this.storage.removeItem(key);
+                this.storage.removeItem(key)
               }
             }
           } catch {
             // Invalid data, remove it
-            this.storage.removeItem(key);
+            this.storage.removeItem(key)
           }
         }
-      });
+      })
     } catch (error) {
-      console.error("Failed to cleanup expired sessions:", error);
+      console.error('Failed to cleanup expired sessions:', error)
     }
   }
 
@@ -330,23 +330,23 @@ export class PaymentStorageService {
    * Get session info
    */
   getSessionInfo(): {
-    active: boolean;
-    sessionId?: string;
-    expiresAt?: string;
+    active: boolean
+    sessionId?: string
+    expiresAt?: string
   } {
-    const state = this.loadState();
+    const state = this.loadState()
     if (!state) {
-      return { active: false };
+      return { active: false }
     }
 
-    const timestamp = new Date(state.timestamp).getTime();
-    const expiresAt = new Date(timestamp + this.sessionTimeout).toISOString();
+    const timestamp = new Date(state.timestamp).getTime()
+    const expiresAt = new Date(timestamp + this.sessionTimeout).toISOString()
 
     return {
       active: true,
       sessionId: state.sessionId,
-      expiresAt,
-    };
+      expiresAt
+    }
   }
 
   /**
@@ -356,7 +356,7 @@ export class PaymentStorageService {
     paymentIntent: PaymentIntent,
     checkoutData?: CheckoutData
   ): PaymentLocalState {
-    const sessionId = this.generateSessionId();
+    const sessionId = this.generateSessionId()
 
     const initialState: PaymentLocalState = {
       sessionId,
@@ -364,11 +364,11 @@ export class PaymentStorageService {
       currentStep: PaymentStep.INIT,
       attemptCount: 0,
       checkoutData,
-      timestamp: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString()
+    }
 
-    this.saveState(initialState);
-    return initialState;
+    this.saveState(initialState)
+    return initialState
   }
 
   /**
@@ -378,35 +378,35 @@ export class PaymentStorageService {
     paymentIntent: PaymentIntent,
     checkoutData?: CheckoutData
   ): PaymentLocalState {
-    const existingState = this.loadState();
+    const existingState = this.loadState()
 
     // If existing session is valid and for the same payment, resume it
     if (existingState && existingState.paymentIntent.id === paymentIntent.id) {
-      return existingState;
+      return existingState
     }
 
     // Otherwise, start fresh
-    return this.initializeSession(paymentIntent, checkoutData);
+    return this.initializeSession(paymentIntent, checkoutData)
   }
 
   /**
    * Check if payment can be retried
    */
   canRetry(maxAttempts: number = APP_CONFIG.retry.maxAttempts): boolean {
-    const state = this.loadState();
+    const state = this.loadState()
     if (!state) {
-      return true;
+      return true
     }
 
-    return state.attemptCount < maxAttempts;
+    return state.attemptCount < maxAttempts
   }
 
   /**
    * Mark payment as completed
    */
   markCompleted(transactionId?: string): boolean {
-    const state = this.loadState();
-    if (!state) return false;
+    const state = this.loadState()
+    if (!state) return false
 
     return this.updateState({
       currentStep: PaymentStep.COMPLETE,
@@ -415,19 +415,19 @@ export class PaymentStorageService {
         status: PaymentStatus.COMPLETED,
         metadata: {
           ...state.paymentIntent.metadata,
-          transactionId,
-        },
-      },
-    });
+          transactionId
+        }
+      }
+    })
   }
 
   /**
    * Mark payment as failed
    */
   markFailed(error: PaymentError): boolean {
-    const currentState = this.loadState();
+    const currentState = this.loadState()
     if (!currentState) {
-      return false;
+      return false
     }
 
     return this.updateState({
@@ -435,17 +435,17 @@ export class PaymentStorageService {
       lastError: error,
       paymentIntent: {
         ...currentState.paymentIntent,
-        status: PaymentStatus.FAILED,
-      },
-    });
+        status: PaymentStatus.FAILED
+      }
+    })
   }
 
   /**
    * Export state for debugging
    */
   exportState(): string {
-    const state = this.loadState();
-    return JSON.stringify(state, null, 2);
+    const state = this.loadState()
+    return JSON.stringify(state, null, 2)
   }
 
   /**
@@ -453,11 +453,11 @@ export class PaymentStorageService {
    */
   importState(stateJson: string): boolean {
     try {
-      const state: PaymentLocalState = JSON.parse(stateJson);
-      return this.saveState(state);
+      const state: PaymentLocalState = JSON.parse(stateJson)
+      return this.saveState(state)
     } catch (error) {
-      console.error("Failed to import state:", error);
-      return false;
+      console.error('Failed to import state:', error)
+      return false
     }
   }
 }
@@ -470,10 +470,10 @@ export function createPaymentStorage(
   storage?: StorageAdapter,
   sessionTimeout?: number
 ): PaymentStorageService {
-  return new PaymentStorageService(storage, sessionTimeout);
+  return new PaymentStorageService(storage, sessionTimeout)
 }
 
 /**
  * Default instance for convenience (can still be tested by passing mock storage)
  */
-export const paymentStorage = createPaymentStorage();
+export const paymentStorage = createPaymentStorage()

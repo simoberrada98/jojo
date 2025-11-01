@@ -1,1 +1,69 @@
-{"id":10440038515025,"title":"BITMAIN Antminer S21 Pro 245T 3675W 15J/T Bitcoin Miner BTC/BCH/BSV SHA256 Air-Cooling Miner 220~277V in Stock","handle":"bitmain-antminer-s21-pro-245t-3675w-15j-t-bitcoin-miner-btc-bch-bsv-sha256-air-cooling-miner-220-277v-in-stock","body_html":"<p><b>Brand:</b> WJSP</p><p><b>Features:</b> </p><ul><li>NEW BITMAIN Antminer S21 Pro 245T 3675W 15J/T BTC/BCH/BSV SHA256 Air-cooling Miner.</li></ul><p><b>Binding:</b> Personal Computers</p><p><b>model number:</b> Antminer S21 Pro 245T</p><p><b>Package Dimensions:</b> 24.8 x 16.9 x 13.8 inches</p>","published_at":"2025-10-27T10:38:06-07:00","created_at":"2025-10-27T10:35:37-07:00","updated_at":"2025-10-27T10:51:16-07:00","vendor":"Jhuangnyc","product_type":"Personal Computer","tags":["Personal Computer","Power Supplies","WJSP"],"variants":[{"id":52209717641553,"title":"Default Title","option1":"Default Title","option2":null,"option3":null,"sku":"UXZC-28-443","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"price":"2995.80","grams":21500,"compare_at_price":"5999.00","position":1,"product_id":10440038515025,"created_at":"2025-10-27T10:35:37-07:00","updated_at":"2025-10-27T10:51:16-07:00"}],"images":[{"id":77247423578449,"created_at":"2025-10-27T10:35:37-07:00","position":1,"updated_at":"2025-10-27T10:35:39-07:00","product_id":10440038515025,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51JcPM50AGL.jpg?v=1761586539","width":540,"height":540},{"id":77247423611217,"created_at":"2025-10-27T10:35:37-07:00","position":2,"updated_at":"2025-10-27T10:35:39-07:00","product_id":10440038515025,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51wDnGYI_5L.jpg?v=1761586539","width":540,"height":540},{"id":77247423643985,"created_at":"2025-10-27T10:35:37-07:00","position":3,"updated_at":"2025-10-27T10:35:39-07:00","product_id":10440038515025,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51jsxEmabRL.jpg?v=1761586539","width":540,"height":540}],"options":[{"name":"Title","position":1,"values":["Default Title"]}]}
+{
+  "id": 10440038515025,
+  "title": "BITMAIN Antminer S21 Pro 245T 3675W 15J/T Bitcoin Miner BTC/BCH/BSV SHA256 Air-Cooling Miner 220~277V in Stock",
+  "handle": "bitmain-antminer-s21-pro-245t-3675w-15j-t-bitcoin-miner-btc-bch-bsv-sha256-air-cooling-miner-220-277v-in-stock",
+  "body_html": "<p><b>Brand:</b> WJSP</p><p><b>Features:</b> </p><ul><li>NEW BITMAIN Antminer S21 Pro 245T 3675W 15J/T BTC/BCH/BSV SHA256 Air-cooling Miner.</li></ul><p><b>Binding:</b> Personal Computers</p><p><b>model number:</b> Antminer S21 Pro 245T</p><p><b>Package Dimensions:</b> 24.8 x 16.9 x 13.8 inches</p>",
+  "published_at": "2025-10-27T10:38:06-07:00",
+  "created_at": "2025-10-27T10:35:37-07:00",
+  "updated_at": "2025-10-27T10:51:16-07:00",
+  "vendor": "Jhuangnyc",
+  "product_type": "Personal Computer",
+  "tags": ["Personal Computer", "Power Supplies", "WJSP"],
+  "variants": [
+    {
+      "id": 52209717641553,
+      "title": "Default Title",
+      "option1": "Default Title",
+      "option2": null,
+      "option3": null,
+      "sku": "UXZC-28-443",
+      "requires_shipping": true,
+      "taxable": true,
+      "featured_image": null,
+      "available": true,
+      "price": "2995.80",
+      "grams": 21500,
+      "compare_at_price": "5999.00",
+      "position": 1,
+      "product_id": 10440038515025,
+      "created_at": "2025-10-27T10:35:37-07:00",
+      "updated_at": "2025-10-27T10:51:16-07:00"
+    }
+  ],
+  "images": [
+    {
+      "id": 77247423578449,
+      "created_at": "2025-10-27T10:35:37-07:00",
+      "position": 1,
+      "updated_at": "2025-10-27T10:35:39-07:00",
+      "product_id": 10440038515025,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51JcPM50AGL.jpg?v=1761586539",
+      "width": 540,
+      "height": 540
+    },
+    {
+      "id": 77247423611217,
+      "created_at": "2025-10-27T10:35:37-07:00",
+      "position": 2,
+      "updated_at": "2025-10-27T10:35:39-07:00",
+      "product_id": 10440038515025,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51wDnGYI_5L.jpg?v=1761586539",
+      "width": 540,
+      "height": 540
+    },
+    {
+      "id": 77247423643985,
+      "created_at": "2025-10-27T10:35:37-07:00",
+      "position": 3,
+      "updated_at": "2025-10-27T10:35:39-07:00",
+      "product_id": 10440038515025,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/51jsxEmabRL.jpg?v=1761586539",
+      "width": 540,
+      "height": 540
+    }
+  ],
+  "options": [{ "name": "Title", "position": 1, "values": ["Default Title"] }]
+}

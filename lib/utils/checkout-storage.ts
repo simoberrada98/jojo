@@ -5,23 +5,23 @@
 
 export interface CheckoutState {
   shippingData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  paymentStep?: "shipping" | "review" | "payment" | "confirmation";
-  orderData?: any;
-  timestamp?: string;
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+    address: string
+    city: string
+    state: string
+    zipCode: string
+    country: string
+  }
+  paymentStep?: 'shipping' | 'review' | 'payment' | 'confirmation'
+  orderData?: any
+  timestamp?: string
 }
 
-const STORAGE_KEY = "mintyos_checkout_state";
-const EXPIRY_HOURS = 24; // Clear data after 24 hours
+const STORAGE_KEY = 'mintyos_checkout_state'
+const EXPIRY_HOURS = 24 // Clear data after 24 hours
 
 /**
  * Save checkout state to localStorage
@@ -30,11 +30,11 @@ export function saveCheckoutState(state: CheckoutState): void {
   try {
     const dataToSave = {
       ...state,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      timestamp: new Date().toISOString()
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
   } catch (error) {
-    console.warn("Failed to save checkout state:", error);
+    console.warn('Failed to save checkout state:', error)
   }
 }
 
@@ -44,27 +44,27 @@ export function saveCheckoutState(state: CheckoutState): void {
  */
 export function loadCheckoutState(): CheckoutState | null {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return null;
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return null
 
-    const data = JSON.parse(stored) as CheckoutState & { timestamp: string };
+    const data = JSON.parse(stored) as CheckoutState & { timestamp: string }
 
     // Check if data is expired
     if (data.timestamp) {
-      const savedTime = new Date(data.timestamp).getTime();
-      const now = new Date().getTime();
-      const hoursPassed = (now - savedTime) / (1000 * 60 * 60);
+      const savedTime = new Date(data.timestamp).getTime()
+      const now = new Date().getTime()
+      const hoursPassed = (now - savedTime) / (1000 * 60 * 60)
 
       if (hoursPassed > EXPIRY_HOURS) {
-        clearCheckoutState();
-        return null;
+        clearCheckoutState()
+        return null
       }
     }
 
-    return data;
+    return data
   } catch (error) {
-    console.warn("Failed to load checkout state:", error);
-    return null;
+    console.warn('Failed to load checkout state:', error)
+    return null
   }
 }
 
@@ -73,9 +73,9 @@ export function loadCheckoutState(): CheckoutState | null {
  */
 export function clearCheckoutState(): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY)
   } catch (error) {
-    console.warn("Failed to clear checkout state:", error);
+    console.warn('Failed to clear checkout state:', error)
   }
 }
 
@@ -83,18 +83,18 @@ export function clearCheckoutState(): void {
  * Update only shipping data in the stored state
  */
 export function updateShippingData(
-  shippingData: CheckoutState["shippingData"]
+  shippingData: CheckoutState['shippingData']
 ): void {
-  const currentState = loadCheckoutState();
+  const currentState = loadCheckoutState()
   saveCheckoutState({
     ...currentState,
-    shippingData,
-  });
+    shippingData
+  })
 }
 
 /**
  * Check if there's saved checkout data
  */
 export function hasCheckoutState(): boolean {
-  return loadCheckoutState() !== null;
+  return loadCheckoutState() !== null
 }

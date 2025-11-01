@@ -98,26 +98,21 @@ Output directory: lib/data/json-optimized
 The script extracts and prioritizes information in this order:
 
 1. **Brand** (if Bitmain/Whatsminer)
-
    - Example: "Bitmain"
 
 2. **Model Name**
-
    - Extracts: S19, S21, L7, L9, KA3, E9, etc.
    - Example: "Antminer S21 Pro"
 
 3. **Hash Rate**
-
    - Formats: TH/s, GH/s, MH/s
    - Example: "235TH/s" or "9050MH/s"
 
 4. **Coin Type**
-
    - Bitcoin, Litecoin, Dogecoin, Kadena, Ethereum Classic
    - Example: "Bitcoin Miner"
 
 5. **Power Consumption**
-
    - Example: "3645W"
 
 6. **Key Features**
@@ -215,17 +210,14 @@ Optimized:
 After optimization:
 
 1. **Review Optimized Files**
-
    - Check `lib/data/json-optimized/` directory
    - Verify titles and handles look correct
 
 2. **Import to Database**
-
    - Use optimized JSON files for Supabase import
    - Follow PRODUCTS_IMPORT_GUIDE.md
 
 3. **Update Images**
-
    - Ensure product images match optimized names
    - Use consistent naming convention
 
@@ -250,7 +242,7 @@ function optimizeTitle(product: ProductJSON): string {
 
 ```typescript
 // Add your own extraction patterns
-const customMatch = originalTitle.match(/your-pattern/i);
+const customMatch = originalTitle.match(/your-pattern/i)
 ```
 
 ### Modify Cleaning Rules
@@ -258,7 +250,7 @@ const customMatch = originalTitle.match(/your-pattern/i);
 ```typescript
 function cleanDescription(bodyHtml: string): string {
   // Add more cleanup rules
-  cleaned = cleaned.replace(/your-pattern/gi, "replacement");
+  cleaned = cleaned.replace(/your-pattern/gi, 'replacement')
 }
 ```
 

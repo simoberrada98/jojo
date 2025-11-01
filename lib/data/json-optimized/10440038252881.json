@@ -1,1 +1,91 @@
-{"id":10440038252881,"title":"New BITMAIN Antminer S21 XP 270T 3645W 13.5W/T BTC Bitcoin ASIC Crypto Miner Include Power Cord","handle":"new-bitmain-antminer-s21-xp-270t-3645w-13-5w-t-btc-bitcoin-asic-crypto-miner-include-power-cord","body_html":"<p><b>Brand:</b> OEMGMINER</p><p><b>Features:</b> </p><ul>\n<li>High Efficiency: The Antminer S21 XP 270T is a top-tier Bitcoin miner with an impressive efficiency of 13.5W/T, maximizing your BTC mining potential while minimizing energy consumption.</li>\n<li>Advanced ASIC Technology: This cutting-edge ASIC miner ensures superior performance and reliability, making it the ideal choice for serious crypto miners seeking optimized operations.</li>\n<li>Exceptional Hash Rate: With a powerful hash rate of 270 TH/s, this crypto miner excels in processing transactions quickly, providing a competitive edge in the Bitcoin mining industry.</li>\n<li>Robust Design: Built for durability, the Antminer S21 XP is engineered to withstand extended periods of intense mining, ensuring stable and consistent BTC production.</li>\n<li>User-Friendly Setup: Designed with ease of use in mind, this Bitcoin miner offers straightforward installation and maintenance, perfect for both novice and experienced cryptocurrency enthusiasts.</li>\n</ul><p><b>Binding:</b> Personal Computers</p><p><b>Details:</b> New BITMAIN Antminer S21 XP 270T 3645W 13.5W/T BTC Bitcoin Miner ASIC Miner Crypto Miner Include Power Cord (270T 3645W 13.5W/T)</p>","published_at":"2025-10-27T10:38:10-07:00","created_at":"2025-10-27T10:35:15-07:00","updated_at":"2025-10-27T10:51:16-07:00","vendor":"Jhuangnyc","product_type":"Personal Computer","tags":["Internal Power Supplies","OEMGMINER","Personal Computer"],"variants":[{"id":52209716953425,"title":"Default Title","option1":"Default Title","option2":null,"option3":null,"sku":"HJNE-72-304","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"price":"3416.93","grams":0,"compare_at_price":"6695.00","position":1,"product_id":10440038252881,"created_at":"2025-10-27T10:35:15-07:00","updated_at":"2025-10-27T10:51:16-07:00"}],"images":[{"id":77247415517521,"created_at":"2025-10-27T10:35:15-07:00","position":1,"updated_at":"2025-10-27T10:35:17-07:00","product_id":10440038252881,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61AhRgDmuJL.jpg?v=1761586517","width":1024,"height":1024},{"id":77247415550289,"created_at":"2025-10-27T10:35:15-07:00","position":2,"updated_at":"2025-10-27T10:35:18-07:00","product_id":10440038252881,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61P-ZdTAAGL.jpg?v=1761586518","width":1652,"height":1412},{"id":77247415583057,"created_at":"2025-10-27T10:35:15-07:00","position":3,"updated_at":"2025-10-27T10:35:18-07:00","product_id":10440038252881,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/71imPXNSulL.jpg?v=1761586518","width":1500,"height":1500},{"id":77247415615825,"created_at":"2025-10-27T10:35:15-07:00","position":4,"updated_at":"2025-10-27T10:35:18-07:00","product_id":10440038252881,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/71u7OmRydJL.jpg?v=1761586518","width":1500,"height":1500},{"id":77247415648593,"created_at":"2025-10-27T10:35:15-07:00","position":5,"updated_at":"2025-10-27T10:35:18-07:00","product_id":10440038252881,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61DLNDwayEL.jpg?v=1761586518","width":1080,"height":1080}],"options":[{"name":"Title","position":1,"values":["Default Title"]}]}
+{
+  "id": 10440038252881,
+  "title": "New BITMAIN Antminer S21 XP 270T 3645W 13.5W/T BTC Bitcoin ASIC Crypto Miner Include Power Cord",
+  "handle": "new-bitmain-antminer-s21-xp-270t-3645w-13-5w-t-btc-bitcoin-asic-crypto-miner-include-power-cord",
+  "body_html": "<p><b>Brand:</b> OEMGMINER</p><p><b>Features:</b> </p><ul>\n<li>High Efficiency: The Antminer S21 XP 270T is a top-tier Bitcoin miner with an impressive efficiency of 13.5W/T, maximizing your BTC mining potential while minimizing energy consumption.</li>\n<li>Advanced ASIC Technology: This cutting-edge ASIC miner ensures superior performance and reliability, making it the ideal choice for serious crypto miners seeking optimized operations.</li>\n<li>Exceptional Hash Rate: With a powerful hash rate of 270 TH/s, this crypto miner excels in processing transactions quickly, providing a competitive edge in the Bitcoin mining industry.</li>\n<li>Robust Design: Built for durability, the Antminer S21 XP is engineered to withstand extended periods of intense mining, ensuring stable and consistent BTC production.</li>\n<li>User-Friendly Setup: Designed with ease of use in mind, this Bitcoin miner offers straightforward installation and maintenance, perfect for both novice and experienced cryptocurrency enthusiasts.</li>\n</ul><p><b>Binding:</b> Personal Computers</p><p><b>Details:</b> New BITMAIN Antminer S21 XP 270T 3645W 13.5W/T BTC Bitcoin Miner ASIC Miner Crypto Miner Include Power Cord (270T 3645W 13.5W/T)</p>",
+  "published_at": "2025-10-27T10:38:10-07:00",
+  "created_at": "2025-10-27T10:35:15-07:00",
+  "updated_at": "2025-10-27T10:51:16-07:00",
+  "vendor": "Jhuangnyc",
+  "product_type": "Personal Computer",
+  "tags": ["Internal Power Supplies", "OEMGMINER", "Personal Computer"],
+  "variants": [
+    {
+      "id": 52209716953425,
+      "title": "Default Title",
+      "option1": "Default Title",
+      "option2": null,
+      "option3": null,
+      "sku": "HJNE-72-304",
+      "requires_shipping": true,
+      "taxable": true,
+      "featured_image": null,
+      "available": true,
+      "price": "3416.93",
+      "grams": 0,
+      "compare_at_price": "6695.00",
+      "position": 1,
+      "product_id": 10440038252881,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "updated_at": "2025-10-27T10:51:16-07:00"
+    }
+  ],
+  "images": [
+    {
+      "id": 77247415517521,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "position": 1,
+      "updated_at": "2025-10-27T10:35:17-07:00",
+      "product_id": 10440038252881,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61AhRgDmuJL.jpg?v=1761586517",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "id": 77247415550289,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "position": 2,
+      "updated_at": "2025-10-27T10:35:18-07:00",
+      "product_id": 10440038252881,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61P-ZdTAAGL.jpg?v=1761586518",
+      "width": 1652,
+      "height": 1412
+    },
+    {
+      "id": 77247415583057,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "position": 3,
+      "updated_at": "2025-10-27T10:35:18-07:00",
+      "product_id": 10440038252881,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/71imPXNSulL.jpg?v=1761586518",
+      "width": 1500,
+      "height": 1500
+    },
+    {
+      "id": 77247415615825,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "position": 4,
+      "updated_at": "2025-10-27T10:35:18-07:00",
+      "product_id": 10440038252881,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/71u7OmRydJL.jpg?v=1761586518",
+      "width": 1500,
+      "height": 1500
+    },
+    {
+      "id": 77247415648593,
+      "created_at": "2025-10-27T10:35:15-07:00",
+      "position": 5,
+      "updated_at": "2025-10-27T10:35:18-07:00",
+      "product_id": 10440038252881,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/61DLNDwayEL.jpg?v=1761586518",
+      "width": 1080,
+      "height": 1080
+    }
+  ],
+  "options": [{ "name": "Title", "position": 1, "values": ["Default Title"] }]
+}

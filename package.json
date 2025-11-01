@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:analyze": "ANALYZE=true next build --webpack",
+    "build:analyze": "cross-env NODE_ENV=production ANALYZE=true next build --webpack",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "import:products": "tsx scripts/import-products.ts",
     "optimize:products": "tsx scripts/optimize-products.ts",
@@ -23,7 +24,8 @@
     "prepare:data": "pnpm optimize:products && pnpm json-to-csv",
     "setup:local": "pnpm db:start && pnpm db:seed",
     "deploy:staging": "pnpm build && vercel --prod",
-    "deploy:production": "pnpm build && vercel --prod"
+    "deploy:production": "pnpm build && vercel --prod",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -88,15 +90,24 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "-": "^0.0.1",
+    "@eslint/eslintrc": "^2.1.4",
     "@next/bundle-analyzer": "^16.0.1",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.1.9",
-    "@types/jspdf": "^2.0.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "postcss": "^8.5",
+    "prettier": "^3.3.3",
     "supabase": "^2.54.11",
     "tailwindcss": "^4.1.9",
     "tsx": "^4.7.0",

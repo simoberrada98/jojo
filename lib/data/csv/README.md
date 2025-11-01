@@ -38,9 +38,9 @@ You can also import via SQL using the `COPY` command:
 ```sql
 -- Import products
 COPY public.products(
-  shopify_id, sku, name, slug, description, short_description, 
-  category, brand, tags, base_price, compare_at_price, 
-  hash_rate, power_consumption, algorithm, efficiency, 
+  shopify_id, sku, name, slug, description, short_description,
+  category, brand, tags, base_price, compare_at_price,
+  hash_rate, power_consumption, algorithm, efficiency,
   weight, dimensions_length, dimensions_width, dimensions_height,
   featured_image_url, images, meta_title, meta_description,
   is_featured, is_active, published_at, created_at, updated_at
@@ -51,7 +51,7 @@ CSV HEADER;
 
 -- Import variants
 COPY public.product_variants(
-  shopify_id, product_shopify_id, sku, name, price, 
+  shopify_id, product_shopify_id, sku, name, price,
   compare_at_price, stock_quantity, is_active, position,
   created_at, updated_at
 )
@@ -66,7 +66,7 @@ CSV HEADER;
 # Import products
 supabase db execute "$(cat lib/data/csv/products.csv)" --csv
 
-# Import variants  
+# Import variants
 supabase db execute "$(cat lib/data/csv/product_variants.csv)" --csv
 ```
 
@@ -102,7 +102,7 @@ GROUP BY p.id, p.name;
 
 ```sql
 -- Get all active products with their lowest price
-SELECT 
+SELECT
   p.name,
   p.slug,
   get_product_display_price(p.id) as price,
@@ -115,6 +115,7 @@ ORDER BY p.created_at DESC;
 ## Data Structure
 
 ### Products CSV Columns
+
 - `shopify_id` - Original Shopify product ID
 - `sku` - Stock keeping unit
 - `name` - Product title
@@ -143,6 +144,7 @@ ORDER BY p.created_at DESC;
 - `updated_at` - Last update timestamp
 
 ### Product Variants CSV Columns
+
 - `shopify_id` - Original Shopify variant ID
 - `product_shopify_id` - Links to product's Shopify ID
 - `sku` - Variant SKU
@@ -158,16 +160,19 @@ ORDER BY p.created_at DESC;
 ## Troubleshooting
 
 ### Issue: Foreign key constraint errors
+
 **Solution**: Import products first, then variants. Make sure to run the post-import SQL to link variants to products.
 
 ### Issue: Array format errors
+
 **Solution**: The CSV uses PostgreSQL array format `{"item1","item2"}`. If this doesn't work, you may need to import as text and convert after.
 
 ### Issue: Date/timestamp format errors
+
 **Solution**: Ensure timestamps are in ISO 8601 format. You can convert them post-import if needed:
 
 ```sql
-UPDATE products 
+UPDATE products
 SET published_at = to_timestamp(published_at, 'YYYY-MM-DD"T"HH24:MI:SS');
 ```
 

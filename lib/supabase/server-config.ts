@@ -1,5 +1,5 @@
-import { env } from "@/lib/env";
-import { supabaseConfig } from "./config";
+import { env } from '@/lib/config/env'
+import { supabaseConfig } from './config'
 
 /**
  * Server-only Supabase configuration
@@ -8,5 +8,5 @@ import { supabaseConfig } from "./config";
  */
 export const supabaseServerConfig = {
   ...supabaseConfig,
-  serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
-} as const;
+  serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY
+} as const

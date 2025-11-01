@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -132,9 +132,9 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", "Courier New", monospace;
+  --font-sans:
+    var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', 'Courier New', monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -268,7 +268,7 @@
 
   .animated-border::before,
   .animated-border-hover::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: -2px;
     border-radius: inherit;
@@ -281,7 +281,9 @@
     );
     animation: gradient-orbit 8s linear infinite;
     filter: brightness(1);
-    transition: filter var(--transition-base), opacity var(--transition-base);
+    transition:
+      filter var(--transition-base),
+      opacity var(--transition-base);
     z-index: -2;
   }
 
@@ -301,7 +303,7 @@
 
   .animated-border::after,
   .animated-border-hover::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 1px;
     border-radius: inherit;

@@ -5,6 +5,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 ## Project Overview
 
 **Jhuangnyc (Jhuangnyc)** is a Next.js 16 e-commerce application for a cryptocurrency mining hardware store. The app features:
+
 - Crypto payment integration (BTC, ETH, USDC) with HoodPay.io
 - Admin dashboard for order and product management
 - 3D product visualization using React Three Fiber
@@ -73,29 +74,33 @@ lib/
 **Path Aliases**: All imports use `@/*` alias mapping to root (configured in `tsconfig.json` and `components.json`)
 
 ```typescript
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 ```
 
-**Component Structure**: 
+**Component Structure**:
+
 - Server components by default (no "use client" directive)
 - Client components explicitly marked with `"use client"`
 - Admin pages use client-side state management
 - Product data served via API route at `/api/products`
 
 **Styling System**:
+
 - Custom CSS variables in `app/globals.css` using OKLCH color space
 - Dark theme by default with mining/tech aesthetic
 - Uses Tailwind CSS 4 with PostCSS plugin
 - Design tokens: `--primary`, `--accent`, `--background`, etc.
 - Semantic tokens for success, warning, info states
 
-**Form Handling**: 
+**Form Handling**:
+
 - React Hook Form for form state
 - Zod schemas for validation
 - `@hookform/resolvers` for schema integration
 
-**3D Models**: 
+**3D Models**:
+
 - Located in `/public/assets/3d/`
 - Loaded via `@react-three/fiber` and `@react-three/drei`
 - Used in product visualization (e.g., `model-3d-viewer.tsx`)
@@ -107,6 +112,7 @@ import { cn } from "@/lib/utils"
 Central API route for all product data operations:
 
 **Query Parameters**:
+
 - `?id={productId}` - Get single product by ID
 - `?ids={id1,id2,id3}` - Get multiple products by comma-separated IDs
 - `?q={query}` or `?search={query}` - Search products
@@ -114,6 +120,7 @@ Central API route for all product data operations:
 - `?offset={number}` - Pagination offset (default: 0)
 
 **Implementation**:
+
 - Located in `app/api/products/route.ts`
 - Depends on `@/lib/data/local-product-store` for data operations
 - Uses `@/lib/utils/logger` for logging
@@ -121,10 +128,12 @@ Central API route for all product data operations:
 - Revalidates every 60 seconds (`export const revalidate = 60`)
 
 **Required modules** (to be created if not present):
+
 - `lib/data/local-product-store.ts` - Export: `searchProducts()`, `findProductById()`, `findProductsByIds()`
 - `lib/utils/logger.ts` - Export: `logger` object with `api()` and `error()` methods
 
 **Usage in components**:
+
 ```typescript
 // Fetch single product
 const res = await fetch('/api/products?id=123')
@@ -142,6 +151,7 @@ const { results, total, hasMore } = await res.json()
 ## Crypto Payment Flow
 
 The checkout process (`app/checkout/page.tsx`) uses `crypto-payment-form.tsx` which:
+
 1. Accepts BTC, ETH, or USDC
 2. Generates payment QR codes via external API
 3. Shows wallet address with copy functionality
@@ -176,6 +186,7 @@ To add new shadcn components, use the CLI respecting the existing config in `com
 ## Adding New Features
 
 When adding components:
+
 1. Use existing path aliases (`@/components`, `@/lib`, etc.)
 2. Follow shadcn/ui patterns for UI components
 3. Use `cn()` utility for conditional className merging
@@ -183,6 +194,7 @@ When adding components:
 5. Mark client components with `"use client"` when using hooks/state
 
 When modifying product data:
+
 - **Source of Truth**: JSON files in `lib/data/json/*.json` (21 Shopify product files)
 - **Format**: Standard Shopify product JSON format with images, variants, tags
 - **Loader**: `lib/data/json/index.ts` reads and maps JSON to Product interface
@@ -191,6 +203,7 @@ When modifying product data:
 - **No Hardcoding**: All products loaded dynamically from JSON files
 
 To add/edit products:
+
 1. Add/edit JSON files in `lib/data/json/`
 2. Server automatically reloads on file changes
 3. No code changes needed

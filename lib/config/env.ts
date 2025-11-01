@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs'
+import { z } from 'zod'
 
 export const env = createEnv({
   /**
@@ -17,8 +17,8 @@ export const env = createEnv({
 
     // Node Environment
     NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .enum(['development', 'test', 'production'])
+      .default('development')
   },
 
   /**
@@ -31,20 +31,20 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
 
     // App Configuration
-    NEXT_PUBLIC_BASE_URL: z.string().url().default("https://jhuangnyc.com"),
-    NEXT_PUBLIC_APP_NAME: z.string().default("Jhuangnyc"),
+    NEXT_PUBLIC_BASE_URL: z.string().url().default('https://jhuangnyc.com'),
+    NEXT_PUBLIC_APP_NAME: z.string().default('Jhuangnyc'),
 
     // Feature Flags
     NEXT_PUBLIC_ENABLE_HOODPAY: z
       .string()
-      .transform((val) => val === "true")
-      .default("false"),
+      .transform((val) => val === 'true')
+      .default('false'),
     NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API: z
       .string()
-      .transform((val) => val === "true")
-      .default("false"),
+      .transform((val) => val === 'true')
+      .default('false'),
     // Verification
-    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional(),
+    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional()
   },
 
   /**
@@ -69,7 +69,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API:
       process.env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:
-      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
   },
 
   /**
@@ -81,5 +81,5 @@ export const env = createEnv({
    * Makes it so that empty strings are treated as undefined.
    * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.
    */
-  emptyStringAsUndefined: true,
-});
+  emptyStringAsUndefined: true
+})

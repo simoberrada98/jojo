@@ -1,1 +1,80 @@
-{"id":10440038383953,"title":"OEMGMINER New Bitmain Antminer S19 Pro+ HYD 198T 380V Asic Miner 5445W Crypro BTC Bitcoin Miner with Maximum Hashrate Include PSU Asic Mining SHA-256 Water Cooling Equipment","handle":"oemgminer-new-bitmain-antminer-s19-pro-hyd-198t-380v-asic-miner-5445w-crypro-btc-bitcoin-miner-with-maximum-hashrate-include-psu-asic-mining-sha-256-water-cooling-equipment","body_html":"<p><b>Brand:</b> OEMGMINER</p><p><b>Features:</b> </p><ul>\n<li>Enhanced Mining Power: Achieve high hash rates with the Antminer S19 Pro+ HYD, optimized for BTC mining and other cryptocurrencies, ensuring efficient operation and maximum profitability.</li>\n<li>Advanced ASIC Technology: Built with cutting-edge ASIC miner technology, this device offers superior performance and reliability, ideal for serious miners looking to maximize their ROI.</li>\n<li>Efficient Heat Dissipation: a state-of-the-art cooling system, the Antminer S19 Pro+ HYD ensures optimal temperature control, enhancing longevity and performance.</li>\n<li>User-Friendly Interface: Featuring intuitive controls and setup, it's easy to configure and start mining right out of the box, even for beginners in the cryptocurrency mining world.</li>\n<li>Trusted Brand: From Bitmain, a leading name in mining hardware, ensuring quality, support, and the latest advancements in Bitcoin mining technology.</li>\n</ul><p><b>Binding:</b> Personal Computers</p><p><b>Details:</b> New Bitmain Antminer S19 Pro+ Hyd 198T Asic Miner 5445W Crypro BTC Bitcoin Miner with Maximum Hashrate Include PSU Asic Mining SHA-256</p>","published_at":"2025-10-27T10:38:11-07:00","created_at":"2025-10-27T10:35:24-07:00","updated_at":"2025-10-27T10:51:16-07:00","vendor":"Jhuangnyc","product_type":"BISS","tags":["BISS","Internal Power Supplies","OEMGMINER"],"variants":[{"id":52209717215569,"title":"Default Title","option1":"Default Title","option2":null,"option3":null,"sku":"PDTN-87-881","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"price":"2039.40","grams":0,"compare_at_price":null,"position":1,"product_id":10440038383953,"created_at":"2025-10-27T10:35:24-07:00","updated_at":"2025-10-27T10:51:16-07:00"}],"images":[{"id":77247419580753,"created_at":"2025-10-27T10:35:24-07:00","position":1,"updated_at":"2025-10-27T10:35:26-07:00","product_id":10440038383953,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41NPcSPmcfL.jpg?v=1761586526","width":540,"height":469},{"id":77247419613521,"created_at":"2025-10-27T10:35:24-07:00","position":2,"updated_at":"2025-10-27T10:35:27-07:00","product_id":10440038383953,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/6145QY50rgL.jpg?v=1761586527","width":647,"height":659},{"id":77247419646289,"created_at":"2025-10-27T10:35:24-07:00","position":3,"updated_at":"2025-10-27T10:35:27-07:00","product_id":10440038383953,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41_PHU8ZxpL.jpg?v=1761586527","width":800,"height":800},{"id":77247419679057,"created_at":"2025-10-27T10:35:24-07:00","position":4,"updated_at":"2025-10-27T10:35:27-07:00","product_id":10440038383953,"variant_ids":[],"src":"https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41QnAum9dTL.jpg?v=1761586527","width":540,"height":466}],"options":[{"name":"Title","position":1,"values":["Default Title"]}]}
+{
+  "id": 10440038383953,
+  "title": "OEMGMINER New Bitmain Antminer S19 Pro+ HYD 198T 380V Asic Miner 5445W Crypro BTC Bitcoin Miner with Maximum Hashrate Include PSU Asic Mining SHA-256 Water Cooling Equipment",
+  "handle": "oemgminer-new-bitmain-antminer-s19-pro-hyd-198t-380v-asic-miner-5445w-crypro-btc-bitcoin-miner-with-maximum-hashrate-include-psu-asic-mining-sha-256-water-cooling-equipment",
+  "body_html": "<p><b>Brand:</b> OEMGMINER</p><p><b>Features:</b> </p><ul>\n<li>Enhanced Mining Power: Achieve high hash rates with the Antminer S19 Pro+ HYD, optimized for BTC mining and other cryptocurrencies, ensuring efficient operation and maximum profitability.</li>\n<li>Advanced ASIC Technology: Built with cutting-edge ASIC miner technology, this device offers superior performance and reliability, ideal for serious miners looking to maximize their ROI.</li>\n<li>Efficient Heat Dissipation: a state-of-the-art cooling system, the Antminer S19 Pro+ HYD ensures optimal temperature control, enhancing longevity and performance.</li>\n<li>User-Friendly Interface: Featuring intuitive controls and setup, it's easy to configure and start mining right out of the box, even for beginners in the cryptocurrency mining world.</li>\n<li>Trusted Brand: From Bitmain, a leading name in mining hardware, ensuring quality, support, and the latest advancements in Bitcoin mining technology.</li>\n</ul><p><b>Binding:</b> Personal Computers</p><p><b>Details:</b> New Bitmain Antminer S19 Pro+ Hyd 198T Asic Miner 5445W Crypro BTC Bitcoin Miner with Maximum Hashrate Include PSU Asic Mining SHA-256</p>",
+  "published_at": "2025-10-27T10:38:11-07:00",
+  "created_at": "2025-10-27T10:35:24-07:00",
+  "updated_at": "2025-10-27T10:51:16-07:00",
+  "vendor": "Jhuangnyc",
+  "product_type": "BISS",
+  "tags": ["BISS", "Internal Power Supplies", "OEMGMINER"],
+  "variants": [
+    {
+      "id": 52209717215569,
+      "title": "Default Title",
+      "option1": "Default Title",
+      "option2": null,
+      "option3": null,
+      "sku": "PDTN-87-881",
+      "requires_shipping": true,
+      "taxable": true,
+      "featured_image": null,
+      "available": true,
+      "price": "2039.40",
+      "grams": 0,
+      "compare_at_price": null,
+      "position": 1,
+      "product_id": 10440038383953,
+      "created_at": "2025-10-27T10:35:24-07:00",
+      "updated_at": "2025-10-27T10:51:16-07:00"
+    }
+  ],
+  "images": [
+    {
+      "id": 77247419580753,
+      "created_at": "2025-10-27T10:35:24-07:00",
+      "position": 1,
+      "updated_at": "2025-10-27T10:35:26-07:00",
+      "product_id": 10440038383953,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41NPcSPmcfL.jpg?v=1761586526",
+      "width": 540,
+      "height": 469
+    },
+    {
+      "id": 77247419613521,
+      "created_at": "2025-10-27T10:35:24-07:00",
+      "position": 2,
+      "updated_at": "2025-10-27T10:35:27-07:00",
+      "product_id": 10440038383953,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/6145QY50rgL.jpg?v=1761586527",
+      "width": 647,
+      "height": 659
+    },
+    {
+      "id": 77247419646289,
+      "created_at": "2025-10-27T10:35:24-07:00",
+      "position": 3,
+      "updated_at": "2025-10-27T10:35:27-07:00",
+      "product_id": 10440038383953,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41_PHU8ZxpL.jpg?v=1761586527",
+      "width": 800,
+      "height": 800
+    },
+    {
+      "id": 77247419679057,
+      "created_at": "2025-10-27T10:35:24-07:00",
+      "position": 4,
+      "updated_at": "2025-10-27T10:35:27-07:00",
+      "product_id": 10440038383953,
+      "variant_ids": [],
+      "src": "https://cdn.shopify.com/s/files/1/0979/8539/7073/files/41QnAum9dTL.jpg?v=1761586527",
+      "width": 540,
+      "height": 466
+    }
+  ],
+  "options": [{ "name": "Title", "position": 1, "values": ["Default Title"] }]
+}

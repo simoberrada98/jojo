@@ -279,37 +279,37 @@ All documentation is up-to-date:
 ### 1. Environment Variables
 
 ```typescript
-import { env } from "@/lib/env";
-const url = env.NEXT_PUBLIC_SUPABASE_URL; // Type-safe, validated
+import { env } from '@/lib/env'
+const url = env.NEXT_PUBLIC_SUPABASE_URL // Type-safe, validated
 ```
 
 ### 2. Configuration
 
 ```typescript
-import { PRICING_CONFIG } from "@/lib/config/pricing.config";
-const shipping = PRICING_CONFIG.shipping.standard;
+import { PRICING_CONFIG } from '@/lib/config/pricing.config'
+const shipping = PRICING_CONFIG.shipping.standard
 ```
 
 ### 3. Services
 
 ```typescript
-import { PricingService } from "@/lib/services/pricing.service";
-const total = PricingService.calculateSubtotal(items);
+import { PricingService } from '@/lib/services/pricing.service'
+const total = PricingService.calculateSubtotal(items)
 ```
 
 ### 4. Payment Strategies
 
 ```typescript
-import { paymentStrategyRegistry } from "@/lib/services/payment-strategies";
-const strategy = paymentStrategyRegistry.getStrategy(method);
-const result = await strategy.process(state, data);
+import { paymentStrategyRegistry } from '@/lib/services/payment-strategies'
+const strategy = paymentStrategyRegistry.getStrategy(method)
+const result = await strategy.process(state, data)
 ```
 
 ### 5. Custom Hooks
 
 ```typescript
-import { useProductFilters } from "@/lib/hooks/useProductFilters";
-const { filteredAndSortedProducts } = useProductFilters({ products });
+import { useProductFilters } from '@/lib/hooks/useProductFilters'
+const { filteredAndSortedProducts } = useProductFilters({ products })
 ```
 
 ---

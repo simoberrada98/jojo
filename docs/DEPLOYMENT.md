@@ -49,7 +49,6 @@ pnpm studio
 ### Production Supabase
 
 1. **Create Project**
-
    - Go to https://supabase.com/dashboard
    - Click "New Project"
    - Name it (e.g., "jhuangnyc-prod")
@@ -200,7 +199,6 @@ For automatic deployments:
    ```
 
 2. **Verify Database Connection**
-
    - Visit your deployed URL
    - Check if products load
    - Test authentication
@@ -343,7 +341,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - run: pnpm install
 
@@ -359,7 +357,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+          vercel-args: '--prod'
 ```
 
 ## 🛡️ Security Checklist

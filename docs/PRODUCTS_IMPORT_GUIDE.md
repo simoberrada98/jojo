@@ -5,6 +5,7 @@ This guide explains how to import products with variants from JSON into your Sup
 ## Overview
 
 The new product schema supports:
+
 - **Products** with full ecommerce attributes (SKU, pricing, inventory, SEO, etc.)
 - **Product Variants** (e.g., different warranty options, colors, sizes)
 - **Product Options** (e.g., "Warranty Period", "Color", "Size")
@@ -20,6 +21,7 @@ The new product schema supports:
 5. Click **Run**
 
 This will:
+
 - Drop and recreate the products table with enhanced schema
 - Create variant, option, collection, and review tables
 - Set up indexes and RLS policies
@@ -44,8 +46,8 @@ Create a JSON file with your product data. See `data/products.json` for the comp
       "category": "ASIC Miners",
       "brand": "Bitmain",
       "tags": ["bitcoin", "asic"],
-      "basePrice": 2499.00,
-      "compareAtPrice": 3299.00,
+      "basePrice": 2499.0,
+      "compareAtPrice": 3299.0,
       "hashRate": "110 TH/s",
       "powerConsumption": "3250W",
       "featuredImageUrl": "/images/product.jpg",
@@ -65,7 +67,7 @@ Create a JSON file with your product data. See `data/products.json` for the comp
 {
   "sku": "BM-S19PRO-110",
   "name": "Bitmain Antminer S19 Pro",
-  "basePrice": 2499.00,
+  "basePrice": 2499.0,
   "options": [
     {
       "name": "warranty",
@@ -81,14 +83,14 @@ Create a JSON file with your product data. See `data/products.json` for the comp
     {
       "sku": "BM-S19PRO-110-6M",
       "name": "6 Months Warranty",
-      "price": 2499.00,
+      "price": 2499.0,
       "options": { "warranty": "6-months" },
       "stockQuantity": 30
     },
     {
       "sku": "BM-S19PRO-110-12M",
       "name": "12 Months Warranty",
-      "price": 2699.00,
+      "price": 2699.0,
       "options": { "warranty": "12-months" },
       "stockQuantity": 15
     }
@@ -99,11 +101,13 @@ Create a JSON file with your product data. See `data/products.json` for the comp
 ## Step 3: Set Up the Import Script
 
 1. Navigate to the scripts directory:
+
    ```bash
    cd scripts
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
@@ -138,6 +142,7 @@ The script will:
 6. ✅ Link products to collections
 
 Example output:
+
 ```
 Importing 3 collections...
 ✓ Imported collection: Featured Miners
@@ -159,21 +164,27 @@ Importing 5 products...
 ## Schema Features
 
 ### 1. Product Variants
+
 Products can have multiple variants with different:
+
 - Prices
 - SKUs
 - Stock levels
 - Options (size, color, warranty, etc.)
 
 ### 2. Product Options
+
 Define selectable options like:
+
 - **Type: select** - Dropdown menu
 - **Type: radio** - Radio buttons
 - **Type: swatch** - Color swatches (with hex colors)
 - **Type: button** - Button selection
 
 ### 3. Collections
+
 Group products into collections:
+
 - Featured products
 - Category collections
 - Sale collections
@@ -201,14 +212,16 @@ SELECT get_product_average_rating(product_id);
 ```typescript
 const { data } = await supabase
   .from('products')
-  .select(`
+  .select(
+    `
     *,
     variants:product_variants(*),
     options:product_options(
       *,
       values:product_option_values(*)
     )
-  `)
+  `
+  )
   .eq('is_active', true)
 ```
 
@@ -217,9 +230,11 @@ const { data } = await supabase
 ```typescript
 const { data } = await supabase
   .from('product_collections')
-  .select(`
+  .select(
+    `
     product:products(*)
-  `)
+  `
+  )
   .eq('collection_id', collectionId)
 ```
 
@@ -228,13 +243,15 @@ const { data } = await supabase
 ```typescript
 const { data } = await supabase
   .from('products')
-  .select(`
+  .select(
+    `
     *,
     reviews:product_reviews(
       *,
       user:profiles(full_name, avatar_url)
     )
-  `)
+  `
+  )
   .eq('id', productId)
   .single()
 ```
@@ -265,15 +282,18 @@ products
 ## Troubleshooting
 
 ### "Duplicate key value violates unique constraint"
+
 - Check that all SKUs are unique
 - Check that slugs are unique
 - Ensure variant SKUs don't conflict with product SKUs
 
 ### "Foreign key violation"
+
 - Make sure collections are imported before products
 - Verify collection slugs match in product data
 
 ### "RLS policy" errors
+
 - The service role key bypasses RLS
 - Ensure you're using `SUPABASE_SERVICE_ROLE_KEY` in the script
 
@@ -291,6 +311,7 @@ After importing products:
 ## Sample Products Included
 
 The `data/products.json` file includes:
+
 - Bitmain Antminer S19 Pro (with warranty variants)
 - Whatsminer M50 (simple product)
 - GPU Mining Rig 8x RTX 4090 (with OS variants)

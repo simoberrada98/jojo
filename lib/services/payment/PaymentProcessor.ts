@@ -3,14 +3,14 @@
  * Single Responsibility: Process payments using strategies
  */
 
-import { paymentStrategyRegistry } from "@/lib/services/payment-strategies";
-import { PaymentDatabaseService } from "@/lib/services/payment-db.service";
+import { paymentStrategyRegistry } from '@/lib/services/payment-strategies'
+import type { PaymentDatabaseService } from '@/lib/services/payment-db.service'
 import {
   PaymentStatus,
   type PaymentMethod,
   type PaymentResult,
-  type PaymentLocalState,
-} from "@/lib/payment/types";
+  type PaymentLocalState
+} from '@/types/payment'
 
 export class PaymentProcessor {
   constructor(private dbService?: PaymentDatabaseService) {}
@@ -24,7 +24,7 @@ export class PaymentProcessor {
     paymentData?: any
   ): Promise<PaymentResult> {
     // Get strategy for payment method
-    const strategy = paymentStrategyRegistry.getStrategy(method);
+    const strategy = paymentStrategyRegistry.getStrategy(method)
 
     if (!strategy) {
       return {
@@ -32,11 +32,11 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: "UNSUPPORTED_METHOD",
+          code: 'UNSUPPORTED_METHOD',
           message: `Payment method ${method} not supported`,
-          retryable: false,
-        },
-      };
+          retryable: false
+        }
+      }
     }
 
     // Check if strategy is available
@@ -46,57 +46,57 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: "METHOD_UNAVAILABLE",
+          code: 'METHOD_UNAVAILABLE',
           message: `Payment method ${method} is not available`,
-          retryable: false,
-        },
-      };
+          retryable: false
+        }
+      }
     }
 
     // Validate payment data
-    const validation = strategy.validate(paymentData);
+    const validation = strategy.validate(paymentData)
     if (!validation.valid) {
       return {
         success: false,
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: "VALIDATION_ERROR",
-          message: validation.error || "Invalid payment data",
-          retryable: false,
-        },
-      };
+          code: 'VALIDATION_ERROR',
+          message: validation.error || 'Invalid payment data',
+          retryable: false
+        }
+      }
     }
 
     // Process payment with strategy
     try {
-      const result = await strategy.process(state, paymentData);
+      const result = await strategy.process(state, paymentData)
 
       // Record attempt in database if available
       if (this.dbService) {
-        await this.recordAttempt(state, method, result, paymentData);
+        await this.recordAttempt(state, method, result, paymentData)
       }
 
-      return result;
+      return result
     } catch (error: any) {
       const errorResult: PaymentResult = {
         success: false,
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: "PROCESSING_ERROR",
-          message: error.message || "Payment processing failed",
+          code: 'PROCESSING_ERROR',
+          message: error.message || 'Payment processing failed',
           details: error,
-          retryable: true,
-        },
-      };
+          retryable: true
+        }
+      }
 
       // Record failed attempt
       if (this.dbService) {
-        await this.recordAttempt(state, method, errorResult, paymentData);
+        await this.recordAttempt(state, method, errorResult, paymentData)
       }
 
-      return errorResult;
+      return errorResult
     }
   }
 
@@ -109,7 +109,7 @@ export class PaymentProcessor {
     result: PaymentResult,
     paymentData?: any
   ): Promise<void> {
-    if (!this.dbService) return;
+    if (!this.dbService) return
 
     try {
       await this.dbService.createPaymentAttempt({
@@ -119,10 +119,10 @@ export class PaymentProcessor {
         status: result.status,
         error: result.error,
         request_data: paymentData,
-        response_data: result.metadata,
-      });
+        response_data: result.metadata
+      })
     } catch (error) {
-      console.warn("Failed to record payment attempt:", error);
+      console.warn('Failed to record payment attempt:', error)
     }
   }
 
@@ -134,12 +134,12 @@ export class PaymentProcessor {
     status: PaymentStatus,
     error?: any
   ): Promise<void> {
-    if (!this.dbService) return;
+    if (!this.dbService) return
 
     try {
-      await this.dbService.updatePaymentStatus(paymentId, status, error);
+      await this.dbService.updatePaymentStatus(paymentId, status, error)
     } catch (err) {
-      console.warn("Failed to update payment status:", err);
+      console.warn('Failed to update payment status:', err)
     }
   }
 
@@ -152,12 +152,12 @@ export class PaymentProcessor {
     amount: number,
     currency: string,
     options?: {
-      customerEmail?: string;
-      metadata?: Record<string, any>;
-      checkoutData?: any;
+      customerEmail?: string
+      metadata?: Record<string, any>
+      checkoutData?: any
     }
   ): Promise<void> {
-    if (!this.dbService) return;
+    if (!this.dbService) return
 
     try {
       await this.dbService.createPayment({
@@ -168,10 +168,10 @@ export class PaymentProcessor {
         status: PaymentStatus.PENDING,
         customer_email: options?.customerEmail,
         metadata: options?.metadata,
-        checkout_data: options?.checkoutData,
-      });
+        checkout_data: options?.checkoutData
+      })
     } catch (error) {
-      console.warn("Failed to save payment to database:", error);
+      console.warn('Failed to save payment to database:', error)
     }
   }
 }

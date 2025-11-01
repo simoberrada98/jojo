@@ -6,8 +6,9 @@
 import type {
   PaymentResult,
   PaymentLocalState,
-  CheckoutData,
-} from "@/lib/payment/types";
+  CheckoutData
+} from '@/types/payment'
+import { PaymentStatus } from '@/types/payment'
 
 /**
  * Payment Strategy Interface
@@ -17,22 +18,22 @@ export interface PaymentStrategy {
   /**
    * Process payment using this strategy
    */
-  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>;
+  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>
 
   /**
    * Check if this strategy is available
    */
-  isAvailable(): boolean;
+  isAvailable(): boolean
 
   /**
    * Get strategy name
    */
-  getName(): string;
+  getName(): string
 
   /**
    * Validate payment data for this strategy
    */
-  validate(paymentData?: any): { valid: boolean; error?: string };
+  validate(paymentData?: any): { valid: boolean; error?: string }
 }
 
 /**
@@ -43,22 +44,22 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
   abstract process(
     state: PaymentLocalState,
     paymentData?: any
-  ): Promise<PaymentResult>;
+  ): Promise<PaymentResult>
 
-  abstract getName(): string;
+  abstract getName(): string
 
   /**
    * Default implementation - can be overridden
    */
   isAvailable(): boolean {
-    return true;
+    return true
   }
 
   /**
    * Default implementation - can be overridden
    */
   validate(paymentData?: any): { valid: boolean; error?: string } {
-    return { valid: true };
+    return { valid: true }
   }
 
   /**
@@ -73,13 +74,13 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
     return {
       success: false,
       paymentId,
-      status: "FAILED" as any,
+      status: PaymentStatus.FAILED,
       error: {
         code,
         message,
-        retryable,
-      },
-    };
+        retryable
+      }
+    }
   }
 
   /**
@@ -93,9 +94,9 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
     return {
       success: true,
       paymentId,
-      status: "COMPLETED" as any,
+      status: PaymentStatus.COMPLETED,
       transactionId,
-      metadata,
-    };
+      metadata
+    }
   }
 }

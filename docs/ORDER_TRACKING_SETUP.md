@@ -5,11 +5,13 @@ The order tracking feature on the thank you page will work with or without Supab
 ## Current Behavior
 
 **Without Supabase configured:**
+
 - Shows default "Order Received" status
 - No database errors (graceful fallback)
 - Basic tracking UI still displays
 
 **With Supabase configured:**
+
 - Real-time order status updates
 - Full tracking history with timestamps and locations
 - Live updates via Supabase Realtime
@@ -31,6 +33,7 @@ supabase db push
 ### 2. Verify Table Creation
 
 Check that the table was created:
+
 - Go to your Supabase dashboard
 - Navigate to "Table Editor"
 - Look for `order_tracking` table
@@ -38,6 +41,7 @@ Check that the table was created:
 ### 3. Test with Sample Data
 
 The migration includes sample tracking data for order `MH-SAMPLE001`. You can test by:
+
 1. Go to `/thank-you?order=MH-SAMPLE001`
 2. You should see 3 tracking events
 
@@ -47,7 +51,7 @@ To add tracking events for real orders, insert into the table:
 
 ```sql
 INSERT INTO order_tracking (order_number, status, message, location)
-VALUES 
+VALUES
   ('MH-ABC123', 'processing', 'Payment confirmed, preparing hardware', 'Denver, CO');
 ```
 
@@ -81,34 +85,32 @@ When creating orders in your backend, you can insert tracking events:
 
 ```typescript
 // Example: After order creation
-await supabase
-  .from('order_tracking')
-  .insert({
-    order_number: orderId,
-    status: 'pending',
-    message: 'Order received and awaiting processing',
-    location: 'Denver, CO',
-  });
+await supabase.from('order_tracking').insert({
+  order_number: orderId,
+  status: 'pending',
+  message: 'Order received and awaiting processing',
+  location: 'Denver, CO'
+})
 
 // Example: When payment is confirmed
-await supabase
-  .from('order_tracking')
-  .insert({
-    order_number: orderId,
-    status: 'processing',
-    message: 'Payment confirmed, preparing hardware',
-    location: 'Denver, CO',
-  });
+await supabase.from('order_tracking').insert({
+  order_number: orderId,
+  status: 'processing',
+  message: 'Payment confirmed, preparing hardware',
+  location: 'Denver, CO'
+})
 ```
 
 ## Troubleshooting
 
 **Console warnings about tracking table:**
+
 - This is normal if Supabase isn't set up yet
 - The app will use default tracking status
 - No functionality is broken
 
 **Realtime not working:**
+
 - Verify Realtime is enabled in Supabase dashboard (Database → Replication)
 - Check that the table is added to `supabase_realtime` publication
 - The migration should handle this automatically
@@ -116,6 +118,7 @@ await supabase
 ## Future Enhancements
 
 Possible improvements:
+
 - Email notifications on status changes
 - SMS notifications
 - Carrier tracking integration

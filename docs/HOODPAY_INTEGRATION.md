@@ -38,6 +38,7 @@ npm run db:push
 ```
 
 This creates:
+
 - `payments` table - stores payment records
 - `webhook_events` table - tracks webhook events
 - `payment_attempts` table - logs payment retry attempts
@@ -45,11 +46,13 @@ This creates:
 ### 3. Webhook Configuration
 
 Your webhook endpoint is already configured at:
+
 ```
 https://jhuangnyc.com/api/hoodpay/webhook
 ```
 
 **Webhook Details:**
+
 - URL: `https://jhuangnyc.com/api/hoodpay/webhook`
 - Secret: `whsec_Ez1ErDOvHXNEoSSty8QeNV1xefM1Osly`
 - Events:
@@ -64,24 +67,24 @@ https://jhuangnyc.com/api/hoodpay/webhook
 ### Basic Payment Flow
 
 ```typescript
-import { createPaymentOrchestrator, PaymentMethod } from '@/lib/payment';
+import { createPaymentOrchestrator, PaymentMethod } from '@/lib/payment'
 
 // Initialize orchestrator with hooks
 const orchestrator = createPaymentOrchestrator({
   hooks: {
     onCreated: async (event) => {
-      console.log('Payment created:', event);
+      console.log('Payment created:', event)
     },
     onCompleted: async (event) => {
-      console.log('Payment completed:', event);
+      console.log('Payment completed:', event)
       // Send confirmation email, update order, etc.
     },
     onFailed: async (event) => {
-      console.error('Payment failed:', event);
+      console.error('Payment failed:', event)
       // Handle failure, notify user
     }
   }
-});
+})
 
 // 1. Initialize payment
 const checkoutData = {
@@ -91,15 +94,15 @@ const checkoutData = {
       name: 'Premium Plan',
       quantity: 1,
       unitPrice: 99.99,
-      total: 99.99,
+      total: 99.99
     }
   ],
   subtotal: 99.99,
-  tax: 8.00,
+  tax: 8.0,
   shipping: 0,
   total: 107.99,
-  currency: 'USD',
-};
+  currency: 'USD'
+}
 
 const paymentIntent = await orchestrator.initializePayment(
   107.99,
@@ -107,38 +110,35 @@ const paymentIntent = await orchestrator.initializePayment(
   checkoutData,
   {
     customerEmail: 'customer@example.com',
-    description: 'Premium Plan Purchase',
+    description: 'Premium Plan Purchase'
   }
-);
+)
 
 // 2. Process payment with HoodPay
-const result = await orchestrator.processPayment(
-  PaymentMethod.HOODPAY,
-  {
-    redirectUrl: 'https://yoursite.com/payment/success',
-    notifyUrl: 'https://yoursite.com/api/hoodpay/webhook',
-  }
-);
+const result = await orchestrator.processPayment(PaymentMethod.HOODPAY, {
+  redirectUrl: 'https://yoursite.com/payment/success',
+  notifyUrl: 'https://yoursite.com/api/hoodpay/webhook'
+})
 
 if (result.success) {
   // Redirect to HoodPay payment page
-  window.location.href = result.metadata.paymentUrl;
+  window.location.href = result.metadata.paymentUrl
 }
 ```
 
 ### Using Web Payment API
 
 ```typescript
-import { webPaymentService, isPaymentRequestSupported } from '@/lib/payment';
+import { webPaymentService, isPaymentRequestSupported } from '@/lib/payment'
 
 // Check if Web Payment API is available
 if (isPaymentRequestSupported()) {
   const result = await orchestrator.processPayment(
     PaymentMethod.WEB_PAYMENT_API
-  );
-  
+  )
+
   if (result.success) {
-    console.log('Payment completed via Web Payment API');
+    console.log('Payment completed via Web Payment API')
   }
 }
 ```
@@ -146,15 +146,15 @@ if (isPaymentRequestSupported()) {
 ### Payment Recovery
 
 ```typescript
-import { paymentStorage } from '@/lib/payment';
+import { paymentStorage } from '@/lib/payment'
 
 // On page load, check for interrupted payment
-const state = paymentStorage.loadState();
+const state = paymentStorage.loadState()
 if (state && state.currentStep !== PaymentStep.COMPLETE) {
   // Resume payment flow
-  const recovered = await orchestrator.recoverPayment();
+  const recovered = await orchestrator.recoverPayment()
   if (recovered) {
-    console.log('Recovered payment:', recovered);
+    console.log('Recovered payment:', recovered)
   }
 }
 ```
@@ -166,8 +166,8 @@ import {
   getPayments,
   createPayment,
   getWebhooks,
-  createWebhook,
-} from '@/lib/payment';
+  createWebhook
+} from '@/lib/payment'
 
 // Fetch payments
 const payments = await getPayments(
@@ -176,9 +176,9 @@ const payments = await getPayments(
   {
     PageNumber: 1,
     PageSize: 20,
-    status: 'completed',
+    status: 'completed'
   }
-);
+)
 
 // Create payment
 const payment = await createPayment(
@@ -188,15 +188,15 @@ const payment = await createPayment(
     currency: 'USD',
     amount: 99.99,
     name: 'Product Name',
-    customerEmail: 'customer@example.com',
+    customerEmail: 'customer@example.com'
   }
-);
+)
 
 // Get webhooks
 const webhooks = await getWebhooks(
   process.env.HOODPAY_API_KEY!,
   process.env.HOODPAY_BUSINESS_ID!
-);
+)
 ```
 
 ## Webhook Handling
@@ -210,13 +210,13 @@ The webhook endpoint at `/api/hoodpay/webhook` automatically:
 
 ### Webhook Events
 
-| Event | Description | Action |
-|-------|-------------|--------|
-| `PAYMENT_CREATED` | Payment initialized | Creates/updates payment record |
-| `PAYMENT_METHOD_SELECTED` | Customer chose payment method | Updates payment method |
-| `PAYMENT_COMPLETED` | Payment successful | Updates status to completed |
-| `PAYMENT_CANCELLED` | Customer cancelled | Updates status to cancelled |
-| `PAYMENT_EXPIRED` | Payment timed out | Updates status to expired |
+| Event                     | Description                   | Action                         |
+| ------------------------- | ----------------------------- | ------------------------------ |
+| `PAYMENT_CREATED`         | Payment initialized           | Creates/updates payment record |
+| `PAYMENT_METHOD_SELECTED` | Customer chose payment method | Updates payment method         |
+| `PAYMENT_COMPLETED`       | Payment successful            | Updates status to completed    |
+| `PAYMENT_CANCELLED`       | Customer cancelled            | Updates status to cancelled    |
+| `PAYMENT_EXPIRED`         | Payment timed out             | Updates status to expired      |
 
 ### Testing Webhooks Locally
 
@@ -280,7 +280,7 @@ The integration includes comprehensive error handling:
 
 ```typescript
 // Automatic retry with exponential backoff
-const dbService = createPaymentService();
+const dbService = createPaymentService()
 // Retries up to 3 times with 1s delay between attempts
 ```
 
@@ -298,6 +298,7 @@ const dbService = createPaymentService();
 ### Error Logging
 
 All errors are logged to:
+
 - `payment_attempts` table (per attempt)
 - `error_log` field in payments table
 - Console with full stack traces
@@ -305,18 +306,22 @@ All errors are logged to:
 ## Security
 
 ✅ **Webhook Signature Verification**
+
 - HMAC SHA256 with constant-time comparison
 - Prevents spoofed webhook requests
 
 ✅ **Environment Variables**
+
 - All secrets stored in environment variables
 - Never committed to git
 
 ✅ **Supabase RLS**
+
 - Configure Row Level Security policies
 - Restrict access to payment data
 
 ✅ **HTTPS Only**
+
 - All API calls use HTTPS
 - Webhook endpoint requires HTTPS
 
@@ -379,6 +384,7 @@ LIMIT 20;
 ## Support
 
 For issues or questions:
+
 - Check HoodPay documentation: https://docs.hoodpay.io
 - Review Supabase docs: https://supabase.com/docs
 - File an issue in the repository

@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import PageLayout from "@/components/layout/PageLayout";
-import HeroSection from "@/components/hero-section";
-import TrustedBySection from "@/components/trusted-by";
-import TopProducts from "@/components/top-products";
-import ProductCatalog from "@/components/product-catalog";
+import PageLayout from '@/components/layout/PageLayout'
+import HeroSection from '@/components/hero-section'
+import TrustedBySection from '@/components/trusted-by'
+import TopProducts from '@/components/top-products'
+import ProductCatalog from '@/components/product-catalog'
 
 export default function Home() {
   return (
@@ -14,5 +14,5 @@ export default function Home() {
       <TopProducts />
       <ProductCatalog />
     </PageLayout>
-  );
+  )
 }

@@ -1,6 +1,7 @@
 # Official shadcn/ui Typography Patterns
 
 ## Overview
+
 shadcn/ui does NOT provide custom typography components. Instead, it uses native HTML elements with Tailwind CSS utility classes.
 
 ## Official Typography Classes

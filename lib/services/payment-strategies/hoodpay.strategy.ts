@@ -3,51 +3,51 @@
  * Handles payments through HoodPay API
  */
 
-import { BasePaymentStrategy } from "./payment-strategy.interface";
-import { createPayment } from "@/lib/hoodpayModule";
-import { PAYMENT_CONFIG } from "@/lib/config/payment.config";
-import type { PaymentResult, PaymentLocalState } from "@/lib/payment/types";
+import { BasePaymentStrategy } from './payment-strategy.interface'
+import { createPayment } from '@/lib/hoodpayModule'
+import { PAYMENT_CONFIG } from '@/lib/config/payment.config'
+import type { PaymentResult, PaymentLocalState } from '@/types/payment'
 
 export class HoodPayStrategy extends BasePaymentStrategy {
-  private apiKey: string | undefined;
-  private businessId: string | undefined;
+  private apiKey: string | undefined
+  private businessId: string | undefined
 
   constructor(apiKey?: string, businessId?: string) {
-    super();
-    this.apiKey = apiKey ?? PAYMENT_CONFIG.hoodpay.apiKey;
-    this.businessId = businessId ?? PAYMENT_CONFIG.hoodpay.businessId;
+    super()
+    this.apiKey = apiKey ?? PAYMENT_CONFIG.hoodpay.apiKey
+    this.businessId = businessId ?? PAYMENT_CONFIG.hoodpay.businessId
   }
 
   getName(): string {
-    return "HoodPay";
+    return 'HoodPay'
   }
 
   isAvailable(): boolean {
-    return !!(this.apiKey && this.businessId);
+    return !!(this.apiKey && this.businessId)
   }
 
   validate(paymentData?: any): { valid: boolean; error?: string } {
     if (!this.isAvailable()) {
       return {
         valid: false,
-        error: "HoodPay credentials not configured",
-      };
+        error: 'HoodPay credentials not configured'
+      }
     }
-    return { valid: true };
+    return { valid: true }
   }
 
   async process(
     state: PaymentLocalState,
     paymentData?: any
   ): Promise<PaymentResult> {
-    const validation = this.validate(paymentData);
+    const validation = this.validate(paymentData)
     if (!validation.valid || !this.apiKey || !this.businessId) {
       return this.createErrorResult(
         state.paymentIntent.id,
-        "HOODPAY_NOT_CONFIGURED",
+        'HOODPAY_NOT_CONFIGURED',
         validation.error!,
         false
-      );
+      )
     }
 
     try {
@@ -59,22 +59,22 @@ export class HoodPayStrategy extends BasePaymentStrategy {
           amount: state.paymentIntent.amount,
           description: state.paymentIntent.description,
           customerEmail: state.paymentIntent.customerEmail,
-          ...paymentData,
+          ...paymentData
         }
-      );
+      )
 
       return this.createSuccessResult(
         state.paymentIntent.id,
         hoodpayResponse.id,
         hoodpayResponse
-      );
+      )
     } catch (error: any) {
       return this.createErrorResult(
         state.paymentIntent.id,
-        "HOODPAY_ERROR",
-        error.message || "HoodPay payment failed",
+        'HOODPAY_ERROR',
+        error.message || 'HoodPay payment failed',
         true
-      );
+      )
     }
   }
 }

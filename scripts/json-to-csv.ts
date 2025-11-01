@@ -56,31 +56,35 @@ function extractSpecs(bodyHtml: string): {
   efficiency?: string
 } {
   const specs: any = {}
-  
+
   // Extract hash rate
-  const hashRateMatch = bodyHtml.match(/(\d+(?:,\d+)?)\s*(?:MH\/s|TH\/s|GH\/s)/i)
+  const hashRateMatch = bodyHtml.match(
+    /(\d+(?:,\d+)?)\s*(?:MH\/s|TH\/s|GH\/s)/i
+  )
   if (hashRateMatch) {
     specs.hashRate = hashRateMatch[0].replace(',', '')
   }
-  
+
   // Extract power consumption
   const powerMatch = bodyHtml.match(/(\d+(?:,\d+)?)\s*W(?:att)?/i)
   if (powerMatch) {
     specs.power = powerMatch[1].replace(',', '') + 'W'
   }
-  
+
   // Extract algorithm
-  const algoMatch = bodyHtml.match(/(?:Algorithm|Cryptocurrency)[:\s]+(\w+(?:\s+\|\s+\w+)?)/i)
+  const algoMatch = bodyHtml.match(
+    /(?:Algorithm|Cryptocurrency)[:\s]+(\w+(?:\s+\|\s+\w+)?)/i
+  )
   if (algoMatch) {
     specs.algorithm = algoMatch[1].split('|')[0].trim()
   }
-  
+
   // Extract efficiency
   const efficiencyMatch = bodyHtml.match(/([\d.]+)\s*J\/(?:TH|MH|GH)/i)
   if (efficiencyMatch) {
     specs.efficiency = efficiencyMatch[0]
   }
-  
+
   return specs
 }
 
@@ -91,34 +95,36 @@ function extractDimensions(bodyHtml: string): {
   weight?: number
 } {
   const dimensions: any = {}
-  
+
   // Extract dimensions in inches, convert to cm
-  const dimMatch = bodyHtml.match(/([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)\s*inches/i)
+  const dimMatch = bodyHtml.match(
+    /([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)\s*inches/i
+  )
   if (dimMatch) {
     dimensions.length = (parseFloat(dimMatch[1]) * 2.54).toFixed(2)
     dimensions.width = (parseFloat(dimMatch[2]) * 2.54).toFixed(2)
     dimensions.height = (parseFloat(dimMatch[3]) * 2.54).toFixed(2)
   }
-  
+
   // Extract weight in lbs, convert to kg
   const weightMatch = bodyHtml.match(/(?:Net weight)[:\s]+([\d.]+)\s*lbs/i)
   if (weightMatch) {
     dimensions.weight = (parseFloat(weightMatch[1]) * 0.453592).toFixed(2)
   }
-  
+
   return dimensions
 }
 
 function generateMetaDescription(title: string, bodyHtml: string): string {
   const specs = extractSpecs(bodyHtml)
   const parts: string[] = []
-  
+
   parts.push(title + '.')
   if (specs.hashRate) parts.push(`Hash rate: ${specs.hashRate}.`)
   if (specs.efficiency) parts.push(`Efficiency: ${specs.efficiency}.`)
   if (bodyHtml.match(/PSU|Power Supply/i)) parts.push('Includes power supply.')
   parts.push('Professional cryptocurrency mining hardware.')
-  
+
   return parts.join(' ').substring(0, 160)
 }
 
@@ -135,7 +141,7 @@ function escapeCsvField(field: any): string {
 function convertProductsToCSV(products: ProductJSON[]) {
   const productRows: string[] = []
   const variantRows: string[] = []
-  
+
   // CSV headers for products
   const productHeaders = [
     'shopify_id',
@@ -167,7 +173,7 @@ function convertProductsToCSV(products: ProductJSON[]) {
     'created_at',
     'updated_at'
   ]
-  
+
   // CSV headers for variants
   const variantHeaders = [
     'shopify_id',
@@ -182,36 +188,38 @@ function convertProductsToCSV(products: ProductJSON[]) {
     'created_at',
     'updated_at'
   ]
-  
+
   productRows.push(productHeaders.join(','))
   variantRows.push(variantHeaders.join(','))
-  
+
   for (const product of products) {
     const specs = extractSpecs(product.body_html)
     const dimensions = extractDimensions(product.body_html)
-    
+
     // Determine brand from title or vendor
     let brand = ''
     if (product.title.toLowerCase().includes('bitmain')) brand = 'Bitmain'
-    else if (product.title.toLowerCase().includes('whatsminer')) brand = 'MicroBT'
+    else if (product.title.toLowerCase().includes('whatsminer'))
+      brand = 'MicroBT'
     else if (product.title.toLowerCase().includes('antminer')) brand = 'Bitmain'
-    
+
     // Determine category from product type or tags
     let category = 'ASIC Miners'
     if (product.product_type) {
       category = product.product_type
     }
-    
+
     // Extract short description (first 200 chars without HTML)
-    const shortDescription = product.body_html
-      .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .substring(0, 200) + '...'
-    
+    const shortDescription =
+      product.body_html
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 200) + '...'
+
     // Get first variant for base price
     const firstVariant = product.variants[0]
-    
+
     // Prepare product row
     const productRow = [
       product.id,
@@ -222,7 +230,7 @@ function convertProductsToCSV(products: ProductJSON[]) {
       shortDescription,
       category,
       brand,
-      `{${product.tags.map(t => `"${t}"`).join(',')}}`, // PostgreSQL array format
+      `{${product.tags.map((t) => `"${t}"`).join(',')}}`, // PostgreSQL array format
       firstVariant?.price || '0',
       firstVariant?.compare_at_price || '',
       specs.hashRate || '',
@@ -234,7 +242,7 @@ function convertProductsToCSV(products: ProductJSON[]) {
       dimensions.width || '',
       dimensions.height || '',
       product.images[0]?.src || '',
-      `{${product.images.map(img => `"${img.src}"`).join(',')}}`, // PostgreSQL array format
+      `{${product.images.map((img) => `"${img.src}"`).join(',')}}`, // PostgreSQL array format
       product.title, // meta_title same as title
       generateMetaDescription(product.title, product.body_html),
       'false', // is_featured
@@ -243,9 +251,9 @@ function convertProductsToCSV(products: ProductJSON[]) {
       product.created_at,
       product.updated_at
     ]
-    
+
     productRows.push(productRow.map(escapeCsvField).join(','))
-    
+
     // Add variants
     for (const variant of product.variants) {
       const variantRow = [
@@ -261,11 +269,11 @@ function convertProductsToCSV(products: ProductJSON[]) {
         variant.created_at,
         variant.updated_at
       ]
-      
+
       variantRows.push(variantRow.map(escapeCsvField).join(','))
     }
   }
-  
+
   return {
     productsCSV: productRows.join('\n'),
     variantsCSV: variantRows.join('\n')
@@ -275,34 +283,36 @@ function convertProductsToCSV(products: ProductJSON[]) {
 async function main() {
   const jsonDir = path.join(process.cwd(), 'lib/data/json-optimized')
   const outputDir = path.join(process.cwd(), 'lib/data/csv')
-  
+
   // Create output directory
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true })
   }
-  
+
   // Read all JSON files
-  const files = fs.readdirSync(jsonDir).filter(f => f.endsWith('.json'))
+  const files = fs.readdirSync(jsonDir).filter((f) => f.endsWith('.json'))
   console.log(`Found ${files.length} product files to convert\n`)
-  
+
   const products: ProductJSON[] = []
-  
+
   for (const file of files) {
     const filePath = path.join(jsonDir, file)
     const product: ProductJSON = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
     products.push(product)
   }
-  
+
   // Convert to CSV
   const { productsCSV, variantsCSV } = convertProductsToCSV(products)
-  
+
   // Write CSV files
   fs.writeFileSync(path.join(outputDir, 'products.csv'), productsCSV)
   fs.writeFileSync(path.join(outputDir, 'product_variants.csv'), variantsCSV)
-  
+
   console.log(`✅ Converted ${products.length} products to CSV`)
   console.log(`📁 Products CSV: ${path.join(outputDir, 'products.csv')}`)
-  console.log(`📁 Variants CSV: ${path.join(outputDir, 'product_variants.csv')}`)
+  console.log(
+    `📁 Variants CSV: ${path.join(outputDir, 'product_variants.csv')}`
+  )
 }
 
 main().catch(console.error)

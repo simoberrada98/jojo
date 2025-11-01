@@ -1,24 +1,38 @@
 /**
- * Payment Module - Production-ready payment integration
- * Exports all payment functionality for HoodPay, Web Payment API, Supabase, and localStorage
+ * Payment Module - Unified exports for payment orchestration
  */
 
 // Core types
-export * from "./types";
+export * from '@/types/payment'
 
-// Storage management
-export * from "./localStorage";
+// Browser payment helpers
+export * from './webPaymentApi'
 
-// Web Payment API
-export * from "./webPaymentApi";
+// Storage service (client-safe)
+export {
+  PaymentStorageService,
+  type StorageAdapter,
+  createPaymentStorage,
+  paymentStorage
+} from '../services/payment-storage.service'
 
-// Supabase service
-export * from "./supabaseService";
+// Database service (server usage)
+export {
+  PaymentDatabaseService,
+  createPaymentDbService
+} from '../services/payment-db.service'
 
-// Main orchestrator
-export * from "./paymentOrchestrator";
+// Orchestrator and related services
+export {
+  PaymentOrchestrator,
+  createPaymentOrchestrator
+} from '../services/payment'
+export * from '../services/payment'
 
-// Re-export HoodPay module functions
+// Shared webhook verification
+export { verifyHoodpaySignature } from '../services/payment/webhook'
+
+// HoodPay API helpers
 export {
   supabase,
   getPayments,
@@ -31,5 +45,5 @@ export {
   resetWebhookSecret,
   webhooksApiHandler,
   webhookReceiverHandler,
-  verifyWebhookSignature,
-} from "../hoodpayModule";
+  verifyWebhookSignature
+} from '../hoodpayModule'

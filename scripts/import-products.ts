@@ -90,7 +90,7 @@ async function importCollections(collections: ImportData['collections']) {
         name: collection.name,
         slug: collection.slug,
         description: collection.description,
-        image_url: collection.imageUrl,
+        image_url: collection.imageUrl
       })
       .select('id, slug')
       .single()
@@ -107,7 +107,10 @@ async function importCollections(collections: ImportData['collections']) {
   return collectionMap
 }
 
-async function importProducts(products: Product[], collectionMap: Record<string, string>) {
+async function importProducts(
+  products: Product[],
+  collectionMap: Record<string, string>
+) {
   console.log(`\nImporting ${products.length} products...`)
 
   for (const product of products) {
@@ -139,7 +142,7 @@ async function importProducts(products: Product[], collectionMap: Record<string,
           is_active: true,
           meta_title: product.metaTitle,
           meta_description: product.metaDescription,
-          published_at: new Date().toISOString(),
+          published_at: new Date().toISOString()
         })
         .select('id')
         .single()
@@ -156,7 +159,7 @@ async function importProducts(products: Product[], collectionMap: Record<string,
       if (product.options && product.options.length > 0) {
         for (let i = 0; i < product.options.length; i++) {
           const option = product.options[i]
-          
+
           const { data: optionData, error: optionError } = await supabase
             .from('product_options')
             .insert({
@@ -164,20 +167,23 @@ async function importProducts(products: Product[], collectionMap: Record<string,
               name: option.name,
               display_name: option.displayName,
               type: option.type,
-              position: i,
+              position: i
             })
             .select('id')
             .single()
 
           if (optionError) {
-            console.error(`  Error importing option ${option.name}:`, optionError)
+            console.error(
+              `  Error importing option ${option.name}:`,
+              optionError
+            )
             continue
           }
 
           // Import option values
           for (let j = 0; j < option.values.length; j++) {
             const value = option.values[j]
-            
+
             const { error: valueError } = await supabase
               .from('product_option_values')
               .insert({
@@ -186,15 +192,20 @@ async function importProducts(products: Product[], collectionMap: Record<string,
                 display_value: value.displayValue,
                 color_hex: value.colorHex,
                 image_url: value.imageUrl,
-                position: j,
+                position: j
               })
 
             if (valueError) {
-              console.error(`    Error importing value ${value.value}:`, valueError)
+              console.error(
+                `    Error importing value ${value.value}:`,
+                valueError
+              )
             }
           }
 
-          console.log(`  ✓ Imported option: ${option.name} with ${option.values.length} values`)
+          console.log(
+            `  ✓ Imported option: ${option.name} with ${option.values.length} values`
+          )
         }
       }
 
@@ -213,11 +224,14 @@ async function importProducts(products: Product[], collectionMap: Record<string,
               stock_quantity: variant.stockQuantity,
               image_url: variant.imageUrl,
               images: variant.images,
-              is_active: true,
+              is_active: true
             })
 
           if (variantError) {
-            console.error(`  Error importing variant ${variant.name}:`, variantError)
+            console.error(
+              `  Error importing variant ${variant.name}:`,
+              variantError
+            )
             continue
           }
 
@@ -234,16 +248,18 @@ async function importProducts(products: Product[], collectionMap: Record<string,
               .from('product_collections')
               .insert({
                 product_id: productId,
-                collection_id: collectionId,
+                collection_id: collectionId
               })
 
             if (linkError) {
-              console.error(`  Error linking to collection ${collectionSlug}:`, linkError)
+              console.error(
+                `  Error linking to collection ${collectionSlug}:`,
+                linkError
+              )
             }
           }
         }
       }
-
     } catch (error) {
       console.error(`Error processing product ${product.name}:`, error)
     }

@@ -1,0 +1,6 @@
+.next/
+node_modules/
+.pnp.cjs
+.pnp.loader.mjs
+build/
+coverage/

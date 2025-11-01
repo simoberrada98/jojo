@@ -9,6 +9,7 @@
 A small, framework-friendly SDK to integrate **HoodPay** with **Next.js** and **Supabase**.
 
 **Capabilities**
+
 - Fetch payments with filters (pagination, time range, status, etc.).
 - Create payments with **dynamic product details** (price, currency, description, etc.).
 - Store payment objects in Supabase.
@@ -16,6 +17,7 @@ A small, framework-friendly SDK to integrate **HoodPay** with **Next.js** and **
 - Drop‑in Next.js API route handlers for payments and webhooks.
 
 **References**
+
 - Payments list endpoint: `GET /v1/businesses/{businessId}/payments`.
 - Webhooks endpoints:
   - `GET /v1/dash/businesses/{businessId}/settings/developer/webhooks`
@@ -35,10 +37,12 @@ A small, framework-friendly SDK to integrate **HoodPay** with **Next.js** and **
 - Supabase project & service role key (or RW key)
 
 **Install**
+
 ```bash
 npm i @supabase/supabase-js
 ```
-*(Types come with `@supabase/supabase-js`. In your app repo you’ll already have Next.js types.)*
+
+_(Types come with `@supabase/supabase-js`. In your app repo you’ll already have Next.js types.)_
 
 ---
 
@@ -57,6 +61,7 @@ SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
 **Security tips**
+
 - Never commit API keys to git.
 - Rotate HoodPay keys and webhook secret regularly.
 - Restrict who can call your server routes (don’t expose these endpoints to the public without auth).
@@ -66,6 +71,7 @@ SUPABASE_SERVICE_ROLE_KEY=...
 ## 4) API surface (exports)
 
 ### `getPayments(token, businessId, options)` → `Promise<any>`
+
 Fetches payments for the business.
 
 **Options** (all optional):
@@ -74,7 +80,9 @@ Fetches payments for the business.
 ---
 
 ### `createPayment(token, businessId, payment)` → `Promise<any>`
+
 Creates a new payment. **Dynamic product fields** supported:
+
 - `currency` (string)
 - `amount` (number)
 - `name`, `description`
@@ -84,11 +92,13 @@ Creates a new payment. **Dynamic product fields** supported:
 ---
 
 ### `savePaymentsToSupabase(payments, table?)` → inserted rows
+
 Bulk‑inserts any array to a Supabase table (default table: `hoodpay_payments`).
 
 ---
 
 ### `paymentsApiHandler(req, res)` (Next.js API)
+
 - `GET` → returns `getPayments(...)` with query params passthrough.
 - `POST` → creates a payment with request body as `PaymentCreationRequest`.
 
@@ -97,18 +107,23 @@ Bulk‑inserts any array to a Supabase table (default table: `hoodpay_payments`)
 ### Webhooks
 
 #### `getWebhooks(token, businessId)`
+
 Returns webhook config for the business.
 
 #### `createWebhook(token, businessId, { url, events, description? })`
+
 Registers a webhook URL for selected events.
 
 #### `deleteWebhook(token, businessId, webhookId)`
+
 Deletes a specific webhook by id.
 
 #### `resetWebhookSecret(token, businessId)`
+
 Resets the shared secret used to sign webhook payloads.
 
 #### `webhooksApiHandler(req, res)` (suggested)
+
 - `GET` → list webhooks
 - `POST` → create webhook
 - `DELETE` → delete webhook by `id`
@@ -122,24 +137,48 @@ Resets the shared secret used to sign webhook payloads.
 
 ```ts
 export interface GetPaymentsOptions {
-  PageNumber?: number; PageSize?: number; fromTime?: string; toTime?: string;
-  status?: string; paymentMethod?: string; fromAmount?: number; toAmount?: number;
-  searchString?: string;
+  PageNumber?: number
+  PageSize?: number
+  fromTime?: string
+  toTime?: string
+  status?: string
+  paymentMethod?: string
+  fromAmount?: number
+  toAmount?: number
+  searchString?: string
 }
 
 export interface PaymentCreationRequest {
-  currency: string; amount: number;
-  name?: string; description?: string;
-  customerEmail?: string; customerIp?: string; customerUserAgent?: string;
-  redirectUrl?: string; notifyUrl?: string;
+  currency: string
+  amount: number
+  name?: string
+  description?: string
+  customerEmail?: string
+  customerIp?: string
+  customerUserAgent?: string
+  redirectUrl?: string
+  notifyUrl?: string
 }
 
 export type WebhookEvent =
-  | 'payment:completed' | 'payment:cancelled' | 'payment:expired'
-  | 'payment:method_selected' | 'payment:created';
+  | 'payment:completed'
+  | 'payment:cancelled'
+  | 'payment:expired'
+  | 'payment:method_selected'
+  | 'payment:created'
 
-export interface CreateWebhookRequest { url: string; events: WebhookEvent[]; description?: string }
-export interface Webhook { id: string; url: string; events: WebhookEvent[]; enabled: boolean; createdAt?: string }
+export interface CreateWebhookRequest {
+  url: string
+  events: WebhookEvent[]
+  description?: string
+}
+export interface Webhook {
+  id: string
+  url: string
+  events: WebhookEvent[]
+  enabled: boolean
+  createdAt?: string
+}
 ```
 
 ---
@@ -147,46 +186,59 @@ export interface Webhook { id: string; url: string; events: WebhookEvent[]; enab
 ## 6) Example: Next.js API routes
 
 **`pages/api/payments.ts`**
+
 ```ts
-export { paymentsApiHandler as default } from '@/lib/hoodpayModule';
+export { paymentsApiHandler as default } from '@/lib/hoodpayModule'
 ```
 
 **`pages/api/webhooks/index.ts`** (list/create)
-```ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import { getWebhooks, createWebhook } from '@/lib/hoodpayModule';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const token = process.env.HOODPAY_API_KEY!;
-  const businessId = process.env.HOODPAY_BUSINESS_ID!;
-  if (req.method === 'GET') return res.json(await getWebhooks(token, businessId));
-  if (req.method === 'POST') return res.json(await createWebhook(token, businessId, req.body));
-  res.status(405).end();
+```ts
+import { NextApiRequest, NextApiResponse } from 'next'
+import { getWebhooks, createWebhook } from '@/lib/hoodpayModule'
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const token = process.env.HOODPAY_API_KEY!
+  const businessId = process.env.HOODPAY_BUSINESS_ID!
+  if (req.method === 'GET')
+    return res.json(await getWebhooks(token, businessId))
+  if (req.method === 'POST')
+    return res.json(await createWebhook(token, businessId, req.body))
+  res.status(405).end()
 }
 ```
 
 **`pages/api/webhooks/[id].ts`** (delete)
+
 ```ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteWebhook } from '@/lib/hoodpayModule';
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const token = process.env.HOODPAY_API_KEY!;
-  const businessId = process.env.HOODPAY_BUSINESS_ID!;
-  const { id } = req.query as { id: string };
-  if (req.method === 'DELETE') return res.json(await deleteWebhook(token, businessId, id));
-  res.status(405).end();
+import { NextApiRequest, NextApiResponse } from 'next'
+import { deleteWebhook } from '@/lib/hoodpayModule'
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const token = process.env.HOODPAY_API_KEY!
+  const businessId = process.env.HOODPAY_BUSINESS_ID!
+  const { id } = req.query as { id: string }
+  if (req.method === 'DELETE')
+    return res.json(await deleteWebhook(token, businessId, id))
+  res.status(405).end()
 }
 ```
 
 **`pages/api/webhooks/reset-secret.ts`**
+
 ```ts
-import { resetWebhookSecret } from '@/lib/hoodpayModule';
+import { resetWebhookSecret } from '@/lib/hoodpayModule'
 export default async function handler(req, res) {
-  const token = process.env.HOODPAY_API_KEY!;
-  const businessId = process.env.HOODPAY_BUSINESS_ID!;
-  if (req.method !== 'POST') return res.status(405).end();
-  const out = await resetWebhookSecret(token, businessId);
-  res.json(out);
+  const token = process.env.HOODPAY_API_KEY!
+  const businessId = process.env.HOODPAY_BUSINESS_ID!
+  if (req.method !== 'POST') return res.status(405).end()
+  const out = await resetWebhookSecret(token, businessId)
+  res.json(out)
 }
 ```
 
@@ -197,6 +249,7 @@ export default async function handler(req, res) {
 HoodPay will send events to your webhook URL with a **shared secret**. Implement verification to reject spoofed requests.
 
 **Suggested approach**
+
 1. Store the current `WEBHOOK_SECRET` securely.
 2. Expect an HMAC signature header (e.g., `x-hoodpay-signature`).
 3. Compute `HMAC_SHA256(secret, rawBody)` and compare using constant‑time equality.
@@ -258,37 +311,44 @@ create index on hoodpay_payments (status);
 ## 12) Development Plan
 
 **Milestone 1 — Foundation (done)**
+
 - Fetch payments with filters.
 - Create payments with dynamic product details.
 - Supabase insert helper.
 - Basic Next.js route handler for payments.
 
 **Milestone 2 — Webhooks (done/initial)**
+
 - List/create/delete/reset‑secret webhook endpoints.
 - Example Next.js webhook admin routes.
 
 **Milestone 3 — Verification & Reliability**
+
 - Signature verification helper (`verifyWebhookSignature`).
 - Automatic retry policy + exponential backoff helpers.
 - Idempotency key support for `createPayment`.
 - Request timeout + abort support.
 
 **Milestone 4 — Data model & Sync**
+
 - Map HoodPay payment schema to typed TS interfaces.
 - Upsert strategy in Supabase (avoid duplicates by `hp_payment_id`).
 - Full pagination sync job (CRON/API route).
 
 **Milestone 5 — DX & Docs**
+
 - JSDoc for all functions + generated API docs.
 - Example app page (Next.js) to browse payments and webhook logs.
 - Add E2E examples with Playwright (mocked HoodPay + local receiver).
 
 **Milestone 6 — Security & Compliance**
+
 - Rotate API keys and secrets tooling.
 - Audit trail for webhook secret resets.
 - PII redaction utilities.
 
 **Acceptance criteria (for each milestone)**
+
 - Unit tests ≥ 90% statements for new code.
 - Type‑safe public API (no `any` in exported types).
 - Lint/format clean (ESLint + Prettier).
@@ -316,4 +376,3 @@ create index on hoodpay_payments (status);
 ---
 
 **Questions / changes you want?** Ping here what shape you want for the webhook signature header and I’ll add a `verifyWebhookSignature()` helper + docs right away.
-
