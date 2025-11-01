@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import crypto from 'crypto';
 
 /**
  * Verify HMAC SHA256 signature from HoodPay webhook payload.
@@ -10,18 +10,18 @@ export function verifyHoodpaySignature(
   secret: string
 ): boolean {
   if (!signature || !secret) {
-    return false
+    return false;
   }
 
   try {
-    const hmac = crypto.createHmac('sha256', secret)
-    hmac.update(typeof payload === 'string' ? payload : payload.toString())
-    const computed = hmac.digest('hex')
-    const receivedBuffer = Buffer.from(signature, 'hex')
-    const expectedBuffer = Buffer.from(computed, 'hex')
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(typeof payload === 'string' ? payload : payload.toString());
+    const computed = hmac.digest('hex');
+    const receivedBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(computed, 'hex');
 
-    return crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
+    return crypto.timingSafeEqual(receivedBuffer, expectedBuffer);
   } catch {
-    return false
+    return false;
   }
 }

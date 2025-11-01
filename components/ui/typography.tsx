@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { cn } from '@/lib/utils'
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 function H1({ className, ...props }: React.ComponentProps<'h1'>) {
   return (
@@ -10,7 +10,7 @@ function H1({ className, ...props }: React.ComponentProps<'h1'>) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function H2({ className, ...props }: React.ComponentProps<'h2'>) {
@@ -22,7 +22,7 @@ function H2({ className, ...props }: React.ComponentProps<'h2'>) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function H3({ className, ...props }: React.ComponentProps<'h3'>) {
@@ -34,7 +34,7 @@ function H3({ className, ...props }: React.ComponentProps<'h3'>) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function H4({ className, ...props }: React.ComponentProps<'h4'>) {
@@ -46,21 +46,21 @@ function H4({ className, ...props }: React.ComponentProps<'h4'>) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function P({ className, ...props }: React.ComponentProps<'p'>) {
-  return <p className={cn('not-first:mt-6 leading-7', className)} {...props} />
+  return <p className={cn('not-first:mt-6 leading-7', className)} {...props} />;
 }
 
 function Lead({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p className={cn('text-muted-foreground text-xl', className)} {...props} />
-  )
+  );
 }
 
 function Large({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div className={cn('font-semibold text-lg', className)} {...props} />
+  return <div className={cn('font-semibold text-lg', className)} {...props} />;
 }
 
 function Small({ className, ...props }: React.ComponentProps<'small'>) {
@@ -69,13 +69,13 @@ function Small({ className, ...props }: React.ComponentProps<'small'>) {
       className={cn('font-medium text-sm leading-none', className)}
       {...props}
     />
-  )
+  );
 }
 
 function Muted({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p className={cn('text-muted-foreground text-sm', className)} {...props} />
-  )
+  );
 }
 
-export { H1, H2, H3, H4, P, Lead, Large, Small, Muted }
+export { H1, H2, H3, H4, P, Lead, Large, Small, Muted };

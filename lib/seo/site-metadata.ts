@@ -1,12 +1,12 @@
-const DEFAULT_BASE_URL = 'https://jhuangnyc.com'
+const DEFAULT_BASE_URL = 'https://jhuangnyc.com';
 
 function resolveBaseUrl() {
-  const candidate = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL
+  const candidate = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
   try {
-    return new URL(candidate)
+    return new URL(candidate);
   } catch {
-    return new URL(DEFAULT_BASE_URL)
+    return new URL(DEFAULT_BASE_URL);
   }
 }
 
@@ -22,11 +22,11 @@ export const siteMetadata = {
     'ASIC miners',
     'GPU mining rigs',
     'bitcoin miners',
-    'crypto payments'
+    'crypto payments',
   ],
   category: 'Technology',
   baseUrl: resolveBaseUrl(),
   creator: 'MineHub',
   publisher: 'MineHub',
-  twitterHandle: '@jhuangnyc'
-}
+  twitterHandle: '@jhuangnyc',
+};

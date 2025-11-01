@@ -137,27 +137,27 @@ Resets the shared secret used to sign webhook payloads.
 
 ```ts
 export interface GetPaymentsOptions {
-  PageNumber?: number
-  PageSize?: number
-  fromTime?: string
-  toTime?: string
-  status?: string
-  paymentMethod?: string
-  fromAmount?: number
-  toAmount?: number
-  searchString?: string
+  PageNumber?: number;
+  PageSize?: number;
+  fromTime?: string;
+  toTime?: string;
+  status?: string;
+  paymentMethod?: string;
+  fromAmount?: number;
+  toAmount?: number;
+  searchString?: string;
 }
 
 export interface PaymentCreationRequest {
-  currency: string
-  amount: number
-  name?: string
-  description?: string
-  customerEmail?: string
-  customerIp?: string
-  customerUserAgent?: string
-  redirectUrl?: string
-  notifyUrl?: string
+  currency: string;
+  amount: number;
+  name?: string;
+  description?: string;
+  customerEmail?: string;
+  customerIp?: string;
+  customerUserAgent?: string;
+  redirectUrl?: string;
+  notifyUrl?: string;
 }
 
 export type WebhookEvent =
@@ -165,19 +165,19 @@ export type WebhookEvent =
   | 'payment:cancelled'
   | 'payment:expired'
   | 'payment:method_selected'
-  | 'payment:created'
+  | 'payment:created';
 
 export interface CreateWebhookRequest {
-  url: string
-  events: WebhookEvent[]
-  description?: string
+  url: string;
+  events: WebhookEvent[];
+  description?: string;
 }
 export interface Webhook {
-  id: string
-  url: string
-  events: WebhookEvent[]
-  enabled: boolean
-  createdAt?: string
+  id: string;
+  url: string;
+  events: WebhookEvent[];
+  enabled: boolean;
+  createdAt?: string;
 }
 ```
 
@@ -188,57 +188,57 @@ export interface Webhook {
 **`pages/api/payments.ts`**
 
 ```ts
-export { paymentsApiHandler as default } from '@/lib/hoodpayModule'
+export { paymentsApiHandler as default } from '@/lib/hoodpayModule';
 ```
 
 **`pages/api/webhooks/index.ts`** (list/create)
 
 ```ts
-import { NextApiRequest, NextApiResponse } from 'next'
-import { getWebhooks, createWebhook } from '@/lib/hoodpayModule'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getWebhooks, createWebhook } from '@/lib/hoodpayModule';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const token = process.env.HOODPAY_API_KEY!
-  const businessId = process.env.HOODPAY_BUSINESS_ID!
+  const token = process.env.HOODPAY_API_KEY!;
+  const businessId = process.env.HOODPAY_BUSINESS_ID!;
   if (req.method === 'GET')
-    return res.json(await getWebhooks(token, businessId))
+    return res.json(await getWebhooks(token, businessId));
   if (req.method === 'POST')
-    return res.json(await createWebhook(token, businessId, req.body))
-  res.status(405).end()
+    return res.json(await createWebhook(token, businessId, req.body));
+  res.status(405).end();
 }
 ```
 
 **`pages/api/webhooks/[id].ts`** (delete)
 
 ```ts
-import { NextApiRequest, NextApiResponse } from 'next'
-import { deleteWebhook } from '@/lib/hoodpayModule'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { deleteWebhook } from '@/lib/hoodpayModule';
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const token = process.env.HOODPAY_API_KEY!
-  const businessId = process.env.HOODPAY_BUSINESS_ID!
-  const { id } = req.query as { id: string }
+  const token = process.env.HOODPAY_API_KEY!;
+  const businessId = process.env.HOODPAY_BUSINESS_ID!;
+  const { id } = req.query as { id: string };
   if (req.method === 'DELETE')
-    return res.json(await deleteWebhook(token, businessId, id))
-  res.status(405).end()
+    return res.json(await deleteWebhook(token, businessId, id));
+  res.status(405).end();
 }
 ```
 
 **`pages/api/webhooks/reset-secret.ts`**
 
 ```ts
-import { resetWebhookSecret } from '@/lib/hoodpayModule'
+import { resetWebhookSecret } from '@/lib/hoodpayModule';
 export default async function handler(req, res) {
-  const token = process.env.HOODPAY_API_KEY!
-  const businessId = process.env.HOODPAY_BUSINESS_ID!
-  if (req.method !== 'POST') return res.status(405).end()
-  const out = await resetWebhookSecret(token, businessId)
-  res.json(out)
+  const token = process.env.HOODPAY_API_KEY!;
+  const businessId = process.env.HOODPAY_BUSINESS_ID!;
+  if (req.method !== 'POST') return res.status(405).end();
+  const out = await resetWebhookSecret(token, businessId);
+  res.json(out);
 }
 ```
 

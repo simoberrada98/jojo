@@ -273,37 +273,37 @@ docs/
 ### 1. Using Environment Variables
 
 ```typescript
-import { env } from '@/lib/env'
-const url = env.NEXT_PUBLIC_SUPABASE_URL
+import { env } from '@/lib/env';
+const url = env.NEXT_PUBLIC_SUPABASE_URL;
 ```
 
 ### 2. Using Configuration
 
 ```typescript
-import { PRICING_CONFIG } from '@/lib/config/pricing.config'
-const shipping = PRICING_CONFIG.shipping.standard
+import { PRICING_CONFIG } from '@/lib/config/pricing.config';
+const shipping = PRICING_CONFIG.shipping.standard;
 ```
 
 ### 3. Using Services
 
 ```typescript
 // Direct import
-import { PricingService } from '@/lib/services/pricing.service'
-const total = PricingService.calculateSubtotal(items)
+import { PricingService } from '@/lib/services/pricing.service';
+const total = PricingService.calculateSubtotal(items);
 
 // Via Service Container
-import { container, Services } from '@/lib/services/ServiceContainer'
-const pricing = container.resolve(Services.PRICING)
+import { container, Services } from '@/lib/services/ServiceContainer';
+const pricing = container.resolve(Services.PRICING);
 
 // Via React Hook
-import { usePricingService } from '@/lib/contexts/services-context'
-const pricing = usePricingService()
+import { usePricingService } from '@/lib/contexts/services-context';
+const pricing = usePricingService();
 ```
 
 ### 4. Using Payment Orchestrator
 
 ```typescript
-import { createPaymentOrchestrator } from '@/lib/services/payment'
+import { createPaymentOrchestrator } from '@/lib/services/payment';
 
 const orchestrator = createPaymentOrchestrator({
   businessId: 'my-business',
@@ -311,29 +311,29 @@ const orchestrator = createPaymentOrchestrator({
   supabaseKey: env.SUPABASE_SERVICE_ROLE_KEY,
   hooks: {
     onCompleted: async (event) => {
-      console.log('Payment completed!', event)
-    }
-  }
-})
+      console.log('Payment completed!', event);
+    },
+  },
+});
 
 // Initialize payment
-const intent = await orchestrator.initializePayment(100, 'USD', checkoutData)
+const intent = await orchestrator.initializePayment(100, 'USD', checkoutData);
 
 // Process payment
-const result = await orchestrator.processPayment(PaymentMethod.HOODPAY, data)
+const result = await orchestrator.processPayment(PaymentMethod.HOODPAY, data);
 ```
 
 ### 5. Using Custom Hooks
 
 ```typescript
-import { useProductFilters } from '@/lib/hooks/useProductFilters'
+import { useProductFilters } from '@/lib/hooks/useProductFilters';
 
 const {
   filteredAndSortedProducts,
   categories,
   setSelectedCategory,
-  setSortBy
-} = useProductFilters({ products })
+  setSortBy,
+} = useProductFilters({ products });
 ```
 
 ---
@@ -348,26 +348,26 @@ const mockStorage = {
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
-  keys: jest.fn(() => [])
-}
+  keys: jest.fn(() => []),
+};
 
-const storage = createPaymentStorage(mockStorage)
-storage.saveState(testState)
-expect(mockStorage.setItem).toHaveBeenCalled()
+const storage = createPaymentStorage(mockStorage);
+storage.saveState(testState);
+expect(mockStorage.setItem).toHaveBeenCalled();
 ```
 
 ### Service Container Testing
 
 ```typescript
 // Reset services for isolated tests
-import { resetServices, container } from '@/lib/services'
+import { resetServices, container } from '@/lib/services';
 
 beforeEach(() => {
-  resetServices()
-})
+  resetServices();
+});
 
 // Register mock service
-container.instance('TestService', mockService)
+container.instance('TestService', mockService);
 ```
 
 ---

@@ -3,7 +3,7 @@
  * Single Responsibility: Manage payment event hooks and callbacks
  */
 
-import type { PaymentHooks, PaymentEvent } from '@/types/payment'
+import type { PaymentHooks, PaymentEvent } from '@/types/payment';
 
 export class PaymentHooksManager {
   constructor(private hooks?: PaymentHooks) {}
@@ -15,13 +15,13 @@ export class PaymentHooksManager {
     hookName: keyof PaymentHooks,
     event: PaymentEvent
   ): Promise<void> {
-    const hook = this.hooks?.[hookName]
-    if (!hook) return
+    const hook = this.hooks?.[hookName];
+    if (!hook) return;
 
     try {
-      await hook(event)
+      await hook(event);
     } catch (error) {
-      console.error(`Hook ${hookName} failed:`, error)
+      console.error(`Hook ${hookName} failed:`, error);
       // Don't throw - hooks should not break the payment flow
     }
   }
@@ -30,48 +30,48 @@ export class PaymentHooksManager {
    * Trigger onCreated hook
    */
   async triggerCreated(event: PaymentEvent): Promise<void> {
-    return this.trigger('onCreated', event)
+    return this.trigger('onCreated', event);
   }
 
   /**
    * Trigger onProcessing hook
    */
   async triggerProcessing(event: PaymentEvent): Promise<void> {
-    return this.trigger('onProcessing', event)
+    return this.trigger('onProcessing', event);
   }
 
   /**
    * Trigger onCompleted hook
    */
   async triggerCompleted(event: PaymentEvent): Promise<void> {
-    return this.trigger('onCompleted', event)
+    return this.trigger('onCompleted', event);
   }
 
   /**
    * Trigger onFailed hook
    */
   async triggerFailed(event: PaymentEvent): Promise<void> {
-    return this.trigger('onFailed', event)
+    return this.trigger('onFailed', event);
   }
 
   /**
    * Trigger onCancelled hook
    */
   async triggerCancelled(event: PaymentEvent): Promise<void> {
-    return this.trigger('onCancelled', event)
+    return this.trigger('onCancelled', event);
   }
 
   /**
    * Register new hooks
    */
   registerHooks(hooks: PaymentHooks): void {
-    this.hooks = { ...this.hooks, ...hooks }
+    this.hooks = { ...this.hooks, ...hooks };
   }
 
   /**
    * Check if a hook is registered
    */
   hasHook(hookName: keyof PaymentHooks): boolean {
-    return !!this.hooks?.[hookName]
+    return !!this.hooks?.[hookName];
   }
 }

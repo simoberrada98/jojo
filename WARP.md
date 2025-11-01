@@ -74,8 +74,8 @@ lib/
 **Path Aliases**: All imports use `@/*` alias mapping to root (configured in `tsconfig.json` and `components.json`)
 
 ```typescript
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 ```
 
 **Component Structure**:
@@ -136,16 +136,16 @@ Central API route for all product data operations:
 
 ```typescript
 // Fetch single product
-const res = await fetch('/api/products?id=123')
-const product = await res.json()
+const res = await fetch('/api/products?id=123');
+const product = await res.json();
 
 // Fetch multiple products
-const res = await fetch('/api/products?ids=1,2,3')
-const products = await res.json()
+const res = await fetch('/api/products?ids=1,2,3');
+const products = await res.json();
 
 // Search/paginate
-const res = await fetch('/api/products?q=miner&limit=10&offset=0')
-const { results, total, hasMore } = await res.json()
+const res = await fetch('/api/products?q=miner&limit=10&offset=0');
+const { results, total, hasMore } = await res.json();
 ```
 
 ## Crypto Payment Flow

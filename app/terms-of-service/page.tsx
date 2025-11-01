@@ -1,18 +1,18 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import type { Metadata } from 'next'
-import { ChevronRight } from 'lucide-react'
-import PageLayout from '@/components/layout/PageLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { serializeSchema } from '@/lib/schema'
+import Image from 'next/image';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { ChevronRight } from 'lucide-react';
+import PageLayout from '@/components/layout/PageLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { serializeSchema } from '@/lib/schema';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com'
-const canonicalUrl = `${baseUrl}/terms-of-service`
-const ogImageUrl = `${baseUrl}/assets/images/Terms.png`
-const lastUpdatedDisplay = 'October 15, 2024'
-const lastUpdatedISO = '2024-10-15'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
+const canonicalUrl = `${baseUrl}/terms-of-service`;
+const ogImageUrl = `${baseUrl}/assets/images/Terms.png`;
+const lastUpdatedDisplay = 'October 15, 2024';
+const lastUpdatedISO = '2024-10-15';
 const description =
-  'Review the Jhuangnyc Terms of Service to understand your responsibilities, order policies, and legal rights when purchasing cryptocurrency mining hardware.'
+  'Review the Jhuangnyc Terms of Service to understand your responsibilities, order policies, and legal rights when purchasing cryptocurrency mining hardware.';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Jhuangnyc',
@@ -28,21 +28,21 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: 'Graphic depicting contractual agreement and handshake for Jhuangnyc terms'
-      }
-    ]
+        alt: 'Graphic depicting contractual agreement and handshake for Jhuangnyc terms',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jhuangnyc Terms of Service',
     description,
-    images: [ogImageUrl]
+    images: [ogImageUrl],
   },
   robots: {
     index: true,
-    follow: true
-  }
-}
+    follow: true,
+  },
+};
 
 export default function TermsOfServicePage() {
   const termsSchema = {
@@ -59,65 +59,65 @@ export default function TermsOfServicePage() {
       url: baseUrl,
       logo: {
         '@type': 'ImageObject',
-        url: `${baseUrl}/logo.png`
+        url: `${baseUrl}/logo.png`,
       },
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'Customer Support',
         email: 'contact@jhuangnyc.com',
-        telephone: '+1-631-224-3534'
-      }
+        telephone: '+1-631-224-3534',
+      },
     },
-    mainEntityOfPage: canonicalUrl
-  }
+    mainEntityOfPage: canonicalUrl,
+  };
 
   return (
     <PageLayout>
       <script
-        type='application/ld+json'
+        type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeSchema(termsSchema)
+          __html: serializeSchema(termsSchema),
         }}
       />
 
-      <main className='pt-20'>
+      <main className="pt-20">
         {/* Hero */}
-        <section className='border-border border-b bg-background'>
-          <div className='relative overflow-hidden'>
-            <div className='absolute inset-0'>
+        <section className="border-border border-b bg-background">
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0">
               <Image
-                src='/assets/images/Terms.png'
-                alt='Graphic illustrating legal agreement and contract review'
+                src="/assets/images/Terms.png"
+                alt="Graphic illustrating legal agreement and contract review"
                 fill
                 priority
-                className='object-cover'
+                className="object-cover"
               />
-              <div className='absolute inset-0 bg-background/80 backdrop-blur' />
+              <div className="absolute inset-0 bg-background/80 backdrop-blur" />
             </div>
-            <div className='relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl'>
-              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+            <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Link
-                  href='/'
-                  className='hover:text-foreground transition-colors'
+                  href="/"
+                  className="hover:text-foreground transition-colors"
                 >
                   Home
                 </Link>
-                <ChevronRight className='w-4 h-4' aria-hidden='true' />
-                <span className='font-medium text-foreground'>
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium text-foreground">
                   Terms of Service
                 </span>
               </div>
-              <div className='mt-8 max-w-3xl'>
-                <h1 className='font-bold text-4xl sm:text-5xl'>
+              <div className="mt-8 max-w-3xl">
+                <h1 className="font-bold text-4xl sm:text-5xl">
                   Terms of Service
                 </h1>
-                <p className='mt-4 text-muted-foreground text-lg'>
+                <p className="mt-4 text-muted-foreground text-lg">
                   These terms outline how you can access, purchase from, and
                   interact with Jhuangnyc. Please read them carefully so you
                   understand your obligations and our commitments before placing
                   an order.
                 </p>
-                <p className='mt-6 text-muted-foreground'>
+                <p className="mt-6 text-muted-foreground">
                   Last updated:{' '}
                   <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
                 </p>
@@ -127,13 +127,13 @@ export default function TermsOfServicePage() {
         </section>
 
         {/* Content */}
-        <section className='mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl'>
-          <div className='space-y-10'>
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+          <div className="space-y-10">
             <Card>
               <CardHeader>
                 <CardTitle>Key Takeaways</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <ul>
                   <li>
                     Using our site means you accept these terms and agree to
@@ -151,12 +151,12 @@ export default function TermsOfServicePage() {
               </CardContent>
             </Card>
 
-            <div className='gap-6 grid md:grid-cols-2'>
+            <div className="gap-6 grid md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Your Account Responsibilities</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <ul>
                     <li>
                       Provide accurate, current, and complete registration
@@ -182,7 +182,7 @@ export default function TermsOfServicePage() {
                 <CardHeader>
                   <CardTitle>Orders, Payments & Verification</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <ul>
                     <li>
                       Prices are quoted in USD and may change without prior
@@ -209,7 +209,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Products, Availability & Accuracy</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   We strive to present accurate product specifications, lead
                   times, and pricing. However, mining hardware can change
@@ -218,7 +218,7 @@ export default function TermsOfServicePage() {
                   information, and availability is not guaranteed until an order
                   is accepted.
                 </p>
-                <p className='mt-4'>
+                <p className="mt-4">
                   We reserve the right to limit quantities, substitute
                   equivalent models, or discontinue items at our discretion. If
                   a material change affects your order, we will contact you with
@@ -231,7 +231,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Shipping, Delivery & Risk of Loss</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <ul>
                   <li>
                     Shipping estimates are provided during checkout and may vary
@@ -257,7 +257,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Acceptable Use & Restrictions</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   You agree not to misuse the site or any products purchased
                   from us. Prohibited conduct includes:
@@ -283,12 +283,12 @@ export default function TermsOfServicePage() {
               </CardContent>
             </Card>
 
-            <div className='gap-6 grid md:grid-cols-2'>
+            <div className="gap-6 grid md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Risk Disclosure & Warranties</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <p>
                     Cryptocurrency mining carries operational and financial
                     risks, including hardware failure, network difficulty
@@ -305,7 +305,7 @@ export default function TermsOfServicePage() {
                 <CardHeader>
                   <CardTitle>Limitation of Liability</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <p>
                     To the fullest extent permitted by law, Jhuangnyc and its
                     affiliates are not liable for indirect, incidental, special,
@@ -322,7 +322,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Indemnification</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   You agree to defend, indemnify, and hold harmless Jhuangnyc,
                   its officers, employees, and partners from any claims,
@@ -337,7 +337,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Governing Law & Dispute Resolution</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   These terms are governed by the laws of the State of New York,
                   United States, without regard to conflict-of-law rules. You
@@ -353,7 +353,7 @@ export default function TermsOfServicePage() {
               <CardHeader>
                 <CardTitle>Changes & Contact</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   We may update these Terms of Service to reflect changes in our
                   products, legal requirements, or operational practices. When
@@ -362,14 +362,14 @@ export default function TermsOfServicePage() {
                   of the services after changes take effect constitutes
                   acceptance of the revised terms.
                 </p>
-                <p className='mt-4'>
+                <p className="mt-4">
                   Questions about these terms? Our support team is ready to
                   help:
                 </p>
                 <ul>
                   <li>
                     Email:{' '}
-                    <a href='mailto:contact@jhuangnyc.com'>
+                    <a href="mailto:contact@jhuangnyc.com">
                       contact@jhuangnyc.com
                     </a>
                   </li>
@@ -384,5 +384,5 @@ export default function TermsOfServicePage() {
         </section>
       </main>
     </PageLayout>
-  )
+  );
 }

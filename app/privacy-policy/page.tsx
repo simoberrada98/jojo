@@ -1,18 +1,18 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import type { Metadata } from 'next'
-import { ChevronRight } from 'lucide-react'
-import PageLayout from '@/components/layout/PageLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { serializeSchema } from '@/lib/schema'
+import Image from 'next/image';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { ChevronRight } from 'lucide-react';
+import PageLayout from '@/components/layout/PageLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { serializeSchema } from '@/lib/schema';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com'
-const canonicalUrl = `${baseUrl}/privacy-policy`
-const ogImageUrl = `${baseUrl}/assets/images/Privacy.png`
-const lastUpdatedDisplay = 'October 15, 2024'
-const lastUpdatedISO = '2024-10-15'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
+const canonicalUrl = `${baseUrl}/privacy-policy`;
+const ogImageUrl = `${baseUrl}/assets/images/Privacy.png`;
+const lastUpdatedDisplay = 'October 15, 2024';
+const lastUpdatedISO = '2024-10-15';
 const description =
-  'Understand how Jhuangnyc collects, uses, and protects your personal data when you shop for cryptocurrency mining hardware.'
+  'Understand how Jhuangnyc collects, uses, and protects your personal data when you shop for cryptocurrency mining hardware.';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Jhuangnyc',
@@ -28,21 +28,21 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: 'Illustration representing data protection for Jhuangnyc customers'
-      }
-    ]
+        alt: 'Illustration representing data protection for Jhuangnyc customers',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jhuangnyc Privacy Policy',
     description,
-    images: [ogImageUrl]
+    images: [ogImageUrl],
   },
   robots: {
     index: true,
-    follow: true
-  }
-}
+    follow: true,
+  },
+};
 
 export default function PrivacyPolicyPage() {
   const privacyPolicySchema = {
@@ -59,65 +59,65 @@ export default function PrivacyPolicyPage() {
       url: baseUrl,
       logo: {
         '@type': 'ImageObject',
-        url: `${baseUrl}/logo.png`
+        url: `${baseUrl}/logo.png`,
       },
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'Customer Support',
         email: 'contact@jhuangnyc.com',
-        telephone: '+1-631-224-3534'
-      }
+        telephone: '+1-631-224-3534',
+      },
     },
-    mainEntityOfPage: canonicalUrl
-  }
+    mainEntityOfPage: canonicalUrl,
+  };
 
   return (
     <PageLayout>
       <script
-        type='application/ld+json'
+        type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeSchema(privacyPolicySchema)
+          __html: serializeSchema(privacyPolicySchema),
         }}
       />
 
-      <main className='pt-20'>
+      <main className="pt-20">
         {/* Hero */}
-        <section className='border-border border-b bg-background'>
-          <div className='relative overflow-hidden'>
-            <div className='absolute inset-0'>
+        <section className="border-border border-b bg-background">
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0">
               <Image
-                src='/assets/images/Privacy.png'
-                alt='Abstract illustration representing privacy and data protection'
+                src="/assets/images/Privacy.png"
+                alt="Abstract illustration representing privacy and data protection"
                 fill
                 priority
-                className='object-cover'
+                className="object-cover"
               />
-              <div className='absolute inset-0 bg-background/80 backdrop-blur' />
+              <div className="absolute inset-0 bg-background/80 backdrop-blur" />
             </div>
-            <div className='relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl'>
-              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+            <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Link
-                  href='/'
-                  className='hover:text-foreground transition-colors'
+                  href="/"
+                  className="hover:text-foreground transition-colors"
                 >
                   Home
                 </Link>
-                <ChevronRight className='w-4 h-4' aria-hidden='true' />
-                <span className='font-medium text-foreground'>
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium text-foreground">
                   Privacy Policy
                 </span>
               </div>
-              <div className='mt-8 max-w-3xl'>
-                <h1 className='font-bold text-4xl sm:text-5xl'>
+              <div className="mt-8 max-w-3xl">
+                <h1 className="font-bold text-4xl sm:text-5xl">
                   Privacy Policy
                 </h1>
-                <p className='mt-4 text-muted-foreground text-lg'>
+                <p className="mt-4 text-muted-foreground text-lg">
                   Transparency, security, and trust are at the core of
                   everything we do. This policy explains how we collect, use,
                   and protect your data when you explore or purchase mining
                   hardware from Jhuangnyc.
                 </p>
-                <p className='mt-6 text-muted-foreground'>
+                <p className="mt-6 text-muted-foreground">
                   Last updated:{' '}
                   <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
                 </p>
@@ -127,13 +127,13 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Content */}
-        <section className='mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl'>
-          <div className='space-y-10'>
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
+          <div className="space-y-10">
             <Card>
               <CardHeader>
                 <CardTitle>At a Glance</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <ul>
                   <li>
                     We only collect the information we need to process orders,
@@ -151,12 +151,12 @@ export default function PrivacyPolicyPage() {
               </CardContent>
             </Card>
 
-            <div className='gap-6 grid md:grid-cols-2'>
+            <div className="gap-6 grid md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Information We Collect</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <h3>Information you give us</h3>
                   <ul>
                     <li>Account details such as name, email, and password</li>
@@ -168,7 +168,7 @@ export default function PrivacyPolicyPage() {
                       Payment details processed securely by vetted third parties
                     </li>
                   </ul>
-                  <h3 className='mt-4'>Information we collect automatically</h3>
+                  <h3 className="mt-4">Information we collect automatically</h3>
                   <ul>
                     <li>
                       Device and browser data, IP address, and approximate
@@ -189,7 +189,7 @@ export default function PrivacyPolicyPage() {
                 <CardHeader>
                   <CardTitle>How We Use Your Information</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <ul>
                     <li>
                       Process purchases, deliver products, and provide invoices
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
                       jurisdictions where we operate
                     </li>
                   </ul>
-                  <p className='mt-4'>
+                  <p className="mt-4">
                     Our legal bases for processing include performing a
                     contract, legitimate business interests, obtaining your
                     consent, and fulfilling legal requirements.
@@ -219,7 +219,7 @@ export default function PrivacyPolicyPage() {
               <CardHeader>
                 <CardTitle>How Payments Work</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   Checkout flows are handled end-to-end with Stripe, which
                   tokenizes sensitive cardholder data and shares only the last
@@ -227,7 +227,7 @@ export default function PrivacyPolicyPage() {
                   app responsive while preventing us from ever storing full card
                   numbers on Jhuangnyc servers.
                 </p>
-                <ol className='list-decimal space-y-2 pl-6'>
+                <ol className="list-decimal space-y-2 pl-6">
                   <li>
                     Review your cart, shipping details, and taxes, then choose a
                     payment option supported by Stripe (major credit and debit
@@ -250,12 +250,12 @@ export default function PrivacyPolicyPage() {
                     shipment or pickup logistics.
                   </li>
                 </ol>
-                <p className='mt-4'>
+                <p className="mt-4">
                   If Stripe declines or flags a payment, we will prompt you to
                   retry, switch to another method, or contact support for manual
                   assistance. You can request invoices, payment confirmations,
                   or account statements anytime by emailing{' '}
-                  <a href='mailto:contact@jhuangnyc.com'>
+                  <a href="mailto:contact@jhuangnyc.com">
                     contact@jhuangnyc.com
                   </a>
                   .
@@ -267,7 +267,7 @@ export default function PrivacyPolicyPage() {
               <CardHeader>
                 <CardTitle>Sharing & International Transfers</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   We only share personal data with vendors that enable core
                   operations such as payment processing, logistics, analytics,
@@ -289,7 +289,7 @@ export default function PrivacyPolicyPage() {
                     with applicable laws, court orders, or to protect our rights
                   </li>
                 </ul>
-                <p className='mt-4'>
+                <p className="mt-4">
                   Because we operate in the United States, your data may be
                   processed outside of your country. We implement safeguards
                   such as Standard Contractual Clauses and vendor due diligence
@@ -298,12 +298,12 @@ export default function PrivacyPolicyPage() {
               </CardContent>
             </Card>
 
-            <div className='gap-6 grid md:grid-cols-2'>
+            <div className="gap-6 grid md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Data Retention & Security</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <p>
                     We keep personal information only for as long as needed to
                     deliver products, resolve disputes, comply with legal
@@ -324,7 +324,7 @@ export default function PrivacyPolicyPage() {
                 <CardHeader>
                   <CardTitle>Cookies & Tracking Technologies</CardTitle>
                 </CardHeader>
-                <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+                <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                   <p>
                     We use cookies to remember your preferences, keep you signed
                     in, analyze traffic, and measure marketing performance.
@@ -341,7 +341,7 @@ export default function PrivacyPolicyPage() {
                       Marketing cookies personalize offers when you opt in
                     </li>
                   </ul>
-                  <p className='mt-4'>
+                  <p className="mt-4">
                     You can manage cookies in your browser settings or through
                     our cookie banner. Disabling certain cookies may limit site
                     functionality.
@@ -354,7 +354,7 @@ export default function PrivacyPolicyPage() {
               <CardHeader>
                 <CardTitle>Your Privacy Choices & Rights</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   Depending on where you live, you may have the right to access,
                   correct, delete, or restrict the processing of your personal
@@ -374,7 +374,7 @@ export default function PrivacyPolicyPage() {
                     authority
                   </li>
                 </ul>
-                <p className='mt-4'>
+                <p className="mt-4">
                   If you are located in the EEA, UK, or Switzerland, we process
                   personal data in alignment with GDPR requirements. California
                   residents can exercise rights under the CCPA, including
@@ -388,21 +388,21 @@ export default function PrivacyPolicyPage() {
               <CardHeader>
                 <CardTitle>Contact & Updates</CardTitle>
               </CardHeader>
-              <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+              <CardContent className="dark:prose-invert max-w-none prose prose-sm">
                 <p>
                   We review this policy regularly to reflect changes in our
                   services, legal obligations, or best practices. When we make
                   material updates, we will adjust the date above and share a
                   notice on our site.
                 </p>
-                <p className='mt-4'>
+                <p className="mt-4">
                   Reach out anytime with questions or to exercise your privacy
                   rights:
                 </p>
                 <ul>
                   <li>
                     Email:{' '}
-                    <a href='mailto:contact@jhuangnyc.com'>
+                    <a href="mailto:contact@jhuangnyc.com">
                       contact@jhuangnyc.com
                     </a>
                   </li>
@@ -418,5 +418,5 @@ export default function PrivacyPolicyPage() {
         </section>
       </main>
     </PageLayout>
-  )
+  );
 }

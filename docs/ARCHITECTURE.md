@@ -111,34 +111,34 @@ Components (UI)
 #### `PricingService` (Static Methods)
 
 ```typescript
-PricingService.convertPrice(usdPrice, currency)
-PricingService.formatPrice(usdPrice, currency)
-PricingService.calculateCartSummary(items)
+PricingService.convertPrice(usdPrice, currency);
+PricingService.formatPrice(usdPrice, currency);
+PricingService.calculateCartSummary(items);
 ```
 
 #### `PaymentDatabaseService` (Class)
 
 ```typescript
-const dbService = new PaymentDatabaseService(url, key)
-await dbService.createPayment(paymentData)
-await dbService.getPayment(id)
-await dbService.updatePaymentStatus(id, status)
+const dbService = new PaymentDatabaseService(url, key);
+await dbService.createPayment(paymentData);
+await dbService.getPayment(id);
+await dbService.updatePaymentStatus(id, status);
 ```
 
 #### `PaymentStorageService` (Class with DI)
 
 ```typescript
-const storage = createPaymentStorage(storageAdapter)
-storage.initializeSession(paymentIntent, checkoutData)
-storage.updateStep(PaymentStep.PROCESSING)
-storage.markCompleted(transactionId)
+const storage = createPaymentStorage(storageAdapter);
+storage.initializeSession(paymentIntent, checkoutData);
+storage.updateStep(PaymentStep.PROCESSING);
+storage.markCompleted(transactionId);
 ```
 
 #### Payment Strategies (Strategy Pattern)
 
 ```typescript
-const strategy = paymentStrategyRegistry.getStrategy(method)
-const result = await strategy.process(state, paymentData)
+const strategy = paymentStrategyRegistry.getStrategy(method);
+const result = await strategy.process(state, paymentData);
 ```
 
 **Principles**:
@@ -189,19 +189,19 @@ Supabase client
 #### `AuthContext`
 
 ```typescript
-const { user, profile, signOut } = useAuth()
+const { user, profile, signOut } = useAuth();
 ```
 
 #### `CartContext`
 
 ```typescript
-const { items, addItem, removeItem, itemCount, total } = useCart()
+const { items, addItem, removeItem, itemCount, total } = useCart();
 ```
 
 #### `CurrencyContext`
 
 ```typescript
-const { currency, setCurrency, formatPrice } = useCurrency()
+const { currency, setCurrency, formatPrice } = useCurrency();
 ```
 
 **Integration**:
@@ -210,12 +210,12 @@ Contexts now use services for business logic:
 ```typescript
 // CurrencyContext delegates to PricingService
 const formatPrice = (usdPrice: number) => {
-  return PricingService.formatPrice(usdPrice, currency)
-}
+  return PricingService.formatPrice(usdPrice, currency);
+};
 
 // CartContext uses PricingService
-const itemCount = PricingService.calculateItemCount(items)
-const total = PricingService.calculateSubtotal(items)
+const itemCount = PricingService.calculateItemCount(items);
+const total = PricingService.calculateSubtotal(items);
 ```
 
 **Principles**:
@@ -289,10 +289,10 @@ export function createPaymentStrategyRegistry() { ... }
 
 ```typescript
 interface StorageAdapter {
-  getItem(key: string): string | null
-  setItem(key: string, value: string): void
-  removeItem(key: string): void
-  keys(): string[]
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  keys(): string[];
 }
 
 class BrowserStorageAdapter implements StorageAdapter {
@@ -326,10 +326,10 @@ Components and contexts use services:
 
 ```typescript
 // Component
-const total = PricingService.calculateCartTotal(items, currency)
+const total = PricingService.calculateCartTotal(items, currency);
 
 // Context
-const itemCount = PricingService.calculateItemCount(items)
+const itemCount = PricingService.calculateItemCount(items);
 ```
 
 **Benefits**:
@@ -388,10 +388,10 @@ const itemCount = PricingService.calculateItemCount(items)
 ```typescript
 describe('PricingService', () => {
   it('converts USD to BTC', () => {
-    const result = PricingService.convertPrice(1000, 'BTC')
-    expect(result).toBeCloseTo(0.029)
-  })
-})
+    const result = PricingService.convertPrice(1000, 'BTC');
+    expect(result).toBeCloseTo(0.029);
+  });
+});
 ```
 
 #### Storage with Mock
@@ -402,29 +402,29 @@ describe('PaymentStorageService', () => {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem: jest.fn(),
-    keys: jest.fn(() => [])
-  }
+    keys: jest.fn(() => []),
+  };
 
-  const storage = createPaymentStorage(mockStorage)
+  const storage = createPaymentStorage(mockStorage);
 
   it('saves payment state', () => {
-    storage.saveState(testState)
-    expect(mockStorage.setItem).toHaveBeenCalled()
-  })
-})
+    storage.saveState(testState);
+    expect(mockStorage.setItem).toHaveBeenCalled();
+  });
+});
 ```
 
 #### Strategies
 
 ```typescript
 describe('HoodPayStrategy', () => {
-  const strategy = new HoodPayStrategy('test-key', 'test-id')
+  const strategy = new HoodPayStrategy('test-key', 'test-id');
 
   it('processes payment', async () => {
-    const result = await strategy.process(mockState, mockData)
-    expect(result.success).toBe(true)
-  })
-})
+    const result = await strategy.process(mockState, mockData);
+    expect(result.success).toBe(true);
+  });
+});
 ```
 
 ### Integration Tests
@@ -521,7 +521,7 @@ describe('HoodPayStrategy', () => {
 // lib/services/payment-strategies/new-method.strategy.ts
 export class NewMethodStrategy extends BasePaymentStrategy {
   getName() {
-    return 'New Method'
+    return 'New Method';
   }
   async process(state, data) {
     /* implementation */
@@ -550,9 +550,9 @@ export const APP_CONFIG = {
   // ... existing config
   newFeature: {
     enabled: true,
-    timeout: 5000
-  }
-}
+    timeout: 5000,
+  },
+};
 ```
 
 2. Use throughout app:
@@ -582,7 +582,7 @@ export class MyService {
 }
 
 export function createMyService(dep?: SomeDependency) {
-  return new MyService(dep || defaultDep)
+  return new MyService(dep || defaultDep);
 }
 ```
 

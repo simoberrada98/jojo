@@ -4,15 +4,15 @@
  * Each concern delegated to a specialized service
  */
 
-import { generateId } from '@/lib/utils/string'
-import { PAYMENT_CONFIG } from '@/lib/config/payment.config'
-import { createPaymentStorage } from '@/lib/services/payment-storage.service'
-import { createPaymentDbService } from '@/lib/services/payment-db.service'
-import { supabaseConfig } from '@/lib/supabase/config'
-import { PaymentStateManager } from './PaymentStateManager'
-import { PaymentHooksManager } from './PaymentHooksManager'
-import { PaymentProcessor } from './PaymentProcessor'
-import { PaymentRecoveryService } from './PaymentRecoveryService'
+import { generateId } from '@/lib/utils/string';
+import { PAYMENT_CONFIG } from '@/lib/config/payment.config';
+import { createPaymentStorage } from '@/lib/services/payment-storage.service';
+import { createPaymentDbService } from '@/lib/services/payment-db.service';
+import { supabaseConfig } from '@/lib/supabase/config';
+import { PaymentStateManager } from './PaymentStateManager';
+import { PaymentHooksManager } from './PaymentHooksManager';
+import { PaymentProcessor } from './PaymentProcessor';
+import { PaymentRecoveryService } from './PaymentRecoveryService';
 import {
   PaymentStatus,
   PaymentStep,
@@ -21,42 +21,42 @@ import {
   type PaymentResult,
   type PaymentMethod,
   type CheckoutData,
-  type PaymentHooks
-} from '@/types/payment'
+  type PaymentHooks,
+} from '@/types/payment';
 
 export class PaymentOrchestrator {
-  private stateManager: PaymentStateManager
-  private hooksManager: PaymentHooksManager
-  private processor: PaymentProcessor
-  private recoveryService: PaymentRecoveryService
-  private businessId: string
+  private stateManager: PaymentStateManager;
+  private hooksManager: PaymentHooksManager;
+  private processor: PaymentProcessor;
+  private recoveryService: PaymentRecoveryService;
+  private businessId: string;
 
   constructor(config: {
-    businessId?: string
-    supabaseUrl?: string
-    supabaseKey?: string
-    hooks?: PaymentHooks
+    businessId?: string;
+    supabaseUrl?: string;
+    supabaseKey?: string;
+    hooks?: PaymentHooks;
   }) {
-    const businessId = config.businessId || PAYMENT_CONFIG.hoodpay.businessId
+    const businessId = config.businessId || PAYMENT_CONFIG.hoodpay.businessId;
     if (!businessId) {
-      throw new Error('HOODPAY_BUSINESS_ID is not configured.')
+      throw new Error('HOODPAY_BUSINESS_ID is not configured.');
     }
-    this.businessId = businessId
+    this.businessId = businessId;
 
     // Initialize storage
-    const storage = createPaymentStorage()
+    const storage = createPaymentStorage();
 
     // Initialize database service (optional)
     const dbService =
       config.supabaseUrl && config.supabaseKey
         ? createPaymentDbService(config.supabaseUrl, config.supabaseKey)
-        : undefined
+        : undefined;
 
     // Initialize specialized services
-    this.stateManager = new PaymentStateManager(storage)
-    this.hooksManager = new PaymentHooksManager(config.hooks)
-    this.processor = new PaymentProcessor(dbService)
-    this.recoveryService = new PaymentRecoveryService(storage)
+    this.stateManager = new PaymentStateManager(storage);
+    this.hooksManager = new PaymentHooksManager(config.hooks);
+    this.processor = new PaymentProcessor(dbService);
+    this.recoveryService = new PaymentRecoveryService(storage);
   }
 
   /**
@@ -67,9 +67,9 @@ export class PaymentOrchestrator {
     currency: string,
     checkoutData?: CheckoutData,
     options?: {
-      customerEmail?: string
-      description?: string
-      metadata?: Record<string, any>
+      customerEmail?: string;
+      description?: string;
+      metadata?: Record<string, any>;
     }
   ): Promise<PaymentIntent> {
     const paymentIntent: PaymentIntent = {
@@ -82,11 +82,11 @@ export class PaymentOrchestrator {
       metadata: options?.metadata,
       status: PaymentStatus.PENDING,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
+      updatedAt: new Date().toISOString(),
+    };
 
     // Initialize state
-    this.stateManager.initializeSession(paymentIntent, checkoutData)
+    this.stateManager.initializeSession(paymentIntent, checkoutData);
 
     // Create database record
     await this.processor.createDatabaseRecord(
@@ -97,19 +97,19 @@ export class PaymentOrchestrator {
       {
         customerEmail: options?.customerEmail,
         metadata: options?.metadata,
-        checkoutData
+        checkoutData,
       }
-    )
+    );
 
     // Trigger created hook
     await this.hooksManager.triggerCreated({
       type: PaymentEventType.PAYMENT_CREATED,
       paymentId: paymentIntent.id,
       timestamp: new Date().toISOString(),
-      data: paymentIntent
-    })
+      data: paymentIntent,
+    });
 
-    return paymentIntent
+    return paymentIntent;
   }
 
   /**
@@ -119,7 +119,7 @@ export class PaymentOrchestrator {
     method: PaymentMethod,
     paymentData?: any
   ): Promise<PaymentResult> {
-    const state = this.stateManager.getCurrentState()
+    const state = this.stateManager.getCurrentState();
 
     if (!state) {
       return {
@@ -129,107 +129,107 @@ export class PaymentOrchestrator {
         error: {
           code: 'NO_SESSION',
           message: 'No active payment session',
-          retryable: false
-        }
-      }
+          retryable: false,
+        },
+      };
     }
 
     // Update step to processing
-    this.stateManager.updateStep(PaymentStep.PROCESSING)
+    this.stateManager.updateStep(PaymentStep.PROCESSING);
 
     // Trigger processing hook
     await this.hooksManager.triggerProcessing({
       type: PaymentEventType.PAYMENT_PROCESSING,
       paymentId: state.paymentIntent.id,
       timestamp: new Date().toISOString(),
-      data: { method }
-    })
+      data: { method },
+    });
 
     // Process payment
-    const result = await this.processor.process(method, state, paymentData)
+    const result = await this.processor.process(method, state, paymentData);
 
     // Update state based on result
     if (result.success) {
-      this.stateManager.markCompleted(result.transactionId)
+      this.stateManager.markCompleted(result.transactionId);
       await this.processor.updateDatabaseStatus(
         state.paymentIntent.id,
         PaymentStatus.COMPLETED
-      )
+      );
 
       await this.hooksManager.triggerCompleted({
         type: PaymentEventType.PAYMENT_COMPLETED,
         paymentId: state.paymentIntent.id,
         timestamp: new Date().toISOString(),
-        data: result
-      })
+        data: result,
+      });
     } else {
-      this.stateManager.markFailed(result.error!)
+      this.stateManager.markFailed(result.error!);
       await this.processor.updateDatabaseStatus(
         state.paymentIntent.id,
         PaymentStatus.FAILED,
         result.error
-      )
+      );
 
       await this.hooksManager.triggerFailed({
         type: PaymentEventType.PAYMENT_FAILED,
         paymentId: state.paymentIntent.id,
         timestamp: new Date().toISOString(),
-        data: result
-      })
+        data: result,
+      });
     }
 
-    return result
+    return result;
   }
 
   /**
    * Cancel payment
    */
   async cancelPayment(reason?: string): Promise<void> {
-    const state = this.stateManager.getCurrentState()
-    if (!state) return
+    const state = this.stateManager.getCurrentState();
+    if (!state) return;
 
-    this.stateManager.updateStatus(PaymentStatus.CANCELLED)
+    this.stateManager.updateStatus(PaymentStatus.CANCELLED);
     await this.processor.updateDatabaseStatus(
       state.paymentIntent.id,
       PaymentStatus.CANCELLED
-    )
+    );
 
     await this.hooksManager.triggerCancelled({
       type: PaymentEventType.PAYMENT_CANCELLED,
       paymentId: state.paymentIntent.id,
       timestamp: new Date().toISOString(),
-      data: { reason }
-    })
+      data: { reason },
+    });
 
-    this.stateManager.clearState()
+    this.stateManager.clearState();
   }
 
   /**
    * Get current payment state
    */
   getCurrentState() {
-    return this.stateManager.getCurrentState()
+    return this.stateManager.getCurrentState();
   }
 
   /**
    * Recover from interrupted payment
    */
   async recoverPayment(): Promise<PaymentIntent | null> {
-    return this.recoveryService.recoverPayment()
+    return this.recoveryService.recoverPayment();
   }
 
   /**
    * Check if payment can be recovered
    */
   canRecover() {
-    return this.recoveryService.validateRecovery()
+    return this.recoveryService.validateRecovery();
   }
 
   /**
    * Get recovery metadata
    */
   getRecoveryMetadata() {
-    return this.recoveryService.getRecoveryMetadata()
+    return this.recoveryService.getRecoveryMetadata();
   }
 }
 
@@ -238,16 +238,16 @@ export class PaymentOrchestrator {
  */
 export function createPaymentOrchestrator(
   config: {
-    businessId?: string
-    supabaseUrl?: string
-    supabaseKey?: string
-    hooks?: PaymentHooks
+    businessId?: string;
+    supabaseUrl?: string;
+    supabaseKey?: string;
+    hooks?: PaymentHooks;
   } = {}
 ): PaymentOrchestrator {
   const resolvedConfig = {
     ...config,
-    supabaseUrl: config.supabaseUrl ?? supabaseConfig.url
-  }
+    supabaseUrl: config.supabaseUrl ?? supabaseConfig.url,
+  };
 
-  return new PaymentOrchestrator(resolvedConfig)
+  return new PaymentOrchestrator(resolvedConfig);
 }

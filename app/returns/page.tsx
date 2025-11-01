@@ -1,25 +1,25 @@
-import PageLayout from '@/components/layout/PageLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { H1, Muted } from '@/components/ui/typography'
-import { AlertCircle, CheckCircle, XCircle } from 'lucide-react'
+import PageLayout from '@/components/layout/PageLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { H1, Muted } from '@/components/ui/typography';
+import { AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 
 export default function ReturnsPage() {
   return (
     <PageLayout>
-      <div className='mx-auto px-4 py-12 max-w-4xl container'>
-        <div className='mb-8'>
-          <H1 className='mb-2'>Returns & Refunds Policy</H1>
-          <Muted className='m-0'>
+      <div className="mx-auto px-4 py-12 max-w-4xl container">
+        <div className="mb-8">
+          <H1 className="mb-2">Returns & Refunds Policy</H1>
+          <Muted className="m-0">
             Last updated: {new Date().toLocaleDateString()}
           </Muted>
         </div>
 
-        <div className='space-y-6'>
+        <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Return Window</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We offer a <strong>14-day return window</strong> from the date
                 of delivery for most products. Mining hardware must be returned
@@ -31,12 +31,12 @@ export default function ReturnsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <CheckCircle className='w-5 h-5 text-green-500' />
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
                 Eligible for Return
               </CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <ul>
                 <li>Unopened mining hardware in original packaging</li>
                 <li>Defective or damaged items (report within 48 hours)</li>
@@ -48,12 +48,12 @@ export default function ReturnsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <XCircle className='w-5 h-5 text-destructive' />
+              <CardTitle className="flex items-center gap-2">
+                <XCircle className="w-5 h-5 text-destructive" />
                 Not Eligible for Return
               </CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <ul>
                 <li>Opened or used mining hardware</li>
                 <li>Items returned after 14 days</li>
@@ -68,7 +68,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>How to Initiate a Return</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <ol>
                 <li>Contact our support team at contact@jhuangnyc.com</li>
                 <li>Provide your order number and reason for return</li>
@@ -76,9 +76,9 @@ export default function ReturnsPage() {
                 <li>Package item securely with all original materials</li>
                 <li>Ship to the address provided in your RMA email</li>
               </ol>
-              <div className='flex gap-3 bg-amber-50 dark:bg-amber-950 mt-4 p-4 border border-amber-200 dark:border-amber-800 rounded-lg'>
-                <AlertCircle className='mt-0.5 w-5 h-5 text-amber-600 shrink-0' />
-                <Muted className='m-0 text-sm'>
+              <div className="flex gap-3 bg-amber-50 dark:bg-amber-950 mt-4 p-4 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <AlertCircle className="mt-0.5 w-5 h-5 text-amber-600 shrink-0" />
+                <Muted className="m-0 text-sm">
                   <strong>Important:</strong> Returns without an RMA number will
                   be refused. Please do not ship items back without
                   authorization.
@@ -91,7 +91,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>Refund Process</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>Once we receive and inspect your return:</p>
               <ul>
                 <li>Refunds are processed within 5-7 business days</li>
@@ -101,7 +101,7 @@ export default function ReturnsPage() {
                 </li>
                 <li>Restocking fee of 15% may apply to opened items</li>
               </ul>
-              <p className='mt-4'>
+              <p className="mt-4">
                 You will receive an email confirmation once your refund has been
                 processed.
               </p>
@@ -112,7 +112,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>Defective or Damaged Items</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 If you receive a defective or damaged item, please contact us
                 immediately with photos of the damage. We will:
@@ -122,7 +122,7 @@ export default function ReturnsPage() {
                 <li>Offer a replacement or full refund</li>
                 <li>Cover all return shipping costs</li>
               </ul>
-              <p className='mt-4 font-semibold'>
+              <p className="mt-4 font-semibold">
                 Report damage within 48 hours of delivery for fastest
                 resolution.
               </p>
@@ -133,7 +133,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>Exchanges</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 We do not offer direct exchanges. If you need a different item,
                 please return the original for a refund and place a new order.
@@ -145,7 +145,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>Warranty Claims</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 Most mining hardware comes with manufacturer warranty. For
                 warranty claims:
@@ -155,7 +155,7 @@ export default function ReturnsPage() {
                 <li>Provide proof of purchase and warranty information</li>
                 <li>Follow manufacturer&rsquo;s RMA process</li>
               </ul>
-              <p className='mt-4'>
+              <p className="mt-4">
                 We can assist in facilitating warranty claims if needed. Contact
                 our support team for assistance.
               </p>
@@ -166,7 +166,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>International Returns</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>
                 International customers are responsible for return shipping
                 costs and any customs fees. We recommend using a trackable
@@ -179,7 +179,7 @@ export default function ReturnsPage() {
             <CardHeader>
               <CardTitle>Contact Us</CardTitle>
             </CardHeader>
-            <CardContent className='dark:prose-invert max-w-none prose prose-sm'>
+            <CardContent className="dark:prose-invert max-w-none prose prose-sm">
               <p>For questions about returns or refunds:</p>
               <ul>
                 <li>Email: contact@jhuangnyc.com</li>
@@ -191,5 +191,5 @@ export default function ReturnsPage() {
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }

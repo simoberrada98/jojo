@@ -79,7 +79,7 @@ pnpm studio
 ```bash
 # Already configured from supabase start
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<local-anon-key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=<local-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<local-service-key>
 DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -91,7 +91,7 @@ Add these in Vercel Project Settings → Environment Variables:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=<your-production-supabase-url>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-production-anon-key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=<your-production-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-production-service-role-key>
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 ```
@@ -154,7 +154,7 @@ See `lib/data/csv/README.md` for SQL import commands.
 4. **Set Environment Variables**
    ```bash
    vercel env add NEXT_PUBLIC_SUPABASE_URL
-   vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
+   vercel env add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
    vercel env add SUPABASE_SERVICE_ROLE_KEY
    vercel env add NEXT_PUBLIC_APP_URL
    ```

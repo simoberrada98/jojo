@@ -1,101 +1,101 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useAuth } from '@/lib/contexts/auth-context'
-import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState } from 'react';
+import { useAuth } from '@/lib/contexts/auth-context';
+import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
+  CardTitle,
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
-  const { user, profile, refreshProfile } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [passwordLoading, setPasswordLoading] = useState(false)
+  const { user, profile, refreshProfile } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   // Profile form
-  const [fullName, setFullName] = useState(profile?.full_name || '')
-  const [phone, setPhone] = useState(profile?.phone || '')
+  const [fullName, setFullName] = useState(profile?.full_name || '');
+  const [phone, setPhone] = useState(profile?.phone || '');
 
   // Password form
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const supabase = createClient()
+  const supabase = createClient();
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     const { error } = await supabase
       .from('profiles')
       .update({
         full_name: fullName,
-        phone
+        phone,
       })
-      .eq('id', profile?.id)
+      .eq('id', profile?.id);
 
     if (error) {
-      toast.error('Failed to update profile')
+      toast.error('Failed to update profile');
     } else {
-      toast.success('Profile updated successfully')
-      await refreshProfile()
+      toast.success('Profile updated successfully');
+      await refreshProfile();
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPasswordLoading(true)
+    e.preventDefault();
+    setPasswordLoading(true);
 
     if (newPassword !== confirmPassword) {
-      toast.error('New passwords do not match')
-      setPasswordLoading(false)
-      return
+      toast.error('New passwords do not match');
+      setPasswordLoading(false);
+      return;
     }
 
     if (newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters')
-      setPasswordLoading(false)
-      return
+      toast.error('Password must be at least 6 characters');
+      setPasswordLoading(false);
+      return;
     }
 
     const { error } = await supabase.auth.updateUser({
-      password: newPassword
-    })
+      password: newPassword,
+    });
 
     if (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     } else {
-      toast.success('Password updated successfully')
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
+      toast.success('Password updated successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
     }
 
-    setPasswordLoading(false)
-  }
+    setPasswordLoading(false);
+  };
 
   return (
-    <div className='max-w-2xl'>
-      <div className='mb-8'>
-        <h1 className='font-bold text-3xl'>Settings</h1>
-        <p className='mt-2 text-muted-foreground'>
+    <div className="max-w-2xl">
+      <div className="mb-8">
+        <h1 className="font-bold text-3xl">Settings</h1>
+        <p className="mt-2 text-muted-foreground">
           Manage your account settings and preferences
         </p>
       </div>
 
-      <div className='space-y-6'>
+      <div className="space-y-6">
         {/* Profile Settings */}
         <Card>
           <CardHeader>
@@ -103,41 +103,41 @@ export default function SettingsPage() {
             <CardDescription>Update your personal details</CardDescription>
           </CardHeader>
           <form onSubmit={handleUpdateProfile}>
-            <CardContent className='space-y-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='email'>Email</Label>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id='email'
-                  type='email'
+                  id="email"
+                  type="email"
                   value={user?.email || ''}
                   disabled
-                  className='bg-muted'
+                  className="bg-muted"
                 />
-                <p className='text-muted-foreground text-xs'>
+                <p className="text-muted-foreground text-xs">
                   Email cannot be changed
                 </p>
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='fullName'>Full Name</Label>
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  id='fullName'
-                  type='text'
+                  id="fullName"
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder='John Doe'
+                  placeholder="John Doe"
                 />
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='phone'>Phone Number</Label>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
                 <Input
-                  id='phone'
-                  type='tel'
+                  id="phone"
+                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder='+1 (555) 000-0000'
+                  placeholder="+1 (555) 000-0000"
                 />
               </div>
-              <Button type='submit' disabled={loading}>
+              <Button type="submit" disabled={loading}>
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </CardContent>
@@ -153,30 +153,30 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleChangePassword}>
-            <CardContent className='space-y-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='newPassword'>New Password</Label>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
                 <Input
-                  id='newPassword'
-                  type='password'
+                  id="newPassword"
+                  type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder='Enter new password'
+                  placeholder="Enter new password"
                   minLength={6}
                 />
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='confirmPassword'>Confirm New Password</Label>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
                 <Input
-                  id='confirmPassword'
-                  type='password'
+                  id="confirmPassword"
+                  type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder='Confirm new password'
+                  placeholder="Confirm new password"
                   minLength={6}
                 />
               </div>
-              <Button type='submit' disabled={passwordLoading}>
+              <Button type="submit" disabled={passwordLoading}>
                 {passwordLoading ? 'Updating...' : 'Update Password'}
               </Button>
             </CardContent>
@@ -189,26 +189,26 @@ export default function SettingsPage() {
             <CardTitle>Account</CardTitle>
             <CardDescription>Manage your account settings</CardDescription>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='flex justify-between items-center'>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
               <div>
-                <p className='font-medium'>Account Status</p>
-                <p className='text-muted-foreground text-sm'>
+                <p className="font-medium">Account Status</p>
+                <p className="text-muted-foreground text-sm">
                   Your account is active
                 </p>
               </div>
-              <div className='flex items-center gap-2'>
-                <div className='bg-green-500 rounded-full w-2 h-2' />
-                <span className='text-muted-foreground text-sm'>Active</span>
+              <div className="flex items-center gap-2">
+                <div className="bg-green-500 rounded-full w-2 h-2" />
+                <span className="text-muted-foreground text-sm">Active</span>
               </div>
             </div>
 
             <Separator />
 
-            <div className='flex justify-between items-center'>
+            <div className="flex justify-between items-center">
               <div>
-                <p className='font-medium'>Member Since</p>
-                <p className='text-muted-foreground text-sm'>
+                <p className="font-medium">Member Since</p>
+                <p className="text-muted-foreground text-sm">
                   {user?.created_at
                     ? new Date(user.created_at).toLocaleDateString()
                     : 'N/A'}
@@ -219,12 +219,12 @@ export default function SettingsPage() {
             <Separator />
 
             <div>
-              <p className='mb-2 font-medium'>Danger Zone</p>
-              <p className='mb-4 text-muted-foreground text-sm'>
+              <p className="mb-2 font-medium">Danger Zone</p>
+              <p className="mb-4 text-muted-foreground text-sm">
                 Once you delete your account, there is no going back. Please be
                 certain.
               </p>
-              <Button variant='destructive' disabled>
+              <Button variant="destructive" disabled>
                 Delete Account
               </Button>
             </div>
@@ -232,5 +232,5 @@ export default function SettingsPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

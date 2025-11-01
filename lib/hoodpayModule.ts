@@ -49,56 +49,56 @@
  * - SUPABASE_SERVICE_ROLE_KEY: a Supabase service role key (or other key with insert rights).
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { env } from '@/lib/config/env'
-import { verifyHoodpaySignature } from '@/lib/services/payment/webhook'
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { env } from '@/lib/config/env';
+import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
 
-export { verifyHoodpaySignature as verifyWebhookSignature } from '@/lib/services/payment/webhook'
+export { verifyHoodpaySignature as verifyWebhookSignature } from '@/lib/services/payment/webhook';
 
 // Lazy-load Supabase client to avoid initialization errors
-let supabaseInstance: SupabaseClient | null = null
+let supabaseInstance: SupabaseClient | null = null;
 
 export const getSupabaseClient = (): SupabaseClient => {
   if (!supabaseInstance) {
-    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY
+    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error(
         'Supabase credentials not configured. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY'
-      )
+      );
     }
 
-    supabaseInstance = createClient(supabaseUrl, supabaseKey)
+    supabaseInstance = createClient(supabaseUrl, supabaseKey);
   }
-  return supabaseInstance
-}
+  return supabaseInstance;
+};
 
 // For backward compatibility
 export const supabase = new Proxy({} as SupabaseClient, {
   get: (target, prop) => {
-    return getSupabaseClient()[prop as keyof SupabaseClient]
-  }
-})
+    return getSupabaseClient()[prop as keyof SupabaseClient];
+  },
+});
 
 // Base URL for HoodPay API
-const HOODPAY_BASE_URL = 'https://api.hoodpay.io/v1'
+const HOODPAY_BASE_URL = 'https://api.hoodpay.io/v1';
 
 /**
  * Options for filtering the payments list returned by getPayments().
  * Corresponds to the query parameters described in the HoodPay API spec【606859361936998†L780-L807】.
  */
 export interface GetPaymentsOptions {
-  PageNumber?: number
-  PageSize?: number
-  fromTime?: string
-  toTime?: string
-  status?: string
-  paymentMethod?: string
-  fromAmount?: number
-  toAmount?: number
-  searchString?: string
+  PageNumber?: number;
+  PageSize?: number;
+  fromTime?: string;
+  toTime?: string;
+  status?: string;
+  paymentMethod?: string;
+  fromAmount?: number;
+  toAmount?: number;
+  searchString?: string;
 }
 
 /**
@@ -114,40 +114,40 @@ export async function getPayments(
   businessId: string | number,
   options: GetPaymentsOptions = {}
 ): Promise<any> {
-  const url = new URL(`${HOODPAY_BASE_URL}/businesses/${businessId}/payments`)
+  const url = new URL(`${HOODPAY_BASE_URL}/businesses/${businessId}/payments`);
   // Append query parameters if provided
   Object.entries(options).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      url.searchParams.append(key, String(value))
+      url.searchParams.append(key, String(value));
     }
-  })
+  });
   const response = await fetch(url.toString(), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
+      'Content-Type': 'application/json',
+    },
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json()
+  return response.json();
 }
 
 /**
  * Request body for creating a new payment. Fields mirror the HoodPay SDK parameters【434714040128871†L64-L109】.
  */
 export interface PaymentCreationRequest {
-  currency: string
-  amount: number
-  name?: string
-  description?: string
-  customerEmail?: string
-  customerIp?: string
-  customerUserAgent?: string
-  redirectUrl?: string
-  notifyUrl?: string
+  currency: string;
+  amount: number;
+  name?: string;
+  description?: string;
+  customerEmail?: string;
+  customerIp?: string;
+  customerUserAgent?: string;
+  redirectUrl?: string;
+  notifyUrl?: string;
 }
 
 /**
@@ -162,15 +162,15 @@ export interface PaymentCreationRequest {
  */
 export interface Webhook {
   /** Unique identifier for this webhook. */
-  id: number | string
+  id: number | string;
   /** Fully qualified URL that will receive event notifications. */
-  url: string
+  url: string;
   /** Array of events this webhook is subscribed to (e.g., payment:completed). */
-  events: string[]
+  events: string[];
   /** Whether the webhook is currently active. */
-  active?: boolean
+  active?: boolean;
   /** Any additional properties returned by the API are captured here. */
-  [key: string]: any
+  [key: string]: any;
 }
 
 /**
@@ -186,7 +186,7 @@ export type WebhookEvent =
   | 'payment:expired'
   | 'payment:method_selected'
   | 'payment:created'
-  | (string & {})
+  | (string & {});
 
 /**
  * Request body for creating a new webhook subscription. The `url` specifies
@@ -198,14 +198,14 @@ export type WebhookEvent =
  * dashboard.
  */
 export interface CreateWebhookRequest {
-  url: string
-  events: WebhookEvent[]
-  description?: string
+  url: string;
+  events: WebhookEvent[];
+  description?: string;
   /**
    * Whether the webhook should be enabled upon creation. Defaults to true. If
    * omitted, the API will enable the subscription by default.
    */
-  active?: boolean
+  active?: boolean;
 }
 
 /**
@@ -221,28 +221,28 @@ export async function getWebhooks(
   token: string,
   businessId: string | number
 ): Promise<Webhook[]> {
-  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks`
+  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
+      'Content-Type': 'application/json',
+    },
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  const data = await response.json()
+  const data = await response.json();
   // The API returns an object containing a list of webhooks under a property such as
   // "webhooks" or it may return the array itself. We normalise to an array.
   if (Array.isArray(data)) {
-    return data as Webhook[]
+    return data as Webhook[];
   }
   if (Array.isArray((data as any).webhooks)) {
-    return (data as any).webhooks as Webhook[]
+    return (data as any).webhooks as Webhook[];
   }
-  return []
+  return [];
 }
 
 /**
@@ -261,25 +261,25 @@ export async function createWebhook(
   businessId: string | number,
   webhook: CreateWebhookRequest
 ): Promise<Webhook> {
-  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks`
+  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       url: webhook.url,
       events: webhook.events,
       description: webhook.description,
-      active: webhook.active ?? true
-    })
-  })
+      active: webhook.active ?? true,
+    }),
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return (await response.json()) as Webhook
+  return (await response.json()) as Webhook;
 }
 
 /**
@@ -296,19 +296,19 @@ export async function resetWebhookSecret(
   token: string,
   businessId: string | number
 ): Promise<any> {
-  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/reset-secret`
+  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/reset-secret`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
+      'Content-Type': 'application/json',
+    },
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json()
+  return response.json();
 }
 
 /**
@@ -326,19 +326,19 @@ export async function deleteWebhook(
   businessId: string | number,
   webhookId: string | number
 ): Promise<any> {
-  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/${webhookId}`
+  const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/${webhookId}`;
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
+      'Content-Type': 'application/json',
+    },
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json()
+  return response.json();
 }
 
 /**
@@ -361,48 +361,48 @@ export async function webhooksApiHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const token = env.HOODPAY_API_KEY
-  const businessId = env.HOODPAY_BUSINESS_ID
+  const token = env.HOODPAY_API_KEY;
+  const businessId = env.HOODPAY_BUSINESS_ID;
   if (!token || !businessId) {
     res.status(500).json({
       error:
-        'Missing HOODPAY_API_KEY or HOODPAY_BUSINESS_ID environment variable'
-    })
-    return
+        'Missing HOODPAY_API_KEY or HOODPAY_BUSINESS_ID environment variable',
+    });
+    return;
   }
   try {
     if (req.method === 'GET') {
-      const webhooks = await getWebhooks(token, businessId)
-      res.status(200).json(webhooks)
-      return
+      const webhooks = await getWebhooks(token, businessId);
+      res.status(200).json(webhooks);
+      return;
     }
     if (req.method === 'POST' && req.query.action === 'reset-secret') {
-      const result = await resetWebhookSecret(token, businessId)
-      res.status(200).json(result)
-      return
+      const result = await resetWebhookSecret(token, businessId);
+      res.status(200).json(result);
+      return;
     }
     if (req.method === 'POST') {
-      const body = req.body as CreateWebhookRequest
-      const created = await createWebhook(token, businessId, body)
-      res.status(200).json(created)
-      return
+      const body = req.body as CreateWebhookRequest;
+      const created = await createWebhook(token, businessId, body);
+      res.status(200).json(created);
+      return;
     }
     if (req.method === 'DELETE') {
-      const { webhookId } = req.query as { [key: string]: any }
+      const { webhookId } = req.query as { [key: string]: any };
       if (!webhookId) {
         res.status(400).json({
-          error: 'webhookId query parameter is required for deletion'
-        })
-        return
+          error: 'webhookId query parameter is required for deletion',
+        });
+        return;
       }
-      const deleted = await deleteWebhook(token, businessId, webhookId)
-      res.status(200).json(deleted)
-      return
+      const deleted = await deleteWebhook(token, businessId, webhookId);
+      res.status(200).json(deleted);
+      return;
     }
-    res.setHeader('Allow', ['GET', 'POST', 'DELETE'])
-    res.status(405).json({ error: `Method ${req.method} Not Allowed` })
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+    res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   } catch (error: any) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -425,19 +425,19 @@ export async function createPayment(
   if (!token) {
     throw new Error(
       'HoodPay API key (token) is missing. Ensure HOODPAY_API_KEY is configured and accessible.'
-    )
+    );
   }
   if (!businessId) {
     throw new Error(
       'HoodPay Business ID is missing. Ensure HOODPAY_BUSINESS_ID is configured and accessible.'
-    )
+    );
   }
-  const url = `${HOODPAY_BASE_URL}/businesses/${businessId}/payments`
+  const url = `${HOODPAY_BASE_URL}/businesses/${businessId}/payments`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       currency: payment.currency,
@@ -448,14 +448,14 @@ export async function createPayment(
       customer_ip: payment.customerIp,
       customer_user_agent: payment.customerUserAgent,
       redirect_url: payment.redirectUrl,
-      notify_url: payment.notifyUrl
-    })
-  })
+      notify_url: payment.notifyUrl,
+    }),
+  });
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`HoodPay API error ${response.status}: ${errorText}`)
+    const errorText = await response.text();
+    throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json()
+  return response.json();
 }
 
 /**
@@ -470,17 +470,17 @@ export async function savePaymentsToSupabase<T>(
   table = 'hoodpay_payments'
 ): Promise<T[]> {
   if (!Array.isArray(payments)) {
-    throw new TypeError('payments must be an array')
+    throw new TypeError('payments must be an array');
   }
-  const client = getSupabaseClient()
-  const { data, error } = await client.from(table).insert(payments)
+  const client = getSupabaseClient();
+  const { data, error } = await client.from(table).insert(payments);
   if (error) {
-    throw error
+    throw error;
   }
   if (!data) {
-    return []
+    return [];
   }
-  return data
+  return data;
 }
 
 /**
@@ -499,35 +499,35 @@ export async function paymentsApiHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const token = env.HOODPAY_API_KEY
-  const businessId = env.HOODPAY_BUSINESS_ID
+  const token = env.HOODPAY_API_KEY;
+  const businessId = env.HOODPAY_BUSINESS_ID;
   if (!token || !businessId) {
     res.status(500).json({
       error:
-        'Missing HOODPAY_API_KEY or HOODPAY_BUSINESS_ID environment variable'
-    })
-    return
+        'Missing HOODPAY_API_KEY or HOODPAY_BUSINESS_ID environment variable',
+    });
+    return;
   }
   try {
     if (req.method === 'POST') {
-      const paymentRequest: PaymentCreationRequest = req.body
+      const paymentRequest: PaymentCreationRequest = req.body;
       const createdPayment = await createPayment(
         token,
         businessId,
         paymentRequest
-      )
-      res.status(200).json(createdPayment)
-      return
+      );
+      res.status(200).json(createdPayment);
+      return;
     }
     // Default to GET: return payments list
     const payments = await getPayments(
       token,
       businessId,
       req.query as unknown as GetPaymentsOptions
-    )
-    res.status(200).json(payments)
+    );
+    res.status(200).json(payments);
   } catch (error: any) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -540,55 +540,55 @@ export async function webhookReceiverHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const webhookSecret = env.HOODPAY_WEBHOOK_SECRET
+  const webhookSecret = env.HOODPAY_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
-    res.status(500).json({ error: 'HOODPAY_WEBHOOK_SECRET not configured' })
-    return
+    res.status(500).json({ error: 'HOODPAY_WEBHOOK_SECRET not configured' });
+    return;
   }
 
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' })
-    return
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
   }
 
   try {
     // Get raw body for signature verification
-    const signature = req.headers['x-hoodpay-signature'] as string
+    const signature = req.headers['x-hoodpay-signature'] as string;
 
     if (!signature) {
-      res.status(401).json({ error: 'Missing signature' })
-      return
+      res.status(401).json({ error: 'Missing signature' });
+      return;
     }
 
     // In production, you'd get the raw body from middleware
-    const rawBody = JSON.stringify(req.body)
+    const rawBody = JSON.stringify(req.body);
 
     // Verify signature
-    const isValid = verifyHoodpaySignature(rawBody, signature, webhookSecret)
+    const isValid = verifyHoodpaySignature(rawBody, signature, webhookSecret);
 
     if (!isValid) {
-      res.status(401).json({ error: 'Invalid signature' })
-      return
+      res.status(401).json({ error: 'Invalid signature' });
+      return;
     }
 
     // Process webhook payload
-    const payload = req.body
+    const payload = req.body;
 
     // Log webhook receipt (in production, save to database)
     console.log('Webhook received:', {
       event: payload.event,
       paymentId: payload.paymentId,
-      status: payload.status
-    })
+      status: payload.status,
+    });
 
     // Acknowledge receipt immediately
-    res.status(200).json({ received: true })
+    res.status(200).json({ received: true });
 
     // Process webhook asynchronously (implement your business logic)
     // Example: Update payment status in database, send notifications, etc.
   } catch (error: any) {
-    console.error('Webhook processing error:', error)
-    res.status(500).json({ error: 'Webhook processing failed' })
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
   }
 }

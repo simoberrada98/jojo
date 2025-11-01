@@ -1,73 +1,73 @@
-import type { DisplayProduct } from '../types/product'
+import type { DisplayProduct } from '@/types/product';
 
 export interface OrganizationSchema {
-  '@context': 'https://schema.org'
-  '@type': 'Organization'
-  name: string
-  url: string
-  logo?: string
-  description?: string
+  '@context': 'https://schema.org';
+  '@type': 'Organization';
+  name: string;
+  url: string;
+  logo?: string;
+  description?: string;
   address?: {
-    '@type': 'PostalAddress'
-    streetAddress?: string
-    addressLocality?: string
-    addressRegion?: string
-    postalCode?: string
-    addressCountry?: string
-  }
+    '@type': 'PostalAddress';
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+    addressCountry?: string;
+  };
   contactPoint?: {
-    '@type': 'ContactPoint'
-    contactType: string
-    email?: string
-    telephone?: string
-  }
-  sameAs?: string[]
+    '@type': 'ContactPoint';
+    contactType: string;
+    email?: string;
+    telephone?: string;
+  };
+  sameAs?: string[];
 }
 
 export interface ProductSchema {
-  '@context': 'https://schema.org'
-  '@type': 'Product'
-  name: string
-  description: string
-  image?: string
-  sku?: string
+  '@context': 'https://schema.org';
+  '@type': 'Product';
+  name: string;
+  description: string;
+  image?: string;
+  sku?: string;
   brand?: {
-    '@type': 'Brand'
-    name: string
-  }
+    '@type': 'Brand';
+    name: string;
+  };
   offers: {
-    '@type': 'Offer'
-    url: string
-    priceCurrency: string
-    price: number
-    priceValidUntil?: string
-    availability: string
-    itemCondition: string
-  }
+    '@type': 'Offer';
+    url: string;
+    priceCurrency: string;
+    price: number;
+    priceValidUntil?: string;
+    availability: string;
+    itemCondition: string;
+  };
   aggregateRating?: {
-    '@type': 'AggregateRating'
-    ratingValue: number
-    reviewCount: number
-    bestRating: number
-    worstRating: number
-  }
-  category?: string
+    '@type': 'AggregateRating';
+    ratingValue: number;
+    reviewCount: number;
+    bestRating: number;
+    worstRating: number;
+  };
+  category?: string;
 }
 
 export interface WebSiteSchema {
-  '@context': 'https://schema.org'
-  '@type': 'WebSite'
-  name: string
-  url: string
-  description?: string
+  '@context': 'https://schema.org';
+  '@type': 'WebSite';
+  name: string;
+  url: string;
+  description?: string;
   potentialAction?: {
-    '@type': 'SearchAction'
+    '@type': 'SearchAction';
     target: {
-      '@type': 'EntryPoint'
-      urlTemplate: string
-    }
-    'query-input': string
-  }
+      '@type': 'EntryPoint';
+      urlTemplate: string;
+    };
+    'query-input': string;
+  };
 }
 
 /**
@@ -90,15 +90,15 @@ export function generateOrganizationSchema(
       addressLocality: 'East Islip',
       addressRegion: 'NY',
       postalCode: '11730',
-      addressCountry: 'US'
+      addressCountry: 'US',
     },
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',
       email: 'contact@jhuangnyc.com',
-      telephone: '+1-631-224-3534'
-    }
-  }
+      telephone: '+1-631-224-3534',
+    },
+  };
 }
 
 /**
@@ -109,14 +109,14 @@ export function generateProductSchema(
   baseUrl: string,
   currency: string = 'USD'
 ): ProductSchema {
-  const productUrl = `${baseUrl}/product/${product.handle}`
+  const productUrl = `${baseUrl}/product/${product.handle}`;
 
   // Calculate price valid until (1 year from now)
-  const priceValidUntil = new Date()
-  priceValidUntil.setFullYear(priceValidUntil.getFullYear() + 1)
+  const priceValidUntil = new Date();
+  priceValidUntil.setFullYear(priceValidUntil.getFullYear() + 1);
 
   // Extract brand from product name (e.g., "Bitmain Antminer S19" -> "Bitmain")
-  const brandName = product.name.split(' ')[0] || 'Jhuangnyc'
+  const brandName = product.name.split(' ')[0] || 'Jhuangnyc';
 
   const schema: ProductSchema = {
     '@context': 'https://schema.org',
@@ -128,7 +128,7 @@ export function generateProductSchema(
     sku: product.id.toString(),
     brand: {
       '@type': 'Brand',
-      name: brandName
+      name: brandName,
     },
     category: product.category,
     offers: {
@@ -138,9 +138,9 @@ export function generateProductSchema(
       price: product.priceUSD,
       priceValidUntil: priceValidUntil.toISOString().split('T')[0],
       availability: 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition'
-    }
-  }
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+  };
 
   // Add aggregate rating if available
   if (product.rating && product.reviews) {
@@ -149,11 +149,11 @@ export function generateProductSchema(
       ratingValue: product.rating,
       reviewCount: product.reviews,
       bestRating: 5,
-      worstRating: 1
-    }
+      worstRating: 1,
+    };
   }
 
-  return schema
+  return schema;
 }
 
 /**
@@ -171,16 +171,16 @@ export function generateWebSiteSchema(baseUrl: string): WebSiteSchema {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${baseUrl}/collection?search={search_term_string}`
+        urlTemplate: `${baseUrl}/collection?search={search_term_string}`,
       },
-      'query-input': 'required name=search_term_string'
-    }
-  }
+      'query-input': 'required name=search_term_string',
+    },
+  };
 }
 
 /**
  * Helper to serialize schema to JSON-LD script tag
  */
 export function serializeSchema(schema: Record<string, any>): string {
-  return JSON.stringify(schema, null, 2)
+  return JSON.stringify(schema, null, 2);
 }

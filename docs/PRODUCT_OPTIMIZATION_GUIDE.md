@@ -242,7 +242,7 @@ function optimizeTitle(product: ProductJSON): string {
 
 ```typescript
 // Add your own extraction patterns
-const customMatch = originalTitle.match(/your-pattern/i)
+const customMatch = originalTitle.match(/your-pattern/i);
 ```
 
 ### Modify Cleaning Rules
@@ -250,7 +250,7 @@ const customMatch = originalTitle.match(/your-pattern/i)
 ```typescript
 function cleanDescription(bodyHtml: string): string {
   // Add more cleanup rules
-  cleaned = cleaned.replace(/your-pattern/gi, 'replacement')
+  cleaned = cleaned.replace(/your-pattern/gi, 'replacement');
 }
 ```
 

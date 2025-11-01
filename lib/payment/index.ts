@@ -3,34 +3,34 @@
  */
 
 // Core types
-export * from '@/types/payment'
+export * from '@/types/payment';
 
 // Browser payment helpers
-export * from './webPaymentApi'
+export * from './webPaymentApi';
 
 // Storage service (client-safe)
 export {
   PaymentStorageService,
   type StorageAdapter,
   createPaymentStorage,
-  paymentStorage
-} from '../services/payment-storage.service'
+  paymentStorage,
+} from '../services/payment-storage.service';
 
 // Database service (server usage)
 export {
   PaymentDatabaseService,
-  createPaymentDbService
-} from '../services/payment-db.service'
+  createPaymentDbService,
+} from '../services/payment-db.service';
 
 // Orchestrator and related services
 export {
   PaymentOrchestrator,
-  createPaymentOrchestrator
-} from '../services/payment'
-export * from '../services/payment'
+  createPaymentOrchestrator,
+} from '../services/payment';
+export * from '../services/payment';
 
 // Shared webhook verification
-export { verifyHoodpaySignature } from '../services/payment/webhook'
+export { verifyHoodpaySignature } from '../services/payment/webhook';
 
 // HoodPay API helpers
 export {
@@ -45,5 +45,5 @@ export {
   resetWebhookSecret,
   webhooksApiHandler,
   webhookReceiverHandler,
-  verifyWebhookSignature
-} from '../hoodpayModule'
+  verifyWebhookSignature,
+} from '../hoodpayModule';

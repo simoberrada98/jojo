@@ -1,5 +1,5 @@
-import { createEnv } from '@t3-oss/env-nextjs'
-import { z } from 'zod'
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -18,7 +18,7 @@ export const env = createEnv({
     // Node Environment
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
-      .default('development')
+      .default('development'),
   },
 
   /**
@@ -28,7 +28,7 @@ export const env = createEnv({
   client: {
     // Supabase
     NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1),
 
     // App Configuration
     NEXT_PUBLIC_BASE_URL: z.string().url().default('https://jhuangnyc.com'),
@@ -44,7 +44,7 @@ export const env = createEnv({
       .transform((val) => val === 'true')
       .default('false'),
     // Verification
-    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional()
+    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional(),
   },
 
   /**
@@ -62,14 +62,15 @@ export const env = createEnv({
 
     // Client
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENABLE_HOODPAY: process.env.NEXT_PUBLIC_ENABLE_HOODPAY,
     NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API:
       process.env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:
-      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 
   /**
@@ -81,5 +82,5 @@ export const env = createEnv({
    * Makes it so that empty strings are treated as undefined.
    * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.
    */
-  emptyStringAsUndefined: true
-})
+  emptyStringAsUndefined: true,
+});

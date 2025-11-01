@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-const SERVICE_WORKER_PATH = '/service-worker.js'
+const SERVICE_WORKER_PATH = '/service-worker.js';
 
 export function ServiceWorkerProvider() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
-      return
+      return;
     }
 
     if (!('serviceWorker' in navigator)) {
-      return
+      return;
     }
 
     const register = async () => {
       try {
         await navigator.serviceWorker.register(SERVICE_WORKER_PATH, {
-          scope: '/'
-        })
+          scope: '/',
+        });
       } catch (error) {
-        console.error('Service worker registration failed', error)
+        console.error('Service worker registration failed', error);
       }
-    }
+    };
 
-    void register()
-  }, [])
+    void register();
+  }, []);
 
-  return null
+  return null;
 }

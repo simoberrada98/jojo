@@ -112,27 +112,27 @@ The HoodPay payment gateway has been **fully integrated and verified** with your
 
 ```typescript
 // 1. Initialize payment
-const orchestrator = createPaymentOrchestrator({ hooks })
+const orchestrator = createPaymentOrchestrator({ hooks });
 const paymentIntent = await orchestrator.initializePayment(
   amount,
   currency,
   checkoutData,
   options
-)
+);
 // → Creates localStorage session
 // → Stores in Supabase
 
 // 2. Process payment
 const result = await orchestrator.processPayment(PaymentMethod.HOODPAY, {
   redirectUrl,
-  notifyUrl
-})
+  notifyUrl,
+});
 // → Calls HoodPay API
 // → Gets payment URL
 // → Redirects user
 
 // 3. Webhook receives event
-POST / api / hoodpay / webhook
+POST / api / hoodpay / webhook;
 // → Verifies signature
 // → Updates database
 // → Processes event

@@ -89,16 +89,16 @@ await supabase.from('order_tracking').insert({
   order_number: orderId,
   status: 'pending',
   message: 'Order received and awaiting processing',
-  location: 'Denver, CO'
-})
+  location: 'Denver, CO',
+});
 
 // Example: When payment is confirmed
 await supabase.from('order_tracking').insert({
   order_number: orderId,
   status: 'processing',
   message: 'Payment confirmed, preparing hardware',
-  location: 'Denver, CO'
-})
+  location: 'Denver, CO',
+});
 ```
 
 ## Troubleshooting

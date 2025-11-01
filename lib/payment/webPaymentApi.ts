@@ -12,14 +12,14 @@ import {
   CheckoutItem,
   PaymentResult,
   PaymentStatus,
-  PaymentError
-} from '../../types/payment'
+  PaymentError,
+} from '@/types/payment';
 
 /**
  * Check if Web Payment API is supported
  */
 export function isPaymentRequestSupported(): boolean {
-  return typeof window !== 'undefined' && 'PaymentRequest' in window
+  return typeof window !== 'undefined' && 'PaymentRequest' in window;
 }
 
 /**
@@ -29,22 +29,22 @@ export async function canMakePayment(
   methodData: PaymentMethodData[]
 ): Promise<boolean> {
   if (!isPaymentRequestSupported()) {
-    return false
+    return false;
   }
 
   try {
     const details: PaymentDetailsInit = {
       total: {
         label: 'Test',
-        amount: { currency: 'USD', value: '0.00' }
-      }
-    }
+        amount: { currency: 'USD', value: '0.00' },
+      },
+    };
 
-    const request = new PaymentRequest(methodData, details)
-    const result = await request.canMakePayment()
-    return result
+    const request = new PaymentRequest(methodData, details);
+    const result = await request.canMakePayment();
+    return result;
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -58,9 +58,9 @@ export function convertCheckoutToPaymentDetails(
     label: `${item.name} (x${item.quantity})`,
     amount: {
       currency: checkoutData.currency,
-      value: item.total.toFixed(2)
-    }
-  }))
+      value: item.total.toFixed(2),
+    },
+  }));
 
   // Add subtotal, tax, shipping as display items
   if (checkoutData.subtotal > 0) {
@@ -68,9 +68,9 @@ export function convertCheckoutToPaymentDetails(
       label: 'Subtotal',
       amount: {
         currency: checkoutData.currency,
-        value: checkoutData.subtotal.toFixed(2)
-      }
-    })
+        value: checkoutData.subtotal.toFixed(2),
+      },
+    });
   }
 
   if (checkoutData.tax > 0) {
@@ -78,9 +78,9 @@ export function convertCheckoutToPaymentDetails(
       label: 'Tax',
       amount: {
         currency: checkoutData.currency,
-        value: checkoutData.tax.toFixed(2)
-      }
-    })
+        value: checkoutData.tax.toFixed(2),
+      },
+    });
   }
 
   if (checkoutData.shipping > 0) {
@@ -88,9 +88,9 @@ export function convertCheckoutToPaymentDetails(
       label: 'Shipping',
       amount: {
         currency: checkoutData.currency,
-        value: checkoutData.shipping.toFixed(2)
-      }
-    })
+        value: checkoutData.shipping.toFixed(2),
+      },
+    });
   }
 
   return {
@@ -98,11 +98,11 @@ export function convertCheckoutToPaymentDetails(
       label: 'Total',
       amount: {
         currency: checkoutData.currency,
-        value: checkoutData.total.toFixed(2)
-      }
+        value: checkoutData.total.toFixed(2),
+      },
     },
-    displayItems
-  }
+    displayItems,
+  };
 }
 
 /**
@@ -116,39 +116,39 @@ export function createPaymentMethodData(
       supportedMethods: 'basic-card',
       data: {
         supportedNetworks,
-        supportedTypes: ['credit', 'debit']
-      }
+        supportedTypes: ['credit', 'debit'],
+      },
     },
     // Add support for digital wallets
     {
-      supportedMethods: 'https://apple.com/apple-pay'
+      supportedMethods: 'https://apple.com/apple-pay',
     },
     {
-      supportedMethods: 'https://google.com/pay'
-    }
-  ]
+      supportedMethods: 'https://google.com/pay',
+    },
+  ];
 }
 
 /**
  * WebPaymentService - Handles Web Payment Request API integration
  */
 export class WebPaymentService {
-  private merchantName: string
-  private supportedNetworks: string[]
+  private merchantName: string;
+  private supportedNetworks: string[];
 
   constructor(
     merchantName: string = 'HoodPay Merchant',
     supportedNetworks: string[] = ['visa', 'mastercard', 'amex']
   ) {
-    this.merchantName = merchantName
-    this.supportedNetworks = supportedNetworks
+    this.merchantName = merchantName;
+    this.supportedNetworks = supportedNetworks;
   }
 
   /**
    * Check if service is available
    */
   isAvailable(): boolean {
-    return isPaymentRequestSupported()
+    return isPaymentRequestSupported();
   }
 
   /**
@@ -166,17 +166,17 @@ export class WebPaymentService {
         error: {
           code: 'WEB_PAYMENT_NOT_SUPPORTED',
           message: 'Web Payment API is not supported in this browser',
-          retryable: false
-        }
-      }
+          retryable: false,
+        },
+      };
     }
 
     try {
-      const methodData = createPaymentMethodData(this.supportedNetworks)
-      const details = convertCheckoutToPaymentDetails(checkoutData)
+      const methodData = createPaymentMethodData(this.supportedNetworks);
+      const details = convertCheckoutToPaymentDetails(checkoutData);
 
       // Check if payment can be made
-      const canPay = await canMakePayment(methodData)
+      const canPay = await canMakePayment(methodData);
       if (!canPay) {
         return {
           success: false,
@@ -185,9 +185,9 @@ export class WebPaymentService {
           error: {
             code: 'NO_PAYMENT_METHOD',
             message: 'No supported payment method available',
-            retryable: false
-          }
-        }
+            retryable: false,
+          },
+        };
       }
 
       // Create payment request
@@ -197,25 +197,27 @@ export class WebPaymentService {
         options || {
           requestPayerName: true,
           requestPayerEmail: true,
-          requestPayerPhone: false
+          requestPayerPhone: false,
         }
-      )
+      );
 
       // Show payment UI
-      const paymentResponse = await paymentRequest.show()
+      const paymentResponse = await paymentRequest.show();
 
       // Process the payment (this would integrate with your backend)
       const processResult = await this.processPaymentResponse(
         paymentResponse,
         checkoutData
-      )
+      );
 
       // Complete the payment
-      await paymentResponse.complete(processResult.success ? 'success' : 'fail')
+      await paymentResponse.complete(
+        processResult.success ? 'success' : 'fail'
+      );
 
-      return processResult
+      return processResult;
     } catch (error: any) {
-      return this.handlePaymentError(error)
+      return this.handlePaymentError(error);
     }
   }
 
@@ -229,16 +231,16 @@ export class WebPaymentService {
     try {
       // Extract payment details
       const { details, methodName, payerEmail, payerName, payerPhone } =
-        response
+        response;
 
       // In production, send this to your backend for processing
       // For now, we'll simulate a successful payment
       const paymentId = `web_${Date.now()}_${Math.random()
         .toString(36)
-        .substr(2, 9)}`
+        .substr(2, 9)}`;
 
       // Simulate backend processing
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return {
         success: true,
@@ -250,9 +252,9 @@ export class WebPaymentService {
           payerName: payerName || undefined,
           payerPhone: payerPhone || undefined,
           amount: checkoutData.total,
-          currency: checkoutData.currency
-        }
-      }
+          currency: checkoutData.currency,
+        },
+      };
     } catch (error: any) {
       return {
         success: false,
@@ -261,9 +263,9 @@ export class WebPaymentService {
         error: {
           code: 'PROCESSING_ERROR',
           message: error.message || 'Failed to process payment',
-          retryable: true
-        }
-      }
+          retryable: true,
+        },
+      };
     }
   }
 
@@ -271,28 +273,28 @@ export class WebPaymentService {
    * Handle payment errors
    */
   private handlePaymentError(error: any): PaymentResult {
-    let errorCode = 'UNKNOWN_ERROR'
-    let errorMessage = 'An unknown error occurred'
-    let retryable = true
+    let errorCode = 'UNKNOWN_ERROR';
+    let errorMessage = 'An unknown error occurred';
+    let retryable = true;
 
     if (error.name === 'AbortError') {
-      errorCode = 'USER_CANCELLED'
-      errorMessage = 'Payment was cancelled by user'
-      retryable = false
+      errorCode = 'USER_CANCELLED';
+      errorMessage = 'Payment was cancelled by user';
+      retryable = false;
     } else if (error.name === 'InvalidStateError') {
-      errorCode = 'INVALID_STATE'
-      errorMessage = 'Payment request is in an invalid state'
-      retryable = false
+      errorCode = 'INVALID_STATE';
+      errorMessage = 'Payment request is in an invalid state';
+      retryable = false;
     } else if (error.name === 'NotSupportedError') {
-      errorCode = 'NOT_SUPPORTED'
-      errorMessage = 'Payment method not supported'
-      retryable = false
+      errorCode = 'NOT_SUPPORTED';
+      errorMessage = 'Payment method not supported';
+      retryable = false;
     } else if (error.name === 'SecurityError') {
-      errorCode = 'SECURITY_ERROR'
-      errorMessage = 'Security error during payment'
-      retryable = false
+      errorCode = 'SECURITY_ERROR';
+      errorMessage = 'Security error during payment';
+      retryable = false;
     } else if (error.message) {
-      errorMessage = error.message
+      errorMessage = error.message;
     }
 
     return {
@@ -303,9 +305,9 @@ export class WebPaymentService {
         code: errorCode,
         message: errorMessage,
         details: error,
-        retryable
-      }
-    }
+        retryable,
+      },
+    };
   }
 
   /**
@@ -313,9 +315,9 @@ export class WebPaymentService {
    */
   async abortPayment(request: PaymentRequest): Promise<void> {
     try {
-      await request.abort()
+      await request.abort();
     } catch (error) {
-      console.error('Failed to abort payment:', error)
+      console.error('Failed to abort payment:', error);
     }
   }
 }
@@ -326,11 +328,11 @@ export class WebPaymentService {
 export function createWebPaymentRequest(
   checkoutData: CheckoutData,
   config: {
-    merchantName?: string
-    supportedNetworks?: string[]
-    requestPayerEmail?: boolean
-    requestPayerName?: boolean
-    requestPayerPhone?: boolean
+    merchantName?: string;
+    supportedNetworks?: string[];
+    requestPayerEmail?: boolean;
+    requestPayerName?: boolean;
+    requestPayerPhone?: boolean;
   } = {}
 ): WebPaymentRequest {
   const {
@@ -338,8 +340,8 @@ export function createWebPaymentRequest(
     supportedNetworks = ['visa', 'mastercard', 'amex'],
     requestPayerEmail = true,
     requestPayerName = true,
-    requestPayerPhone = false
-  } = config
+    requestPayerPhone = false,
+  } = config;
 
   return {
     methodData: createPaymentMethodData(supportedNetworks),
@@ -347,9 +349,9 @@ export function createWebPaymentRequest(
     options: {
       requestPayerEmail,
       requestPayerName,
-      requestPayerPhone
-    }
-  }
+      requestPayerPhone,
+    },
+  };
 }
 
 /**
@@ -357,14 +359,14 @@ export function createWebPaymentRequest(
  */
 export async function hasSavedPaymentMethod(): Promise<boolean> {
   if (!isPaymentRequestSupported()) {
-    return false
+    return false;
   }
 
   try {
-    const methodData = createPaymentMethodData()
-    return await canMakePayment(methodData)
+    const methodData = createPaymentMethodData();
+    return await canMakePayment(methodData);
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -373,30 +375,30 @@ export async function hasSavedPaymentMethod(): Promise<boolean> {
  */
 export async function getAvailablePaymentMethods(): Promise<string[]> {
   if (!isPaymentRequestSupported()) {
-    return []
+    return [];
   }
 
-  const methods: string[] = []
+  const methods: string[] = [];
 
   // Check for basic card
   if (await canMakePayment([{ supportedMethods: 'basic-card' }])) {
-    methods.push('basic-card')
+    methods.push('basic-card');
   }
 
   // Check for Apple Pay
   if (
     await canMakePayment([{ supportedMethods: 'https://apple.com/apple-pay' }])
   ) {
-    methods.push('apple-pay')
+    methods.push('apple-pay');
   }
 
   // Check for Google Pay
   if (await canMakePayment([{ supportedMethods: 'https://google.com/pay' }])) {
-    methods.push('google-pay')
+    methods.push('google-pay');
   }
 
-  return methods
+  return methods;
 }
 
 // Export singleton instance
-export const webPaymentService = new WebPaymentService()
+export const webPaymentService = new WebPaymentService();

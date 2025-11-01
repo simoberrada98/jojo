@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useAuth } from '@/lib/contexts/auth-context'
-import type { WishlistItem, Product } from '@/types/database'
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/lib/contexts/auth-context';
+import type { WishlistItem, Product } from '@/types/database';
 
 export function useWishlist() {
   const [wishlist, setWishlist] = useState<
     (WishlistItem & { product: Product })[]
-  >([])
-  const [loading, setLoading] = useState(true)
-  const { user } = useAuth()
-  const supabase = createClient()
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const supabase = createClient();
 
   const fetchWishlist = async () => {
     if (!user) {
-      setWishlist([])
-      setLoading(false)
-      return
+      setWishlist([]);
+      setLoading(false);
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     const { data, error } = await supabase
       .from('wishlist')
       .select(
@@ -29,53 +29,53 @@ export function useWishlist() {
         product:products(*)
       `
       )
-      .eq('user_id', user.id)
+      .eq('user_id', user.id);
 
     if (!error && data) {
-      setWishlist(data as any)
+      setWishlist(data as any);
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    fetchWishlist()
-  }, [user, supabase])
+    fetchWishlist();
+  }, [user, supabase]);
 
   const addToWishlist = async (productId: string) => {
     if (!user) {
-      throw new Error('Must be logged in to add to wishlist')
+      throw new Error('Must be logged in to add to wishlist');
     }
 
     const { error } = await supabase
       .from('wishlist')
-      .insert({ user_id: user.id, product_id: productId })
+      .insert({ user_id: user.id, product_id: productId });
 
-    if (error) throw error
-    await fetchWishlist()
-  }
+    if (error) throw error;
+    await fetchWishlist();
+  };
 
   const removeFromWishlist = async (productId: string) => {
-    if (!user) return
+    if (!user) return;
 
     const { error } = await supabase
       .from('wishlist')
       .delete()
       .eq('user_id', user.id)
-      .eq('product_id', productId)
+      .eq('product_id', productId);
 
-    if (error) throw error
-    await fetchWishlist()
-  }
+    if (error) throw error;
+    await fetchWishlist();
+  };
 
   const isInWishlist = (productId: string) => {
-    return wishlist.some((item) => item.product_id === productId)
-  }
+    return wishlist.some((item) => item.product_id === productId);
+  };
 
   return {
     wishlist,
     loading,
     addToWishlist,
     removeFromWishlist,
-    isInWishlist
-  }
+    isInWishlist,
+  };
 }

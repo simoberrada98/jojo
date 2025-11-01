@@ -89,13 +89,13 @@ Created configuration files:
 const total = items.reduce(
   (sum, item) => sum + item.priceUSD * item.quantity,
   0
-)
+);
 ```
 
 **New Approach**:
 
 ```typescript
-const total = PricingService.calculateSubtotal(items)
+const total = PricingService.calculateSubtotal(items);
 ```
 
 **Benefits**:
@@ -169,8 +169,8 @@ const storage = PaymentStorage.getInstance(); // Untestable
 
 ```typescript
 interface StorageAdapter {
-  getItem(key: string): string | null
-  setItem(key: string, value: string): void
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
   // ...
 }
 
@@ -180,7 +180,7 @@ class PaymentStorageService {
 
 // Factory function for DI
 export function createPaymentStorage(storage?: StorageAdapter) {
-  return new PaymentStorageService(storage)
+  return new PaymentStorageService(storage);
 }
 ```
 
@@ -218,14 +218,14 @@ switch (method) {
 ```typescript
 // payment-strategy.interface.ts
 interface PaymentStrategy {
-  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>
-  isAvailable(): boolean
-  validate(paymentData?: any): { valid: boolean; error?: string }
+  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>;
+  isAvailable(): boolean;
+  validate(paymentData?: any): { valid: boolean; error?: string };
 }
 
 // strategy-registry.ts
-const strategy = paymentStrategyRegistry.getStrategy(method)
-const result = await strategy.process(state, paymentData)
+const strategy = paymentStrategyRegistry.getStrategy(method);
+const result = await strategy.process(state, paymentData);
 ```
 
 **Strategies**:
@@ -248,22 +248,22 @@ const result = await strategy.process(state, paymentData)
 
 ```typescript
 // Old
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
 // New
-import { env } from '@/lib/env'
-const url = env.NEXT_PUBLIC_SUPABASE_URL // Type-safe, validated
+import { env } from '@/lib/env';
+const url = env.NEXT_PUBLIC_SUPABASE_URL; // Type-safe, validated
 ```
 
 ### Using Configuration
 
 ```typescript
 // Old
-const SHIPPING_COST = 50
+const SHIPPING_COST = 50;
 
 // New
-import { PRICING_CONFIG } from '@/lib/config/pricing.config'
-const shipping = PRICING_CONFIG.shipping.standard
+import { PRICING_CONFIG } from '@/lib/config/pricing.config';
+const shipping = PRICING_CONFIG.shipping.standard;
 ```
 
 ### Using Pricing Service
@@ -273,13 +273,13 @@ const shipping = PRICING_CONFIG.shipping.standard
 const total = items.reduce(
   (sum, item) => sum + item.priceUSD * item.quantity,
   0
-)
-const converted = total * CONVERSION_RATES[currency]
+);
+const converted = total * CONVERSION_RATES[currency];
 
 // New
-import { PricingService } from '@/lib/services/pricing.service'
-const total = PricingService.calculateSubtotal(items)
-const converted = PricingService.convertPrice(total, currency)
+import { PricingService } from '@/lib/services/pricing.service';
+const total = PricingService.calculateSubtotal(items);
+const converted = PricingService.convertPrice(total, currency);
 ```
 
 ### Using Payment Strategies
@@ -288,14 +288,14 @@ const converted = PricingService.convertPrice(total, currency)
 // Old - switch statement in orchestrator
 
 // New - in your payment processing code
-import { paymentStrategyRegistry } from '@/lib/services/payment-strategies'
+import { paymentStrategyRegistry } from '@/lib/services/payment-strategies';
 
-const strategy = paymentStrategyRegistry.getStrategy(paymentMethod)
+const strategy = paymentStrategyRegistry.getStrategy(paymentMethod);
 if (!strategy || !strategy.isAvailable()) {
   // Handle unavailable method
 }
 
-const result = await strategy.process(paymentState, paymentData)
+const result = await strategy.process(paymentState, paymentData);
 ```
 
 ---
@@ -340,12 +340,12 @@ const mockStorage = {
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
-  keys: jest.fn(() => [])
-}
+  keys: jest.fn(() => []),
+};
 
-const storage = createPaymentStorage(mockStorage)
-storage.saveState(testState)
-expect(mockStorage.setItem).toHaveBeenCalled()
+const storage = createPaymentStorage(mockStorage);
+storage.saveState(testState);
+expect(mockStorage.setItem).toHaveBeenCalled();
 ```
 
 ### Integration Tests

@@ -222,7 +222,7 @@ const { data } = await supabase
     )
   `
   )
-  .eq('is_active', true)
+  .eq('is_active', true);
 ```
 
 ### Get products in a collection
@@ -235,7 +235,7 @@ const { data } = await supabase
     product:products(*)
   `
   )
-  .eq('collection_id', collectionId)
+  .eq('collection_id', collectionId);
 ```
 
 ### Get product with reviews
@@ -253,7 +253,7 @@ const { data } = await supabase
   `
   )
   .eq('id', productId)
-  .single()
+  .single();
 ```
 
 ## Product Data Model

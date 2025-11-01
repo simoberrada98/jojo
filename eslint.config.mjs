@@ -1,13 +1,23 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig, globalIgnores } from 'eslint/config';
-import nextVitals from 'eslint-config-next/core-web-vitals';
-import nextTs from 'eslint-config-next/typescript';
+import { FlatCompat } from '@eslint/eslintrc';
 import prettier from 'eslint-config-prettier/flat';
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  prettier,
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  resolvePluginsRelativeTo: __dirname,
+});
+
+export default defineConfig([
+  ...compat.extends(
+    'eslint-config-next/core-web-vitals',
+    'eslint-config-next/typescript'
+  ),
+  prettier,
   globalIgnores([
     // Default ignores of eslint-config-next:
     '.next/**',
@@ -16,5 +26,3 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
   ]),
 ]);
-
-export default eslintConfig;
