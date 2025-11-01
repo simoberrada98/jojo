@@ -5,6 +5,7 @@ import PageLayout from '@/components/layout/PageLayout';
 import ProductImage from '@/components/product-image';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import ProductCatalog from '@/components/product-catalog';
 
 const collections = [
   {
@@ -135,6 +136,7 @@ export default function CollectionPage() {
               </Link>
             ))}
           </div>
+          <ProductCatalog />
         </section>
       </main>
     </PageLayout>
