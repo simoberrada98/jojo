@@ -29,33 +29,52 @@ export interface StorageAdapter {
  * Browser localStorage adapter
  */
 class BrowserStorageAdapter implements StorageAdapter {
+  private get storage(): Storage | null {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return null;
+    }
+    return window.localStorage;
+  }
+
   getItem(key: string): string | null {
+    const storage = this.storage;
+    if (!storage) return null;
+
     try {
-      return localStorage.getItem(key);
+      return storage.getItem(key);
     } catch {
       return null;
     }
   }
 
   setItem(key: string, value: string): void {
+    const storage = this.storage;
+    if (!storage) return;
+
     try {
-      localStorage.setItem(key, value);
+      storage.setItem(key, value);
     } catch (error) {
       console.error('Failed to save to storage:', error);
     }
   }
 
   removeItem(key: string): void {
+    const storage = this.storage;
+    if (!storage) return;
+
     try {
-      localStorage.removeItem(key);
+      storage.removeItem(key);
     } catch (error) {
       console.error('Failed to remove from storage:', error);
     }
   }
 
   keys(): string[] {
+    const storage = this.storage;
+    if (!storage) return [];
+
     try {
-      return Object.keys(localStorage);
+      return Object.keys(storage);
     } catch {
       return [];
     }
@@ -76,13 +95,23 @@ export class PaymentStorageService {
   ) {
     this.storage = storage;
     this.sessionTimeout = sessionTimeout;
-    this.cleanupExpiredSessions();
+    if (this.hasStorage()) {
+      this.cleanupExpiredSessions();
+    }
+  }
+
+  private hasStorage(): boolean {
+    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
   }
 
   /**
    * Check if storage is available
    */
   isAvailable(): boolean {
+    if (!this.hasStorage()) {
+      return false;
+    }
+
     try {
       const test = '__storage_test__';
       this.storage.setItem(test, test);
