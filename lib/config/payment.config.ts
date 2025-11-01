@@ -5,13 +5,7 @@ import { env } from '@/lib/config/env';
  * Centralized payment-related constants
  */
 export const PAYMENT_CONFIG = {
-  // HoodPay credentials
-  hoodpay: {
-    apiKey: env.HOODPAY_API_KEY,
-    businessId: env.HOODPAY_BUSINESS_ID,
-    webhookSecret: env.HOODPAY_WEBHOOK_SECRET,
-  },
-
+  
   // Payment timeouts
   timeouts: {
     sessionMs: 30 * 60 * 1000, // 30 minutes

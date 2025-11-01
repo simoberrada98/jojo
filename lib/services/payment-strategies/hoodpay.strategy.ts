@@ -7,6 +7,7 @@ import { BasePaymentStrategy } from './payment-strategy.interface';
 import { createPayment } from '@/lib/hoodpayModule';
 import { PAYMENT_CONFIG } from '@/lib/config/payment.config';
 import type { PaymentResult, PaymentLocalState } from '@/types/payment';
+import { paymentServerConfig } from '@/lib/config/payment.config.server';
 
 export class HoodPayStrategy extends BasePaymentStrategy {
   private apiKey: string | undefined;
@@ -14,8 +15,8 @@ export class HoodPayStrategy extends BasePaymentStrategy {
 
   constructor(apiKey?: string, businessId?: string) {
     super();
-    this.apiKey = apiKey ?? PAYMENT_CONFIG.hoodpay.apiKey;
-    this.businessId = businessId ?? PAYMENT_CONFIG.hoodpay.businessId;
+    this.apiKey = apiKey ?? paymentServerConfig.hoodpay.apiKey;
+    this.businessId = businessId ?? paymentServerConfig.hoodpay.businessId;
   }
 
   getName(): string {
