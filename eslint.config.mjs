@@ -17,6 +17,7 @@ export default defineConfig([
     'eslint-config-next/core-web-vitals',
     'eslint-config-next/typescript'
   ),
+  
   prettier,
   globalIgnores([
     // Default ignores of eslint-config-next:

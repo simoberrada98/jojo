@@ -1,89 +1,43 @@
-'use client';
-
+"use client";
 import { useState } from 'react';
-import {
-  createPaymentOrchestrator,
-  PaymentMethod,
-  type CheckoutData,
-} from '@/lib/payment';
+import { paymentClientConfig } from '../config/payment.config.client';
+import { createHoodpaySessionAction } from '../../app/actions/create-hoodpay-session';
 
-type PaymentHandlerOptions = {
-  onComplete: () => void;
-};
-
-export function usePaymentHandler({ onComplete }: PaymentHandlerOptions) {
+export function usePaymentHandler(options = {}) {
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<
-    'idle' | 'processing' | 'success' | 'failed'
-  >('idle');
+  const [paymentStatus, setPaymentStatus] = useState('idle');
+  const [error, setError] = useState(null);
 
-  const handlePayment = async (
-    method: 'hoodpay' | 'web-payment',
-    checkoutData: CheckoutData,
-    currency: string
-  ) => {
-    setProcessing(true);
+  async function handlePayment(method, data, currency) {
     setError(null);
-    setPaymentStatus('processing');
-
     try {
-      const orchestrator = createPaymentOrchestrator({
-        hooks: {
-          onCompleted: async () => {
-            setPaymentStatus('success');
-            setTimeout(() => onComplete(), 2000);
-          },
-          onFailed: async (event) => {
-            setPaymentStatus('failed');
-            setError((event.data as any)?.error?.message || 'Payment failed');
-          },
-        },
-      });
-
-      await orchestrator.initializePayment(
-        checkoutData.total,
-        currency,
-        checkoutData,
-        {
-          customerEmail: checkoutData.customerInfo?.email,
-          description: `Order for ${checkoutData.items.length} item(s)`,
-        }
-      );
-
-      const paymentMethod =
-        method === 'hoodpay'
-          ? PaymentMethod.HOODPAY
-          : PaymentMethod.WEB_PAYMENT_API;
-
-      const result = await orchestrator.processPayment(paymentMethod, {
-        redirectUrl: `${window.location.origin}/checkout/success`,
-        notifyUrl: `${window.location.origin}/api/hoodpay/webhook`,
-      });
-
-      if (result.success) {
-        if (method === 'hoodpay' && result.metadata?.paymentUrl) {
-          window.location.href = result.metadata.paymentUrl as string;
-        } else {
-          setPaymentStatus('success');
-          setTimeout(() => onComplete(), 2000);
-        }
-      } else {
-        throw new Error(result.error?.message || 'Payment failed');
+      setProcessing(true);
+      setPaymentStatus('processing');
+      if (method === 'hoodpay') {
+        if (!paymentClientConfig.enableHoodpay) throw new Error('HoodPay is disabled');
+        const session = await createHoodpaySessionAction({
+          amount: data.totalMinor,
+          currency,
+          metadata: data.metadata,
+          customer: data.customer,
+        });
+        window.location.href = session.checkoutUrl;
+        return;
       }
-    } catch (err: any) {
-      console.error(`${method} payment error:`, err);
-      setError(err.message || 'Payment failed. Please try again.');
+      if (method === 'web-payment') {
+        await new Promise((r) => setTimeout(r, 500));
+        setPaymentStatus('success');
+        options.onComplete?.();
+        return;
+      }
+      throw new Error(`Unsupported payment method: ${method}`);
+    } catch (err) {
       setPaymentStatus('failed');
+      setError(err.message ?? 'Unknown payment error');
     } finally {
       setProcessing(false);
     }
-  };
+  }
 
-  return {
-    processing,
-    error,
-    paymentStatus,
-    handlePayment,
-  };
+  return { processing, error, paymentStatus, handlePayment };
 }

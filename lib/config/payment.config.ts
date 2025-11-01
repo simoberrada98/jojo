@@ -1,37 +1,21 @@
-import { env } from '@/lib/config/env';
+export interface PaymentConfig {
+  paymentTimeoutSeconds: number;
+  paymentStatusPollIntervalSeconds: number;
+  supportedMethods: Array<'hoodpay' | 'web-payment'>;
+  hoodpay: {
+    apiKey?: string;
+    businessId?: string;
+    webhookSecret?: string;
+  };
+}
 
-/**
- * Payment configuration
- * Centralized payment-related constants
- */
-export const PAYMENT_CONFIG = {
-  
-  // Payment timeouts
-  timeouts: {
-    sessionMs: 30 * 60 * 1000, // 30 minutes
-    processingMs: 5 * 60 * 1000, // 5 minutes
+export const PAYMENT_CONFIG: PaymentConfig = {
+  paymentTimeoutSeconds: 15 * 60,
+  paymentStatusPollIntervalSeconds: 5,
+  supportedMethods: ['hoodpay', 'web-payment'],
+  hoodpay: {
+    apiKey: undefined,
+    businessId: undefined,
+    webhookSecret: undefined,
   },
-
-  // Retry settings
-  retry: {
-    maxAttempts: 3,
-    delayMs: 1000,
-    backoffMultiplier: 2,
-  },
-
-  // Supported payment methods
-  methods: {
-    hoodpay: 'HOODPAY',
-    crypto: 'CRYPTO',
-    webPaymentApi: 'WEB_PAYMENT_API',
-  } as const,
-} as const;
-
-/**
- * Payment validation rules
- */
-export const PAYMENT_VALIDATION = {
-  minAmount: 0.01,
-  maxAmount: 1000000,
-  supportedCurrencies: ['BTC', 'ETH', 'BNB', 'USDC'],
 } as const;
