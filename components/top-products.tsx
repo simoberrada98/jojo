@@ -193,7 +193,7 @@ export default function TopProducts() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center"
         >
-          <Link href="#products">
+          <Link href="/collections/all">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 size="lg"
