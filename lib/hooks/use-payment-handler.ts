@@ -1,12 +1,16 @@
-"use client";
+'use client';
 import { useState } from 'react';
 import { paymentClientConfig } from '../config/payment.config.client';
 import { createHoodpaySessionAction } from '../../app/actions/create-hoodpay-session';
 
-export function usePaymentHandler(options = {}) {
+interface UsePaymentHandlerOptions {
+  onComplete?: () => void;
+}
+
+export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
   const [processing, setProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('idle');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handlePayment(method, data, currency) {
     setError(null);
@@ -14,12 +18,13 @@ export function usePaymentHandler(options = {}) {
       setProcessing(true);
       setPaymentStatus('processing');
       if (method === 'hoodpay') {
-        if (!paymentClientConfig.enableHoodpay) throw new Error('HoodPay is disabled');
+        if (!paymentClientConfig.enableHoodpay)
+          throw new Error('HoodPay is disabled');
         const session = await createHoodpaySessionAction({
-          amount: data.totalMinor,
+          amount: data.total,
           currency,
           metadata: data.metadata,
-          customer: data.customer,
+          customer: data.customerInfo,
         });
         window.location.href = session.checkoutUrl;
         return;
@@ -31,9 +36,13 @@ export function usePaymentHandler(options = {}) {
         return;
       }
       throw new Error(`Unsupported payment method: ${method}`);
-    } catch (err) {
+    } catch (err: unknown) {
       setPaymentStatus('failed');
-      setError(err.message ?? 'Unknown payment error');
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Unknown payment error');
+      }
     } finally {
       setProcessing(false);
     }

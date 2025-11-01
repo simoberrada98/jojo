@@ -3,7 +3,7 @@
  * Centralized conversion rates and currency settings
  */
 
-export type Currency = 'BTC' | 'ETH' | 'BNB' | 'USDC';
+export type Currency = 'BTC' | 'ETH' | 'BNB' | 'USDC' | 'USDT';
 
 /**
  * Conversion rates from USD to crypto
@@ -15,6 +15,7 @@ export const CONVERSION_RATES: Record<Currency, number> = {
   ETH: 0.00042, // ~$2,400 per ETH
   BNB: 0.00165, // ~$606 per BNB
   USDC: 1.0, // 1:1 with USD
+  USDT: 1.0, // 1:1 with USD
 } as const;
 
 /**
@@ -48,12 +49,17 @@ export const CURRENCY_CONFIG: Record<
     decimals: 2,
     name: 'USD Coin',
   },
+  USDT: {
+    symbol: 'USD',
+    decimals: 2,
+    name: 'Tether',
+  },
 } as const;
 
 /**
  * Default currency
  */
-export const DEFAULT_CURRENCY: Currency = 'BTC';
+export const DEFAULT_CURRENCY: Currency = 'USDC';
 
 /**
  * Get decimal places for a currency

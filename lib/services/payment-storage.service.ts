@@ -101,7 +101,10 @@ export class PaymentStorageService {
   }
 
   private hasStorage(): boolean {
-    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.localStorage !== 'undefined'
+    );
   }
 
   /**

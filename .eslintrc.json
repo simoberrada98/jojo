@@ -1,9 +1,8 @@
 {
   "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
   "rules": {
-     "@next/next/no-img-element": "off", // Disables the rule against using <img>
-        "@next/next/no-html-link-for-pages": "warn",
+    "@next/next/no-img-element": "off", // Disables the rule against using <img>
+    "@next/next/no-html-link-for-pages": "warn",
     "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
-
 }

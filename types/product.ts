@@ -157,7 +157,9 @@ export type ProductWithExtras = Product & {
 function normalizeStringArray(candidate: unknown): string[] {
   if (Array.isArray(candidate)) {
     return candidate
-      .map((entry) => (typeof entry === 'string' ? entry.trim() : String(entry)))
+      .map((entry) =>
+        typeof entry === 'string' ? entry.trim() : String(entry)
+      )
       .filter((entry) => entry.length > 0);
   }
 
@@ -171,7 +173,9 @@ function normalizeStringArray(candidate: unknown): string[] {
       const parsed = JSON.parse(trimmed);
       if (Array.isArray(parsed)) {
         return parsed
-          .map((entry) => (typeof entry === 'string' ? entry.trim() : String(entry)))
+          .map((entry) =>
+            typeof entry === 'string' ? entry.trim() : String(entry)
+          )
           .filter((entry) => entry.length > 0);
       }
     } catch {
@@ -195,7 +199,6 @@ export interface DisplayProduct extends Product {
   costPrice?: number | null;
   hashrate: string;
   power: string;
-
 
   image: string;
   images: string[];
@@ -302,8 +305,7 @@ export function transformToDisplayProduct(
       dbProduct.power_consumption && `Power: ${dbProduct.power_consumption}`,
       dbProduct.algorithm && `Algorithm: ${dbProduct.algorithm}`,
       dbProduct.efficiency && `Efficiency: ${dbProduct.efficiency}`,
-      typeof dbProduct.weight === 'number' &&
-        `Weight: ${dbProduct.weight} lbs`,
+      typeof dbProduct.weight === 'number' && `Weight: ${dbProduct.weight} lbs`,
       dbProduct.dimensions_length !== null &&
         dbProduct.dimensions_width !== null &&
         dbProduct.dimensions_height !== null &&

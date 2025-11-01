@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { env } from './env';
 
 export const paymentClientConfig = {
