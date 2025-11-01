@@ -90,9 +90,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Reviews Count */}
-          {product.reviews && (
+          {product.reviewCount && (
             <p className="mb-4 text-foreground/60 text-xs">
-              ({product.reviews} reviews)
+              ({product.reviewCount} reviews)
             </p>
           )}
 

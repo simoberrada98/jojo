@@ -58,33 +58,33 @@ export default function CheckoutPage() {
   const [hasRestoredData, setHasRestoredData] = useState(false);
 
   // Load saved checkout state on mount
-  useEffect(() => {
-    const savedState = loadCheckoutState();
-    if (savedState) {
-      setShippingData(savedState.shippingData);
-      if (savedState.paymentStep && savedState.paymentStep !== 'confirmation') {
-        setPaymentStep(savedState.paymentStep);
-      }
-      if (savedState.orderData) {
-        setOrderData(savedState.orderData);
-      }
-      setHasRestoredData(true);
-      // Hide the notification after 5 seconds
-      setTimeout(() => setHasRestoredData(false), 5000);
-    }
-    setIsLoaded(true);
-  }, []);
+  // useEffect(() => {
+  //   const savedState = loadCheckoutState();
+  //   if (savedState) {
+  //     setShippingData(savedState.shippingData);
+  //     if (savedState.paymentStep && savedState.paymentStep !== 'confirmation') {
+  //       setPaymentStep(savedState.paymentStep);
+  //     }
+  //     if (savedState.orderData) {
+  //       setOrderData(savedState.orderData);
+  //     }
+  //     setHasRestoredData(true);
+  //     // Hide the notification after 5 seconds
+  //     setTimeout(() => setHasRestoredData(false), 5000);
+  //   }
+  //   setIsLoaded(true);
+  // }, []);
 
   // Save checkout state whenever it changes
-  useEffect(() => {
-    if (isLoaded && paymentStep !== 'confirmation') {
-      saveCheckoutState({
-        shippingData,
-        paymentStep,
-        orderData,
-      });
-    }
-  }, [shippingData, paymentStep, orderData, isLoaded]);
+  // useEffect(() => {
+  //   if (isLoaded && paymentStep !== 'confirmation') {
+  //     saveCheckoutState({
+  //       shippingData,
+  //       paymentStep,
+  //       orderData,
+  //     });
+  //   }
+  // }, [shippingData, paymentStep, orderData, isLoaded]);
 
   const validateShipping = () => {
     const newErrors: Record<string, string> = {};

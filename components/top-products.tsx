@@ -140,7 +140,7 @@ export default function TopProducts() {
                       ))}
                     </div>
                     <span className="text-foreground/60 text-sm">
-                      ({product.reviews} reviews)
+                      ({product.reviewCount} reviews)
                     </span>
                   </div>
 

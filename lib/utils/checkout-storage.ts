@@ -27,14 +27,16 @@ const EXPIRY_HOURS = 24; // Clear data after 24 hours
  * Save checkout state to localStorage
  */
 export function saveCheckoutState(state: CheckoutState): void {
-  try {
-    const dataToSave = {
-      ...state,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  } catch (error) {
-    console.warn('Failed to save checkout state:', error);
+  if (typeof window !== 'undefined') {
+    try {
+      const dataToSave = {
+        ...state,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    } catch (error) {
+      console.warn('Failed to save checkout state:', error);
+    }
   }
 }
 
@@ -43,39 +45,44 @@ export function saveCheckoutState(state: CheckoutState): void {
  * Returns null if no data or data is expired
  */
 export function loadCheckoutState(): CheckoutState | null {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return null;
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return null;
 
-    const data = JSON.parse(stored) as CheckoutState & { timestamp: string };
+      const data = JSON.parse(stored) as CheckoutState & { timestamp: string };
 
-    // Check if data is expired
-    if (data.timestamp) {
-      const savedTime = new Date(data.timestamp).getTime();
-      const now = new Date().getTime();
-      const hoursPassed = (now - savedTime) / (1000 * 60 * 60);
+      // Check if data is expired
+      if (data.timestamp) {
+        const savedTime = new Date(data.timestamp).getTime();
+        const now = new Date().getTime();
+        const hoursPassed = (now - savedTime) / (1000 * 60 * 60);
 
-      if (hoursPassed > EXPIRY_HOURS) {
-        clearCheckoutState();
-        return null;
+        if (hoursPassed > EXPIRY_HOURS) {
+          clearCheckoutState();
+          return null;
+        }
       }
-    }
 
-    return data;
-  } catch (error) {
-    console.warn('Failed to load checkout state:', error);
-    return null;
+      return data;
+    } catch (error) {
+      console.warn('Failed to load checkout state:', error);
+      return null;
+    }
   }
+  return null;
 }
 
 /**
  * Clear checkout state from localStorage
  */
 export function clearCheckoutState(): void {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.warn('Failed to clear checkout state:', error);
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.warn('Failed to clear checkout state:', error);
+    }
   }
 }
 
@@ -85,16 +92,21 @@ export function clearCheckoutState(): void {
 export function updateShippingData(
   shippingData: CheckoutState['shippingData']
 ): void {
-  const currentState = loadCheckoutState();
-  saveCheckoutState({
-    ...currentState,
-    shippingData,
-  });
+  if (typeof window !== 'undefined') {
+    const currentState = loadCheckoutState();
+    saveCheckoutState({
+      ...currentState,
+      shippingData,
+    });
+  }
 }
 
 /**
  * Check if there's saved checkout data
  */
 export function hasCheckoutState(): boolean {
-  return loadCheckoutState() !== null;
+  if (typeof window !== 'undefined') {
+    return loadCheckoutState() !== null;
+  }
+  return false;
 }

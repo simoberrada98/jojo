@@ -1,19 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Headset, ShieldCheck, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductInfo } from '@/components/product/product-info';
 import { ProductImageGallery } from '@/components/product/product-image-gallery';
 import PageLayout from '@/components/layout/PageLayout';
-import ProductImage from '@/components/product-image';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { useProduct } from '@/lib/hooks/use-product';
-import { useCart } from '@/lib/contexts/cart-context';
 import { generateProductSchema, serializeSchema } from '@/lib/schema';
-import toast from 'react-hot-toast';
-import type { DisplayProduct } from '@/types/product';
+import { H2, P } from '@/components/ui/typography';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -21,20 +18,17 @@ export default function ProductDetailPage() {
   const { product, error, isLoading } = useProduct(params.id as string);
   const [selectedImage, setSelectedImage] = useState(0);
   const { currency } = useCurrency();
-  const { addItem } = useCart();
-
-  const handleAddToCart = () => {
-    if (product) {
-      addItem(product);
-      toast.success(`${product.name} added to cart!`);
-    }
-  };
+  const perks = [
+    { icon: Headset, highlight: '24/7', description: 'Support' },
+    { icon: ShieldCheck, highlight: '2 Year', description: 'Warranty' },
+    { icon: Truck, highlight: 'Free', description: 'Shipping' },
+  ];
 
   if (isLoading) {
     return (
       <PageLayout>
         <div className="flex justify-center items-center min-h-[60vh]">
-          <p className="text-foreground/60">Loading product...</p>
+          <P className="text-foreground/60">Loading product...</P>
         </div>
       </PageLayout>
     );
@@ -44,9 +38,9 @@ export default function ProductDetailPage() {
     return (
       <PageLayout>
         <div className="flex flex-col justify-center items-center gap-4 min-h-[60vh]">
-          <p className="text-destructive text-lg">
+          <P className="text-destructive text-lg">
             {error?.message || 'Product not found'}
-          </p>
+          </P>
           <Button onClick={() => router.push('/')} variant="outline">
             <ArrowLeft className="mr-2 w-4 h-4" />
             Back to Home
@@ -96,6 +90,23 @@ export default function ProductDetailPage() {
             {/* Product Info */}
             <ProductInfo product={product} />
           </div>
+
+          <aside className="gap-4 grid grid-cols-3 backdrop-blur-md mt-12 p-12 border border-accent-foreground/10 rounded-xl bg-accent-foreground/5">
+            {perks.map(({ icon: Icon, highlight, description }) => (
+              <div
+                className="flex flex-col items-center text-center gap-2"
+                key={highlight}
+              >
+                <div className="flex justify-center items-center bg-accent/10 rounded-full text-accent w-12 h-12">
+                  <Icon aria-hidden="true" className="w-6 h-6" />
+                </div>
+                <div className="font-mono font-bold text-accent text-2xl">
+                  {highlight}
+                </div>
+                <div className="text-foreground/60 text-xs">{description}</div>
+              </div>
+            ))}
+          </aside>
         </div>
       </div>
     </PageLayout>

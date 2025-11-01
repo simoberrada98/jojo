@@ -87,7 +87,7 @@ function ProductCatalogContent() {
         result.sort((a, b) => b.rating - a.rating);
         break;
       case 'popular':
-        result.sort((a, b) => b.reviews - a.reviews);
+        result.sort((a, b) => b.reviewCount - a.reviewCount);
         break;
       default:
         // newest - keep original order

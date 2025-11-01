@@ -33,7 +33,7 @@ export function sortProducts(
       return sorted.sort((a, b) => b.rating - a.rating);
 
     case 'popular':
-      return sorted.sort((a, b) => b.reviews - a.reviews);
+      return sorted.sort((a, b) => b.reviewCount - a.reviewCount);
 
     case 'newest':
     default:

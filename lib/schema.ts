@@ -147,7 +147,7 @@ export function generateProductSchema(
     schema.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: product.rating,
-      reviewCount: product.reviews,
+      reviewCount: product.reviewCount,
       bestRating: 5,
       worstRating: 1,
     };
