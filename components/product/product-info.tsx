@@ -7,18 +7,19 @@ import {
   Cpu,
   Shield,
   ShoppingCart,
-  Package,
   Tag,
   Info,
   Ruler,
-  CalendarClock,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { useCart } from '@/lib/contexts/cart-context';
 import type { DisplayProduct } from '@/types/product';
-import { H2, H3 } from '../ui/typography';
+
+import { H2 } from '../ui/typography';
+import { ProductTrustedBy } from './product-trusted-by';
+
 
 interface ProductInfoProps {
   product: DisplayProduct;
@@ -69,8 +70,6 @@ export function ProductInfo({ product }: ProductInfoProps) {
       ? `${product.dimensions.weight} lbs`
       : 'N/A';
 
-  const seoKeywords =
-    product.seo.keywords.length > 0 ? product.seo.keywords.join(', ') : 'N/A';
 
   return (
     <div className="space-y-6">
@@ -147,6 +146,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
           Add to Cart
         </Button>
       </div>
+
+      <ProductTrustedBy />
 
       <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
         <div className="bg-card p-4 border border-border rounded-xl">
@@ -267,30 +268,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         </ul>
       </div>
 
-      {product.features.length > 0 && (
-        <div className="bg-card p-6 border border-border rounded-xl">
-          <div className="flex items-center gap-2 mb-4 text-accent">
-            <Shield className="w-5 h-5" />
-            <h3 className="font-semibold text-foreground text-lg">
-              Key features
-            </h3>
-          </div>
-          <ul className="space-y-3">
-            {product.features.map((feature) => (
-              <li
-                key={feature}
-                className="flex items-start gap-3 text-foreground/80"
-              >
-                <span
-                  aria-hidden="true"
-                  className="inline-block bg-accent mt-1.5 rounded-full w-2 h-2"
-                />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+
       {product.description && (
         <section className="hidden visible bg-card mt-12 p-6 border border-border rounded-xl">
           <H2 className="mb-4 font-semibold text-foreground text-2xl">

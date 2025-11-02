@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
   const id = params.get('id') ?? undefined;
   const handle = params.get('handle') ?? undefined;
   const idsParam = params.get('ids') ?? undefined;
+  const category = params.get('category') ?? undefined;
   const q = params.get('q') ?? params.get('search') ?? '';
 
   const rawLimit = Number(params.get('limit'));
@@ -112,6 +113,10 @@ export async function GET(request: NextRequest) {
       .select('*', { count: 'exact' })
       .eq('is_active', true)
       .eq('is_archived', false);
+
+    if (category) {
+      query = query.eq('category', category);
+    }
 
     // Add search filter if provided
     if (q) {

@@ -10,7 +10,10 @@ import PageLayout from '@/components/layout/PageLayout';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { useProduct } from '@/lib/hooks/use-product';
 import { generateProductSchema, serializeSchema } from '@/lib/schema';
-import { H2, P } from '@/components/ui/typography';
+import { P } from '@/components/ui/typography';
+import { ProductKeyFeatures } from '@/components/product/product-key-features';
+import { RelatedProducts } from '@/components/product/related-products';
+import { ProductDetailSkeleton } from '@/components/product/product-detail-skeleton';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -27,9 +30,7 @@ export default function ProductDetailPage() {
   if (isLoading) {
     return (
       <PageLayout>
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <P className="text-foreground/60">Loading product...</P>
-        </div>
+        <ProductDetailSkeleton />
       </PageLayout>
     );
   }
@@ -80,12 +81,15 @@ export default function ProductDetailPage() {
           </Button>
 
           <div className="gap-12 grid grid-cols-1 lg:grid-cols-2">
-            {/* Product Visual */}
-            <ProductImageGallery
-              product={product}
-              selectedImage={selectedImage}
-              setSelectedImage={setSelectedImage}
-            />
+            {/* Product Visuals and Key Features */}
+            <div>
+              <ProductImageGallery
+                product={product}
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+              />
+              <ProductKeyFeatures product={product} />
+            </div>
 
             {/* Product Info */}
             <ProductInfo product={product} />
@@ -107,6 +111,8 @@ export default function ProductDetailPage() {
               </div>
             ))}
           </aside>
+
+          <RelatedProducts category={product.category} currentProductId={product.id} />
         </div>
       </div>
     </PageLayout>

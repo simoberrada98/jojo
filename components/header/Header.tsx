@@ -12,6 +12,8 @@ import { CartButton } from './CartButton';
 import { Navigation } from './Navigation';
 import { UserMenu } from './UserMenu';
 import { MobileMenu } from './MobileMenu';
+import { useAnimationConfig } from '@/lib/animation';
+import { MotionButton } from '@/components/ui/button';
 
 interface HeaderProps {
   cartCount?: number;
@@ -20,24 +22,25 @@ interface HeaderProps {
 export function Header({ cartCount = 0 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const anim = useAnimationConfig();
 
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+      transition={{ duration: anim.enter, ease: anim.easeStandard }}
       className="top-0 z-50 fixed bg-background/60 backdrop-blur-md border-border border-b w-full"
       role="banner"
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-2"
             aria-label={`${APP_BRANDING.name} home`}
           >
-            <BrandLogo className="p-6 text-foreground" decorative />
+            <BrandLogo className="p-4 sm:p-6 text-foreground" decorative />
 
             <span className="sr-only">{APP_BRANDING.name}</span>
           </Link>
@@ -46,24 +49,26 @@ export function Header({ cartCount = 0 }: HeaderProps) {
           <Navigation />
 
           {/* Actions: Currency Toggle, Cart, User Menu, Mobile Toggle */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <CurrencyToggle />
             <CartButton cartCount={cartCount} />
             <UserMenu onAuthDialogOpen={() => setAuthDialogOpen(true)} />
 
             {/* Mobile Menu Button */}
-            <button
+            <MotionButton
+              variant="ghost"
+              size="icon"
               className="md:hidden"
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
             >
               {isOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
               )}
-            </button>
+            </MotionButton>
           </div>
         </div>
 

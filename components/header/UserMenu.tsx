@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { User, Settings, LogOut, Package, Heart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MotionButton } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,7 @@ import { Muted } from '@/components/ui/typography';
 import { useAuth } from '@/lib/contexts/auth-context';
 import { getInitials } from '@/lib/utils/string';
 import { USER_DASHBOARD_NAV } from '@/lib/constants/navigation';
+import { useAnimationConfig } from '@/lib/animation';
 
 interface UserMenuProps {
   onAuthDialogOpen: () => void;
@@ -30,31 +31,36 @@ const iconMap = {
 
 export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
   const { user, profile, signOut } = useAuth();
+  const anim = useAnimationConfig();
 
   if (!user) {
     return (
-      <Button
+      <MotionButton
         variant="ghost"
         size="icon"
         onClick={onAuthDialogOpen}
         className="rounded-full"
       >
         <User className="w-5 h-5" />
-      </Button>
+      </MotionButton>
     );
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <MotionButton
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+        >
           <Avatar className="w-8 h-8">
             <AvatarImage src={profile?.avatar_url || undefined} />
             <AvatarFallback className="bg-primary text-primary-foreground">
               {getInitials(user.email)}
             </AvatarFallback>
           </Avatar>
-        </Button>
+        </MotionButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>

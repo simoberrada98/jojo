@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useAnimationConfig } from '@/lib/animation';
 import type { BezierDefinition } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
@@ -47,21 +48,23 @@ const brands: Brand[] = [
   },
 ];
 
-const marqueeVariants = {
+const makeMarquee = (duration: number) => ({
   animate: {
     x: ['0%', '-50%'],
     transition: {
       x: {
         repeat: Infinity,
         repeatType: 'loop' as const,
-        duration: 30,
-        ease: [0.25, 0.1, 0.25, 1] satisfies BezierDefinition,
+        duration,
+        ease: 'linear',
       },
     },
   },
-};
+});
 
 export default function TrustedBySection() {
+  const reducedMotion = useReducedMotion();
+  const anim = useAnimationConfig();
   const duplicatedBrands = [...brands, ...brands];
 
   return (
@@ -86,10 +89,9 @@ export default function TrustedBySection() {
 
         <div className="relative overflow-hidden">
           <motion.div
-            className="flex items-center gap-10 py-4 min-w-max"
-            variants={marqueeVariants}
-            animate="animate"
-            initial={false}
+            className="flex items-center gap-10 py-4 min-w-max will-change-transform"
+            variants={makeMarquee(anim.marqueeDuration)}
+            animate={reducedMotion ? undefined : 'animate'}
           >
             {duplicatedBrands.map((brand, index) => (
               <div

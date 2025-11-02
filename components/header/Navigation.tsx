@@ -13,7 +13,7 @@ export function Navigation() {
         <Link
           key={item.href}
           href={item.href}
-          className="text-foreground/80 hover:text-accent transition"
+          className="relative text-foreground/80 transition-colors hover:text-foreground after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-accent after:transition-[width] after:duration-200 hover:after:w-full"
         >
           {item.label}
         </Link>

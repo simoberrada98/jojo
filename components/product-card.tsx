@@ -16,6 +16,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const anim = useAnimationConfig();
   const [isAdded, setIsAdded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { currency, formatPrice } = useCurrency();
@@ -37,11 +38,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      transition={{ duration: anim.enter, ease: anim.easeStandard }}
+      whileHover={{ y: -8, transition: { type: 'tween', ease: anim.easeStandard, duration: anim.hover } }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="group relative hover:shadow-2xl hover:shadow-accent/20 border border-border hover:border-accent rounded-lg overflow-hidden transition-all duration-300"
+      className="group relative hover:shadow-2xl hover:shadow-accent/20 border border-border hover:border-accent rounded-lg overflow-hidden transition-all duration-300 will-change-transform"
     >
       <div
         aria-hidden="true"
@@ -136,7 +137,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Add to Cart Button */}
-        <motion.div whileTap={{ scale: 0.95 }}>
+        <motion.div whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: anim.tap }}>
           <Button
             onClick={handleAddToCart}
             className="gap-2 bg-primary hover:bg-primary/90 w-full font-semibold text-primary-foreground transition-all duration-300 glow-accent-hover"
@@ -149,3 +150,4 @@ export default function ProductCard({ product }: ProductCardProps) {
     </motion.div>
   );
 }
+import { useAnimationConfig } from '@/lib/animation';

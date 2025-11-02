@@ -10,8 +10,11 @@ import ProductImage from '@/components/product-image';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { useCart } from '@/lib/contexts/cart-context';
 import type { DisplayProduct } from '@/types/product';
+import { useAnimationConfig } from '@/lib/animation';
+import { ProductCardSkeleton } from './product/product-card-skeleton';
 
 export default function TopProducts() {
+  const anim = useAnimationConfig();
   const [products, setProducts] = useState<DisplayProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const { currency, formatPrice } = useCurrency();
@@ -45,8 +48,21 @@ export default function TopProducts() {
     return (
       <section className="px-4 sm:px-6 lg:px-8 py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="text-foreground/60">Loading top products...</p>
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
+              <span className="bg-clip-text bg-linear-to-r from-primary via-accent to-secondary text-transparent">
+                Top Rated Products
+              </span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-foreground/70 text-lg">
+              Our most popular and highest-rated mining hardware trusted by
+              professionals worldwide.
+            </p>
+          </div>
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-3 mb-12">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </section>
@@ -63,7 +79,7 @@ export default function TopProducts() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: anim.enter, ease: anim.easeStandard }}
           className="mb-12 text-center"
         >
           <h2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
@@ -85,9 +101,9 @@ export default function TopProducts() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative bg-card hover:shadow-accent/10 hover:shadow-lg border border-border hover:border-accent/50 rounded-xl overflow-hidden transition-all duration-300"
+                      transition: { duration: anim.enter, ease: anim.easeStandard },
+              whileHover={{ y: -8, transition: { type: 'tween', ease: anim.easeStandard, duration: anim.hover } }}
+              className="group relative bg-card hover:shadow-accent/10 hover:shadow-lg border border-border hover:border-accent/50 rounded-xl overflow-hidden transition-all duration-300 will-change-transform"
             >
               {/* Best Seller Badge */}
               <Link href={`/product/${product.handle}`} className="block">
@@ -169,7 +185,7 @@ export default function TopProducts() {
                 </Link>
 
                 {/* Action Button */}
-                <motion.div whileTap={{ scale: 0.95 }}>
+                <motion.div whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: anim.tap }}>
                   <Button
                     className="bg-primary hover:bg-primary/90 w-full text-primary-foreground"
                     onClick={() => {
@@ -190,11 +206,11 @@ export default function TopProducts() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
           className="text-center"
         >
           <Link href="/collections/all">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: 0.15 }}>
               <Button
                 size="lg"
                 variant="outline"

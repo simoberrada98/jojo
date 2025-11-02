@@ -3,12 +3,14 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useAnimationConfig } from '@/lib/animation';
 
 interface PageTransitionProps {
   children: ReactNode;
 }
 
 export default function PageTransition({ children }: PageTransitionProps) {
+  const anim = useAnimationConfig();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -58,7 +60,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
     []
   );
 
-  const overlayDuration = isMobile ? 0.4 : 0.5;
+  const overlayDuration = anim.overlay;
   const gridLineDelay = isMobile ? 0.015 : 0.01;
 
   return (
@@ -69,8 +71,8 @@ export default function PageTransition({ children }: PageTransitionProps) {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 1.005 }}
         transition={{
-          duration: 0.3,
-          ease: [0.45, 0.05, 0.55, 0.95],
+          duration: anim.pageTransition,
+          ease: anim.easeEmphasized,
         }}
       >
         {/* Animated overlay layers - kept lightweight for responsiveness */}
@@ -86,7 +88,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               className="absolute inset-0 bg-linear-to-br from-accent/20 via-primary/10 to-transparent"
               initial={{ x: '-100%', skewX: -10 }}
               animate={{ x: '100%' }}
-              transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+              transition={{ duration: Math.max(0.5, anim.overlay + 0.15), ease: [0.76, 0, 0.24, 1] }}
             />
 
             {/* Digital grid lines */}
@@ -104,7 +106,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: [0, 1, 0] }}
                   transition={{
-                    duration: 0.45,
+                    duration: Math.max(0.35, anim.overlay - 0.1),
                     delay: i * gridLineDelay,
                     ease: 'easeOut',
                   }}
@@ -118,7 +120,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: 1, opacity: [0, 1, 0] }}
                   transition={{
-                    duration: 0.45,
+                    duration: Math.max(0.35, anim.overlay - 0.1),
                     delay: i * gridLineDelay,
                     ease: 'easeOut',
                   }}
@@ -144,7 +146,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
                       y: [-14, 14],
                     }}
                     transition={{
-                      duration: 0.75,
+                      duration: Math.max(0.6, anim.overlay + 0.2),
                       delay: particle.delay,
                       ease: 'easeOut',
                     }}
