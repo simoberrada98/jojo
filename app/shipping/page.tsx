@@ -19,7 +19,7 @@ export default function ShippingPage() {
               </Link>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium text-foreground">
-                Shipping Information
+                Information — Shipping:
               </span>
             </div>
           </div>
@@ -28,7 +28,11 @@ export default function ShippingPage() {
         {/* Hero */}
         <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
-            <H1 className="mb-4">Shipping Information</H1>
+            <H1 className="mb-4">Information — Shipping:</H1>
+            <div className="mx-auto max-w-xl space-y-2 text-lg text-muted-foreground">
+              <p>Handling time: 1–2 days</p>
+              <p>Delivery time: 2–4 days</p>
+            </div>
             <Muted className="m-0 mx-auto max-w-2xl text-lg">
               Fast, secure, and reliable delivery of your mining hardware
               worldwide

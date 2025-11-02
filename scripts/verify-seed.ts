@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '../lib/utils/logger';
 
 config({ path: '.env.local' });
 
@@ -9,7 +10,7 @@ async function verifyData() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseKey) {
-    console.error('❌ SUPABASE_SERVICE_ROLE_KEY not found');
+    logger.error('❌ SUPABASE_SERVICE_ROLE_KEY not found');
     process.exit(1);
   }
 
@@ -17,7 +18,7 @@ async function verifyData() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  console.log('🔍 Verifying seeded data...\n');
+  logger.audit('🔍 Verifying seeded data...\n');
 
   // Check products
   const { data: products, error: productsError } = await supabase
@@ -26,16 +27,16 @@ async function verifyData() {
     .limit(5);
 
   if (productsError) {
-    console.error('❌ Error fetching products:', productsError.message);
+    logger.error('❌ Error fetching products', productsError);
     return;
   }
 
-  console.log('📦 Sample Products:');
+  logger.audit('📦 Sample Products:');
   products?.forEach((p) => {
-    console.log(`  • ${p.name}`);
-    console.log(`    Price: $${p.base_price}`);
-    console.log(`    Featured Image: ${p.featured_image_url ? '✅' : '❌'}`);
-    console.log(`    Images Count: ${p.images?.length || 0}`);
+    logger.audit(`  • ${p.name}`);
+    logger.audit(`    Price: $${p.base_price}`);
+    logger.audit(`    Featured Image: ${p.featured_image_url ? '✅' : '❌'}`);
+    logger.audit(`    Images Count: ${p.images?.length || 0}`);
   });
 
   // Check variants
@@ -45,16 +46,16 @@ async function verifyData() {
     .limit(5);
 
   if (variantsError) {
-    console.error('❌ Error fetching variants:', variantsError.message);
+    logger.error('❌ Error fetching variants', variantsError);
     return;
   }
 
-  console.log('\n🎯 Sample Variants:');
+  logger.audit('\n🎯 Sample Variants:');
   variants?.forEach((v) => {
-    console.log(`  • ${v.name}`);
-    console.log(`    Price: $${v.price}`);
-    console.log(`    Image: ${v.image_url ? '✅' : '❌'}`);
-    console.log(`    Images Count: ${v.images?.length || 0}`);
+    logger.audit(`  • ${v.name}`);
+    logger.audit(`    Price: $${v.price}`);
+    logger.audit(`    Image: ${v.image_url ? '✅' : '❌'}`);
+    logger.audit(`    Images Count: ${v.images?.length || 0}`);
   });
 
   // Summary stats
@@ -66,9 +67,9 @@ async function verifyData() {
     .from('product_variants')
     .select('*', { count: 'exact', head: true });
 
-  console.log('\n📊 Summary:');
-  console.log(`  Total Products: ${productCount}`);
-  console.log(`  Total Variants: ${variantCount}`);
+  logger.audit('\n📊 Summary:');
+  logger.audit(`  Total Products: ${productCount}`);
+  logger.audit(`  Total Variants: ${variantCount}`);
 
   // Check for missing data
   const { count: noImages } = await supabase
@@ -81,13 +82,16 @@ async function verifyData() {
     .select('*', { count: 'exact', head: true })
     .lte('base_price', 0);
 
-  console.log('\n⚠️  Data Quality:');
-  console.log(`  Products without images: ${noImages}`);
-  console.log(`  Products with invalid prices: ${noPrices}`);
+  logger.audit('\n⚠️  Data Quality:');
+  logger.audit(`  Products without images: ${noImages}`);
+  logger.audit(`  Products with invalid prices: ${noPrices}`);
 
   if (noImages === 0 && noPrices === 0) {
-    console.log('\n✅ All products have valid images and prices!');
+    logger.audit('\n✅ All products have valid images and prices!');
   }
 }
 
-verifyData().catch(console.error);
+verifyData().catch((error) => {
+  logger.error('verify-seed script failed', error as Error);
+  process.exit(1);
+});

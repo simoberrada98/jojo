@@ -304,6 +304,7 @@ const pricing = usePricingService();
 
 ```typescript
 import { createPaymentOrchestrator } from '@/lib/services/payment';
+import { logger } from '@/lib/utils/logger';
 
 const orchestrator = createPaymentOrchestrator({
   businessId: 'my-business',
@@ -311,7 +312,7 @@ const orchestrator = createPaymentOrchestrator({
   supabaseKey: env.SUPABASE_SERVICE_ROLE_KEY,
   hooks: {
     onCompleted: async (event) => {
-      console.log('Payment completed!', event);
+      logger.info('Payment completed!', event);
     },
   },
 });

@@ -1,32 +1,61 @@
-ALTER TABLE public.products
-  RENAME COLUMN price TO base_price;
-
-ALTER TABLE public.products
-  ADD COLUMN sku TEXT UNIQUE NOT NULL,
-  ADD COLUMN slug TEXT UNIQUE NOT NULL,
-  ADD COLUMN short_description TEXT,
-  ADD COLUMN brand TEXT,
-  ADD COLUMN tags TEXT[],
-  ADD COLUMN compare_at_price DECIMAL(10, 2),
-  ADD COLUMN cost_price DECIMAL(10, 2),
-  ADD COLUMN algorithm TEXT,
-  ADD COLUMN efficiency TEXT,
-  ADD COLUMN weight DECIMAL(10, 2),
-  ADD COLUMN dimensions_length DECIMAL(10, 2),
-  ADD COLUMN dimensions_width DECIMAL(10, 2),
-  ADD COLUMN dimensions_height DECIMAL(10, 2),
-  ADD COLUMN featured_image_url TEXT,
-  ADD COLUMN images TEXT[],
-  ADD COLUMN video_url TEXT,
-  ADD COLUMN track_inventory BOOLEAN DEFAULT true,
-  ADD COLUMN low_stock_threshold INTEGER DEFAULT 5,
-  ADD COLUMN allow_backorder BOOLEAN DEFAULT false,
-  ADD COLUMN meta_title TEXT,
-  ADD COLUMN meta_description TEXT,
-  ADD COLUMN meta_keywords TEXT[],
-  ADD COLUMN is_archived BOOLEAN DEFAULT false,
-  ADD COLUMN published_at TIMESTAMPTZ;
-
+-- Drop existing products table and recreate with enhanced schema
+DROP TABLE IF EXISTS public.products CASCADE;
+-- Products table (base product information)
+CREATE TABLE public.products (
+  id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
+  sku TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  description TEXT,
+  short_description TEXT,
+  category TEXT NOT NULL,
+  brand TEXT,
+  tags TEXT[], -- Array of tags for filtering
+  
+  -- Pricing (base price, can be overridden by variants)
+  base_price DECIMAL(10, 2) NOT NULL,
+  compare_at_price DECIMAL(10, 2), -- Original price for showing discounts
+  cost_price DECIMAL(10, 2), -- Cost for profit calculations
+  
+  -- Mining-specific attributes
+  hash_rate TEXT,
+  power_consumption TEXT,
+  algorithm TEXT,
+  efficiency TEXT, -- e.g., "J/TH", "W/MH"
+  
+  -- Physical attributes
+  weight DECIMAL(10, 2), -- in kg
+  dimensions_length DECIMAL(10, 2), -- in cm
+  dimensions_width DECIMAL(10, 2),
+  dimensions_height DECIMAL(10, 2),
+  
+  -- Media
+  featured_image_url TEXT,
+  images TEXT[], -- Array of image URLs
+  video_url TEXT,
+  model_3d_url TEXT,
+  
+  -- Inventory
+  track_inventory BOOLEAN DEFAULT true,
+  stock_quantity INTEGER DEFAULT 0,
+  low_stock_threshold INTEGER DEFAULT 5,
+  allow_backorder BOOLEAN DEFAULT false,
+  
+  -- SEO
+  meta_title TEXT,
+  meta_description TEXT,
+  meta_keywords TEXT[],
+  
+  -- Status
+  is_featured BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
+  is_archived BOOLEAN DEFAULT false,
+  published_at TIMESTAMPTZ,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 -- Product variants table (different options of the same product)
 CREATE TABLE public.product_variants (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -65,7 +94,6 @@ CREATE TABLE public.product_variants (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Product options table (defines available options like "Color", "Size", "Memory")
 CREATE TABLE public.product_options (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -77,7 +105,6 @@ CREATE TABLE public.product_options (
   required BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Product option values table (defines specific values like "Red", "8GB", etc.)
 CREATE TABLE public.product_option_values (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -90,7 +117,6 @@ CREATE TABLE public.product_option_values (
   is_available BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Product collections table (for grouping products)
 CREATE TABLE public.collections (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -103,7 +129,6 @@ CREATE TABLE public.collections (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Product collection mapping (many-to-many)
 CREATE TABLE public.product_collections (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -113,7 +138,6 @@ CREATE TABLE public.product_collections (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(product_id, collection_id)
 );
-
 -- Product reviews table
 CREATE TABLE public.product_reviews (
   id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
@@ -128,7 +152,6 @@ CREATE TABLE public.product_reviews (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Indexes for better query performance
 CREATE INDEX idx_products_category ON public.products(category);
 CREATE INDEX idx_products_brand ON public.products(brand);
@@ -137,47 +160,35 @@ CREATE INDEX idx_products_sku ON public.products(sku);
 CREATE INDEX idx_products_is_featured ON public.products(is_featured);
 CREATE INDEX idx_products_is_active ON public.products(is_active);
 CREATE INDEX idx_products_tags ON public.products USING GIN(tags);
-
 CREATE INDEX idx_product_variants_product_id ON public.product_variants(product_id);
 CREATE INDEX idx_product_variants_sku ON public.product_variants(sku);
 CREATE INDEX idx_product_variants_options ON public.product_variants USING GIN(options);
-
 CREATE INDEX idx_product_options_product_id ON public.product_options(product_id);
 CREATE INDEX idx_product_option_values_option_id ON public.product_option_values(option_id);
-
 CREATE INDEX idx_collections_slug ON public.collections(slug);
 CREATE INDEX idx_product_collections_product_id ON public.product_collections(product_id);
 CREATE INDEX idx_product_collections_collection_id ON public.product_collections(collection_id);
-
 CREATE INDEX idx_product_reviews_product_id ON public.product_reviews(product_id);
 CREATE INDEX idx_product_reviews_user_id ON public.product_reviews(user_id);
 CREATE INDEX idx_product_reviews_rating ON public.product_reviews(rating);
-
 -- Triggers for updated_at
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON public.products
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_product_variants_updated_at BEFORE UPDATE ON public.product_variants
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_collections_updated_at BEFORE UPDATE ON public.collections
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_product_reviews_updated_at BEFORE UPDATE ON public.product_reviews
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- Row Level Security (RLS) Policies
 
 -- Products policies (public read for active products)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view active products"
   ON public.products FOR SELECT
   USING (is_active = true AND is_archived = false);
-
 -- Product variants policies
 ALTER TABLE public.product_variants ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view active product variants"
   ON public.product_variants FOR SELECT
   USING (
@@ -188,54 +199,40 @@ CREATE POLICY "Anyone can view active product variants"
       AND products.is_archived = false
     )
   );
-
 -- Product options policies
 ALTER TABLE public.product_options ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view product options"
   ON public.product_options FOR SELECT
   USING (true);
-
 -- Product option values policies
 ALTER TABLE public.product_option_values ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view product option values"
   ON public.product_option_values FOR SELECT
   USING (true);
-
 -- Collections policies
 ALTER TABLE public.collections ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view collections"
   ON public.collections FOR SELECT
   USING (true);
-
 -- Product collections policies
 ALTER TABLE public.product_collections ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view product collections"
   ON public.product_collections FOR SELECT
   USING (true);
-
 -- Product reviews policies
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view approved reviews"
   ON public.product_reviews FOR SELECT
   USING (is_approved = true);
-
 CREATE POLICY "Users can create their own reviews"
   ON public.product_reviews FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
 CREATE POLICY "Users can update their own reviews"
   ON public.product_reviews FOR UPDATE
   USING (auth.uid() = user_id);
-
 CREATE POLICY "Users can delete their own reviews"
   ON public.product_reviews FOR DELETE
   USING (auth.uid() = user_id);
-
 -- Helper function to get product with lowest variant price
 CREATE OR REPLACE FUNCTION get_product_display_price(product_id UUID)
 RETURNS DECIMAL AS $$
@@ -257,7 +254,6 @@ BEGIN
   RETURN COALESCE(lowest_variant_price, base_price);
 END;
 $$ LANGUAGE plpgsql;
-
 -- Helper function to get total stock for a product (including variants)
 CREATE OR REPLACE FUNCTION get_product_total_stock(product_id UUID)
 RETURNS INTEGER AS $$
@@ -287,7 +283,6 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Helper function to calculate average rating
 CREATE OR REPLACE FUNCTION get_product_average_rating(product_id UUID)
 RETURNS DECIMAL AS $$
@@ -302,7 +297,6 @@ BEGIN
   RETURN ROUND(avg_rating, 1);
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function to generate unique slug
 CREATE OR REPLACE FUNCTION generate_unique_slug(base_slug TEXT, table_name TEXT)
 RETURNS TEXT AS $$

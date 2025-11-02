@@ -13,10 +13,11 @@ import type { CartItem } from '@/types/cart';
 export type { CartItem };
 import { PricingService } from '@/lib/services/pricing.service';
 import { STORAGE_KEYS } from '@/lib/config/app.config';
+import { logger } from '@/lib/utils/logger';
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: DisplayProduct) => void;
+  addItem: (product: DisplayProduct, quantity?: number) => void;
   removeItem: (productId: string | number) => void;
   updateQuantity: (productId: string | number, quantity: number) => void;
   clearCart: () => void;
@@ -39,7 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         try {
           setItems(JSON.parse(savedCart));
         } catch (e) {
-          console.error('Failed to load cart:', e);
+          logger.error('Failed to load cart', e as Error);
         }
       }
     }
@@ -53,17 +54,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  const addItem = (product: DisplayProduct) => {
+  const addItem = (product: DisplayProduct, quantity?: number) => {
+    const proposed = quantity ?? 1;
+    const resolvedQuantity = Number.isFinite(proposed) ? Math.floor(proposed) : 1;
+    const normalizedQuantity = Math.max(1, resolvedQuantity);
+
     setItems((current) => {
       const existing = current.find((item) => item.id === product.id);
       if (existing) {
         return current.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + normalizedQuantity }
             : item
         );
       }
-      return [...current, { ...product, quantity: 1 }];
+      return [...current, { ...product, quantity: normalizedQuantity }];
     });
   };
 

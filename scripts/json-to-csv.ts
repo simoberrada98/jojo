@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../lib/utils/logger';
 
 interface ProductJSON {
   id: number;
@@ -292,7 +293,7 @@ async function main() {
 
   // Read all JSON files
   const files = fs.readdirSync(jsonDir).filter((f) => f.endsWith('.json'));
-  console.log(`Found ${files.length} product files to convert\n`);
+  logger.audit(`Found ${files.length} product files to convert\n`);
 
   const products: ProductJSON[] = [];
 
@@ -309,11 +310,14 @@ async function main() {
   fs.writeFileSync(path.join(outputDir, 'products.csv'), productsCSV);
   fs.writeFileSync(path.join(outputDir, 'product_variants.csv'), variantsCSV);
 
-  console.log(`✅ Converted ${products.length} products to CSV`);
-  console.log(`📁 Products CSV: ${path.join(outputDir, 'products.csv')}`);
-  console.log(
+  logger.audit(`✅ Converted ${products.length} products to CSV`);
+  logger.audit(`📁 Products CSV: ${path.join(outputDir, 'products.csv')}`);
+  logger.audit(
     `📁 Variants CSV: ${path.join(outputDir, 'product_variants.csv')}`
   );
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  logger.error('json-to-csv script failed', error as Error);
+  process.exit(1);
+});

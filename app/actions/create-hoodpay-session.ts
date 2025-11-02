@@ -4,6 +4,7 @@ import 'server-only';
 
 import { CONVERSION_RATES } from '@/lib/config/currency.config';
 import { PricingService } from '@/lib/services/pricing.service';
+import { logger } from '@/lib/utils/logger';
 
 export async function createHoodpaySessionAction(input: {
   amount: any;
@@ -25,7 +26,6 @@ export async function createHoodpaySessionAction(input: {
     metadata: input.metadata ?? {},
     customerEmail: input.customer?.email,
   };
-  console.error('HoodPay payload:', payload);
   const res = await fetch(
     `https://api.hoodpay.io/v1/businesses/${businessId}/payments`,
     {
@@ -39,7 +39,7 @@ export async function createHoodpaySessionAction(input: {
     }
   );
   if (!res.ok) {
-    console.error('HoodPay API response status:', res.status);
+    logger.error('HoodPay API response', undefined, { status: res.status });
     throw new Error(`Failed to create HoodPay session: ${await res.text()}`);
   }
   const data = await res.json();

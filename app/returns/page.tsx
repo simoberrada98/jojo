@@ -14,6 +14,16 @@ export default function ReturnsPage() {
           </Muted>
         </div>
 
+        <section className="mb-10">
+          <div className="space-y-2 rounded-lg border border-border bg-card p-6">
+            <h2 className="text-xl font-semibold text-foreground">
+              Information — Shipping:
+            </h2>
+            <p className="text-muted-foreground">Handling time: 1–2 days</p>
+            <p className="text-muted-foreground">Delivery time: 2–4 days</p>
+          </div>
+        </section>
+
         <div className="space-y-6">
           <Card>
             <CardHeader>

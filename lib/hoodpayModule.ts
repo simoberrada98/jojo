@@ -53,6 +53,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { env } from '@/lib/config/env';
 import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
+import { logger } from '@/lib/utils/logger';
 
 export { verifyHoodpaySignature as verifyWebhookSignature } from '@/lib/services/payment/webhook';
 
@@ -576,7 +577,7 @@ export async function webhookReceiverHandler(
     const payload = req.body;
 
     // Log webhook receipt (in production, save to database)
-    console.log('Webhook received:', {
+    logger.info('Webhook received', {
       event: payload.event,
       paymentId: payload.paymentId,
       status: payload.status,
@@ -588,7 +589,7 @@ export async function webhookReceiverHandler(
     // Process webhook asynchronously (implement your business logic)
     // Example: Update payment status in database, send notifications, etc.
   } catch (error: any) {
-    console.error('Webhook processing error:', error);
+    logger.error('Webhook processing error', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 }

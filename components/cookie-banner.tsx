@@ -8,6 +8,7 @@ import {
 } from '@/app/actions/cookies';
 import { Button } from '@/components/ui/button';
 import type { CookieConsentStatus } from '@/lib/cookies/preferences';
+import { logger } from '@/lib/utils/logger';
 
 interface CookieBannerProps {
   initialStatus: CookieConsentStatus | null;
@@ -33,7 +34,7 @@ export function CookieBanner({ initialStatus }: CookieBannerProps) {
           await rejectCookieConsent();
         }
       } catch (error) {
-        console.error('Cookie consent update failed', error);
+        logger.error('Cookie consent update failed', error as Error);
         setStatus(null);
       }
     });

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { logger } from '../lib/utils/logger';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -80,7 +81,7 @@ function slugify(text: string): string {
 async function importCollections(collections: ImportData['collections']) {
   if (!collections || collections.length === 0) return {};
 
-  console.log(`Importing ${collections.length} collections...`);
+  logger.audit(`Importing ${collections.length} collections...`);
   const collectionMap: Record<string, string> = {};
 
   for (const collection of collections) {
@@ -96,12 +97,12 @@ async function importCollections(collections: ImportData['collections']) {
       .single();
 
     if (error) {
-      console.error(`Error importing collection ${collection.name}:`, error);
+      logger.error(`Error importing collection ${collection.name}`, error);
       continue;
     }
 
     collectionMap[collection.slug] = data.id;
-    console.log(`✓ Imported collection: ${collection.name}`);
+    logger.audit(`✓ Imported collection: ${collection.name}`);
   }
 
   return collectionMap;
@@ -111,7 +112,7 @@ async function importProducts(
   products: Product[],
   collectionMap: Record<string, string>
 ) {
-  console.log(`\nImporting ${products.length} products...`);
+  logger.audit(`\nImporting ${products.length} products...`);
 
   for (const product of products) {
     try {
@@ -148,12 +149,12 @@ async function importProducts(
         .single();
 
       if (productError) {
-        console.error(`Error importing product ${product.name}:`, productError);
+        logger.error(`Error importing product ${product.name}`, productError);
         continue;
       }
 
       const productId = productData.id;
-      console.log(`✓ Imported product: ${product.name}`);
+      logger.audit(`✓ Imported product: ${product.name}`);
 
       // Import product options
       if (product.options && product.options.length > 0) {
@@ -173,10 +174,7 @@ async function importProducts(
             .single();
 
           if (optionError) {
-            console.error(
-              `  Error importing option ${option.name}:`,
-              optionError
-            );
+            logger.error(`  Error importing option ${option.name}`, optionError);
             continue;
           }
 
@@ -196,14 +194,11 @@ async function importProducts(
               });
 
             if (valueError) {
-              console.error(
-                `    Error importing value ${value.value}:`,
-                valueError
-              );
+              logger.error(`    Error importing value ${value.value}`, valueError);
             }
           }
 
-          console.log(
+          logger.audit(
             `  ✓ Imported option: ${option.name} with ${option.values.length} values`
           );
         }
@@ -228,14 +223,11 @@ async function importProducts(
             });
 
           if (variantError) {
-            console.error(
-              `  Error importing variant ${variant.name}:`,
-              variantError
-            );
+            logger.error(`  Error importing variant ${variant.name}`, variantError);
             continue;
           }
 
-          console.log(`  ✓ Imported variant: ${variant.name}`);
+          logger.audit(`  ✓ Imported variant: ${variant.name}`);
         }
       }
 
@@ -252,16 +244,13 @@ async function importProducts(
               });
 
             if (linkError) {
-              console.error(
-                `  Error linking to collection ${collectionSlug}:`,
-                linkError
-              );
+              logger.error(`  Error linking to collection ${collectionSlug}`, linkError);
             }
           }
         }
       }
     } catch (error) {
-      console.error(`Error processing product ${product.name}:`, error);
+      logger.error(`Error processing product ${product.name}`, error as Error);
     }
   }
 }
@@ -270,12 +259,12 @@ async function main() {
   const jsonFilePath = process.argv[2] || './data/products.json';
 
   if (!fs.existsSync(jsonFilePath)) {
-    console.error(`File not found: ${jsonFilePath}`);
-    console.log('Usage: ts-node import-products.ts <path-to-json-file>');
+    logger.error(`File not found: ${jsonFilePath}`);
+    logger.audit('Usage: ts-node import-products.ts <path-to-json-file>');
     process.exit(1);
   }
 
-  console.log(`Reading products from: ${jsonFilePath}`);
+  logger.audit(`Reading products from: ${jsonFilePath}`);
   const jsonData = fs.readFileSync(jsonFilePath, 'utf-8');
   const data: ImportData = JSON.parse(jsonData);
 
@@ -285,7 +274,10 @@ async function main() {
   // Import products
   await importProducts(data.products, collectionMap);
 
-  console.log('\n✅ Import completed!');
+  logger.audit('\n✅ Import completed!');
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  logger.error('Import products script failed', error as Error);
+  process.exit(1);
+});

@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { logger } from '../lib/utils/logger';
 
 interface ProductJSON {
   id: number;
@@ -154,30 +155,33 @@ async function main() {
   // Read all JSON files
   const files = fs.readdirSync(jsonDir).filter((f) => f.endsWith('.json'));
 
-  console.log(`Found ${files.length} product files to optimize\n`);
+  logger.audit(`Found ${files.length} product files to optimize\n`);
 
   for (const file of files) {
     const filePath = path.join(jsonDir, file);
     const product: ProductJSON = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-    console.log(`Original: ${product.title}`);
+    logger.audit(`Original: ${product.title}`);
 
     const optimized = optimizeProduct(product);
 
-    console.log(`Optimized: ${optimized.title}`);
-    console.log(`Handle: ${optimized.handle}`);
-    console.log(
+    logger.audit(`Optimized: ${optimized.title}`);
+    logger.audit(`Handle: ${optimized.handle}`);
+    logger.audit(
       `Meta: ${generateMetaDescription(optimized.title, optimized.body_html)}`
     );
-    console.log('---');
+    logger.audit('---');
 
     // Write optimized version
     const outputPath = path.join(outputDir, file);
     fs.writeFileSync(outputPath, JSON.stringify(optimized, null, 2));
   }
 
-  console.log(`\n✅ Optimized ${files.length} products`);
-  console.log(`Output directory: ${outputDir}`);
+  logger.audit(`\n✅ Optimized ${files.length} products`);
+  logger.audit(`Output directory: ${outputDir}`);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  logger.error('optimize-products script failed', error as Error);
+  process.exit(1);
+});

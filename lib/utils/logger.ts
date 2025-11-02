@@ -1,33 +1,71 @@
-interface LoggerMethods {
-  api?: (method: string, path: string, ...args: unknown[]) => void;
-  error?: (
-    message: string,
-    error?: unknown,
-    context?: Record<string, unknown>
-  ) => void;
-  info?: (...args: unknown[]) => void;
-  warn?: (...args: unknown[]) => void;
-}
+type StructuredContext = Record<string, unknown> | undefined;
 
-class Logger implements LoggerMethods {
+class Logger {
+  private isBrowser = typeof window !== 'undefined';
+
+  private formatArgs(args: unknown[]): string {
+    if (args.length === 0) {
+      return '';
+    }
+
+    return args
+      .map((arg) => {
+        if (typeof arg === 'string') {
+          return arg;
+        }
+        try {
+          return JSON.stringify(arg);
+        } catch {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  private write(
+    stream: 'stdout' | 'stderr',
+    message: string,
+    ...args: unknown[]
+  ) {
+    if (this.isBrowser) {
+      return;
+    }
+
+    const target =
+      stream === 'stdout' ? process.stdout : process.stderr;
+
+    if (!target) {
+      return;
+    }
+
+    const formattedArgs = this.formatArgs(args);
+    const line = formattedArgs ? `${message} ${formattedArgs}` : message;
+    target.write(`${line}\n`);
+  }
+
   api(method: string, path: string, ...args: unknown[]) {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[API] ${method} ${path}`, ...args);
+      this.write('stdout', `[API] ${method} ${path}`, ...args);
     }
   }
 
-  error(message: string, error?: unknown, context?: Record<string, unknown>) {
-    console.error(`[ERROR] ${message}`, error, context);
+  error(message: string, error?: unknown, context?: StructuredContext) {
+    const payload = context ? { error, context } : error;
+    this.write('stderr', `[ERROR] ${message}`, payload);
   }
 
   info(...args: unknown[]) {
     if (process.env.NODE_ENV === 'development') {
-      console.log('[INFO]', ...args);
+      this.write('stdout', '[INFO]', ...args);
     }
   }
 
   warn(...args: unknown[]) {
-    console.warn('[WARN]', ...args);
+    this.write('stdout', '[WARN]', ...args);
+  }
+
+  audit(message: string, context?: StructuredContext) {
+    this.write('stdout', '[AUDIT]', { message, context, timestamp: new Date().toISOString() });
   }
 }
 

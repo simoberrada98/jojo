@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../lib/utils/logger';
 
 // Load environment variables from .env.local
 config({ path: '.env.local' });
@@ -96,7 +97,7 @@ async function seedDatabase() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseKey) {
-    console.error('❌ SUPABASE_SERVICE_ROLE_KEY not found in environment');
+    logger.error('❌ SUPABASE_SERVICE_ROLE_KEY not found in environment');
     process.exit(1);
   }
 
@@ -107,13 +108,13 @@ async function seedDatabase() {
     },
   });
 
-  console.log('🌱 Starting database seed...\n');
+  logger.audit('🌱 Starting database seed...\n');
 
   // Read all optimized JSON files
   const jsonDir = path.join(process.cwd(), 'lib/data/json-optimized');
   const files = fs.readdirSync(jsonDir).filter((f) => f.endsWith('.json'));
 
-  console.log(`📦 Found ${files.length} products to import\n`);
+  logger.audit(`📦 Found ${files.length} products to import\n`);
 
   let successCount = 0;
   let errorCount = 0;
@@ -127,12 +128,12 @@ async function seedDatabase() {
 
       // Skip products without variants or images
       if (!product.variants || product.variants.length === 0) {
-        console.log(`⚠️  Skipping ${product.title}: No variants`);
+        logger.audit(`⚠️  Skipping ${product.title}: No variants`);
         continue;
       }
 
       if (!product.images || product.images.length === 0) {
-        console.log(`⚠️  Skipping ${product.title}: No images`);
+        logger.audit(`⚠️  Skipping ${product.title}: No images`);
         continue;
       }
 
@@ -160,7 +161,7 @@ async function seedDatabase() {
 
       // Validate first variant has a price
       if (!firstVariant.price || parseFloat(firstVariant.price) <= 0) {
-        console.log(`⚠️  Skipping ${product.title}: Invalid or missing price`);
+        logger.audit(`⚠️  Skipping ${product.title}: Invalid or missing price`);
         continue;
       }
 
@@ -210,10 +211,7 @@ async function seedDatabase() {
         .single();
 
       if (productError) {
-        console.error(
-          `❌ Error inserting product ${product.title}:`,
-          productError.message
-        );
+        logger.error(`❌ Error inserting product ${product.title}`, productError);
         errorCount++;
         continue;
       }
@@ -222,7 +220,7 @@ async function seedDatabase() {
       for (const variant of product.variants) {
         // Skip variants without valid prices
         if (!variant.price || parseFloat(variant.price) <= 0) {
-          console.log(`⚠️  Skipping variant ${variant.sku}: Invalid price`);
+          logger.audit(`⚠️  Skipping variant ${variant.sku}: Invalid price`);
           continue;
         }
 
@@ -244,33 +242,33 @@ async function seedDatabase() {
           });
 
         if (variantError) {
-          console.error(
-            `⚠️  Error inserting variant for ${product.title}:`,
-            variantError.message
-          );
+          logger.error(`⚠️  Error inserting variant for ${product.title}`, variantError);
         }
       }
 
-      console.log(`✅ Imported: ${product.title}`);
+      logger.audit(`✅ Imported: ${product.title}`);
       successCount++;
     } catch (error) {
-      console.error(`❌ Error processing ${file}:`, error);
+      logger.error(`❌ Error processing ${file}`, error as Error);
       errorCount++;
     }
   }
 
-  console.log(`\n📊 Import Summary:`);
-  console.log(`   ✅ Success: ${successCount}`);
-  console.log(`   ❌ Errors: ${errorCount}`);
-  console.log(`   📦 Total: ${files.length}`);
+  logger.audit(`\n📊 Import Summary:`);
+  logger.audit(`   ✅ Success: ${successCount}`);
+  logger.audit(`   ❌ Errors: ${errorCount}`);
+  logger.audit(`   📦 Total: ${files.length}`);
 
   // Verify data
   const { count } = await supabase
     .from('products')
     .select('*', { count: 'exact', head: true });
 
-  console.log(`\n🔍 Database verification:`);
-  console.log(`   Products in database: ${count}`);
+  logger.audit(`\n🔍 Database verification:`);
+  logger.audit(`   Products in database: ${count}`);
 }
 
-seedDatabase().catch(console.error);
+seedDatabase().catch((error) => {
+  logger.error('seed-database script failed', error as Error);
+  process.exit(1);
+});

@@ -1,10 +1,12 @@
 import 'server-only';
+import { logger } from '@/lib/utils/logger';
 
 interface SeoProduct {
   id: string;
   slug: string;
   name: string;
   description: string | null;
+  short_description?: string | null;
   category: string;
   base_price: number;
   compare_at_price: number | null;
@@ -14,11 +16,36 @@ interface SeoProduct {
   updated_at: string;
   meta_title: string | null;
   meta_description: string | null;
+  hash_rate: string | null;
+  power_consumption: string | null;
+  algorithm: string | null;
+  efficiency: string | null;
+  noise_level?: string | null;
 }
 
 const SUPABASE_REST_PATH = 'products';
 const SUPABASE_REST_SELECT =
-  'id,slug,name,description,category,base_price,compare_at_price,brand,stock_quantity,featured_image_url,updated_at,meta_title,meta_description';
+  [
+    'id',
+    'slug',
+    'name',
+    'description',
+    'short_description',
+    'category',
+    'base_price',
+    'compare_at_price',
+    'brand',
+    'stock_quantity',
+    'featured_image_url',
+    'updated_at',
+    'meta_title',
+    'meta_description',
+    'hash_rate',
+    'power_consumption',
+    'algorithm',
+    'efficiency',
+    'noise_level',
+  ].join(',');
 
 function getSupabaseInfo() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -52,10 +79,11 @@ export async function fetchActiveProductsForSeo(): Promise<SeoProduct[]> {
   });
 
   if (!response.ok) {
-    console.error(
-      'Failed to fetch Supabase products for SEO',
-      await response.text()
-    );
+    const details = await response.text();
+    logger.error('Failed to fetch Supabase products for SEO', undefined, {
+      status: response.status,
+      details,
+    });
     return [];
   }
 

@@ -1,7 +1,6 @@
 -- Drop tables if they exist (destructive operation)
 DROP TABLE IF EXISTS public.order_items CASCADE;
 DROP TABLE IF EXISTS public.orders CASCADE;
-
 -- Create the 'orders' table
 CREATE TABLE public.orders (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -15,20 +14,15 @@ CREATE TABLE public.orders (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
 -- Enable Row Level Security for 'orders'
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-
 -- Policy for 'orders': Users can view and manage their own orders
 CREATE POLICY "Users can view their own orders" ON public.orders
 FOR SELECT USING (auth.uid() = user_id);
-
 CREATE POLICY "Users can insert their own orders" ON public.orders
 FOR INSERT WITH CHECK (auth.uid() = user_id);
-
 CREATE POLICY "Users can update their own orders" ON public.orders
 FOR UPDATE USING (auth.uid() = user_id);
-
 -- Create the 'order_items' table
 CREATE TABLE public.order_items (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -40,16 +34,13 @@ CREATE TABLE public.order_items (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
-
 -- Enable Row Level Security for 'order_items'
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
-
 -- Policy for 'order_items': Users can view their own order items
 CREATE POLICY "Users can view their own order items" ON public.order_items
 FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.orders WHERE id = order_id AND user_id = auth.uid())
 );
-
 -- Policy for 'order_items': Users can insert their own order items
 CREATE POLICY "Users can insert their own order items" ON public.order_items
 FOR INSERT WITH CHECK (

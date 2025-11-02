@@ -2,6 +2,7 @@
  * Checkout storage utility for persisting checkout form data
  * Saves/loads checkout state to/from localStorage
  */
+import { logger } from '@/lib/utils/logger';
 
 export interface CheckoutState {
   shippingData: {
@@ -35,7 +36,7 @@ export function saveCheckoutState(state: CheckoutState): void {
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (error) {
-      console.warn('Failed to save checkout state:', error);
+      logger.warn('Failed to save checkout state', { error });
     }
   }
 }
@@ -66,7 +67,7 @@ export function loadCheckoutState(): CheckoutState | null {
 
       return data;
     } catch (error) {
-      console.warn('Failed to load checkout state:', error);
+      logger.warn('Failed to load checkout state', { error });
       return null;
     }
   }
@@ -81,7 +82,7 @@ export function clearCheckoutState(): void {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      console.warn('Failed to clear checkout state:', error);
+      logger.warn('Failed to clear checkout state', { error });
     }
   }
 }

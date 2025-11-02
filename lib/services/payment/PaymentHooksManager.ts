@@ -4,6 +4,7 @@
  */
 
 import type { PaymentHooks, PaymentEvent } from '@/types/payment';
+import { logger } from '@/lib/utils/logger';
 
 export class PaymentHooksManager {
   constructor(private hooks?: PaymentHooks) {}
@@ -21,7 +22,7 @@ export class PaymentHooksManager {
     try {
       await hook(event);
     } catch (error) {
-      console.error(`Hook ${hookName} failed:`, error);
+      logger.error(`Hook ${hookName} failed`, error as Error);
       // Don't throw - hooks should not break the payment flow
     }
   }

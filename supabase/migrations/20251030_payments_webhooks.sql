@@ -23,11 +23,9 @@ create table if not exists public.payments (
   completed_at timestamptz,
   expires_at timestamptz
 );
-
 create index if not exists payments_business_id_idx on public.payments (business_id);
 create index if not exists payments_status_idx on public.payments (status);
 create index if not exists payments_created_at_idx on public.payments (created_at desc);
-
 -- Webhook events table
 create table if not exists public.webhook_events (
   id uuid primary key default gen_random_uuid(),
@@ -43,10 +41,8 @@ create table if not exists public.webhook_events (
   processed_at timestamptz,
   retry_count integer not null default 0
 );
-
 create index if not exists webhook_events_event_type_idx on public.webhook_events (event_type);
 create index if not exists webhook_events_received_at_idx on public.webhook_events (received_at desc);
-
 -- Payment attempts table
 create table if not exists public.payment_attempts (
   id uuid primary key default gen_random_uuid(),
@@ -59,5 +55,4 @@ create table if not exists public.payment_attempts (
   response_data jsonb,
   created_at timestamptz not null default now()
 );
-
 create index if not exists payment_attempts_payment_id_idx on public.payment_attempts (payment_id);

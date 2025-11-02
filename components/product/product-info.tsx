@@ -45,6 +45,19 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const { currency, formatPrice } = useCurrency();
   const { addItem } = useCart();
 
+  const appendTrackingParams = (url: string, medium: 'video' | 'model') => {
+    try {
+      const traced = new URL(url);
+      traced.searchParams.set('utm_source', 'minehub');
+      traced.searchParams.set('utm_medium', medium);
+      traced.searchParams.set('utm_campaign', 'product-page');
+      traced.searchParams.set('utm_content', product.handle);
+      return traced.toString();
+    } catch {
+      return url;
+    }
+  };
+
   const handleAddToCart = () => {
     addItem(product);
     toast.success(`${product.name} added to cart!`);
@@ -217,7 +230,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="space-y-2 mt-4 text-foreground/70 text-sm">
               {product.videoUrl && (
                 <a
-                  href={product.videoUrl}
+                  href={appendTrackingParams(product.videoUrl, 'video')}
                   target="_blank"
                   rel="noreferrer"
                   className="text-accent hover:underline underline-offset-4"
@@ -227,7 +240,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
               )}
               {product.model3dUrl && (
                 <a
-                  href={product.model3dUrl}
+                  href={appendTrackingParams(product.model3dUrl, 'model')}
                   target="_blank"
                   rel="noreferrer"
                   className="text-accent hover:underline underline-offset-4"

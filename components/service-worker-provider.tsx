@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { logger } from '@/lib/utils/logger';
 
 const SERVICE_WORKER_PATH = '/service-worker.js';
 
@@ -20,7 +21,7 @@ export function ServiceWorkerProvider() {
           scope: '/',
         });
       } catch (error) {
-        console.error('Service worker registration failed', error);
+        logger.error('Service worker registration failed', error as Error);
       }
     };
 

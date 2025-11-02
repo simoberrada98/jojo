@@ -1,4 +1,5 @@
 import { Currency } from '@/lib/config/currency.config';
+import { logger } from '@/lib/utils/logger';
 
 interface CoinGeckoPriceResponse {
   [key: string]: {
@@ -40,14 +41,14 @@ export class CoinGeckoService {
           // So, 1 / price_in_usd
           rates[currency] = 1 / data[coingeckoId].usd;
         } else {
-          console.warn(`Could not fetch rate for ${currency} from CoinGecko.`);
+          logger.warn(`Could not fetch rate for ${currency} from CoinGecko.`);
           // Fallback to a default or handle error appropriately
           rates[currency] = currency === 'USDC' ? 1.0 : 0; // Default to 1 for USDC, 0 for others if not found
         }
       }
       return rates;
     } catch (error) {
-      console.error('Error fetching conversion rates from CoinGecko:', error);
+      logger.error('Error fetching conversion rates from CoinGecko', error as Error);
       // Return a fallback or throw the error
       return {
         BTC: 0.000029, // Fallback values

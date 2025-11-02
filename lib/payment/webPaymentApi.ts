@@ -14,6 +14,7 @@ import {
   PaymentStatus,
   PaymentError,
 } from '@/types/payment';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * Check if Web Payment API is supported
@@ -317,7 +318,7 @@ export class WebPaymentService {
     try {
       await request.abort();
     } catch (error) {
-      console.error('Failed to abort payment:', error);
+      logger.error('Failed to abort payment', error as Error);
     }
   }
 }

@@ -14,6 +14,7 @@ import {
   type PaymentError,
 } from '@/types/payment';
 import { generateId } from '@/lib/utils/string';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * Storage interface for dependency injection
@@ -54,7 +55,7 @@ class BrowserStorageAdapter implements StorageAdapter {
     try {
       storage.setItem(key, value);
     } catch (error) {
-      console.error('Failed to save to storage:', error);
+      logger.error('Failed to save to storage', error as Error);
     }
   }
 
@@ -65,7 +66,7 @@ class BrowserStorageAdapter implements StorageAdapter {
     try {
       storage.removeItem(key);
     } catch (error) {
-      console.error('Failed to remove from storage:', error);
+      logger.error('Failed to remove from storage', error as Error);
     }
   }
 
@@ -137,7 +138,7 @@ export class PaymentStorageService {
    */
   saveState(state: PaymentLocalState): boolean {
     if (!this.isAvailable()) {
-      console.warn('Storage not available');
+      logger.warn('Storage not available');
       return false;
     }
 
@@ -157,7 +158,7 @@ export class PaymentStorageService {
 
       return true;
     } catch (error) {
-      console.error('Failed to save payment state:', error);
+      logger.error('Failed to save payment state', error as Error);
       return false;
     }
   }
@@ -180,14 +181,14 @@ export class PaymentStorageService {
 
       // Check if session has expired
       if (this.isSessionExpired(state.timestamp)) {
-        console.warn('Payment session expired');
+        logger.warn('Payment session expired');
         this.clearState();
         return null;
       }
 
       return state;
     } catch (error) {
-      console.error('Failed to load payment state:', error);
+      logger.error('Failed to load payment state', error as Error);
       return this.loadRecoveryPoint();
     }
   }
@@ -269,7 +270,7 @@ export class PaymentStorageService {
       this.storage.removeItem(STORAGE_KEYS.paymentState);
       this.storage.removeItem(STORAGE_KEYS.paymentRecovery);
     } catch (error) {
-      console.error('Failed to clear payment state:', error);
+      logger.error('Failed to clear payment state', error as Error);
     }
   }
 
@@ -296,7 +297,7 @@ export class PaymentStorageService {
         JSON.stringify(recoveryData)
       );
     } catch (error) {
-      console.error('Failed to save recovery point:', error);
+      logger.error('Failed to save recovery point', error as Error);
     }
   }
 
@@ -319,7 +320,7 @@ export class PaymentStorageService {
 
       return recoveryData.state;
     } catch (error) {
-      console.error('Failed to load recovery point:', error);
+      logger.error('Failed to load recovery point', error as Error);
       return null;
     }
   }
@@ -354,7 +355,7 @@ export class PaymentStorageService {
         }
       });
     } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
+      logger.error('Failed to cleanup expired sessions', error as Error);
     }
   }
 
@@ -488,7 +489,7 @@ export class PaymentStorageService {
       const state: PaymentLocalState = JSON.parse(stateJson);
       return this.saveState(state);
     } catch (error) {
-      console.error('Failed to import state:', error);
+      logger.error('Failed to import state', error as Error);
       return false;
     }
   }

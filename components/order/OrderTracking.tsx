@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/utils/logger';
 
 interface TrackingEvent {
   id: string;
@@ -69,7 +70,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
 
         if (error) {
           // Table might not exist yet, use default event
-          console.warn('Order tracking table not found, using default status');
+          logger.warn('Order tracking table not found, using default status');
           setEvents([defaultEvent]);
           return;
         }
@@ -82,10 +83,9 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
           setEvents([defaultEvent]);
         }
       } catch (error) {
-        console.warn(
-          'Could not fetch tracking data, using default status:',
-          error
-        );
+        logger.warn('Could not fetch tracking data, using default status', {
+          error,
+        });
         // Set default event on error
         setEvents([defaultEvent]);
       } finally {

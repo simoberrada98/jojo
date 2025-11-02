@@ -12,6 +12,7 @@ import { useCart } from '@/lib/contexts/cart-context';
 import type { DisplayProduct } from '@/types/product';
 import { useAnimationConfig } from '@/lib/animation';
 import { ProductCardSkeleton } from './product/product-card-skeleton';
+import { logger } from '@/lib/utils/logger';
 
 export default function TopProducts() {
   const anim = useAnimationConfig();
@@ -36,7 +37,7 @@ export default function TopProducts() {
 
         setProducts(topRated);
       } catch (error) {
-        console.error('Error fetching top products:', error);
+        logger.error('Error fetching top products', error as Error);
       } finally {
         setLoading(false);
       }
@@ -101,7 +102,7 @@ export default function TopProducts() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-                      transition: { duration: anim.enter, ease: anim.easeStandard },
+              transition={{ duration: anim.enter, ease: anim.easeStandard }}
               whileHover={{ y: -8, transition: { type: 'tween', ease: anim.easeStandard, duration: anim.hover } }}
               className="group relative bg-card hover:shadow-accent/10 hover:shadow-lg border border-border hover:border-accent/50 rounded-xl overflow-hidden transition-all duration-300 will-change-transform"
             >

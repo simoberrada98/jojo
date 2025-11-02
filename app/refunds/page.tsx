@@ -33,6 +33,17 @@ export default function RefundsPage() {
               We stand behind our products. If you&rsquo;re not satisfied,
               we&rsquo;ll make it right.
             </Muted>
+            <div className="mx-auto mt-6 max-w-xl space-y-2">
+              <h2 className="text-xl font-semibold text-foreground">
+                Information — Shipping:
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Handling time: 1–2 days
+              </p>
+              <p className="text-lg text-muted-foreground">
+                Delivery time: 2–4 days
+              </p>
+            </div>
           </div>
         </section>
 

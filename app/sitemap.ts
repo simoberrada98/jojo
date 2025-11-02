@@ -2,85 +2,52 @@ import type { MetadataRoute } from 'next';
 import { fetchActiveProductsForSeo } from '@/lib/data/seo-products';
 import { siteMetadata } from '@/lib/seo/site-metadata';
 
+type StaticEntry = {
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
+  priority: number;
+};
+
+const STATIC_ENTRIES: StaticEntry[] = [
+  { path: '/', changeFrequency: 'daily', priority: 1 },
+  { path: '/miners', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/categories', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/miners/specs', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/guides/asic-buying-guide', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/policies/warranty', changeFrequency: 'yearly', priority: 0.4 },
+  { path: '/policies/returns', changeFrequency: 'yearly', priority: 0.4 },
+  { path: '/about', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/learn-more', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
+];
+
 export const revalidate = 3600; // 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteMetadata.baseUrl.toString().replace(/\/$/, '');
-  const lastModified = new Date();
+  const now = new Date();
 
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${base}/`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${base}/about`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${base}/learn-more`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${base}/collection`,
-      lastModified,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${base}/contact`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${base}/privacy-policy`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${base}/terms-of-service`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${base}/shipping`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${base}/returns`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${base}/refunds`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-  ];
+  const staticRoutes: MetadataRoute.Sitemap = STATIC_ENTRIES.map(
+    ({ path, changeFrequency, priority }) => ({
+      url: `${base}${path}`,
+      lastModified: now,
+      changeFrequency,
+      priority,
+    })
+  );
 
   const products = await fetchActiveProductsForSeo();
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${base}/product/${product.slug}`,
-    lastModified: product.updated_at
-      ? new Date(product.updated_at)
-      : lastModified,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
+  const productRoutes: MetadataRoute.Sitemap = products.map((product) => {
+    const updatedAt = product.updated_at ? new Date(product.updated_at) : now;
 
-  return [...staticPages, ...productRoutes];
+    return {
+      url: `${base}/miners/${product.slug}`,
+      lastModified: updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    };
+  });
+
+  return [...staticRoutes, ...productRoutes];
 }

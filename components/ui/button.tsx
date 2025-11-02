@@ -61,24 +61,41 @@ const Button = React.forwardRef<
 
 Button.displayName = 'Button';
 
-const RawMotionButton = motion(Button);
+const RawMotionButton = motion.create(Button);
 
-function MotionButton(
-  props: (React.ComponentProps<typeof Button> & MotionProps) | any
-) {
-  const { whileHover, whileTap, transition, ...rest } = props;
+const MotionButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<typeof Button> & MotionProps
+>(({ whileHover, whileTap, transition, ...rest }, ref) => {
   const anim = useAnimationConfig();
+  const hoverMotion =
+    whileHover ?? {
+      scale: 1.04,
+      transition: { type: 'tween', duration: anim.hover, ease: anim.easeStandard },
+    };
+  const tapMotion =
+    whileTap ?? {
+      scale: 0.97,
+      transition: { type: 'tween', duration: anim.tap, ease: anim.easeStandard },
+    };
+  const sharedTransition =
+    transition ?? {
+      type: 'tween',
+      duration: anim.hover,
+      ease: anim.easeStandard,
+    };
 
   return (
     <RawMotionButton
-      whileHover={whileHover ?? { scale: 1.05 }}
-      whileTap={whileTap ?? { scale: 0.95 }}
-      transition={
-        transition ?? { type: 'tween', duration: anim.tap }
-      }
+      ref={ref}
+      whileHover={hoverMotion}
+      whileTap={tapMotion}
+      transition={sharedTransition}
       {...rest}
     />
   );
-}
+});
+
+MotionButton.displayName = 'MotionButton';
 
 export { Button, MotionButton, buttonVariants };

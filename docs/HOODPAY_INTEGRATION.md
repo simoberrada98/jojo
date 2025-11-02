@@ -68,19 +68,20 @@ https://jhuangnyc.com/api/hoodpay/webhook
 
 ```typescript
 import { createPaymentOrchestrator, PaymentMethod } from '@/lib/payment';
+import { logger } from '@/lib/utils/logger';
 
 // Initialize orchestrator with hooks
 const orchestrator = createPaymentOrchestrator({
   hooks: {
     onCreated: async (event) => {
-      console.log('Payment created:', event);
+      logger.info('Payment created', event);
     },
     onCompleted: async (event) => {
-      console.log('Payment completed:', event);
+      logger.info('Payment completed', event);
       // Send confirmation email, update order, etc.
     },
     onFailed: async (event) => {
-      console.error('Payment failed:', event);
+      logger.error('Payment failed', event);
       // Handle failure, notify user
     },
   },
@@ -138,7 +139,7 @@ if (isPaymentRequestSupported()) {
   );
 
   if (result.success) {
-    console.log('Payment completed via Web Payment API');
+    logger.info('Payment completed via Web Payment API');
   }
 }
 ```
@@ -154,7 +155,7 @@ if (state && state.currentStep !== PaymentStep.COMPLETE) {
   // Resume payment flow
   const recovered = await orchestrator.recoverPayment();
   if (recovered) {
-    console.log('Recovered payment:', recovered);
+    logger.info('Recovered payment', recovered);
   }
 }
 ```

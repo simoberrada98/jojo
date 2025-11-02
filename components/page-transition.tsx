@@ -92,12 +92,13 @@ export default function PageTransition({ children }: PageTransitionProps) {
             />
 
             {/* Digital grid lines */}
-            <motion.div
-              className="absolute inset-0 overflow-hidden"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 0 }}
-              transition={{ duration: overlayDuration, delay: 0.12 }}
-            >
+            {mounted && (
+              <motion.div
+                className="absolute inset-0 overflow-hidden"
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: overlayDuration, delay: 0.12 }}
+              >
               {horizontalLines.slice(0, lineCount).map((i) => (
                 <motion.div
                   key={`h-${i}`}
@@ -127,6 +128,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
                 />
               ))}
             </motion.div>
+            )}
 
             {/* Glowing particles - only render on client */}
             {mounted && (

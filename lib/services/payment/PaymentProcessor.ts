@@ -11,6 +11,7 @@ import {
   type PaymentResult,
   type PaymentLocalState,
 } from '@/types/payment';
+import { logger } from '@/lib/utils/logger';
 
 export class PaymentProcessor {
   constructor(private dbService?: PaymentDatabaseService) {}
@@ -122,7 +123,7 @@ export class PaymentProcessor {
         response_data: result.metadata,
       });
     } catch (error) {
-      console.warn('Failed to record payment attempt:', error);
+      logger.warn('Failed to record payment attempt', { error });
     }
   }
 
@@ -139,7 +140,7 @@ export class PaymentProcessor {
     try {
       await this.dbService.updatePaymentStatus(paymentId, status, error);
     } catch (err) {
-      console.warn('Failed to update payment status:', err);
+      logger.warn('Failed to update payment status', { error: err });
     }
   }
 
@@ -171,7 +172,7 @@ export class PaymentProcessor {
         checkout_data: options?.checkoutData,
       });
     } catch (error) {
-      console.warn('Failed to save payment to database:', error);
+      logger.warn('Failed to save payment to database', { error });
     }
   }
 }
