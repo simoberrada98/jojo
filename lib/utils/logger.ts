@@ -27,24 +27,41 @@ class Logger {
     message: string,
     ...args: unknown[]
   ) {
+    // In browser, do nothing
     if (this.isBrowser) {
-      return;
-    }
-
-    const target =
-      stream === 'stdout' ? process.stdout : process.stderr;
-
-    if (!target) {
       return;
     }
 
     const formattedArgs = this.formatArgs(args);
     const line = formattedArgs ? `${message} ${formattedArgs}` : message;
-    target.write(`${line}\n`);
+
+    // Check if we're in a Node.js environment with process available
+    if (typeof process !== 'undefined') {
+      // Dynamically access process streams to avoid static analysis in Edge Runtime
+      const processStreams = process as any;
+
+      // Check if streams are available (Node.js, not Edge Runtime)
+      if (processStreams.stdout && processStreams.stderr) {
+        const target =
+          stream === 'stdout' ? processStreams.stdout : processStreams.stderr;
+        target.write(`${line}\n`);
+        return;
+      }
+    }
+
+    // Fallback to console for Edge Runtime or other environments
+    if (stream === 'stderr') {
+      console.error(line);
+    } else {
+      console.log(line);
+    }
   }
 
   api(method: string, path: string, ...args: unknown[]) {
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'development'
+    ) {
       this.write('stdout', `[API] ${method} ${path}`, ...args);
     }
   }
@@ -55,7 +72,10 @@ class Logger {
   }
 
   info(...args: unknown[]) {
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'development'
+    ) {
       this.write('stdout', '[INFO]', ...args);
     }
   }
@@ -65,7 +85,11 @@ class Logger {
   }
 
   audit(message: string, context?: StructuredContext) {
-    this.write('stdout', '[AUDIT]', { message, context, timestamp: new Date().toISOString() });
+    this.write('stdout', '[AUDIT]', {
+      message,
+      context,
+      timestamp: new Date().toISOString(),
+    });
   }
 }
 
