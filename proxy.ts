@@ -1,5 +1,15 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { logger } from '@/lib/utils/logger';
+
+const WATCHED_CRAWLERS = [
+  /gptbot/i,
+  /claudebot/i,
+  /perplexitybot/i,
+  /googlebot/i,
+  /google-extended/i,
+  /ccbot/i,
+];
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -8,6 +18,16 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // Log crawler visits
+  const userAgent = request.headers.get('user-agent') ?? '';
+  if (WATCHED_CRAWLERS.some((pattern) => pattern.test(userAgent))) {
+    logger.audit('crawler-visit', {
+      userAgent,
+      path: pathname,
+    });
+  }
+
+  // Redirect /shop to /collections/all
   if (pathname === '/shop' || pathname === '/shop/') {
     const url = request.nextUrl.clone();
     url.pathname = '/collections/all';
@@ -23,7 +43,7 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
@@ -43,7 +63,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protect dashboard routes
-  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (!user && pathname.startsWith('/dashboard')) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
@@ -59,7 +79,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * - Static assets (svg, png, jpg, jpeg, gif, webp)
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
