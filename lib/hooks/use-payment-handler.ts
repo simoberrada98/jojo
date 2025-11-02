@@ -26,6 +26,9 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
           metadata: data.metadata,
           customer: data.customerInfo,
         });
+        if (!session.checkoutUrl) {
+          throw new Error('HoodPay session checkout URL is missing');
+        }
         window.location.href = session.checkoutUrl;
         return;
       }

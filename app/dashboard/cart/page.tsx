@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function CartPage() {
   const { cart, loading, updateQuantity, removeFromCart, total } = useCart();
@@ -22,7 +23,7 @@ export default function CartPage() {
   ) => {
     try {
       await updateQuantity(cartItemId, newQuantity);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to update quantity');
     }
   };
@@ -31,7 +32,7 @@ export default function CartPage() {
     try {
       await removeFromCart(cartItemId);
       toast.success('Removed from cart');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to remove from cart');
     }
   };
@@ -58,10 +59,12 @@ export default function CartPage() {
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     {item.product?.image_url && (
-                      <img
+                      <Image
                         src={item.product.image_url}
-                        alt={item.product.name}
-                        className="rounded-lg w-24 h-24 object-cover"
+                        alt={item.product.name || 'Product image'}
+                        width={96}
+                        height={96}
+                        className="rounded-lg object-cover"
                       />
                     )}
                     <div className="flex-1">

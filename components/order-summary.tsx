@@ -8,9 +8,10 @@ import { OrderSummarySkeleton } from '@/components/checkout-skeleton';
 import { useCart } from '@/lib/contexts/cart-context';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { PricingService } from '@/lib/services/pricing.service';
+import type { OrderReviewData } from '@/lib/utils/checkout';
 
 interface OrderSummaryProps {
-  onProceed: (data: any) => void;
+  onProceed: (data: OrderReviewData) => void;
 }
 
 export default function OrderSummary({ onProceed }: OrderSummaryProps) {

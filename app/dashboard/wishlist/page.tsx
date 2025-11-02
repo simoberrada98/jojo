@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Trash2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function WishlistPage() {
   const { wishlist, loading, removeFromWishlist } = useWishlist();
@@ -15,7 +16,7 @@ export default function WishlistPage() {
     try {
       await removeFromWishlist(productId);
       toast.success('Removed from wishlist');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to remove from wishlist');
     }
   };
@@ -24,7 +25,7 @@ export default function WishlistPage() {
     try {
       await addToCart(productId);
       toast.success('Added to cart');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to add to cart');
     }
   };
@@ -49,9 +50,11 @@ export default function WishlistPage() {
             <Card key={item.id}>
               <CardContent className="p-6">
                 {item.product?.image_url && (
-                  <img
+                  <Image
                     src={item.product.image_url}
-                    alt={item.product.name}
+                    alt={item.product.name || 'Product image'}
+                    width={600}
+                    height={192}
                     className="mb-4 rounded-lg w-full h-48 object-cover"
                   />
                 )}

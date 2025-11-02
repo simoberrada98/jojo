@@ -18,8 +18,15 @@ import {
 import { H1, H2, H3, Muted } from '@/components/ui/typography';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 
+type ContactFormData = {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+};
+
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
     subject: '',
@@ -43,6 +50,10 @@ export default function ContactPage() {
       setFormData({ name: '', email: '', subject: '', message: '' });
       setSubmitted(false);
     }, 3000);
+  };
+
+  const handleSubjectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, subject: value }));
   };
 
   return (
@@ -135,11 +146,7 @@ export default function ContactPage() {
                   <Select
                     name="subject"
                     value={formData.subject}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: { name: 'subject', value },
-                      } as any)
-                    }
+                    onValueChange={handleSubjectChange}
                     required
                   >
                     <SelectTrigger id="subject">

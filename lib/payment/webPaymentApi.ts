@@ -217,7 +217,7 @@ export class WebPaymentService {
       );
 
       return processResult;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return this.handlePaymentError(error);
     }
   }
@@ -256,14 +256,17 @@ export class WebPaymentService {
           currency: checkoutData.currency,
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
         paymentId: '',
         status: PaymentStatus.FAILED,
         error: {
           code: 'PROCESSING_ERROR',
-          message: error.message || 'Failed to process payment',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to process payment',
           retryable: true,
         },
       };
@@ -273,28 +276,32 @@ export class WebPaymentService {
   /**
    * Handle payment errors
    */
-  private handlePaymentError(error: any): PaymentResult {
+  private handlePaymentError(error: unknown): PaymentResult {
     let errorCode = 'UNKNOWN_ERROR';
     let errorMessage = 'An unknown error occurred';
     let retryable = true;
 
-    if (error.name === 'AbortError') {
-      errorCode = 'USER_CANCELLED';
-      errorMessage = 'Payment was cancelled by user';
-      retryable = false;
-    } else if (error.name === 'InvalidStateError') {
-      errorCode = 'INVALID_STATE';
-      errorMessage = 'Payment request is in an invalid state';
-      retryable = false;
-    } else if (error.name === 'NotSupportedError') {
-      errorCode = 'NOT_SUPPORTED';
-      errorMessage = 'Payment method not supported';
-      retryable = false;
-    } else if (error.name === 'SecurityError') {
-      errorCode = 'SECURITY_ERROR';
-      errorMessage = 'Security error during payment';
-      retryable = false;
-    } else if (error.message) {
+    if (error instanceof DOMException) {
+      if (error.name === 'AbortError') {
+        errorCode = 'USER_CANCELLED';
+        errorMessage = 'Payment was cancelled by user';
+        retryable = false;
+      } else if (error.name === 'InvalidStateError') {
+        errorCode = 'INVALID_STATE';
+        errorMessage = 'Payment request is in an invalid state';
+        retryable = false;
+      } else if (error.name === 'NotSupportedError') {
+        errorCode = 'NOT_SUPPORTED';
+        errorMessage = 'Payment method not supported';
+        retryable = false;
+      } else if (error.name === 'SecurityError') {
+        errorCode = 'SECURITY_ERROR';
+        errorMessage = 'Security error during payment';
+        retryable = false;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+    } else if (error instanceof Error) {
       errorMessage = error.message;
     }
 

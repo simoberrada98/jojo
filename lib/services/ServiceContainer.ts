@@ -8,8 +8,8 @@ type ServiceFactory<T> = () => T;
 type ServiceInstance<T> = T;
 
 export class ServiceContainer {
-  private services = new Map<string, ServiceInstance<any>>();
-  private factories = new Map<string, ServiceFactory<any>>();
+  private services = new Map<string, ServiceInstance<unknown>>();
+  private factories = new Map<string, ServiceFactory<unknown>>();
   private singletons = new Set<string>();
 
   /**
@@ -57,7 +57,7 @@ export class ServiceContainer {
       this.services.set(name, instance);
     }
 
-    return instance;
+    return instance as T;
   }
 
   /**

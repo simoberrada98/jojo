@@ -12,6 +12,7 @@ const COINGECKO_IDS: Record<Currency, string> = {
   ETH: 'ethereum',
   BNB: 'binancecoin',
   USDC: 'usd-coin',
+  USDT: 'tether',
 };
 
 export class CoinGeckoService {
@@ -31,6 +32,7 @@ export class CoinGeckoService {
         ETH: 0,
         BNB: 0,
         USDC: 0,
+        USDT: 0,
       };
 
       for (const currencyKey in COINGECKO_IDS) {
@@ -55,6 +57,7 @@ export class CoinGeckoService {
         ETH: 0.00042,
         BNB: 0.00165,
         USDC: 1.0,
+        USDT: 1.0,
       };
     }
   }

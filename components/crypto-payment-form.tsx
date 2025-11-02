@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { H3, Muted } from '@/components/ui/typography';
 import { Copy, Check } from 'lucide-react';
+import Image from 'next/image';
 
 interface CryptoPaymentFormProps {
   onComplete: () => void;
@@ -96,9 +97,11 @@ export default function CryptoPaymentForm({
 
           {/* QR Code */}
           <div className="flex justify-center bg-background p-6 rounded-lg">
-            <img
+            <Image
               src={qrCodeUrl || '/placeholder.svg'}
               alt="Payment QR Code"
+              width={192}
+              height={192}
               className="w-48 h-48"
             />
           </div>

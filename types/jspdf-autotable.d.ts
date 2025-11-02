@@ -1,10 +1,18 @@
 declare module 'jspdf-autotable' {
   import { jsPDF } from 'jspdf';
 
+  export interface AutoTableHookData {
+    doc: jsPDF;
+    pageNumber: number;
+    settings: UserOptions;
+    cursor: { x: number; y: number };
+    // Add other properties as needed based on jspdf-autotable documentation
+  }
+
   export interface UserOptions {
-    head?: any[][];
-    body?: any[][];
-    foot?: any[][];
+    head?: (string | number)[][];
+    body?: (string | number)[][];
+    foot?: (string | number)[][];
     startY?: number;
     margin?:
       | number
@@ -21,11 +29,11 @@ declare module 'jspdf-autotable' {
     alternateRowStyles?: Partial<CellDef>;
     columnStyles?: { [key: string]: Partial<CellDef> };
     styles?: Partial<CellDef>;
-    didDrawPage?: (data: any) => void;
-    didParseCell?: (data: any) => void;
-    didDrawCell?: (data: any) => void;
-    willDrawCell?: (data: any) => void;
-    willDrawPage?: (data: any) => void;
+    didDrawPage?: (data: AutoTableHookData) => void;
+    didParseCell?: (data: AutoTableHookData) => void;
+    didDrawCell?: (data: AutoTableHookData) => void;
+    willDrawCell?: (data: AutoTableHookData) => void;
+    willDrawPage?: (data: AutoTableHookData) => void;
   }
 
   export interface CellDef {

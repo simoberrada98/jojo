@@ -34,6 +34,7 @@ import {
   saveCheckoutState,
   clearCheckoutState,
 } from '@/lib/utils/checkout-storage';
+import type { OrderData, OrderReviewData } from '@/lib/utils/checkout';
 
 export default function CheckoutPage() {
   const { items, isHydrated: isCartHydrated } = useCart();
@@ -41,8 +42,9 @@ export default function CheckoutPage() {
   const [paymentStep, setPaymentStep] = useState<
     'shipping' | 'review' | 'payment' | 'confirmation'
   >('shipping');
-  const [orderData, setOrderData] = useState<any>(null);
-  const [shippingData, setShippingData] = useState({
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
+  type ShippingFormData = OrderData['shippingData'];
+  const [shippingData, setShippingData] = useState<ShippingFormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -112,7 +114,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleProceedToPayment = (data: any) => {
+  const handleProceedToPayment = (data: OrderReviewData) => {
     setOrderData({ ...data, shippingData });
     setPaymentStep('payment');
   };
@@ -130,6 +132,13 @@ export default function CheckoutPage() {
     setShippingData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleCountryChange = (value: string) => {
+    setShippingData((prev) => ({ ...prev, country: value }));
+    if (errors.country) {
+      setErrors((prev) => ({ ...prev, country: '' }));
     }
   };
 
@@ -420,11 +429,7 @@ export default function CheckoutPage() {
                     <Select
                       name="country"
                       value={shippingData.country}
-                      onValueChange={(value) =>
-                        handleInputChange({
-                          target: { name: 'country', value },
-                        } as any)
-                      }
+                      onValueChange={handleCountryChange}
                     >
                       <SelectTrigger id="country">
                         <SelectValue />

@@ -86,6 +86,9 @@ export const supabase = new Proxy({} as SupabaseClient, {
 // Base URL for HoodPay API
 const HOODPAY_BASE_URL = 'https://api.hoodpay.io/v1';
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
 /**
  * Options for filtering the payments list returned by getPayments().
  * Corresponds to the query parameters described in the HoodPay API spec【606859361936998†L780-L807】.
@@ -114,7 +117,7 @@ export async function getPayments(
   token: string,
   businessId: string | number,
   options: GetPaymentsOptions = {}
-): Promise<any> {
+): Promise<unknown> {
   const url = new URL(`${HOODPAY_BASE_URL}/businesses/${businessId}/payments`);
   // Append query parameters if provided
   Object.entries(options).forEach(([key, value]) => {
@@ -133,7 +136,8 @@ export async function getPayments(
     const errorText = await response.text();
     throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json();
+  const data = await response.json();
+  return data as unknown;
 }
 
 /**
@@ -150,6 +154,16 @@ export interface PaymentCreationRequest {
   redirectUrl?: string;
   notifyUrl?: string;
 }
+
+export interface HoodPayPaymentResponse {
+  id?: string | number;
+  paymentUrl?: string;
+  payment_url?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+export type HoodPayGenericResponse = Record<string, unknown>;
 
 /**
  * A single webhook subscription entry returned by the HoodPay API.
@@ -171,7 +185,7 @@ export interface Webhook {
   /** Whether the webhook is currently active. */
   active?: boolean;
   /** Any additional properties returned by the API are captured here. */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -234,14 +248,17 @@ export async function getWebhooks(
     const errorText = await response.text();
     throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  const data = await response.json();
+  const data = (await response.json()) as unknown;
   // The API returns an object containing a list of webhooks under a property such as
   // "webhooks" or it may return the array itself. We normalise to an array.
   if (Array.isArray(data)) {
     return data as Webhook[];
   }
-  if (Array.isArray((data as any).webhooks)) {
-    return (data as any).webhooks as Webhook[];
+  if (isRecord(data)) {
+    const { webhooks } = data as { webhooks?: unknown };
+    if (Array.isArray(webhooks)) {
+      return webhooks as Webhook[];
+    }
   }
   return [];
 }
@@ -296,7 +313,7 @@ export async function createWebhook(
 export async function resetWebhookSecret(
   token: string,
   businessId: string | number
-): Promise<any> {
+): Promise<HoodPayGenericResponse> {
   const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/reset-secret`;
   const response = await fetch(url, {
     method: 'POST',
@@ -309,7 +326,8 @@ export async function resetWebhookSecret(
     const errorText = await response.text();
     throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json();
+  const data = await response.json();
+  return data as HoodPayGenericResponse;
 }
 
 /**
@@ -326,7 +344,7 @@ export async function deleteWebhook(
   token: string,
   businessId: string | number,
   webhookId: string | number
-): Promise<any> {
+): Promise<HoodPayGenericResponse> {
   const url = `${HOODPAY_BASE_URL}/dash/businesses/${businessId}/settings/developer/webhooks/${webhookId}`;
   const response = await fetch(url, {
     method: 'DELETE',
@@ -339,7 +357,8 @@ export async function deleteWebhook(
     const errorText = await response.text();
     throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json();
+  const data = await response.json();
+  return data as HoodPayGenericResponse;
 }
 
 /**
@@ -389,21 +408,30 @@ export async function webhooksApiHandler(
       return;
     }
     if (req.method === 'DELETE') {
-      const { webhookId } = req.query as { [key: string]: any };
-      if (!webhookId) {
+      const { webhookId } = req.query;
+      const resolvedWebhookId = Array.isArray(webhookId)
+        ? webhookId[0]
+        : webhookId;
+      if (!resolvedWebhookId) {
         res.status(400).json({
           error: 'webhookId query parameter is required for deletion',
         });
         return;
       }
-      const deleted = await deleteWebhook(token, businessId, webhookId);
+      const deleted = await deleteWebhook(
+        token,
+        businessId,
+        resolvedWebhookId
+      );
       res.status(200).json(deleted);
       return;
     }
     res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
     res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Failed to process webhook API';
+    res.status(500).json({ error: message });
   }
 }
 
@@ -422,7 +450,7 @@ export async function createPayment(
   token: string,
   businessId: string | number,
   payment: PaymentCreationRequest
-): Promise<any> {
+): Promise<HoodPayPaymentResponse> {
   if (!token) {
     throw new Error(
       'HoodPay API key (token) is missing. Ensure HOODPAY_API_KEY is configured and accessible.'
@@ -456,7 +484,8 @@ export async function createPayment(
     const errorText = await response.text();
     throw new Error(`HoodPay API error ${response.status}: ${errorText}`);
   }
-  return response.json();
+  const data = await response.json();
+  return data as HoodPayPaymentResponse;
 }
 
 /**
@@ -524,11 +553,13 @@ export async function paymentsApiHandler(
     const payments = await getPayments(
       token,
       businessId,
-      req.query as unknown as GetPaymentsOptions
+      req.query as Partial<GetPaymentsOptions>
     );
     res.status(200).json(payments);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Failed to process payment API';
+    res.status(500).json({ error: message });
   }
 }
 
@@ -588,8 +619,10 @@ export async function webhookReceiverHandler(
 
     // Process webhook asynchronously (implement your business logic)
     // Example: Update payment status in database, send notifications, etc.
-  } catch (error: any) {
-    logger.error('Webhook processing error', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Webhook processing failed';
+    logger.error('Webhook processing error', error instanceof Error ? error : new Error(String(message)));
+    res.status(500).json({ error: message });
   }
 }

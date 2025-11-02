@@ -1,6 +1,7 @@
 import type { DisplayProduct } from '@/types/product';
 
 export interface OrganizationSchema {
+  [key: string]: unknown; // Add index signature
   '@context': 'https://schema.org';
   '@type': 'Organization';
   name: string;
@@ -25,6 +26,7 @@ export interface OrganizationSchema {
 }
 
 export interface ProductSchema {
+  [key: string]: unknown; // Add index signature
   '@context': 'https://schema.org';
   '@type': 'Product';
   name: string;
@@ -176,6 +178,7 @@ function buildAdditionalProperties(
 }
 
 export interface WebSiteSchema {
+  [key: string]: unknown; // Add index signature
   '@context': 'https://schema.org';
   '@type': 'WebSite';
   name: string;
@@ -330,6 +333,6 @@ export function generateWebSiteSchema(baseUrl: string): WebSiteSchema {
 /**
  * Helper to serialize schema to JSON-LD script tag
  */
-export function serializeSchema(schema: Record<string, any>): string {
+export function serializeSchema(schema: Record<string, unknown>): string {
   return JSON.stringify(schema, null, 2);
 }

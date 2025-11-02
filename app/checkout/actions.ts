@@ -90,9 +90,11 @@ export async function initiateHoodPayPayment(
         paymentUrl,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     const message =
-      error?.message ?? 'HoodPay payment failed. Please try again later.';
+      error instanceof Error
+        ? error.message
+        : 'HoodPay payment failed. Please try again later.';
     return buildFailureResult('HOODPAY_ERROR', message, true);
   }
 }

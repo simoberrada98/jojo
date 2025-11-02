@@ -23,6 +23,7 @@ import {
   type CheckoutData,
   type PaymentHooks,
 } from '@/types/payment';
+import type { PaymentStrategyInput } from '@/lib/services/payment-strategies';
 
 export class PaymentOrchestrator {
   private stateManager: PaymentStateManager;
@@ -69,7 +70,7 @@ export class PaymentOrchestrator {
     options?: {
       customerEmail?: string;
       description?: string;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
     }
   ): Promise<PaymentIntent> {
     const paymentIntent: PaymentIntent = {
@@ -117,7 +118,7 @@ export class PaymentOrchestrator {
    */
   async processPayment(
     method: PaymentMethod,
-    paymentData?: any
+    paymentData?: PaymentStrategyInput
   ): Promise<PaymentResult> {
     const state = this.stateManager.getCurrentState();
 

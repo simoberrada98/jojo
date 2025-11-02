@@ -3,6 +3,7 @@
  * Saves/loads checkout state to/from localStorage
  */
 import { logger } from '@/lib/utils/logger';
+import type { OrderData } from '@/lib/utils/checkout';
 
 export interface CheckoutState {
   shippingData: {
@@ -17,7 +18,7 @@ export interface CheckoutState {
     country: string;
   };
   paymentStep?: 'shipping' | 'review' | 'payment' | 'confirmation';
-  orderData?: any;
+  orderData?: OrderData | null;
   timestamp?: string;
 }
 

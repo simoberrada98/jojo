@@ -3,13 +3,18 @@
  * Single Responsibility: Process payments using strategies
  */
 
-import { paymentStrategyRegistry } from '@/lib/services/payment-strategies';
+import {
+  paymentStrategyRegistry,
+  type PaymentStrategyInput,
+} from '@/lib/services/payment-strategies';
 import type { PaymentDatabaseService } from '@/lib/services/payment-db.service';
 import {
   PaymentStatus,
   type PaymentMethod,
   type PaymentResult,
   type PaymentLocalState,
+  type PaymentError,
+  type CheckoutData,
 } from '@/types/payment';
 import { logger } from '@/lib/utils/logger';
 
@@ -22,7 +27,7 @@ export class PaymentProcessor {
   async process(
     method: PaymentMethod,
     state: PaymentLocalState,
-    paymentData?: any
+    paymentData?: PaymentStrategyInput
   ): Promise<PaymentResult> {
     // Get strategy for payment method
     const strategy = paymentStrategyRegistry.getStrategy(method);
@@ -79,14 +84,17 @@ export class PaymentProcessor {
       }
 
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const normalizedError =
+        error instanceof Error ? error : new Error('Payment processing failed');
       const errorResult: PaymentResult = {
         success: false,
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
           code: 'PROCESSING_ERROR',
-          message: error.message || 'Payment processing failed',
+          message:
+            normalizedError.message || 'Payment processing failed',
           details: error,
           retryable: true,
         },
@@ -108,7 +116,7 @@ export class PaymentProcessor {
     state: PaymentLocalState,
     method: PaymentMethod,
     result: PaymentResult,
-    paymentData?: any
+    paymentData?: PaymentStrategyInput
   ): Promise<void> {
     if (!this.dbService) return;
 
@@ -133,7 +141,7 @@ export class PaymentProcessor {
   async updateDatabaseStatus(
     paymentId: string,
     status: PaymentStatus,
-    error?: any
+    error?: PaymentError
   ): Promise<void> {
     if (!this.dbService) return;
 
@@ -154,8 +162,8 @@ export class PaymentProcessor {
     currency: string,
     options?: {
       customerEmail?: string;
-      metadata?: Record<string, any>;
-      checkoutData?: any;
+      metadata?: Record<string, unknown>;
+      checkoutData?: CheckoutData;
     }
   ): Promise<void> {
     if (!this.dbService) return;

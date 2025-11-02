@@ -106,8 +106,12 @@ export const generateInvoicePDF = (data: InvoiceData) => {
     },
   });
 
+  interface jsPDFWithAutoTable extends jsPDF {
+    lastAutoTable: { finalY: number };
+  }
+
   // Get the final Y position after the table
-  const finalY = (doc as any).lastAutoTable.finalY || 75;
+  const finalY = (doc as jsPDFWithAutoTable).lastAutoTable.finalY || 75;
 
   // Summary Section
   const summaryStartY = finalY + 15;

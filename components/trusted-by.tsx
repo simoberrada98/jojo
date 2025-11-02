@@ -56,7 +56,7 @@ const makeMarquee = (duration: number) => ({
         repeat: Infinity,
         repeatType: 'loop' as const,
         duration,
-        ease: 'linear',
+        ease: 'linear' as const,
       },
     },
   },

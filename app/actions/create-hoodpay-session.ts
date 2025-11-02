@@ -2,16 +2,31 @@
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import 'server-only';
 
-import { CONVERSION_RATES } from '@/lib/config/currency.config';
+import { CONVERSION_RATES, Currency } from '@/lib/config/currency.config';
 import { PricingService } from '@/lib/services/pricing.service';
 import { logger } from '@/lib/utils/logger';
 
-export async function createHoodpaySessionAction(input: {
-  amount: any;
-  currency: any;
-  metadata: any;
-  customer: any;
-}) {
+type HoodpaySessionInput = {
+  amount: number;
+  currency: string;
+  metadata?: Record<string, unknown>;
+  customer?: {
+    email?: string;
+  };
+};
+
+type HoodpaySessionResponse = {
+  data?: {
+    url: string;
+    id: string;
+  };
+  url?: string;
+  id?: string;
+};
+
+export async function createHoodpaySessionAction(
+  input: HoodpaySessionInput
+) {
   const { apiKey, businessId } = paymentServerConfig.hoodpay;
   if (!apiKey || !businessId) {
     throw new Error('HoodPay credentials are not configured');
@@ -19,7 +34,7 @@ export async function createHoodpaySessionAction(input: {
   const payload = {
     amount: PricingService.convertPrice(
       input.amount,
-      input.currency,
+      input.currency as Currency,
       CONVERSION_RATES
     ),
     currency: 'USD',
@@ -42,7 +57,7 @@ export async function createHoodpaySessionAction(input: {
     logger.error('HoodPay API response', undefined, { status: res.status });
     throw new Error(`Failed to create HoodPay session: ${await res.text()}`);
   }
-  const data = await res.json();
+  const data = (await res.json()) as HoodpaySessionResponse;
   const session = data?.data ?? data;
   return { checkoutUrl: session.url, id: session.id };
 }

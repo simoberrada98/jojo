@@ -6,8 +6,8 @@ export type DeviceClass = "low" | "mid" | "high";
 
 export type AnimationConfig = {
   deviceClass: DeviceClass;
-  easeStandard: "easeOut" | "easeIn" | "linear" | number[];
-  easeEmphasized: number[];
+  easeStandard: "easeOut" | "easeIn" | "linear" | [number, number, number, number];
+  easeEmphasized: [number, number, number, number];
   enter: number;
   hover: number;
   tap: number;

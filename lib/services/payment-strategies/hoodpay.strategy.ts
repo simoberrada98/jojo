@@ -4,10 +4,12 @@
  */
 
 import { BasePaymentStrategy } from './payment-strategy.interface';
-import { createPayment } from '@/lib/hoodpayModule';
+import { createPayment, type PaymentCreationRequest } from '@/lib/hoodpayModule';
 import { PAYMENT_CONFIG } from '@/lib/config/payment.config';
 import type { PaymentResult, PaymentLocalState } from '@/types/payment';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
+
+type HoodPayPaymentData = Partial<PaymentCreationRequest>;
 
 export class HoodPayStrategy extends BasePaymentStrategy {
   private apiKey: string | undefined;
@@ -27,7 +29,10 @@ export class HoodPayStrategy extends BasePaymentStrategy {
     return !!(this.apiKey && this.businessId);
   }
 
-  validate(paymentData?: any): { valid: boolean; error?: string } {
+  validate(paymentData?: HoodPayPaymentData): {
+    valid: boolean;
+    error?: string;
+  } {
     if (!this.isAvailable()) {
       return {
         valid: false,
@@ -39,7 +44,7 @@ export class HoodPayStrategy extends BasePaymentStrategy {
 
   async process(
     state: PaymentLocalState,
-    paymentData?: any
+    paymentData?: HoodPayPaymentData
   ): Promise<PaymentResult> {
     const validation = this.validate(paymentData);
     if (!validation.valid || !this.apiKey || !this.businessId) {
@@ -66,14 +71,16 @@ export class HoodPayStrategy extends BasePaymentStrategy {
 
       return this.createSuccessResult(
         state.paymentIntent.id,
-        hoodpayResponse.id,
+        String(hoodpayResponse.id),
         hoodpayResponse
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'HoodPay payment failed';
       return this.createErrorResult(
         state.paymentIntent.id,
         'HOODPAY_ERROR',
-        error.message || 'HoodPay payment failed',
+        message,
         true
       );
     }

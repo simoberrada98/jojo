@@ -3,12 +3,10 @@
  * Replaces switch statement with extensible strategy pattern
  */
 
-import type {
-  PaymentResult,
-  PaymentLocalState,
-  CheckoutData,
-} from '@/types/payment';
+import type { PaymentResult, PaymentLocalState } from '@/types/payment';
 import { PaymentStatus } from '@/types/payment';
+
+export type PaymentStrategyInput = Record<string, unknown>;
 
 /**
  * Payment Strategy Interface
@@ -18,7 +16,10 @@ export interface PaymentStrategy {
   /**
    * Process payment using this strategy
    */
-  process(state: PaymentLocalState, paymentData?: any): Promise<PaymentResult>;
+  process(
+    state: PaymentLocalState,
+    paymentData?: PaymentStrategyInput
+  ): Promise<PaymentResult>;
 
   /**
    * Check if this strategy is available
@@ -33,7 +34,10 @@ export interface PaymentStrategy {
   /**
    * Validate payment data for this strategy
    */
-  validate(paymentData?: any): { valid: boolean; error?: string };
+  validate(paymentData?: PaymentStrategyInput): {
+    valid: boolean;
+    error?: string;
+  };
 }
 
 /**
@@ -43,7 +47,7 @@ export interface PaymentStrategy {
 export abstract class BasePaymentStrategy implements PaymentStrategy {
   abstract process(
     state: PaymentLocalState,
-    paymentData?: any
+    paymentData?: PaymentStrategyInput
   ): Promise<PaymentResult>;
 
   abstract getName(): string;
@@ -58,7 +62,10 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
   /**
    * Default implementation - can be overridden
    */
-  validate(paymentData?: any): { valid: boolean; error?: string } {
+  validate(paymentData?: PaymentStrategyInput): {
+    valid: boolean;
+    error?: string;
+  } {
     return { valid: true };
   }
 
@@ -89,7 +96,7 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
   protected createSuccessResult(
     paymentId: string,
     transactionId: string,
-    metadata?: any
+    metadata?: Record<string, unknown>
   ): PaymentResult {
     return {
       success: true,

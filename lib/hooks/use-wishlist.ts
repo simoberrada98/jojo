@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/auth-context';
 import type { WishlistItem, Product } from '@/types/database';
 
+type WishlistEntry = WishlistItem & { product: Product | null };
+
 export function useWishlist() {
-  const [wishlist, setWishlist] = useState<
-    (WishlistItem & { product: Product })[]
-  >([]);
+  const [wishlist, setWishlist] = useState<WishlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const supabase = createClient();
 
-  const fetchWishlist = async () => {
+  const fetchWishlist = useCallback(async () => {
     if (!user) {
       setWishlist([]);
       setLoading(false);
@@ -32,14 +32,18 @@ export function useWishlist() {
       .eq('user_id', user.id);
 
     if (!error && data) {
-      setWishlist(data as any);
+      const normalized: WishlistEntry[] = data.map((item) => ({
+        ...item,
+        product: item.product ?? null,
+      }));
+      setWishlist(normalized);
     }
     setLoading(false);
-  };
+  }, [user, supabase]);
 
   useEffect(() => {
     fetchWishlist();
-  }, [user, supabase]);
+  }, [fetchWishlist, user, supabase]);
 
   const addToWishlist = async (productId: string) => {
     if (!user) {

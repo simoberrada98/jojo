@@ -36,7 +36,7 @@ export default function OrdersPage() {
     };
 
     fetchOrders();
-  }, [user]);
+  }, [user, supabase]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

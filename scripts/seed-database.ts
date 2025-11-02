@@ -35,8 +35,15 @@ interface ProductJSON {
   }>;
 }
 
-function extractSpecs(bodyHtml: string) {
-  const specs: any = {};
+interface ProductSpecs {
+  hashRate?: string;
+  power?: string;
+  algorithm?: string;
+  efficiency?: string;
+}
+
+function extractSpecs(bodyHtml: string): ProductSpecs {
+  const specs: ProductSpecs = {};
 
   const hashRateMatch = bodyHtml.match(
     /(\d+(?:,\d+)?)\s*(?:MH\/s|TH\/s|GH\/s)/i
@@ -57,21 +64,28 @@ function extractSpecs(bodyHtml: string) {
   return specs;
 }
 
-function extractDimensions(bodyHtml: string) {
-  const dimensions: any = {};
+interface ProductDimensions {
+  length?: number;
+  width?: number;
+  height?: number;
+  weight?: number;
+}
+
+function extractDimensions(bodyHtml: string): ProductDimensions {
+  const dimensions: ProductDimensions = {};
 
   const dimMatch = bodyHtml.match(
     /([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)\s*inches/i
   );
   if (dimMatch) {
-    dimensions.length = (parseFloat(dimMatch[1]) * 2.54).toFixed(2);
-    dimensions.width = (parseFloat(dimMatch[2]) * 2.54).toFixed(2);
-    dimensions.height = (parseFloat(dimMatch[3]) * 2.54).toFixed(2);
+    dimensions.length = parseFloat((parseFloat(dimMatch[1]) * 2.54).toFixed(2));
+    dimensions.width = parseFloat((parseFloat(dimMatch[2]) * 2.54).toFixed(2));
+    dimensions.height = parseFloat((parseFloat(dimMatch[3]) * 2.54).toFixed(2));
   }
 
   const weightMatch = bodyHtml.match(/(?:Net weight)[:\s]+([\d.]+)\s*lbs/i);
   if (weightMatch) {
-    dimensions.weight = (parseFloat(weightMatch[1]) * 0.453592).toFixed(2);
+    dimensions.weight = parseFloat((parseFloat(weightMatch[1]) * 0.453592).toFixed(2));
   }
 
   return dimensions;
@@ -185,15 +199,15 @@ async function seedDatabase() {
           power_consumption: specs.power || null,
           algorithm: specs.algorithm || null,
           efficiency: specs.efficiency || null,
-          weight: dimensions.weight ? parseFloat(dimensions.weight) : null,
+          weight: dimensions.weight ? dimensions.weight.toString() : null,
           dimensions_length: dimensions.length
-            ? parseFloat(dimensions.length)
+            ? dimensions.length.toString()
             : null,
           dimensions_width: dimensions.width
-            ? parseFloat(dimensions.width)
+            ? dimensions.width.toString()
             : null,
           dimensions_height: dimensions.height
-            ? parseFloat(dimensions.height)
+            ? dimensions.height.toString()
             : null,
           featured_image_url: product.images[0]?.src || null,
           images: product.images.map((img) => img.src),

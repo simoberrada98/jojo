@@ -50,13 +50,15 @@ interface ProductJSON {
   }>;
 }
 
-function extractSpecs(bodyHtml: string): {
+interface ProductSpecs {
   hashRate?: string;
   power?: string;
   algorithm?: string;
   efficiency?: string;
-} {
-  const specs: any = {};
+}
+
+function extractSpecs(bodyHtml: string): ProductSpecs {
+  const specs: ProductSpecs = {};
 
   // Extract hash rate
   const hashRateMatch = bodyHtml.match(
@@ -89,28 +91,30 @@ function extractSpecs(bodyHtml: string): {
   return specs;
 }
 
-function extractDimensions(bodyHtml: string): {
+interface ProductDimensions {
   length?: number;
   width?: number;
   height?: number;
   weight?: number;
-} {
-  const dimensions: any = {};
+}
+
+function extractDimensions(bodyHtml: string): ProductDimensions {
+  const dimensions: ProductDimensions = {};
 
   // Extract dimensions in inches, convert to cm
   const dimMatch = bodyHtml.match(
     /([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)\s*inches/i
   );
   if (dimMatch) {
-    dimensions.length = (parseFloat(dimMatch[1]) * 2.54).toFixed(2);
-    dimensions.width = (parseFloat(dimMatch[2]) * 2.54).toFixed(2);
-    dimensions.height = (parseFloat(dimMatch[3]) * 2.54).toFixed(2);
+    dimensions.length = parseFloat((parseFloat(dimMatch[1]) * 2.54).toFixed(2));
+    dimensions.width = parseFloat((parseFloat(dimMatch[2]) * 2.54).toFixed(2));
+    dimensions.height = parseFloat((parseFloat(dimMatch[3]) * 2.54).toFixed(2));
   }
 
   // Extract weight in lbs, convert to kg
   const weightMatch = bodyHtml.match(/(?:Net weight)[:\s]+([\d.]+)\s*lbs/i);
   if (weightMatch) {
-    dimensions.weight = (parseFloat(weightMatch[1]) * 0.453592).toFixed(2);
+    dimensions.weight = parseFloat((parseFloat(weightMatch[1]) * 0.453592).toFixed(2));
   }
 
   return dimensions;
@@ -129,7 +133,7 @@ function generateMetaDescription(title: string, bodyHtml: string): string {
   return parts.join(' ').substring(0, 160);
 }
 
-function escapeCsvField(field: any): string {
+function escapeCsvField(field: unknown): string {
   if (field === null || field === undefined) return '';
   const str = String(field);
   // Escape quotes and wrap in quotes if contains comma, newline, or quote

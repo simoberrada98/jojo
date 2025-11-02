@@ -1,5 +1,7 @@
 import { APP_CONFIG } from '@/lib/config/app.config';
-import type { PaymentError, ServiceResponse } from '@/types/payment';
+import type { ServiceResponse } from '@/types/payment';
+
+type DbOperationResult<T> = { data: T | null; error: Error | null };
 
 /**
  * Generic retry logic wrapper
@@ -17,7 +19,7 @@ export async function withRetry<T>(
     try {
       return await operation();
     } catch (error) {
-      lastError = error as Error;
+      lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt < maxRetries) {
         // Exponential backoff
@@ -35,13 +37,7 @@ export async function withRetry<T>(
  * Wraps Supabase operations with consistent error handling and timing
  */
 export async function dbOperation<T>(
-  operation: () =>
-    | Promise<{ data: T | null; error: any }>
-    | {
-        then: (
-          onfulfilled: (value: { data: T | null; error: any }) => any
-        ) => any;
-      },
+  operation: () => PromiseLike<DbOperationResult<T>>,
   errorCode: string,
   errorMessage: string,
   useRetry: boolean = true
@@ -82,12 +78,14 @@ export async function dbOperation<T>(
         duration: Date.now() - startTime,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const normalizedError =
+      error instanceof Error ? error : new Error(errorMessage);
     return {
       success: false,
       error: {
         code: errorCode,
-        message: error.message || errorMessage,
+        message: normalizedError.message || errorMessage,
         details: error,
         retryable: true,
       },

@@ -126,9 +126,14 @@ export default function HeroSection() {
     } else {
       setTimeout(attach, 200);
     }
-    return () =>
-      typeof window !== 'undefined' &&
-      window.removeEventListener('deviceorientation', handleDeviceOrientation);
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(
+          'deviceorientation',
+          handleDeviceOrientation
+        );
+      }
+    };
   }, [clamp, reducedMotion]);
 
   useEffect(() => {
@@ -236,8 +241,16 @@ export default function HeroSection() {
     if (reducedMotion) return;
 
     const tick = () => {
-      const px = clamp(pointerRef.current.x * 0.6 + tiltRef.current.x * 0.4, -1, 1);
-      const py = clamp(pointerRef.current.y * 0.6 + tiltRef.current.y * 0.4, -1, 1);
+      const px = clamp(
+        pointerRef.current.x * 0.6 + tiltRef.current.x * 0.4,
+        -1,
+        1
+      );
+      const py = clamp(
+        pointerRef.current.y * 0.6 + tiltRef.current.y * 0.4,
+        -1,
+        1
+      );
       const sy = scrollYRef.current;
 
       if (overlayParallaxRef.current) {
@@ -325,7 +338,7 @@ export default function HeroSection() {
               linear-gradient(90deg, transparent 24%, rgba(102, 204, 255, 0.05) 25%, rgba(102, 204, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(102, 204, 255, 0.05) 75%, rgba(102, 204, 255, 0.05) 76%, transparent 77%, transparent)
             `,
             backgroundSize: '50px 50px',
-            transform: 'translate3d(0px, 0px, 0)'
+            transform: 'translate3d(0px, 0px, 0)',
           }}
         />
       </div>
@@ -333,11 +346,11 @@ export default function HeroSection() {
       <div className="absolute inset-0 pointer-events-none">
         <div
           ref={glowRef}
-          className="absolute inset-0 opacity-60 mix-blend-screen will-change-transform"
+          className="absolute inset-0 opacity-60 will-change-transform mix-blend-screen"
           style={{
             background:
               'radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.35), transparent 55%)',
-            transform: 'scale(1)'
+            transform: 'scale(1)',
           }}
         />
       </div>
@@ -346,12 +359,20 @@ export default function HeroSection() {
         <div
           ref={blobLeftRef}
           className="absolute bg-primary/10 blur-3xl rounded-full w-96 h-96 will-change-transform"
-          style={{ top: '10%', left: '10%', transform: 'translate3d(0px, 0px, 0)' }}
+          style={{
+            top: '10%',
+            left: '10%',
+            transform: 'translate3d(0px, 0px, 0)',
+          }}
         />
         <div
           ref={blobRightRef}
           className="absolute bg-accent/10 blur-3xl rounded-full w-96 h-96 will-change-transform"
-          style={{ bottom: '10%', right: '10%', transform: 'translate3d(0px, 0px, 0)' }}
+          style={{
+            bottom: '10%',
+            right: '10%',
+            transform: 'translate3d(0px, 0px, 0)',
+          }}
         />
       </div>
 
@@ -360,7 +381,11 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: anim.enter, delay: 0.2, ease: anim.easeStandard }}
+            transition={{
+              duration: anim.enter,
+              delay: 0.2,
+              ease: anim.easeStandard,
+            }}
             className="inline-block bg-primary/10 backdrop-blur-sm mb-6 px-4 py-2 animated-border rounded-full"
           >
             <span className="z-10 relative flex items-center gap-2 font-semibold text-accent text-sm">
@@ -382,7 +407,11 @@ export default function HeroSection() {
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: anim.enter, delay: 0.4, ease: anim.easeStandard }}
+            transition={{
+              duration: anim.enter,
+              delay: 0.4,
+              ease: anim.easeStandard,
+            }}
             className="font-tech font-bold text-4xl sm:text-5xl lg:text-7xl text-balance leading-tight"
           >
             {headingLines.map((line, idx) => {
@@ -414,7 +443,11 @@ export default function HeroSection() {
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: anim.enter, delay: 0.6, ease: anim.easeStandard }}
+            transition={{
+              duration: anim.enter,
+              delay: 0.6,
+              ease: anim.easeStandard,
+            }}
             className="mx-auto mb-8 max-w-2xl text-foreground/70 text-lg sm:text-xl text-balance leading-relaxed"
           >
             Professional-grade mining hardware with cutting-edge technology. Pay
@@ -424,7 +457,11 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: anim.enter, delay: 0.8, ease: anim.easeStandard }}
+            transition={{
+              duration: anim.enter,
+              delay: 0.8,
+              ease: anim.easeStandard,
+            }}
             className="flex sm:flex-row flex-col justify-center gap-4 mb-12"
           >
             <Link href="/collections/all" className="block">
@@ -495,10 +532,16 @@ export default function HeroSection() {
                     visible: {
                       opacity: 1,
                       y: 0,
-                      transition: { duration: anim.enter, ease: anim.easeStandard },
+                      transition: {
+                        duration: anim.enter,
+                        ease: anim.easeStandard,
+                      },
                     },
                   }}
-                  whileHover={{ scale: 1.05, transition: { duration: anim.hover } }}
+                  whileHover={{
+                    scale: 1.05,
+                    transition: { duration: anim.hover },
+                  }}
                   className="group bg-white/5 hover:bg-white/10 hover:shadow-[0_0_35px_rgba(102,204,255,0.2)] backdrop-blur-md px-6 py-5 border border-white/10 hover:border-accent/50 rounded-2xl overflow-hidden transition-all duration-300"
                 >
                   <div className="flex justify-center mb-3">

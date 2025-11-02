@@ -163,12 +163,14 @@ export class PaymentDatabaseService {
           duration: Date.now() - startTime,
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const normalizedError =
+        error instanceof Error ? error : new Error('Failed to fetch payments');
       return {
         success: false,
         error: {
           code: 'DB_QUERY_ERROR',
-          message: error.message || 'Failed to fetch payments',
+          message: normalizedError.message || 'Failed to fetch payments',
           details: error,
           retryable: true,
         },

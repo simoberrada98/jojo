@@ -1,11 +1,13 @@
 import type { CheckoutData } from '@/types/payment';
+import type { CartItem } from '@/types/cart';
 
 export interface OrderData {
-  items: any[];
+  items: CartItem[];
   subtotal: number;
   shipping: number;
   tax: number;
   total: number;
+  orderId: string;
   shippingData: {
     firstName: string;
     lastName: string;
@@ -19,19 +21,21 @@ export interface OrderData {
   };
 }
 
+export type OrderReviewData = Omit<OrderData, 'shippingData'>;
+
 export function prepareCheckoutData(
   orderData: OrderData,
   currency: string,
   includeCustomerInfo: boolean
 ): CheckoutData {
   const checkoutData: CheckoutData = {
-    items: orderData.items.map((item) => ({
-      id: item.id || `item-${Math.random()}`,
-      name: item.name || 'Product',
-      description: item.description,
-      quantity: item.quantity || 1,
-      unitPrice: item.price || 0,
-      total: (item.price || 0) * (item.quantity || 1),
+    items: orderData.items.map((item, index) => ({
+      id: item.id ?? `item-${index}`,
+      name: item.name ?? 'Product',
+      description: item.description ?? undefined,
+      quantity: item.quantity ?? 1,
+      unitPrice: item.priceUSD ?? 0,
+      total: (item.priceUSD ?? 0) * (item.quantity ?? 1),
     })),
     subtotal: orderData.subtotal,
     tax: orderData.tax,

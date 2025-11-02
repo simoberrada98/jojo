@@ -19,11 +19,24 @@ export default defineConfig([
   ),
 
   prettier,
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "varsIgnorePattern": "^",
+          "argsIgnorePattern": "^",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ]
+    }
+  },
   globalIgnores([
     // Default ignores of eslint-config-next:
     '.next/**',
     'out/**',
     'build/**',
     'next-env.d.ts',
+    'types/supabase.types.ts',
   ]),
 ]);

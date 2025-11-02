@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/contexts/auth-context';
 import type { CartItem, Product } from '@/types/database';
 
+type CartEntry = CartItem & { product: Product | null };
+
 export function useCart() {
-  const [cart, setCart] = useState<(CartItem & { product: Product })[]>([]);
+  const [cart, setCart] = useState<CartEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const supabase = createClient();
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     if (!user) {
       setCart([]);
       setLoading(false);
@@ -30,14 +32,18 @@ export function useCart() {
       .eq('user_id', user.id);
 
     if (!error && data) {
-      setCart(data as any);
+      const normalized: CartEntry[] = data.map((item) => ({
+        ...item,
+        product: item.product ?? null,
+      }));
+      setCart(normalized);
     }
     setLoading(false);
-  };
+  }, [user, supabase]);
 
   useEffect(() => {
     fetchCart();
-  }, [user, supabase]);
+  }, [fetchCart, user, supabase]);
 
   const addToCart = async (productId: string, quantity: number = 1) => {
     if (!user) {
