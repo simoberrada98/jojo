@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Order } from '@/types/database';
+import { P, H1 } from '@/components/ui/typography';
 
 export default function OrdersPage() {
   const { user } = useAuth();
@@ -54,17 +55,17 @@ export default function OrdersPage() {
   };
 
   if (loading) {
-    return <p>Loading orders...</p>;
+    return <P>Loading orders...</P>;
   }
 
   return (
     <div>
-      <h1 className="mb-8 font-bold text-3xl">My Orders</h1>
+      <H1 className="mb-8 font-bold text-3xl">My Orders</H1>
 
       {orders.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No orders yet</p>
+            <P className="text-muted-foreground">No orders yet</P>
           </CardContent>
         </Card>
       ) : (
@@ -87,19 +88,19 @@ export default function OrdersPage() {
               <CardContent>
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-muted-foreground text-sm">Total</p>
-                    <p className="font-bold text-2xl">
+                    <P className="text-muted-foreground text-sm">Total</P>
+                    <P className="font-bold text-2xl">
                       ${order.total.toFixed(2)}
-                    </p>
+                    </P>
                   </div>
                   {order.crypto_currency && (
                     <div className="text-right">
-                      <p className="text-muted-foreground text-sm">
+                      <P className="text-muted-foreground text-sm">
                         Paid with {order.crypto_currency}
-                      </p>
-                      <p className="font-mono text-sm">
+                      </P>
+                      <P className="font-mono text-sm">
                         {order.crypto_amount} {order.crypto_currency}
-                      </p>
+                      </P>
                     </div>
                   )}
                 </div>

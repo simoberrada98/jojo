@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
-import { H1, H2, H3, Muted } from '@/components/ui/typography';
+import { H1, H2, H3, Muted, P } from '@/components/ui/typography';
 import { ChevronRight, Truck, Globe, Clock, Shield } from 'lucide-react';
 
 export default function ShippingPage() {
@@ -29,9 +29,9 @@ export default function ShippingPage() {
         <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
             <H1 className="mb-4">Information — Shipping:</H1>
-            <div className="mx-auto max-w-xl space-y-2 text-lg text-muted-foreground">
-              <p>Handling time: 1–2 days</p>
-              <p>Delivery time: 2–4 days</p>
+            <div className="space-y-2 mx-auto max-w-xl text-muted-foreground text-lg">
+              <P>Handling time: 1–2 days</P>
+              <P>Delivery time: 2–4 days</P>
             </div>
             <Muted className="m-0 mx-auto max-w-2xl text-lg">
               Fast, secure, and reliable delivery of your mining hardware

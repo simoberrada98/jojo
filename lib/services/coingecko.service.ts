@@ -50,7 +50,10 @@ export class CoinGeckoService {
       }
       return rates;
     } catch (error) {
-      logger.error('Error fetching conversion rates from CoinGecko', error as Error);
+      logger.error(
+        'Error fetching conversion rates from CoinGecko',
+        error as Error
+      );
       // Return a fallback or throw the error
       return {
         BTC: 0.000029, // Fallback values

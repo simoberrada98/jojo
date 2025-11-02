@@ -1,3 +1,4 @@
+import { P, H1, H2 } from '@/components/ui/typography';
 import type { Metadata } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
@@ -23,8 +24,10 @@ export const metadata: Metadata = {
 const coverageTable = [
   {
     item: 'Factory defects (boards, PSU, control board)',
-    coverage: 'Covered for 24 months from delivery. Vendor-sourced replacements or repair.',
-    response: 'Advance RMA issued within 3 business days once diagnostics are supplied.',
+    coverage:
+      'Covered for 24 months from delivery. Vendor-sourced replacements or repair.',
+    response:
+      'Advance RMA issued within 3 business days once diagnostics are supplied.',
   },
   {
     item: 'Dead on arrival hardware',
@@ -47,17 +50,20 @@ const escalationPaths = [
   {
     stage: 'Level 1: Support Desk',
     owner: 'support@jhuangnyc.com',
-    action: 'Submit ticket with serial, proof of purchase, diagnostics, and photos.',
+    action:
+      'Submit ticket with serial, proof of purchase, diagnostics, and photos.',
   },
   {
     stage: 'Level 2: Warranty Ops',
     owner: 'warranty@jhuangnyc.com',
-    action: 'Escalate if no response within SLA. Includes logistics and vendor liaisons.',
+    action:
+      'Escalate if no response within SLA. Includes logistics and vendor liaisons.',
   },
   {
     stage: 'Level 3: Partner OEM',
     owner: 'OEM success manager',
-    action: 'Joint review when OEM intervention or component micro-repair is required.',
+    action:
+      'Joint review when OEM intervention or component micro-repair is required.',
   },
 ];
 
@@ -66,16 +72,18 @@ export default function WarrantyPolicyPage() {
     <article className="bg-background text-foreground">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
         <header className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-accent">Policy</p>
-          <h1 className="mt-3 text-balance font-semibold text-4xl md:text-5xl">
+          <P className="text-accent text-xs uppercase tracking-widest">
+            Policy
+          </P>
+          <H1 className="mt-3 font-semibold text-4xl md:text-5xl text-balance">
             Warranty Coverage & Service Windows
-          </h1>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
+          </H1>
+          <P className="mt-4 text-muted-foreground leading-relaxed">
             This warranty applies to all ASIC miners purchased through MineHub
             and details how we triage repairs, replacements, and on-site
             service.
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          </P>
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-muted-foreground text-sm">
             <span>Updated {LAST_UPDATED}</span>
             <span aria-hidden="true">|</span>
             <a
@@ -90,20 +98,20 @@ export default function WarrantyPolicyPage() {
         <section
           id="coverage"
           aria-labelledby="coverage-heading"
-          className="rounded-2xl border border-border bg-card/40"
+          className="bg-card/40 border border-border rounded-2xl"
         >
-          <div className="border-b border-border px-6 py-5">
-            <h2 id="coverage-heading" className="font-semibold text-2xl">
+          <div className="px-6 py-5 border-border border-b">
+            <H2 id="coverage-heading" className="font-semibold text-2xl">
               Coverage matrix
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            </H2>
+            <P className="mt-2 text-muted-foreground text-sm">
               Coverage begins on the delivery date recorded in your invoice and
               assumes miners are operated within documented environmental
               tolerances.
-            </p>
+            </P>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full divide-y divide-border text-left text-sm">
+            <table className="divide-y divide-border w-full text-sm text-left">
               <caption className="sr-only">
                 Warranty coverage table listing items, terms, and response times
               </caption>
@@ -120,7 +128,7 @@ export default function WarrantyPolicyPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border bg-background/70">
+              <tbody className="bg-background/70 divide-y divide-border">
                 {coverageTable.map(({ item, coverage, response }) => (
                   <tr key={item} className="align-top">
                     <th scope="row" className="px-4 py-3 font-medium">
@@ -138,39 +146,44 @@ export default function WarrantyPolicyPage() {
         <section
           id="service-windows"
           aria-labelledby="service-windows-heading"
-          className="mt-12 rounded-2xl border border-border bg-card/40 p-6"
+          className="bg-card/40 mt-12 p-6 border border-border rounded-2xl"
         >
-          <h2 id="service-windows-heading" className="font-semibold text-2xl">
+          <H2 id="service-windows-heading" className="font-semibold text-2xl">
             Service windows & turnaround
-          </h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
+          </H2>
+          <P className="mt-4 text-muted-foreground leading-relaxed">
             In-warranty repairs are prioritised based on operational impact.
             Provide complete diagnostics, event logs, and photos of damage to
             accelerate the advance RMA process.
-          </p>
-          <ul className="mt-4 list-disc space-y-3 pl-5 text-muted-foreground">
+          </P>
+          <ul className="space-y-3 mt-4 pl-5 text-muted-foreground list-disc">
             <li>Critical mining downtime: 24 hour initial response.</li>
-            <li>Partial degradation (single board offline): 3 business days.</li>
-            <li>Batch fleet issues impacting &gt; 25% of units: executive call within 1 business day.</li>
+            <li>
+              Partial degradation (single board offline): 3 business days.
+            </li>
+            <li>
+              Batch fleet issues impacting &gt; 25% of units: executive call
+              within 1 business day.
+            </li>
           </ul>
         </section>
 
         <section
           id="escalation"
           aria-labelledby="escalation-heading"
-          className="mt-12 rounded-2xl border border-border bg-card/40"
+          className="bg-card/40 mt-12 border border-border rounded-2xl"
         >
-          <div className="border-b border-border px-6 py-5">
-            <h2 id="escalation-heading" className="font-semibold text-2xl">
+          <div className="px-6 py-5 border-border border-b">
+            <H2 id="escalation-heading" className="font-semibold text-2xl">
               Escalation ladder
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            </H2>
+            <P className="mt-2 text-muted-foreground text-sm">
               Use the contact path below if a ticket is unresolved beyond the
               SLA or if replacement units are unavailable.
-            </p>
+            </P>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full divide-y divide-border text-left text-sm">
+            <table className="divide-y divide-border w-full text-sm text-left">
               <caption className="sr-only">
                 Warranty escalation stages with contact owners and next steps
               </caption>
@@ -187,7 +200,7 @@ export default function WarrantyPolicyPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border bg-background/70">
+              <tbody className="bg-background/70 divide-y divide-border">
                 {escalationPaths.map(({ stage, owner, action }) => (
                   <tr key={stage} className="align-top">
                     <th scope="row" className="px-4 py-3 font-medium">
@@ -204,12 +217,12 @@ export default function WarrantyPolicyPage() {
 
         <section
           id="support"
-          className="mt-12 rounded-2xl border border-dashed border-border bg-card/30 p-6 text-sm text-muted-foreground"
+          className="bg-card/30 mt-12 p-6 border border-border border-dashed rounded-2xl text-muted-foreground text-sm"
         >
-          <h2 className="font-semibold text-2xl text-foreground">
+          <H2 className="font-semibold text-foreground text-2xl">
             Support submission checklist
-          </h2>
-          <p className="mt-4">
+          </H2>
+          <P className="mt-4">
             Email{' '}
             <a
               href="mailto:warranty@jhuangnyc.com?subject=Warranty%20claim&utm_source=policy&utm_medium=llm&utm_campaign=miner-warranty"
@@ -218,8 +231,8 @@ export default function WarrantyPolicyPage() {
               warranty@jhuangnyc.com
             </a>{' '}
             with:
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
+          </P>
+          <ul className="space-y-2 mt-3 pl-5 list-disc">
             <li>Serial numbers and rack position.</li>
             <li>Photos or video of faults and error codes.</li>
             <li>Power logs and ambient temperature readings.</li>

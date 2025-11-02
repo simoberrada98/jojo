@@ -39,7 +39,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: anim.enter, ease: anim.easeStandard }}
-      whileHover={{ y: -8, transition: { type: 'tween', ease: anim.easeStandard, duration: anim.hover } }}
+      whileHover={{
+        y: -8,
+        transition: {
+          type: 'tween',
+          ease: anim.easeStandard,
+          duration: anim.hover,
+        },
+      }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className="group relative hover:shadow-2xl hover:shadow-accent/20 border border-border hover:border-accent rounded-lg overflow-hidden transition-all duration-300 will-change-transform"
@@ -77,9 +84,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="p-6">
           {/* Title and Rating */}
           <div className="flex justify-between items-start mb-2">
-            <h3 className="flex-1 font-bold text-foreground text-xl">
+            <H3 className="flex-1 font-bold text-foreground text-xl line-clamp-2 whitespace-normal">
               {product.name}
-            </h3>
+            </H3>
             {product.rating && (
               <div className="flex items-center gap-1 ml-2">
                 <Star className="fill-accent w-4 h-4 text-accent" />
@@ -92,9 +99,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Reviews Count */}
           {product.reviewCount && (
-            <p className="mb-4 text-foreground/60 text-xs">
+            <P className="mb-4 text-foreground/60 text-xs">
               ({product.reviewCount} reviews)
-            </p>
+            </P>
           )}
 
           {/* Specs */}
@@ -137,7 +144,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Add to Cart Button */}
-        <motion.div whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: anim.tap }}>
+        <motion.div
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: 'tween', duration: anim.tap }}
+        >
           <Button
             onClick={handleAddToCart}
             className="gap-2 bg-primary hover:bg-primary/90 w-full font-semibold text-primary-foreground transition-all duration-300 glow-accent-hover"
@@ -151,3 +161,4 @@ export default function ProductCard({ product }: ProductCardProps) {
   );
 }
 import { useAnimationConfig } from '@/lib/animation';
+import { H3, P } from './ui/typography';

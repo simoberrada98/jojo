@@ -24,28 +24,27 @@ interface SeoProduct {
 }
 
 const SUPABASE_REST_PATH = 'products';
-const SUPABASE_REST_SELECT =
-  [
-    'id',
-    'slug',
-    'name',
-    'description',
-    'short_description',
-    'category',
-    'base_price',
-    'compare_at_price',
-    'brand',
-    'stock_quantity',
-    'featured_image_url',
-    'updated_at',
-    'meta_title',
-    'meta_description',
-    'hash_rate',
-    'power_consumption',
-    'algorithm',
-    'efficiency',
-    'noise_level',
-  ].join(',');
+const SUPABASE_REST_SELECT = [
+  'id',
+  'slug',
+  'name',
+  'description',
+  'short_description',
+  'category',
+  'base_price',
+  'compare_at_price',
+  'brand',
+  'stock_quantity',
+  'featured_image_url',
+  'updated_at',
+  'meta_title',
+  'meta_description',
+  'hash_rate',
+  'power_consumption',
+  'algorithm',
+  'efficiency',
+  'noise_level',
+].join(',');
 
 function getSupabaseInfo() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

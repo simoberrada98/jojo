@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { P } from '@/components/ui/typography';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -102,12 +103,12 @@ export default function SignupPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Creating account...' : 'Sign Up'}
             </Button>
-            <p className="text-muted-foreground text-sm text-center">
+            <P className="text-muted-foreground text-sm text-center">
               Already have an account?{' '}
               <Link href="/auth/login" className="text-primary hover:underline">
                 Sign in
               </Link>
-            </p>
+            </P>
           </CardFooter>
         </form>
       </Card>

@@ -4,7 +4,10 @@
  */
 
 import { BasePaymentStrategy } from './payment-strategy.interface';
-import { createPayment, type PaymentCreationRequest } from '@/lib/hoodpayModule';
+import {
+  createPayment,
+  type PaymentCreationRequest,
+} from '@/lib/hoodpayModule';
 import { PAYMENT_CONFIG } from '@/lib/config/payment.config';
 import type { PaymentResult, PaymentLocalState } from '@/types/payment';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { H2 } from './ui/typography';
 
 export default function ProductsManagement() {
   const [products] = useState([
@@ -44,9 +45,9 @@ export default function ProductsManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-4">
-        <h2 className="font-bold text-foreground text-2xl">
+        <H2 className="font-bold text-foreground text-2xl">
           Products Management
-        </h2>
+        </H2>
         <Button className="gap-2 bg-primary hover:bg-primary/90">
           <Plus className="w-4 h-4" />
           Add Product

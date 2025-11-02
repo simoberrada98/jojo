@@ -24,9 +24,7 @@ type HoodpaySessionResponse = {
   id?: string;
 };
 
-export async function createHoodpaySessionAction(
-  input: HoodpaySessionInput
-) {
+export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
   const { apiKey, businessId } = paymentServerConfig.hoodpay;
   if (!apiKey || !businessId) {
     throw new Error('HoodPay credentials are not configured');

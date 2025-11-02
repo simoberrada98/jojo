@@ -13,7 +13,11 @@ const STATIC_ENTRIES: StaticEntry[] = [
   { path: '/miners', changeFrequency: 'daily', priority: 0.9 },
   { path: '/categories', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/miners/specs', changeFrequency: 'weekly', priority: 0.8 },
-  { path: '/guides/asic-buying-guide', changeFrequency: 'monthly', priority: 0.7 },
+  {
+    path: '/guides/asic-buying-guide',
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  },
   { path: '/policies/warranty', changeFrequency: 'yearly', priority: 0.4 },
   { path: '/policies/returns', changeFrequency: 'yearly', priority: 0.4 },
   { path: '/about', changeFrequency: 'monthly', priority: 0.6 },

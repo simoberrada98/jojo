@@ -85,7 +85,9 @@ function extractDimensions(bodyHtml: string): ProductDimensions {
 
   const weightMatch = bodyHtml.match(/(?:Net weight)[:\s]+([\d.]+)\s*lbs/i);
   if (weightMatch) {
-    dimensions.weight = parseFloat((parseFloat(weightMatch[1]) * 0.453592).toFixed(2));
+    dimensions.weight = parseFloat(
+      (parseFloat(weightMatch[1]) * 0.453592).toFixed(2)
+    );
   }
 
   return dimensions;
@@ -225,7 +227,10 @@ async function seedDatabase() {
         .single();
 
       if (productError) {
-        logger.error(`❌ Error inserting product ${product.title}`, productError);
+        logger.error(
+          `❌ Error inserting product ${product.title}`,
+          productError
+        );
         errorCount++;
         continue;
       }
@@ -256,7 +261,10 @@ async function seedDatabase() {
           });
 
         if (variantError) {
-          logger.error(`⚠️  Error inserting variant for ${product.title}`, variantError);
+          logger.error(
+            `⚠️  Error inserting variant for ${product.title}`,
+            variantError
+          );
         }
       }
 

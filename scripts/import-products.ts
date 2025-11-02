@@ -174,7 +174,10 @@ async function importProducts(
             .single();
 
           if (optionError) {
-            logger.error(`  Error importing option ${option.name}`, optionError);
+            logger.error(
+              `  Error importing option ${option.name}`,
+              optionError
+            );
             continue;
           }
 
@@ -194,7 +197,10 @@ async function importProducts(
               });
 
             if (valueError) {
-              logger.error(`    Error importing value ${value.value}`, valueError);
+              logger.error(
+                `    Error importing value ${value.value}`,
+                valueError
+              );
             }
           }
 
@@ -223,7 +229,10 @@ async function importProducts(
             });
 
           if (variantError) {
-            logger.error(`  Error importing variant ${variant.name}`, variantError);
+            logger.error(
+              `  Error importing variant ${variant.name}`,
+              variantError
+            );
             continue;
           }
 
@@ -244,7 +253,10 @@ async function importProducts(
               });
 
             if (linkError) {
-              logger.error(`  Error linking to collection ${collectionSlug}`, linkError);
+              logger.error(
+                `  Error linking to collection ${collectionSlug}`,
+                linkError
+              );
             }
           }
         }

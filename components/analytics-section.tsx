@@ -12,6 +12,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { H2, H3 } from './ui/typography';
 
 const REVENUE_DATA = [
   { month: 'Jan', revenue: 45.2, orders: 120 },
@@ -25,13 +26,13 @@ const REVENUE_DATA = [
 export default function AnalyticsSection() {
   return (
     <div className="space-y-6">
-      <h2 className="font-bold text-foreground text-2xl">Analytics</h2>
+      <H2 className="font-bold text-foreground text-2xl">Analytics</H2>
 
       {/* Revenue Chart */}
       <div className="bg-card p-6 border border-border rounded-lg">
-        <h3 className="mb-4 font-bold text-foreground text-lg">
+        <H3 className="mb-4 font-bold text-foreground text-lg">
           Revenue Trend
-        </h3>
+        </H3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={REVENUE_DATA}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
@@ -58,9 +59,9 @@ export default function AnalyticsSection() {
 
       {/* Orders Chart */}
       <div className="bg-card p-6 border border-border rounded-lg">
-        <h3 className="mb-4 font-bold text-foreground text-lg">
+        <H3 className="mb-4 font-bold text-foreground text-lg">
           Orders by Month
-        </h3>
+        </H3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={REVENUE_DATA}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />

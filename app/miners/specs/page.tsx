@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
-import { fetchActiveProductsForSeo, type SeoProduct } from '@/lib/data/seo-products';
+import {
+  fetchActiveProductsForSeo,
+  type SeoProduct,
+} from '@/lib/data/seo-products';
 import { logger } from '@/lib/utils/logger';
+import { P, H1, H2 } from '@/components/ui/typography';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
 const canonicalUrl = `${baseUrl}/miners/specs`;
@@ -61,19 +65,19 @@ export default async function MinersSpecsPage() {
     <article className="bg-background text-foreground">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-6xl">
         <header className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-accent">
+          <P className="text-accent text-xs uppercase tracking-widest">
             Reference
-          </p>
-          <h1 className="mt-3 text-balance font-semibold text-4xl md:text-5xl">
+          </P>
+          <H1 className="mt-3 font-semibold text-4xl md:text-5xl text-balance">
             ASIC Miner Specification Matrix
-          </h1>
-          <p className="mt-4 text-muted-foreground text-base leading-relaxed">
+          </H1>
+          <P className="mt-4 text-muted-foreground text-base leading-relaxed">
             Reference live ASIC models with the metrics procurement teams track
             most: algorithm, hashrate, power draw, efficiency, and acoustic
             profile. Link into each product page for warranty, pricing, and
             inventory context.
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          </P>
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-muted-foreground text-sm">
             <span>Updated {LAST_UPDATED}</span>
             <span aria-hidden="true">|</span>
             <a
@@ -88,20 +92,20 @@ export default async function MinersSpecsPage() {
         <section
           id="spec-table"
           aria-labelledby="spec-table-heading"
-          className="rounded-2xl border border-border bg-card/40"
+          className="bg-card/40 border border-border rounded-2xl"
         >
-          <div className="border-b border-border px-6 py-5">
-            <h2 id="spec-table-heading" className="font-semibold text-2xl">
+          <div className="px-6 py-5 border-border border-b">
+            <H2 id="spec-table-heading" className="font-semibold text-2xl">
               Miner comparison table
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Data sourced from active product listings and refreshed dynamically
-              via Supabase inventory sync. Noise levels fall back to supplier
-              documentation when not explicitly recorded.
-            </p>
+            </H2>
+            <P className="mt-2 text-muted-foreground text-sm">
+              Data sourced from active product listings and refreshed
+              dynamically via Supabase inventory sync. Noise levels fall back to
+              supplier documentation when not explicitly recorded.
+            </P>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] divide-y divide-border text-left text-sm">
+            <table className="divide-y divide-border w-full min-w-[720px] text-sm text-left">
               <caption className="sr-only">
                 Comparison matrix of ASIC miners with key specifications
               </caption>
@@ -127,12 +131,12 @@ export default async function MinersSpecsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border bg-background/70">
+              <tbody className="bg-background/70 divide-y divide-border">
                 {tableRows.length === 0 && (
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-4 py-6 text-center text-muted-foreground"
+                      className="px-4 py-6 text-muted-foreground text-center"
                     >
                       Miner inventory is unavailable right now. Please refresh
                       after syncing Supabase credentials.
@@ -149,11 +153,21 @@ export default async function MinersSpecsPage() {
                         {row.name}
                       </a>
                     </th>
-                    <td className="px-4 py-3 text-foreground/80">{row.algorithm}</td>
-                    <td className="px-4 py-3 text-foreground/80">{row.hashrate}</td>
-                    <td className="px-4 py-3 text-foreground/80">{row.power}</td>
-                    <td className="px-4 py-3 text-foreground/80">{row.efficiency}</td>
-                    <td className="px-4 py-3 text-foreground/80">{row.noise}</td>
+                    <td className="px-4 py-3 text-foreground/80">
+                      {row.algorithm}
+                    </td>
+                    <td className="px-4 py-3 text-foreground/80">
+                      {row.hashrate}
+                    </td>
+                    <td className="px-4 py-3 text-foreground/80">
+                      {row.power}
+                    </td>
+                    <td className="px-4 py-3 text-foreground/80">
+                      {row.efficiency}
+                    </td>
+                    <td className="px-4 py-3 text-foreground/80">
+                      {row.noise}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -163,10 +177,10 @@ export default async function MinersSpecsPage() {
 
         <section
           id="usage-notes"
-          className="mt-12 rounded-2xl border border-dashed border-border bg-card/30 p-6"
+          className="bg-card/30 mt-12 p-6 border border-border border-dashed rounded-2xl"
         >
-          <h2 className="font-semibold text-2xl">How to use this matrix</h2>
-          <ul className="mt-4 list-disc space-y-3 pl-5 text-muted-foreground">
+          <H2 className="font-semibold text-2xl">How to use this matrix</H2>
+          <ul className="space-y-3 mt-4 pl-5 text-muted-foreground list-disc">
             <li>
               Review efficiency against your facility power cost to prioritise
               miners that reduce heat density per rack.

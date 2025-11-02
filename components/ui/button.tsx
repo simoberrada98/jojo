@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
@@ -68,22 +68,23 @@ const MotionButton = React.forwardRef<
   React.ComponentProps<typeof Button> & MotionProps
 >(({ whileHover, whileTap, transition, ...rest }, ref) => {
   const anim = useAnimationConfig();
-  const hoverMotion =
-    whileHover ?? {
-      scale: 1.04,
-      transition: { type: 'tween', duration: anim.hover, ease: anim.easeStandard },
-    };
-  const tapMotion =
-    whileTap ?? {
-      scale: 0.97,
-      transition: { type: 'tween', duration: anim.tap, ease: anim.easeStandard },
-    };
-  const sharedTransition =
-    transition ?? {
+  const hoverMotion = whileHover ?? {
+    scale: 1.04,
+    transition: {
       type: 'tween',
       duration: anim.hover,
       ease: anim.easeStandard,
-    };
+    },
+  };
+  const tapMotion = whileTap ?? {
+    scale: 0.97,
+    transition: { type: 'tween', duration: anim.tap, ease: anim.easeStandard },
+  };
+  const sharedTransition = transition ?? {
+    type: 'tween',
+    duration: anim.hover,
+    ease: anim.easeStandard,
+  };
 
   return (
     <RawMotionButton

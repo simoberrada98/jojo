@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
-import { H1, H2, H3, Muted } from '@/components/ui/typography';
+import { H1, H2, H3, Muted, P } from '@/components/ui/typography';
 import { ChevronRight, RotateCcw, Clock, CheckCircle } from 'lucide-react';
 
 export default function RefundsPage() {
@@ -33,16 +33,16 @@ export default function RefundsPage() {
               We stand behind our products. If you&rsquo;re not satisfied,
               we&rsquo;ll make it right.
             </Muted>
-            <div className="mx-auto mt-6 max-w-xl space-y-2">
-              <h2 className="text-xl font-semibold text-foreground">
+            <div className="space-y-2 mx-auto mt-6 max-w-xl">
+              <H2 className="font-semibold text-foreground text-xl">
                 Information — Shipping:
-              </h2>
-              <p className="text-lg text-muted-foreground">
+              </H2>
+              <P className="text-muted-foreground text-lg">
                 Handling time: 1–2 days
-              </p>
-              <p className="text-lg text-muted-foreground">
+              </P>
+              <P className="text-muted-foreground text-lg">
                 Delivery time: 2–4 days
-              </p>
+              </P>
             </div>
           </div>
         </section>

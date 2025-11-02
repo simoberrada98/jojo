@@ -1,6 +1,6 @@
 'use client';
 
-import { H3, Muted } from '@/components/ui/typography';
+import { H3, Muted, P } from '@/components/ui/typography';
 import { Users, Package, DollarSign } from 'lucide-react';
 
 const STATS = [
@@ -56,8 +56,8 @@ export default function DashboardOverview() {
                   {stat.change}
                 </span>
               </div>
-              <p className="mb-1 text-foreground/70 text-sm">{stat.label}</p>
-              <p className="font-bold text-foreground text-2xl">{stat.value}</p>
+              <P className="mb-1 text-foreground/70 text-sm">{stat.label}</P>
+              <P className="font-bold text-foreground text-2xl">{stat.value}</P>
             </div>
           );
         })}

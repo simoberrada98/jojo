@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { P } from '@/components/ui/typography';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -83,7 +84,7 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
-            <p className="text-muted-foreground text-sm text-center">
+            <P className="text-muted-foreground text-sm text-center">
               Don&apos;t have an account?{' '}
               <Link
                 href="/auth/signup"
@@ -91,7 +92,7 @@ export default function LoginPage() {
               >
                 Sign up
               </Link>
-            </p>
+            </P>
           </CardFooter>
         </form>
       </Card>

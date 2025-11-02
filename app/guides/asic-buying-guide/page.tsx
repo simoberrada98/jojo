@@ -1,3 +1,4 @@
+import { P, H1, H2 } from '@/components/ui/typography';
 import type { Metadata } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
@@ -57,7 +58,8 @@ const readinessChecklist = [
   {
     milestone: 'Warranty & RMA process',
     owners: 'Procurement + Support',
-    evidence: 'Serial tracking in CMDB, RMA SLA acknowledgement from manufacturer',
+    evidence:
+      'Serial tracking in CMDB, RMA SLA acknowledgement from manufacturer',
   },
   {
     milestone: 'Spare parts & onsite spares',
@@ -71,21 +73,21 @@ export default function AsicBuyingGuidePage() {
     <article className="bg-background text-foreground">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
         <header className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-accent">
+          <P className="text-accent text-xs uppercase tracking-widest">
             Buying Guide
-          </p>
-          <h1
+          </P>
+          <H1
             id="overview"
-            className="mt-3 text-balance font-semibold text-4xl md:text-5xl"
+            className="mt-3 font-semibold text-4xl md:text-5xl text-balance"
           >
             ASIC Mining Hardware Buying Guide
-          </h1>
-          <p className="mt-4 text-muted-foreground text-base leading-relaxed">
+          </H1>
+          <P className="mt-4 text-muted-foreground text-base leading-relaxed">
             Use this briefing to shortlist ASIC miners, align pricing with your
             energy profile, and standardize deployment readiness for enterprise
             racks or hosted capacity.
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          </P>
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-muted-foreground text-sm">
             <span>Updated {LAST_UPDATED}</span>
             <span aria-hidden="true">|</span>
             <a
@@ -100,21 +102,21 @@ export default function AsicBuyingGuidePage() {
         <section
           id="evaluation-framework"
           aria-labelledby="evaluation-framework-heading"
-          className="space-y-4 border-border border rounded-2xl bg-card/40 p-6"
+          className="space-y-4 bg-card/40 p-6 border border-border rounded-2xl"
         >
-          <h2
+          <H2
             id="evaluation-framework-heading"
             className="font-semibold text-2xl"
           >
             Phase 1: Evaluate Miner Fundamentals
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
+          </H2>
+          <P className="text-muted-foreground leading-relaxed">
             Start with technical viability: select miners with stable firmware
             support, proven chip yields, and component availability. Validate
             efficiency targets against your utility profile and avoid models
             outside Tier 1 manufacturer roadmaps.
-          </p>
-          <table className="w-full overflow-hidden rounded-xl border text-left text-sm">
+          </P>
+          <table className="border rounded-xl w-full overflow-hidden text-sm text-left">
             <caption className="sr-only">
               ROI guardrails for ASIC hardware selection
             </caption>
@@ -131,10 +133,13 @@ export default function AsicBuyingGuidePage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y bg-background/70">
+            <tbody className="bg-background/70 divide-y divide-border">
               {roiFactors.map(({ factor, target, note }) => (
                 <tr key={factor}>
-                  <th scope="row" className="px-4 py-3 font-medium text-foreground">
+                  <th
+                    scope="row"
+                    className="px-4 py-3 font-medium text-foreground"
+                  >
                     {factor}
                   </th>
                   <td className="px-4 py-3 text-foreground/80">{target}</td>
@@ -148,21 +153,18 @@ export default function AsicBuyingGuidePage() {
         <section
           id="pricing-framework"
           aria-labelledby="pricing-framework-heading"
-          className="mt-12 space-y-4 border-border border rounded-2xl bg-card/40 p-6"
+          className="space-y-4 bg-card/40 mt-12 p-6 border border-border rounded-2xl"
         >
-          <h2
-            id="pricing-framework-heading"
-            className="font-semibold text-2xl"
-          >
+          <H2 id="pricing-framework-heading" className="font-semibold text-2xl">
             Phase 2: Model Pricing & Cash Flow
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
+          </H2>
+          <P className="text-muted-foreground leading-relaxed">
             Price miners against a blended cash-flow model: include duties,
             freight forwarding, rack fees, uptime SLAs, and the cost of capital.
             Layer in conservative hashprice assumptions and contract-specific
             energy escalators.
-          </p>
-          <ul className="list-disc pl-5 text-muted-foreground space-y-3">
+          </P>
+          <ul className="space-y-3 pl-5 text-muted-foreground list-disc">
             <li>
               Run three-scenario modelling (base, stress, upside) with real-time
               difficulty curves and compare to infrastructure amortization.
@@ -181,20 +183,20 @@ export default function AsicBuyingGuidePage() {
         <section
           id="deployment-readiness"
           aria-labelledby="deployment-readiness-heading"
-          className="mt-12 space-y-4 border-border border rounded-2xl bg-card/40 p-6"
+          className="space-y-4 bg-card/40 mt-12 p-6 border border-border rounded-2xl"
         >
-          <h2
+          <H2
             id="deployment-readiness-heading"
             className="font-semibold text-2xl"
           >
             Phase 3: Deployment Readiness Checklist
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
+          </H2>
+          <P className="text-muted-foreground leading-relaxed">
             Confirm that facilities, security, and support teams have actionable
             runbooks before container arrival. Use the following RACI-style
             table to formally accept each stage.
-          </p>
-          <table className="w-full overflow-hidden rounded-xl border text-left text-sm">
+          </P>
+          <table className="border rounded-xl w-full overflow-hidden text-sm text-left">
             <caption className="sr-only">
               Deployment readiness milestones with accountable owners
             </caption>
@@ -211,22 +213,27 @@ export default function AsicBuyingGuidePage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y bg-background/70">
+            <tbody className="bg-background/70 divide-y divide-border">
               {readinessChecklist.map(({ milestone, owners, evidence }) => (
                 <tr key={milestone}>
-                  <th scope="row" className="px-4 py-3 font-medium text-foreground">
+                  <th
+                    scope="row"
+                    className="px-4 py-3 font-medium text-foreground"
+                  >
                     {milestone}
                   </th>
                   <td className="px-4 py-3 text-foreground/80">{owners}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{evidence}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {evidence}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </section>
 
-        <footer className="mt-12 rounded-2xl border border-dashed border-border bg-card/30 p-6 text-sm text-muted-foreground">
-          <p>
+        <footer className="bg-card/30 mt-12 p-6 border border-border border-dashed rounded-2xl text-muted-foreground text-sm">
+          <P>
             Need a custom acquisition plan or energy sourcing audit? Email{' '}
             <a
               href="mailto:contact@jhuangnyc.com?subject=ASIC%20procurement%20support&utm_source=guide&utm_medium=llm&utm_campaign=asic-buying-guide"
@@ -235,7 +242,7 @@ export default function AsicBuyingGuidePage() {
               contact@jhuangnyc.com
             </a>{' '}
             for a curated quote and hosting alignment.
-          </p>
+          </P>
         </footer>
       </div>
     </article>

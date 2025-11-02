@@ -17,9 +17,8 @@ import { useCurrency } from '@/lib/contexts/currency-context';
 import { useCart } from '@/lib/contexts/cart-context';
 import type { DisplayProduct } from '@/types/product';
 
-import { H2 } from '../ui/typography';
+import { H1, H2, H3, P } from '../ui/typography';
 import { ProductTrustedBy } from './product-trusted-by';
-
 
 interface ProductInfoProps {
   product: DisplayProduct;
@@ -83,17 +82,16 @@ export function ProductInfo({ product }: ProductInfoProps) {
       ? `${product.dimensions.weight} lbs`
       : 'N/A';
 
-
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="mb-3 font-bold text-foreground text-4xl">
+        <H1 className="mb-3 font-bold text-foreground text-4xl">
           {product.name}
-        </h1>
+        </H1>
         {product.shortDescription && (
-          <p className="mb-4 text-foreground/70 leading-relaxed">
+          <P className="mb-4 text-foreground/70 leading-relaxed">
             {product.shortDescription}
-          </p>
+          </P>
         )}
         {product.rating && (
           <div className="flex flex-wrap items-center gap-4">
@@ -187,9 +185,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <div className="bg-card p-6 border border-border rounded-xl">
           <div className="flex items-center gap-2 mb-4 text-accent">
             <Info className="w-5 h-5" />
-            <h3 className="font-semibold text-foreground text-lg">
+            <H3 className="font-semibold text-foreground text-lg">
               Product details
-            </h3>
+            </H3>
           </div>
           <dl className="space-y-3">
             <InfoItem label="SKU" value={product.sku || 'N/A'} />
@@ -218,9 +216,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <div className="bg-card p-6 border border-border rounded-xl">
           <div className="flex items-center gap-2 mb-4 text-accent">
             <Ruler className="w-5 h-5" />
-            <h3 className="font-semibold text-foreground text-lg">
+            <H3 className="font-semibold text-foreground text-lg">
               Physical characteristics
-            </h3>
+            </H3>
           </div>
           <dl className="space-y-3">
             <InfoItem label="Weight" value={weightLabel} />
@@ -256,9 +254,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
       <div className="bg-card p-6 border border-border rounded-xl">
         <div className="flex items-center gap-2 mb-4 text-accent">
           <Shield className="w-5 h-5" />
-          <h3 className="font-semibold text-foreground text-lg">
+          <H3 className="font-semibold text-foreground text-lg">
             Technical specifications
-          </h3>
+          </H3>
         </div>
         <ul className="space-y-3">
           {product.specs.length === 0 && (
@@ -280,7 +278,6 @@ export function ProductInfo({ product }: ProductInfoProps) {
           ))}
         </ul>
       </div>
-
 
       {product.description && (
         <section className="hidden visible bg-card mt-12 p-6 border border-border rounded-xl">

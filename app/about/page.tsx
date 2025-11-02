@@ -161,24 +161,24 @@ export default function AboutPage() {
               <CardTitle>Our Story</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 Founded in 2020 by a team of cryptocurrency enthusiasts and
                 hardware experts, Jhuangnyc was born from a simple observation:
                 miners needed a reliable, transparent source for quality mining
                 equipment.
-              </p>
-              <p>
+              </P>
+              <P>
                 What started as a small operation has grown into a trusted name
                 in the cryptocurrency mining community. We&rsquo;ve helped
                 thousands of miners—from hobbyists setting up their first rig to
                 large-scale operations managing hundreds of machines.
-              </p>
-              <p>
+              </P>
+              <P>
                 Today, we continue to evolve with the industry, adding new
                 products, improving our services, and staying committed to our
                 founding principles of quality, transparency, and customer
                 satisfaction.
-              </p>
+              </P>
             </CardContent>
           </Card>
         </div>
@@ -227,17 +227,17 @@ export default function AboutPage() {
               <CardTitle>Our Team</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 Our team combines deep expertise in cryptocurrency, hardware
                 engineering, and customer service. We&rsquo;re passionate miners
                 ourselves, which means we understand the challenges and
                 opportunities you face.
-              </p>
-              <p>
+              </P>
+              <P>
                 Every member of our team is dedicated to providing the best
                 possible experience, from helping you choose the right equipment
                 to supporting you long after your purchase.
-              </p>
+              </P>
             </CardContent>
           </Card>
         </div>
@@ -249,11 +249,11 @@ export default function AboutPage() {
               <CardTitle>Join Our Community</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 Jhuangnyc is more than just a store—we&rsquo;re a community of
                 miners supporting each other&rsquo;s success. Stay connected
                 with us:
-              </p>
+              </P>
               <ul>
                 <li>
                   Subscribe to our newsletter for industry news and exclusive

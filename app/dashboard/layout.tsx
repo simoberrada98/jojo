@@ -12,6 +12,7 @@ import {
   LogOut,
   ShoppingBag,
 } from 'lucide-react';
+import { P, H2 } from '@/components/ui/typography';
 
 export default function DashboardLayout({
   children,
@@ -29,7 +30,7 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Loading...</p>
+        <P>Loading...</P>
       </div>
     );
   }
@@ -45,10 +46,10 @@ export default function DashboardLayout({
         {/* Sidebar */}
         <aside className="bg-card p-6 border-r w-64 min-h-screen">
           <div className="mb-8">
-            <h2 className="font-bold text-xl">MineHub</h2>
-            <p className="mt-1 text-muted-foreground text-sm">
+            <H2 className="font-bold text-xl">Jhuangnyc</H2>
+            <P className="mt-1 text-muted-foreground text-sm">
               {profile?.full_name || profile?.email}
-            </p>
+            </P>
           </div>
 
           <nav className="space-y-2">

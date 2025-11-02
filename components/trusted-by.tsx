@@ -18,6 +18,7 @@ import CoinBaseLogo from '@/public/svgs/coinbase.svg';
 import NVIDIALogo from '@/public/svgs/nvidia.svg';
 import TrustPilotLogo from '@/public/svgs/trust-pilot.svg';
 import MiningNowLogo from '@/public/svgs/miningnow.svg';
+import { H2, P } from './ui/typography';
 
 const brands: Brand[] = [
   {
@@ -78,13 +79,13 @@ export default function TrustedBySection() {
           <div className="inline-flex items-center gap-2 bg-accent/10 mb-4 px-4 py-1 border border-accent/40 rounded-full font-semibold text-accent text-sm uppercase tracking-wide">
             Trusted By
           </div>
-          <h2 className="font-tech font-semibold text-foreground text-3xl sm:text-4xl tracking-tight">
+          <H2 className="font-tech font-semibold text-foreground text-3xl sm:text-4xl tracking-tight">
             Partnered with industry-leading innovators
-          </h2>
-          <p className="mt-4 text-foreground/70 text-base sm:text-lg">
+          </H2>
+          <P className="mt-4 text-foreground/70 text-base sm:text-lg">
             From silicon design to global exchanges, we work alongside the
             brands driving next-generation mining infrastructure.
-          </p>
+          </P>
         </div>
 
         <div className="relative overflow-hidden">

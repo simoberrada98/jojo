@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { H1, P } from '@/components/ui/typography';
 
 export default function ProfilePage() {
   const { profile, refreshProfile } = useAuth();
@@ -46,7 +47,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-8 font-bold text-3xl">Profile</h1>
+      <H1 className="mb-8 font-bold text-3xl">Profile</H1>
 
       <Card>
         <CardHeader>
@@ -64,9 +65,9 @@ export default function ProfilePage() {
                 disabled
                 className="bg-muted"
               />
-              <p className="text-muted-foreground text-xs">
+              <P className="text-muted-foreground text-xs">
                 Email cannot be changed
-              </p>
+              </P>
             </div>
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>

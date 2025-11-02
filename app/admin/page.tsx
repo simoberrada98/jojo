@@ -7,6 +7,7 @@ import OrdersManagement from '@/components/orders-management';
 import ProductsManagement from '@/components/products-management';
 import AnalyticsSection from '@/components/analytics-section';
 import { Menu, X } from 'lucide-react';
+import { H1 } from '@/components/ui/typography';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -36,9 +37,9 @@ export default function AdminPage() {
                 <Menu className="w-5 h-5" />
               )}
             </button>
-            <h1 className="font-bold text-foreground text-2xl">
+            <H1 className="font-bold text-foreground text-2xl">
               Admin Dashboard
-            </h1>
+            </H1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex justify-center items-center bg-primary/20 rounded-full w-10 h-10">

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { P, H1, H3 } from '@/components/ui/typography';
 
 export default function CartPage() {
   const { cart, loading, updateQuantity, removeFromCart, total } = useCart();
@@ -38,17 +39,17 @@ export default function CartPage() {
   };
 
   if (loading) {
-    return <p>Loading cart...</p>;
+    return <P>Loading cart...</P>;
   }
 
   return (
     <div>
-      <h1 className="mb-8 font-bold text-3xl">Shopping Cart</h1>
+      <H1 className="mb-8 font-bold text-3xl">Shopping Cart</H1>
 
       {cart.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Your cart is empty</p>
+            <P className="text-muted-foreground">Your cart is empty</P>
           </CardContent>
         </Card>
       ) : (
@@ -68,12 +69,12 @@ export default function CartPage() {
                       />
                     )}
                     <div className="flex-1">
-                      <h3 className="mb-1 font-semibold text-lg">
+                      <H3 className="mb-1 font-semibold text-lg">
                         {item.product?.name}
-                      </h3>
-                      <p className="mb-2 text-muted-foreground">
+                      </H3>
+                      <P className="mb-2 text-muted-foreground">
                         ${item.product?.price.toFixed(2)}
-                      </p>
+                      </P>
                       <div className="flex items-center gap-2">
                         <Button
                           size="icon"
@@ -108,12 +109,12 @@ export default function CartPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="mb-2 font-bold text-xl">
+                      <P className="mb-2 font-bold text-xl">
                         $
                         {((item.product?.price || 0) * item.quantity).toFixed(
                           2
                         )}
-                      </p>
+                      </P>
                       <Button
                         variant="ghost"
                         size="icon"

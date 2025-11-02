@@ -6,6 +6,7 @@ import ProductImage from '@/components/product-image';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import ProductCatalog from '@/components/product-catalog';
+import { H1, P, H3 } from '@/components/ui/typography';
 
 const collections = [
   {
@@ -85,13 +86,13 @@ export default function CollectionPage() {
         <section className="bg-linear-to-b from-card/50 to-background py-12 md:py-16">
           <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="text-center">
-              <h1 className="mb-4 font-bold text-foreground text-4xl md:text-5xl">
+              <H1 className="mb-4 font-bold text-foreground text-4xl md:text-5xl">
                 Mining Hardware Collections
-              </h1>
-              <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+              </H1>
+              <P className="mx-auto max-w-2xl text-muted-foreground text-lg">
                 Explore our curated collections of mining hardware, from
                 entry-level to enterprise-grade solutions
-              </p>
+              </P>
             </div>
           </div>
         </section>
@@ -115,12 +116,12 @@ export default function CollectionPage() {
                     </div>
                   )}
                 </div>
-                <h3 className="mb-2 font-bold text-foreground group-hover:text-accent text-xl transition-colors">
+                <H3 className="mb-2 font-bold text-foreground group-hover:text-accent text-xl transition-colors">
                   {collection.name}
-                </h3>
-                <p className="mb-4 text-muted-foreground text-sm">
+                </H3>
+                <P className="mb-4 text-muted-foreground text-sm">
                   {collection.description}
-                </p>
+                </P>
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-accent text-xs">
                     {collection.productCount} Products

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Download } from 'lucide-react';
+import { H2, P } from './ui/typography';
 
 export default function OrdersManagement() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,9 +58,9 @@ export default function OrdersManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-4">
-        <h2 className="font-bold text-foreground text-2xl">
+        <H2 className="font-bold text-foreground text-2xl">
           Orders Management
-        </h2>
+        </H2>
         <Button className="gap-2 bg-primary hover:bg-primary/90">
           <Download className="w-4 h-4" />
           Export
@@ -127,12 +128,12 @@ export default function OrdersManagement() {
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <p className="font-medium text-foreground">
+                      <P className="font-medium text-foreground">
                         {order.customer}
-                      </p>
-                      <p className="text-foreground/60 text-xs">
+                      </P>
+                      <P className="text-foreground/60 text-xs">
                         {order.email}
-                      </p>
+                      </P>
                     </div>
                   </td>
                   <td className="px-6 py-4 font-semibold text-accent">

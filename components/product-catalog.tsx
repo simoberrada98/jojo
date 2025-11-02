@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { H2, H3, H4, Muted } from '@/components/ui/typography';
+import { H2, H3, H4, Muted, P } from '@/components/ui/typography';
 import { ChevronDown } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
 
@@ -228,11 +228,11 @@ function ProductCatalogContent() {
         <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {loading ? (
             <div className="col-span-full py-12 text-center">
-              <p className="text-foreground/60">Loading products...</p>
+              <P className="text-foreground/60">Loading products...</P>
             </div>
           ) : error ? (
             <div className="col-span-full py-12 text-center">
-              <p className="text-destructive">{error}</p>
+              <P className="text-destructive">{error}</P>
             </div>
           ) : filteredAndSortedProducts.length > 0 ? (
             filteredAndSortedProducts.map((product) => (
@@ -240,9 +240,9 @@ function ProductCatalogContent() {
             ))
           ) : (
             <div className="col-span-full py-12 text-center">
-              <p className="text-foreground/60">
+              <P className="text-foreground/60">
                 No products found matching your filters.
-              </p>
+              </P>
             </div>
           )}
         </div>

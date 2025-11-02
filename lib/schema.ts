@@ -96,7 +96,10 @@ function stripHtml(value: string | null | undefined): string {
   return value.replace(/<[^>]+>/g, ' ');
 }
 
-function normaliseSpecValue(name: SpecName, raw: string | null | undefined): string {
+function normaliseSpecValue(
+  name: SpecName,
+  raw: string | null | undefined
+): string {
   if (!raw) {
     return 'Not specified';
   }
@@ -168,13 +171,13 @@ function buildAdditionalProperties(
     Noise: undefined,
   };
 
-  return (['Algorithm', 'Hashrate', 'Power', 'Efficiency', 'Noise'] as SpecName[]).map(
-    (name) => ({
-      '@type': 'PropertyValue' as const,
-      name,
-      value: inferSpecFromText(name, textCorpus, specFallback[name]),
-    })
-  );
+  return (
+    ['Algorithm', 'Hashrate', 'Power', 'Efficiency', 'Noise'] as SpecName[]
+  ).map((name) => ({
+    '@type': 'PropertyValue' as const,
+    name,
+    value: inferSpecFromText(name, textCorpus, specFallback[name]),
+  }));
 }
 
 export interface WebSiteSchema {
@@ -245,8 +248,8 @@ export function generateProductSchema(
     product.images?.length && product.images.some(Boolean)
       ? product.images.filter(Boolean)
       : product.image
-      ? [product.image]
-      : undefined;
+        ? [product.image]
+        : undefined;
   const availability = product.inStock
     ? 'https://schema.org/InStock'
     : 'https://schema.org/OutOfStock';

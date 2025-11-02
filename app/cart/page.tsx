@@ -138,10 +138,9 @@ export default function CartPage() {
                 ))}
               </div>
 
-              {/* Order Summary Sidebar */}
               <div className="lg:col-span-1">
                 <div className="top-24 sticky bg-card p-6 border border-border rounded-lg">
-                  <H3 className="mb-6 text-lg">Order Summary</H3>
+                  <H3 className="mb-6 text-md">Order Summary</H3>
 
                   {/* Pricing Breakdown */}
                   <div className="space-y-3 mb-6 pb-6 border-border border-b">
@@ -149,18 +148,6 @@ export default function CartPage() {
                       <span className="text-foreground/70">Subtotal</span>
                       <span className="text-foreground">
                         ${subtotal.toLocaleString()} USD
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-foreground/70">Shipping</span>
-                      <span className="text-foreground">
-                        ${shipping.toLocaleString()} USD
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-foreground/70">Tax (8%)</span>
-                      <span className="text-foreground">
-                        ${tax.toFixed(2)} USD
                       </span>
                     </div>
                   </div>

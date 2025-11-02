@@ -93,8 +93,7 @@ export class PaymentProcessor {
         status: PaymentStatus.FAILED,
         error: {
           code: 'PROCESSING_ERROR',
-          message:
-            normalizedError.message || 'Payment processing failed',
+          message: normalizedError.message || 'Payment processing failed',
           details: error,
           retryable: true,
         },

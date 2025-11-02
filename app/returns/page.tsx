@@ -1,6 +1,6 @@
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { H1, Muted } from '@/components/ui/typography';
+import { H1, H2, Muted, P } from '@/components/ui/typography';
 import { AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 
 export default function ReturnsPage() {
@@ -15,12 +15,12 @@ export default function ReturnsPage() {
         </div>
 
         <section className="mb-10">
-          <div className="space-y-2 rounded-lg border border-border bg-card p-6">
-            <h2 className="text-xl font-semibold text-foreground">
+          <div className="space-y-2 bg-card p-6 border border-border rounded-lg">
+            <H2 className="font-semibold text-foreground text-xl">
               Information — Shipping:
-            </h2>
-            <p className="text-muted-foreground">Handling time: 1–2 days</p>
-            <p className="text-muted-foreground">Delivery time: 2–4 days</p>
+            </H2>
+            <P className="text-muted-foreground">Handling time: 1–2 days</P>
+            <P className="text-muted-foreground">Delivery time: 2–4 days</P>
           </div>
         </section>
 
@@ -30,12 +30,12 @@ export default function ReturnsPage() {
               <CardTitle>Return Window</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 We offer a <strong>14-day return window</strong> from the date
                 of delivery for most products. Mining hardware must be returned
                 in original, unopened condition to be eligible for a full
                 refund.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -102,7 +102,7 @@ export default function ReturnsPage() {
               <CardTitle>Refund Process</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>Once we receive and inspect your return:</p>
+              <P>Once we receive and inspect your return:</P>
               <ul>
                 <li>Refunds are processed within 5-7 business days</li>
                 <li>Original payment method will be credited</li>
@@ -111,10 +111,10 @@ export default function ReturnsPage() {
                 </li>
                 <li>Restocking fee of 15% may apply to opened items</li>
               </ul>
-              <p className="mt-4">
+              <P className="mt-4">
                 You will receive an email confirmation once your refund has been
                 processed.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -123,19 +123,19 @@ export default function ReturnsPage() {
               <CardTitle>Defective or Damaged Items</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 If you receive a defective or damaged item, please contact us
                 immediately with photos of the damage. We will:
-              </p>
+              </P>
               <ul>
                 <li>Provide a prepaid return label</li>
                 <li>Offer a replacement or full refund</li>
                 <li>Cover all return shipping costs</li>
               </ul>
-              <p className="mt-4 font-semibold">
+              <P className="mt-4 font-semibold">
                 Report damage within 48 hours of delivery for fastest
                 resolution.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -144,10 +144,10 @@ export default function ReturnsPage() {
               <CardTitle>Exchanges</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 We do not offer direct exchanges. If you need a different item,
                 please return the original for a refund and place a new order.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -156,19 +156,19 @@ export default function ReturnsPage() {
               <CardTitle>Warranty Claims</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 Most mining hardware comes with manufacturer warranty. For
                 warranty claims:
-              </p>
+              </P>
               <ul>
                 <li>Contact the manufacturer directly for support</li>
                 <li>Provide proof of purchase and warranty information</li>
                 <li>Follow manufacturer&rsquo;s RMA process</li>
               </ul>
-              <p className="mt-4">
+              <P className="mt-4">
                 We can assist in facilitating warranty claims if needed. Contact
                 our support team for assistance.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -177,11 +177,11 @@ export default function ReturnsPage() {
               <CardTitle>International Returns</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>
+              <P>
                 International customers are responsible for return shipping
                 costs and any customs fees. We recommend using a trackable
                 shipping method with insurance.
-              </p>
+              </P>
             </CardContent>
           </Card>
 
@@ -190,7 +190,7 @@ export default function ReturnsPage() {
               <CardTitle>Contact Us</CardTitle>
             </CardHeader>
             <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-              <p>For questions about returns or refunds:</p>
+              <P>For questions about returns or refunds:</P>
               <ul>
                 <li>Email: contact@jhuangnyc.com</li>
                 <li>Phone: +1 (631) 224-3534</li>

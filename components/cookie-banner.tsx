@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import type { CookieConsentStatus } from '@/lib/cookies/preferences';
 import { logger } from '@/lib/utils/logger';
+import { P } from './ui/typography';
 
 interface CookieBannerProps {
   initialStatus: CookieConsentStatus | null;
@@ -45,10 +46,10 @@ export function CookieBanner({ initialStatus }: CookieBannerProps) {
       <div className="mx-auto px-4 w-full max-w-3xl">
         <div className="bg-background/95 shadow-xl backdrop-blur p-6 border border-border rounded-2xl">
           <div className="space-y-2 text-foreground/80 text-sm">
-            <p className="font-medium text-foreground">
+            <P className="font-medium text-foreground">
               We respect your privacy
-            </p>
-            <p>
+            </P>
+            <P>
               We use essential cookies to make this site work and analytics
               cookies to understand how you use it. You can learn more in our{' '}
               <Link
@@ -58,7 +59,7 @@ export function CookieBanner({ initialStatus }: CookieBannerProps) {
                 Privacy Policy
               </Link>
               .
-            </p>
+            </P>
           </div>
           <div className="flex flex-wrap justify-end items-center gap-3 mt-4">
             <Button

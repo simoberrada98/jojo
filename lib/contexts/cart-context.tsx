@@ -56,7 +56,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = (product: DisplayProduct, quantity?: number) => {
     const proposed = quantity ?? 1;
-    const resolvedQuantity = Number.isFinite(proposed) ? Math.floor(proposed) : 1;
+    const resolvedQuantity = Number.isFinite(proposed)
+      ? Math.floor(proposed)
+      : 1;
     const normalizedQuantity = Math.max(1, resolvedQuantity);
 
     setItems((current) => {

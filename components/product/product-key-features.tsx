@@ -1,5 +1,6 @@
 import { Shield } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
+import { H3 } from '../ui/typography';
 
 interface ProductKeyFeaturesProps {
   product: DisplayProduct;
@@ -11,12 +12,10 @@ export function ProductKeyFeatures({ product }: ProductKeyFeaturesProps) {
   }
 
   return (
-    <div className="bg-card p-6 border border-border rounded-xl mt-12">
+    <div className="bg-card mt-12 p-6 border border-border rounded-xl">
       <div className="flex items-center gap-2 mb-4 text-accent">
         <Shield className="w-5 h-5" />
-        <h3 className="font-semibold text-foreground text-lg">
-          Key features
-        </h3>
+        <H3 className="font-semibold text-foreground text-lg">Key features</H3>
       </div>
       <ul className="space-y-3">
         {product.features.map((feature) => (

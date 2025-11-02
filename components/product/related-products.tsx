@@ -10,7 +10,10 @@ interface RelatedProductsProps {
   currentProductId: string;
 }
 
-export function RelatedProducts({ category, currentProductId }: RelatedProductsProps) {
+export function RelatedProducts({
+  category,
+  currentProductId,
+}: RelatedProductsProps) {
   const { products, isLoading } = useProductsByCategory(category, 5); // Fetch 5, filter out current, show 4
 
   if (isLoading) {
@@ -26,7 +29,9 @@ export function RelatedProducts({ category, currentProductId }: RelatedProductsP
     );
   }
 
-  const relatedProducts = products?.filter(p => p.id !== currentProductId).slice(0, 4);
+  const relatedProducts = products
+    ?.filter((p) => p.id !== currentProductId)
+    .slice(0, 4);
 
   if (!relatedProducts || relatedProducts.length === 0) {
     return null;

@@ -88,7 +88,10 @@ export default function PageTransition({ children }: PageTransitionProps) {
               className="absolute inset-0 bg-linear-to-br from-accent/20 via-primary/10 to-transparent"
               initial={{ x: '-100%', skewX: -10 }}
               animate={{ x: '100%' }}
-              transition={{ duration: Math.max(0.5, anim.overlay + 0.15), ease: [0.76, 0, 0.24, 1] }}
+              transition={{
+                duration: Math.max(0.5, anim.overlay + 0.15),
+                ease: [0.76, 0, 0.24, 1],
+              }}
             />
 
             {/* Digital grid lines */}
@@ -99,35 +102,35 @@ export default function PageTransition({ children }: PageTransitionProps) {
                 animate={{ opacity: 0 }}
                 transition={{ duration: overlayDuration, delay: 0.12 }}
               >
-              {horizontalLines.slice(0, lineCount).map((i) => (
-                <motion.div
-                  key={`h-${i}`}
-                  className="absolute bg-linear-to-r from-transparent via-accent/30 to-transparent w-full h-px"
-                  style={{ top: `${i * (100 / lineCount)}%` }}
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={{ scaleX: 1, opacity: [0, 1, 0] }}
-                  transition={{
-                    duration: Math.max(0.35, anim.overlay - 0.1),
-                    delay: i * gridLineDelay,
-                    ease: 'easeOut',
-                  }}
-                />
-              ))}
-              {verticalLines.slice(0, lineCount).map((i) => (
-                <motion.div
-                  key={`v-${i}`}
-                  className="absolute bg-linear-to-b from-transparent via-accent/20 to-transparent w-px h-full"
-                  style={{ left: `${i * (100 / lineCount)}%` }}
-                  initial={{ scaleY: 0, opacity: 0 }}
-                  animate={{ scaleY: 1, opacity: [0, 1, 0] }}
-                  transition={{
-                    duration: Math.max(0.35, anim.overlay - 0.1),
-                    delay: i * gridLineDelay,
-                    ease: 'easeOut',
-                  }}
-                />
-              ))}
-            </motion.div>
+                {horizontalLines.slice(0, lineCount).map((i) => (
+                  <motion.div
+                    key={`h-${i}`}
+                    className="absolute bg-linear-to-r from-transparent via-accent/30 to-transparent w-full h-px"
+                    style={{ top: `${i * (100 / lineCount)}%` }}
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                    transition={{
+                      duration: Math.max(0.35, anim.overlay - 0.1),
+                      delay: i * gridLineDelay,
+                      ease: 'easeOut',
+                    }}
+                  />
+                ))}
+                {verticalLines.slice(0, lineCount).map((i) => (
+                  <motion.div
+                    key={`v-${i}`}
+                    className="absolute bg-linear-to-b from-transparent via-accent/20 to-transparent w-px h-full"
+                    style={{ left: `${i * (100 / lineCount)}%` }}
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    animate={{ scaleY: 1, opacity: [0, 1, 0] }}
+                    transition={{
+                      duration: Math.max(0.35, anim.overlay - 0.1),
+                      delay: i * gridLineDelay,
+                      ease: 'easeOut',
+                    }}
+                  />
+                ))}
+              </motion.div>
             )}
 
             {/* Glowing particles - only render on client */}

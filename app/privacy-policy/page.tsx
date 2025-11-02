@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { serializeSchema } from '@/lib/schema';
+import { H1, P, H3 } from '@/components/ui/typography';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
 const canonicalUrl = `${baseUrl}/privacy-policy`;
@@ -82,7 +83,7 @@ export default function PrivacyPolicyPage() {
 
       <main className="pt-20">
         {/* Hero */}
-        <section className="border-border border-b bg-background">
+        <section className="bg-background border-border border-b">
           <div className="relative overflow-hidden">
             <div className="absolute inset-0">
               <Image
@@ -95,7 +96,7 @@ export default function PrivacyPolicyPage() {
               <div className="absolute inset-0 bg-background/80 backdrop-blur" />
             </div>
             <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Link
                   href="/"
                   className="hover:text-foreground transition-colors"
@@ -108,19 +109,19 @@ export default function PrivacyPolicyPage() {
                 </span>
               </div>
               <div className="mt-8 max-w-3xl">
-                <h1 className="font-bold text-4xl sm:text-5xl">
+                <H1 className="font-bold text-4xl sm:text-5xl">
                   Privacy Policy
-                </h1>
-                <p className="mt-4 text-muted-foreground text-lg">
+                </H1>
+                <P className="mt-4 text-muted-foreground text-lg">
                   Transparency, security, and trust are at the core of
                   everything we do. This policy explains how we collect, use,
                   and protect your data when you explore or purchase mining
                   hardware from Jhuangnyc.
-                </p>
-                <p className="mt-6 text-muted-foreground">
+                </P>
+                <P className="mt-6 text-muted-foreground">
                   Last updated:{' '}
                   <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
-                </p>
+                </P>
               </div>
             </div>
           </div>
@@ -157,7 +158,7 @@ export default function PrivacyPolicyPage() {
                   <CardTitle>Information We Collect</CardTitle>
                 </CardHeader>
                 <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                  <h3>Information you give us</h3>
+                  <H3>Information you give us</H3>
                   <ul>
                     <li>Account details such as name, email, and password</li>
                     <li>Billing, shipping, and contact information</li>
@@ -168,7 +169,7 @@ export default function PrivacyPolicyPage() {
                       Payment details processed securely by vetted third parties
                     </li>
                   </ul>
-                  <h3 className="mt-4">Information we collect automatically</h3>
+                  <H3 className="mt-4">Information we collect automatically</H3>
                   <ul>
                     <li>
                       Device and browser data, IP address, and approximate
@@ -206,11 +207,11 @@ export default function PrivacyPolicyPage() {
                       jurisdictions where we operate
                     </li>
                   </ul>
-                  <p className="mt-4">
+                  <P className="mt-4">
                     Our legal bases for processing include performing a
                     contract, legitimate business interests, obtaining your
                     consent, and fulfilling legal requirements.
-                  </p>
+                  </P>
                 </CardContent>
               </Card>
             </div>
@@ -220,14 +221,14 @@ export default function PrivacyPolicyPage() {
                 <CardTitle>How Payments Work</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   Checkout flows are handled end-to-end with Stripe, which
                   tokenizes sensitive cardholder data and shares only the last
                   four digits and expiration date with our team. This keeps the
                   app responsive while preventing us from ever storing full card
                   numbers on Jhuangnyc servers.
-                </p>
-                <ol className="list-decimal space-y-2 pl-6">
+                </P>
+                <ol className="space-y-2 pl-6 list-decimal">
                   <li>
                     Review your cart, shipping details, and taxes, then choose a
                     payment option supported by Stripe (major credit and debit
@@ -250,7 +251,7 @@ export default function PrivacyPolicyPage() {
                     shipment or pickup logistics.
                   </li>
                 </ol>
-                <p className="mt-4">
+                <P className="mt-4">
                   If Stripe declines or flags a payment, we will prompt you to
                   retry, switch to another method, or contact support for manual
                   assistance. You can request invoices, payment confirmations,
@@ -259,7 +260,7 @@ export default function PrivacyPolicyPage() {
                     contact@jhuangnyc.com
                   </a>
                   .
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -268,12 +269,12 @@ export default function PrivacyPolicyPage() {
                 <CardTitle>Sharing & International Transfers</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   We only share personal data with vendors that enable core
                   operations such as payment processing, logistics, analytics,
                   and customer support. Each partner is bound by confidentiality
                   and data processing agreements.
-                </p>
+                </P>
                 <ul>
                   <li>
                     <strong>Service providers:</strong> Stripe, shipping
@@ -289,12 +290,12 @@ export default function PrivacyPolicyPage() {
                     with applicable laws, court orders, or to protect our rights
                   </li>
                 </ul>
-                <p className="mt-4">
+                <P className="mt-4">
                   Because we operate in the United States, your data may be
                   processed outside of your country. We implement safeguards
                   such as Standard Contractual Clauses and vendor due diligence
                   to protect international transfers.
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -304,11 +305,11 @@ export default function PrivacyPolicyPage() {
                   <CardTitle>Data Retention & Security</CardTitle>
                 </CardHeader>
                 <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                  <p>
+                  <P>
                     We keep personal information only for as long as needed to
                     deliver products, resolve disputes, comply with legal
                     obligations, and maintain business records.
-                  </p>
+                  </P>
                   <ul>
                     <li>
                       Encryption in transit and at rest for sensitive data
@@ -325,10 +326,10 @@ export default function PrivacyPolicyPage() {
                   <CardTitle>Cookies & Tracking Technologies</CardTitle>
                 </CardHeader>
                 <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                  <p>
+                  <P>
                     We use cookies to remember your preferences, keep you signed
                     in, analyze traffic, and measure marketing performance.
-                  </p>
+                  </P>
                   <ul>
                     <li>
                       Essential cookies keep the store secure and functional
@@ -341,11 +342,11 @@ export default function PrivacyPolicyPage() {
                       Marketing cookies personalize offers when you opt in
                     </li>
                   </ul>
-                  <p className="mt-4">
+                  <P className="mt-4">
                     You can manage cookies in your browser settings or through
                     our cookie banner. Disabling certain cookies may limit site
                     functionality.
-                  </p>
+                  </P>
                 </CardContent>
               </Card>
             </div>
@@ -355,11 +356,11 @@ export default function PrivacyPolicyPage() {
                 <CardTitle>Your Privacy Choices & Rights</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   Depending on where you live, you may have the right to access,
                   correct, delete, or restrict the processing of your personal
                   data. These rights include:
-                </p>
+                </P>
                 <ul>
                   <li>Requesting a copy of the data we hold about you</li>
                   <li>Updating inaccurate or incomplete information</li>
@@ -374,13 +375,13 @@ export default function PrivacyPolicyPage() {
                     authority
                   </li>
                 </ul>
-                <p className="mt-4">
+                <P className="mt-4">
                   If you are located in the EEA, UK, or Switzerland, we process
                   personal data in alignment with GDPR requirements. California
                   residents can exercise rights under the CCPA, including
                   requesting information about data sharing and opting out of
                   sale or sharing (which we do not perform).
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -389,16 +390,16 @@ export default function PrivacyPolicyPage() {
                 <CardTitle>Contact & Updates</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   We review this policy regularly to reflect changes in our
                   services, legal obligations, or best practices. When we make
                   material updates, we will adjust the date above and share a
                   notice on our site.
-                </p>
-                <p className="mt-4">
+                </P>
+                <P className="mt-4">
                   Reach out anytime with questions or to exercise your privacy
                   rights:
-                </p>
+                </P>
                 <ul>
                   <li>
                     Email:{' '}

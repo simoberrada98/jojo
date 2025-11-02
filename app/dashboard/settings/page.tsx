@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { H1, P } from '@/components/ui/typography';
 
 export default function SettingsPage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -89,10 +90,10 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-8">
-        <h1 className="font-bold text-3xl">Settings</h1>
-        <p className="mt-2 text-muted-foreground">
+        <H1 className="font-bold text-3xl">Settings</H1>
+        <P className="mt-2 text-muted-foreground">
           Manage your account settings and preferences
-        </p>
+        </P>
       </div>
 
       <div className="space-y-6">
@@ -113,9 +114,9 @@ export default function SettingsPage() {
                   disabled
                   className="bg-muted"
                 />
-                <p className="text-muted-foreground text-xs">
+                <P className="text-muted-foreground text-xs">
                   Email cannot be changed
-                </p>
+                </P>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Name</Label>
@@ -192,10 +193,10 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium">Account Status</p>
-                <p className="text-muted-foreground text-sm">
+                <P className="font-medium">Account Status</P>
+                <P className="text-muted-foreground text-sm">
                   Your account is active
-                </p>
+                </P>
               </div>
               <div className="flex items-center gap-2">
                 <div className="bg-green-500 rounded-full w-2 h-2" />
@@ -207,23 +208,23 @@ export default function SettingsPage() {
 
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium">Member Since</p>
-                <p className="text-muted-foreground text-sm">
+                <P className="font-medium">Member Since</P>
+                <P className="text-muted-foreground text-sm">
                   {user?.created_at
                     ? new Date(user.created_at).toLocaleDateString()
                     : 'N/A'}
-                </p>
+                </P>
               </div>
             </div>
 
             <Separator />
 
             <div>
-              <p className="mb-2 font-medium">Danger Zone</p>
-              <p className="mb-4 text-muted-foreground text-sm">
+              <P className="mb-2 font-medium">Danger Zone</P>
+              <P className="mb-4 text-muted-foreground text-sm">
                 Once you delete your account, there is no going back. Please be
                 certain.
-              </p>
+              </P>
               <Button variant="destructive" disabled>
                 Delete Account
               </Button>

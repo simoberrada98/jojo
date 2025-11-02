@@ -418,11 +418,7 @@ export async function webhooksApiHandler(
         });
         return;
       }
-      const deleted = await deleteWebhook(
-        token,
-        businessId,
-        resolvedWebhookId
-      );
+      const deleted = await deleteWebhook(token, businessId, resolvedWebhookId);
       res.status(200).json(deleted);
       return;
     }
@@ -622,7 +618,10 @@ export async function webhookReceiverHandler(
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : 'Webhook processing failed';
-    logger.error('Webhook processing error', error instanceof Error ? error : new Error(String(message)));
+    logger.error(
+      'Webhook processing error',
+      error instanceof Error ? error : new Error(String(message))
+    );
     res.status(500).json({ error: message });
   }
 }

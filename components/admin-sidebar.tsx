@@ -9,6 +9,7 @@ import {
   LogOut,
   LayoutDashboard,
 } from 'lucide-react';
+import { P } from './ui/typography';
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -42,9 +43,9 @@ export default function AdminSidebar({
           title="Jhuangnyc Admin"
         />
         {isOpen && (
-          <p className="mt-2 font-semibold text-foreground text-sm">
+          <P className="mt-2 font-semibold text-foreground text-sm">
             Jhuangnyc Admin
-          </p>
+          </P>
         )}
       </div>
 

@@ -114,7 +114,9 @@ function extractDimensions(bodyHtml: string): ProductDimensions {
   // Extract weight in lbs, convert to kg
   const weightMatch = bodyHtml.match(/(?:Net weight)[:\s]+([\d.]+)\s*lbs/i);
   if (weightMatch) {
-    dimensions.weight = parseFloat((parseFloat(weightMatch[1]) * 0.453592).toFixed(2));
+    dimensions.weight = parseFloat(
+      (parseFloat(weightMatch[1]) * 0.453592).toFixed(2)
+    );
   }
 
   return dimensions;

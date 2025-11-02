@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
+import { H3, P } from '../ui/typography';
 
 interface TrackingEvent {
   id: string;
@@ -122,9 +123,9 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
   if (loading) {
     return (
       <div className="bg-card mb-8 p-8 border border-border rounded-lg">
-        <h3 className="mb-6 font-semibold text-foreground text-lg">
+        <H3 className="mb-6 font-semibold text-foreground text-lg">
           Order Tracking
-        </h3>
+        </H3>
         <div className="flex justify-center items-center py-8">
           <div className="border-accent border-b-2 rounded-full w-8 h-8 animate-spin"></div>
         </div>
@@ -142,9 +143,9 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
 
   return (
     <div className="bg-card mb-8 p-8 border border-border rounded-lg">
-      <h3 className="mb-6 font-semibold text-foreground text-lg">
+      <H3 className="mb-6 font-semibold text-foreground text-lg">
         Order Tracking
-      </h3>
+      </H3>
 
       {/* Status Progress Bar */}
       <div className="mb-8">
@@ -214,7 +215,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
                 />
               </div>
               <div className="flex-1">
-                <p
+                <P
                   className={`text-sm ${
                     index === 0
                       ? 'font-semibold text-foreground'
@@ -222,13 +223,13 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
                   }`}
                 >
                   {event.message}
-                </p>
+                </P>
                 {event.location && (
-                  <p className="mt-1 text-muted-foreground text-xs">
+                  <P className="mt-1 text-muted-foreground text-xs">
                     📍 {event.location}
-                  </p>
+                  </P>
                 )}
-                <p className="mt-1 text-muted-foreground text-xs">
+                <P className="mt-1 text-muted-foreground text-xs">
                   {new Date(event.timestamp).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -237,7 +238,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
                     minute: '2-digit',
                     hour12: true,
                   })}
-                </p>
+                </P>
               </div>
             </div>
           ))}

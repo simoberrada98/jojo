@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { serializeSchema } from '@/lib/schema';
+import { H1, P } from '@/components/ui/typography';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
 const canonicalUrl = `${baseUrl}/terms-of-service`;
@@ -82,7 +83,7 @@ export default function TermsOfServicePage() {
 
       <main className="pt-20">
         {/* Hero */}
-        <section className="border-border border-b bg-background">
+        <section className="bg-background border-border border-b">
           <div className="relative overflow-hidden">
             <div className="absolute inset-0">
               <Image
@@ -95,7 +96,7 @@ export default function TermsOfServicePage() {
               <div className="absolute inset-0 bg-background/80 backdrop-blur" />
             </div>
             <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-5xl">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Link
                   href="/"
                   className="hover:text-foreground transition-colors"
@@ -108,19 +109,19 @@ export default function TermsOfServicePage() {
                 </span>
               </div>
               <div className="mt-8 max-w-3xl">
-                <h1 className="font-bold text-4xl sm:text-5xl">
+                <H1 className="font-bold text-4xl sm:text-5xl">
                   Terms of Service
-                </h1>
-                <p className="mt-4 text-muted-foreground text-lg">
+                </H1>
+                <P className="mt-4 text-muted-foreground text-lg">
                   These terms outline how you can access, purchase from, and
                   interact with Jhuangnyc. Please read them carefully so you
                   understand your obligations and our commitments before placing
                   an order.
-                </p>
-                <p className="mt-6 text-muted-foreground">
+                </P>
+                <P className="mt-6 text-muted-foreground">
                   Last updated:{' '}
                   <time dateTime={lastUpdatedISO}>{lastUpdatedDisplay}</time>
-                </p>
+                </P>
               </div>
             </div>
           </div>
@@ -210,20 +211,20 @@ export default function TermsOfServicePage() {
                 <CardTitle>Products, Availability & Accuracy</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   We strive to present accurate product specifications, lead
                   times, and pricing. However, mining hardware can change
                   rapidly as manufacturers issue updates. Specifications, hash
                   rates, and efficiencies may vary from the published
                   information, and availability is not guaranteed until an order
                   is accepted.
-                </p>
-                <p className="mt-4">
+                </P>
+                <P className="mt-4">
                   We reserve the right to limit quantities, substitute
                   equivalent models, or discontinue items at our discretion. If
                   a material change affects your order, we will contact you with
                   available options or provide a refund.
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -258,10 +259,10 @@ export default function TermsOfServicePage() {
                 <CardTitle>Acceptable Use & Restrictions</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   You agree not to misuse the site or any products purchased
                   from us. Prohibited conduct includes:
-                </p>
+                </P>
                 <ul>
                   <li>
                     Violating applicable laws or export regulations, including
@@ -289,7 +290,7 @@ export default function TermsOfServicePage() {
                   <CardTitle>Risk Disclosure & Warranties</CardTitle>
                 </CardHeader>
                 <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                  <p>
+                  <P>
                     Cryptocurrency mining carries operational and financial
                     risks, including hardware failure, network difficulty
                     changes, and price volatility. Jhuangnyc provides hardware
@@ -297,7 +298,7 @@ export default function TermsOfServicePage() {
                     Manufacturer warranties, when available, are passed through
                     to you and may require direct coordination with the
                     supplier.
-                  </p>
+                  </P>
                 </CardContent>
               </Card>
 
@@ -306,14 +307,14 @@ export default function TermsOfServicePage() {
                   <CardTitle>Limitation of Liability</CardTitle>
                 </CardHeader>
                 <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                  <p>
+                  <P>
                     To the fullest extent permitted by law, Jhuangnyc and its
                     affiliates are not liable for indirect, incidental, special,
                     consequential, or punitive damages, including lost profits,
                     revenue, or data. Aggregate liability for claims relating to
                     a purchase will not exceed the amount you paid for the
                     product giving rise to the claim.
-                  </p>
+                  </P>
                 </CardContent>
               </Card>
             </div>
@@ -323,13 +324,13 @@ export default function TermsOfServicePage() {
                 <CardTitle>Indemnification</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   You agree to defend, indemnify, and hold harmless Jhuangnyc,
                   its officers, employees, and partners from any claims,
                   damages, losses, or expenses (including reasonable attorney
                   fees) arising out of your breach of these terms, misuse of the
                   site, or violation of any law or third-party rights.
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -338,14 +339,14 @@ export default function TermsOfServicePage() {
                 <CardTitle>Governing Law & Dispute Resolution</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   These terms are governed by the laws of the State of New York,
                   United States, without regard to conflict-of-law rules. You
                   agree to submit to the exclusive jurisdiction of the state and
                   federal courts located in Suffolk County, New York, for any
                   dispute that is not subject to informal resolution or binding
                   arbitration agreed upon by the parties.
-                </p>
+                </P>
               </CardContent>
             </Card>
 
@@ -354,18 +355,18 @@ export default function TermsOfServicePage() {
                 <CardTitle>Changes & Contact</CardTitle>
               </CardHeader>
               <CardContent className="dark:prose-invert max-w-none prose prose-sm">
-                <p>
+                <P>
                   We may update these Terms of Service to reflect changes in our
                   products, legal requirements, or operational practices. When
                   material updates occur, we will adjust the “Last updated” date
                   and may provide additional notice on our site. Continued use
                   of the services after changes take effect constitutes
                   acceptance of the revised terms.
-                </p>
-                <p className="mt-4">
+                </P>
+                <P className="mt-4">
                   Questions about these terms? Our support team is ready to
                   help:
-                </p>
+                </P>
                 <ul>
                   <li>
                     Email:{' '}

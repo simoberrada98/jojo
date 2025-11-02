@@ -13,6 +13,7 @@ import type { DisplayProduct } from '@/types/product';
 import { useAnimationConfig } from '@/lib/animation';
 import { ProductCardSkeleton } from './product/product-card-skeleton';
 import { logger } from '@/lib/utils/logger';
+import { H2, P, H3 } from './ui/typography';
 
 export default function TopProducts() {
   const anim = useAnimationConfig();
@@ -50,15 +51,15 @@ export default function TopProducts() {
       <section className="px-4 sm:px-6 lg:px-8 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
+            <H2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
               <span className="bg-clip-text bg-linear-to-r from-primary via-accent to-secondary text-transparent">
                 Top Rated Products
               </span>
-            </h2>
-            <p className="mx-auto max-w-2xl text-foreground/70 text-lg">
+            </H2>
+            <P className="mx-auto max-w-2xl text-foreground/70 text-lg">
               Our most popular and highest-rated mining hardware trusted by
               professionals worldwide.
-            </p>
+            </P>
           </div>
           <div className="gap-6 grid grid-cols-1 md:grid-cols-3 mb-12">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -83,15 +84,15 @@ export default function TopProducts() {
           transition={{ duration: anim.enter, ease: anim.easeStandard }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
+          <H2 className="mb-4 font-bold text-3xl sm:text-4xl lg:text-5xl text-balance">
             <span className="bg-clip-text bg-linear-to-r from-primary via-accent to-secondary text-transparent">
               Top Rated Products
             </span>
-          </h2>
-          <p className="mx-auto max-w-2xl text-foreground/70 text-lg">
+          </H2>
+          <P className="mx-auto max-w-2xl text-foreground/70 text-lg">
             Our most popular and highest-rated mining hardware trusted by
             professionals worldwide.
-          </p>
+          </P>
         </motion.div>
 
         {/* Products Grid */}
@@ -103,7 +104,14 @@ export default function TopProducts() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: anim.enter, ease: anim.easeStandard }}
-              whileHover={{ y: -8, transition: { type: 'tween', ease: anim.easeStandard, duration: anim.hover } }}
+              whileHover={{
+                y: -8,
+                transition: {
+                  type: 'tween',
+                  ease: anim.easeStandard,
+                  duration: anim.hover,
+                },
+              }}
               className="group relative bg-card hover:shadow-accent/10 hover:shadow-lg border border-border hover:border-accent/50 rounded-xl overflow-hidden transition-all duration-300 will-change-transform"
             >
               {/* Best Seller Badge */}
@@ -134,12 +142,12 @@ export default function TopProducts() {
                     <span className="inline-block bg-accent/20 mb-2 px-2 py-1 rounded font-semibold text-accent text-xs">
                       {product.category}
                     </span>
-                    <h3 className="mb-2 font-bold text-foreground group-hover:text-accent text-xl transition-colors">
+                    <H3 className="mb-2 font-bold text-foreground group-hover:text-accent text-xl transition-colors">
                       {product.name}
-                    </h3>
-                    <p className="mb-2 font-mono text-foreground/60 text-sm">
+                    </H3>
+                    <P className="mb-2 font-mono text-foreground/60 text-sm">
                       {product.hashrate} • {product.power}
-                    </p>
+                    </P>
                   </div>
 
                   {/* Rating */}
@@ -186,7 +194,10 @@ export default function TopProducts() {
                 </Link>
 
                 {/* Action Button */}
-                <motion.div whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: anim.tap }}>
+                <motion.div
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'tween', duration: anim.tap }}
+                >
                   <Button
                     className="bg-primary hover:bg-primary/90 w-full text-primary-foreground"
                     onClick={() => {
@@ -211,7 +222,11 @@ export default function TopProducts() {
           className="text-center"
         >
           <Link href="/collections/all">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: 'tween', duration: 0.15 }}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'tween', duration: 0.15 }}
+            >
               <Button
                 size="lg"
                 variant="outline"

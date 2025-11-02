@@ -49,11 +49,7 @@ export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MotionButton
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-        >
+        <MotionButton variant="ghost" size="icon" className="rounded-full">
           <Avatar className="w-8 h-8">
             <AvatarImage src={profile?.avatar_url || undefined} />
             <AvatarFallback className="bg-primary text-primary-foreground">

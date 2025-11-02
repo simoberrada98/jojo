@@ -25,7 +25,7 @@ export function BrandLogo({
     <svg
       viewBox="0 0 2048 648"
       className={cn(
-        'w-32 sm:w-auto sm:max-w-[12rem] h-auto text-foreground',
+        'w-32 sm:w-auto sm:max-w-48 h-auto text-foreground',
         className
       )}
       role={decorative ? undefined : 'img'}

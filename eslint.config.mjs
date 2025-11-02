@@ -21,15 +21,15 @@ export default defineConfig([
   prettier,
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
         {
-          "varsIgnorePattern": "^",
-          "argsIgnorePattern": "^",
-          "caughtErrorsIgnorePattern": "^_"
-        }
-      ]
-    }
+          varsIgnorePattern: '^',
+          argsIgnorePattern: '^',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   globalIgnores([
     // Default ignores of eslint-config-next:

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import TrustPilotLogo from '@/public/svgs/trust-pilot.svg';
 import AmvLogo from '@/public/svgs/amv.svg';
 import MiningNowLogo from '@/public/svgs/miningnow.svg';
-import { H4 } from '../ui/typography';
+import { H4, P } from '../ui/typography';
 
 export function ProductTrustedBy() {
   return (
@@ -25,7 +25,7 @@ export function ProductTrustedBy() {
             height={24}
             className="mx-auto"
           />
-          <p className="mt-1 text-green-600 text-xs">Trusted vendor</p>
+          <P className="mt-1 text-green-600 text-xs">Trusted vendor</P>
         </div>
         <div className="flex flex-col justify-center items-center p-2 border rounded-md text-center">
           <Image
@@ -35,7 +35,7 @@ export function ProductTrustedBy() {
             height={24}
             className="mx-auto"
           />
-          <p className="mt-1 text-green-600 text-xs">Trusted vendor</p>
+          <P className="mt-1 text-green-600 text-xs">Trusted vendor</P>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Trash2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { P, H1, H3 } from '@/components/ui/typography';
 
 export default function WishlistPage() {
   const { wishlist, loading, removeFromWishlist } = useWishlist();
@@ -31,17 +32,17 @@ export default function WishlistPage() {
   };
 
   if (loading) {
-    return <p>Loading wishlist...</p>;
+    return <P>Loading wishlist...</P>;
   }
 
   return (
     <div>
-      <h1 className="mb-8 font-bold text-3xl">My Wishlist</h1>
+      <H1 className="mb-8 font-bold text-3xl">My Wishlist</H1>
 
       {wishlist.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Your wishlist is empty</p>
+            <P className="text-muted-foreground">Your wishlist is empty</P>
           </CardContent>
         </Card>
       ) : (
@@ -58,12 +59,12 @@ export default function WishlistPage() {
                     className="mb-4 rounded-lg w-full h-48 object-cover"
                   />
                 )}
-                <h3 className="mb-2 font-semibold text-lg">
+                <H3 className="mb-2 font-semibold text-lg">
                   {item.product?.name}
-                </h3>
-                <p className="mb-4 font-bold text-2xl">
+                </H3>
+                <P className="mb-4 font-bold text-2xl">
                   ${item.product?.price.toFixed(2)}
-                </p>
+                </P>
                 <div className="flex gap-2">
                   <Button
                     variant="default"
