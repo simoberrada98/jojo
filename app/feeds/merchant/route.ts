@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { fetchActiveProductsForSeo } from '@/lib/data/seo-products';
 import { siteMetadata } from '@/lib/seo/site-metadata';
+import { getExternalReviewSummary } from '@/lib/services/reviews/external-review.service';
 
 export const revalidate = 3600; // 1 hour
 
@@ -25,11 +26,22 @@ function formatPrice(value: number) {
 
 export async function GET() {
   const products = await fetchActiveProductsForSeo();
+  const productsWithReviews = await Promise.all(
+    products.map(async (product) => ({
+      product,
+      reviewSummary: product.gtin
+        ? await getExternalReviewSummary(product.gtin, {
+            name: product.name,
+            brand: product.brand ?? undefined,
+          })
+        : null,
+    }))
+  );
   const base = siteMetadata.baseUrl.toString().replace(/\/$/, '');
   const channelUpdatedAt = new Date().toUTCString();
 
-  const itemsXml = products
-    .map((product) => {
+  const itemsXml = productsWithReviews
+    .map(({ product, reviewSummary }) => {
       const productUrl = `${base}/products/${product.slug}`;
       const imageUrl = product.featured_image_url
         ? product.featured_image_url
@@ -54,6 +66,26 @@ export async function GET() {
         <g:brand>${escapeXml(product.brand || 'MineHub')}</g:brand>
         <g:condition>new</g:condition>
         ${product.gtin ? `<g:gtin>${escapeXml(product.gtin)}</g:gtin>` : ''}
+        ${
+          reviewSummary
+            ? `<g:product_review_average>${reviewSummary.averageRating.toFixed(2)}</g:product_review_average>`
+            : ''
+        }
+        ${
+          reviewSummary
+            ? `<g:product_review_count>${reviewSummary.reviewCount}</g:product_review_count>`
+            : ''
+        }
+        ${
+          reviewSummary?.reviews?.[0]?.comment
+            ? `<g:product_review_snippet><![CDATA[${reviewSummary.reviews[0].comment.slice(0, 400)}]]></g:product_review_snippet>`
+            : ''
+        }
+        ${
+          reviewSummary?.sourceUrl
+            ? `<g:product_review_source_link>${escapeXml(reviewSummary.sourceUrl)}</g:product_review_source_link>`
+            : ''
+        }
         <g:price>${formatPrice(product.base_price)}</g:price>
         ${
           product.compare_at_price

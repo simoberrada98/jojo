@@ -131,7 +131,7 @@ export interface Address {
 
 export interface PaymentRecord {
   id: string;
-  hp_payment_id?: string;
+  hoodpay_payment_id?: string;
   business_id: string;
   session_id: string;
   amount: number;

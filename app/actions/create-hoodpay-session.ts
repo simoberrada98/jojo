@@ -7,7 +7,11 @@ import { env } from '@/lib/config/env';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { createPaymentDbService } from '@/lib/services/payment-db.service';
-import { PaymentMethod, PaymentStatus, type PaymentRecord } from '@/types/payment';
+import {
+  PaymentMethod,
+  PaymentStatus,
+  type PaymentRecord,
+} from '@/types/payment';
 import { createHoodpayPaymentSession } from '@/lib/services/payment-strategies/hoodpay.strategy.server';
 
 type HoodpaySessionInput = {
@@ -59,18 +63,19 @@ export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
       env.SUPABASE_SERVICE_ROLE_KEY
     );
     const businessId = paymentServerConfig.hoodpay.businessId || '';
-    const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> = {
-      hp_payment_id: session.id,
-      business_id: businessId,
-      session_id: session.id,
-      amount: input.amount,
-      currency: 'USD',
-      status: PaymentStatus.PENDING,
-      method: PaymentMethod.HOODPAY,
-      customer_email: input.customer?.email,
-      customer_ip: ip,
-      metadata: input.metadata,
-    };
+    const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> =
+      {
+        hoodpay_payment_id: session.id,
+        business_id: businessId,
+        session_id: session.id,
+        amount: input.amount,
+        currency: 'USD',
+        status: PaymentStatus.PENDING,
+        method: PaymentMethod.HOODPAY,
+        customer_email: input.customer?.email,
+        customer_ip: ip,
+        metadata: input.metadata,
+      };
     await db.createPayment(newPayment);
   } catch (e) {
     // Do not block checkout on DB failures; log for later review

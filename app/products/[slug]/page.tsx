@@ -14,6 +14,7 @@ import { P } from '@/components/ui/typography';
 import { ProductKeyFeatures } from '@/components/product/product-key-features';
 import { RelatedProducts } from '@/components/product/related-products';
 import { ProductDetailSkeleton } from '@/components/product/product-detail-skeleton';
+import { ProductReviews } from '@/components/product/product-reviews';
 
 export default function MinerDetailPage() {
   const params = useParams();
@@ -144,6 +145,12 @@ export default function MinerDetailPage() {
               </div>
             ))}
           </aside>
+
+          <ProductReviews
+            gtin={product.gtin}
+            name={product.name}
+            brand={product.brand}
+          />
 
           <section id="related-products" className="mt-12">
             <RelatedProducts

@@ -8,6 +8,7 @@ export type Product = {
   category: string;
   brand: string | null | undefined;
   tags: string[] | null;
+  gtin?: string | null;
 
   // Pricing
   base_price: number;
