@@ -25,6 +25,16 @@ const nextConfig: NextConfig = {
         destination: '/collections/all',
         permanent: true,
       },
+      {
+        source: '/product',
+        destination: '/collections/all',
+        permanent: true,
+      },
+      {
+        source: '/products',
+        destination: '/collections/all',
+        permanent: true,
+      },
     ];
   },
   typescript: {

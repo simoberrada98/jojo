@@ -103,7 +103,7 @@ export default function CollectionPage() {
             {collections.map((collection) => (
               <Link
                 key={collection.id}
-                href="/#products"
+                href="/products"
                 className="group block"
               >
                 <div className="relative mb-4 border border-border group-hover:border-accent rounded-lg h-64 overflow-hidden transition-all duration-300">

@@ -1,10 +1,9 @@
 'use server';
-import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import 'server-only';
-
-import { CONVERSION_RATES, Currency } from '@/lib/config/currency.config';
-import { PricingService } from '@/lib/services/pricing.service';
+import { headers } from 'next/headers';
+import { APP_CONFIG } from '@/lib/config/app.config';
 import { logger } from '@/lib/utils/logger';
+import { createHoodpayPaymentSession } from '@/lib/services/payment-strategies/hoodpay.strategy.server';
 
 type HoodpaySessionInput = {
   amount: number;
@@ -25,37 +24,28 @@ type HoodpaySessionResponse = {
 };
 
 export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
-  const { apiKey, businessId } = paymentServerConfig.hoodpay;
-  if (!apiKey || !businessId) {
-    throw new Error('HP credentials are not configured');
-  }
-  const payload = {
-    amount: PricingService.convertPrice(
-      input.amount,
-      input.currency as Currency,
-      CONVERSION_RATES
-    ),
+  const h = await headers();
+  const ip = h.get('x-forwarded-for') || undefined;
+  const userAgent = h.get('user-agent') || undefined;
+
+  const baseUrl = APP_CONFIG.baseUrl;
+  const redirectUrl = baseUrl ? `${baseUrl}/thank-you` : undefined;
+  const notifyUrl = baseUrl ? `${baseUrl}/api/hoodpay/webhook` : undefined;
+
+  const session = await createHoodpayPaymentSession({
+    amount: input.amount, // already USD
     currency: 'USD',
-    metadata: input.metadata ?? {},
-    customerEmail: input.customer?.email,
-  };
-  const res = await fetch(
-    `https://api.hoodpay.io/v1/businesses/${businessId}/payments`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-      cache: 'no-store',
-    }
-  );
-  if (!res.ok) {
-    logger.error('Crypto API response', undefined, { status: res.status });
-    throw new Error(`Failed to create Crypto session: ${await res.text()}`);
+    metadata: input.metadata,
+    customer: { email: input.customer?.email, ip, userAgent },
+    redirectUrl,
+    notifyUrl,
+    name: 'Order',
+  });
+
+  if (!session.checkoutUrl) {
+    logger.error('Crypto API response', undefined, { status: 'no_url' });
+    throw new Error('Failed to create Crypto session: missing checkout URL');
   }
-  const data = (await res.json()) as HoodpaySessionResponse;
-  const session = data?.data ?? data;
-  return { checkoutUrl: session.url, id: session.id };
+
+  return session;
 }

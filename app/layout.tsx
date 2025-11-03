@@ -159,7 +159,6 @@ export default async function RootLayout({
           href="/apple-touch-icon.png"
         />
         <meta name="apple-mobile-web-app-title" content="JhuangNYC" />
-        <link rel="manifest" href="/site.webmanifest" />
         {/* Schema.org Organization markup */}
         <script
           type="application/ld+json"

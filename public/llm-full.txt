@@ -1,47 +1,3 @@
-
-- [Next Generation Mining](https://www.jhuangnyc.com/): Explore professional-grade mining hardware and maximize your potential.
-- [J Huang NYC Sitemap](https://www.jhuangnyc.com/sitemap.xml): Explore J Huang NYC's sitemap for easy navigation.
-- [404 Not Found](https://www.jhuangnyc.com/miners): Page not found for crypto mining hardware store.
-- [Crypto Mining Hardware](https://www.jhuangnyc.com/categories): Explore Jhuangnyc's crypto mining hardware offerings.
-- [ASIC Miner Specifications](https://www.jhuangnyc.com/miners/specs): Compare ASIC miners' specifications for informed purchasing decisions.
-- [ASIC Buying Guide](https://www.jhuangnyc.com/guides/asic-buying-guide): Comprehensive guide for evaluating and purchasing ASIC miners.
-- [Mining Hardware Warranty](https://www.jhuangnyc.com/policies/warranty): Comprehensive warranty coverage details for mining hardware.
-- [Returns and Refunds](https://www.jhuangnyc.com/policies/returns): Detailed return policy for hardware and refund process.
-- [Jhuangnyc - Mining Hardware](https://www.jhuangnyc.com/about): Trusted source for cryptocurrency mining hardware and support.
-- [Mining Hardware Solutions](https://www.jhuangnyc.com/learn-more): Expert support and vetted hardware for serious miners.
-
-# curated llms index for ai and search models
-https://jhuangnyc.com/
-https://jhuangnyc.com/learn-more
-https://jhuangnyc.com/about
-https://jhuangnyc.com/contact
-https://jhuangnyc.com/sitemap
-https://jhuangnyc.com/robots
-https://jhuangnyc.com/feeds/merchant
-https://jhuangnyc.com/collections
-https://jhuangnyc.com/collections/all
-https://jhuangnyc.com/products
-https://jhuangnyc.com/products/specs
-https://jhuangnyc.com/guides/asic-buying-guide#overview
-https://jhuangnyc.com/guides/asic-buying-guide#pricing-framework
-
-
-
-# policies
-https://jhuangnyc.com/policies
-https://jhuangnyc.com/policies/warranty#coverage
-https://jhuangnyc.com/policies/returns#process
-https://jhuangnyc.com/policies/warranty#service-windows
-https://jhuangnyc.com/policies/returns#exceptions
-https://jhuangnyc.com/terms
-https://jhuangnyc.com/terms-of-service
-https://jhuangnyc.com/refunds
-https://jhuangnyc.com/shipping
-https://jhuangnyc.com/returns
-https://jhuangnyc.com/privacy
-https://jhuangnyc.com/privacy-policy
-
-
 # https://jhuangnyc.com llms-full.txt
 
 ## Next Generation Mining
@@ -687,7 +643,7 @@ Terms of Service \\| Jhuangnyc \\| Jhuangnyc
 ## Application error: a client-side exception has occurred while loading www.jhuangnyc.com (see the browser console for more information).
 
 ## 404 Not Found
-[Skip to main content](https://www.jhuangnyc.com/products/aims-power-2500-watt-12-volt-modified-sine-power-inverter/feed#main-content)
+[Skip to main content](https://www.jhuangnyc.com/product/aims-power-2500-watt-12-volt-modified-sine-power-inverter/feed#main-content)
 
 # 404
 
