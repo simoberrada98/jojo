@@ -53,6 +53,7 @@ export async function GET() {
         <g:google_product_category>Electronics</g:google_product_category>
         <g:brand>${escapeXml(product.brand || 'MineHub')}</g:brand>
         <g:condition>new</g:condition>
+        ${product.gtin ? `<g:gtin>${escapeXml(product.gtin)}</g:gtin>` : ''}
         <g:price>${formatPrice(product.base_price)}</g:price>
         ${
           product.compare_at_price

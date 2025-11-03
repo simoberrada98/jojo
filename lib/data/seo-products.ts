@@ -20,6 +20,7 @@ interface SeoProduct {
   power_consumption: string | null;
   algorithm: string | null;
   efficiency: string | null;
+  gtin?: string | null;
   noise_level?: string | null;
 }
 
@@ -43,6 +44,7 @@ const SUPABASE_REST_SELECT = [
   'power_consumption',
   'algorithm',
   'efficiency',
+  'gtin',
 ].join(',');
 
 function getSupabaseInfo() {
