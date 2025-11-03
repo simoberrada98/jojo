@@ -148,8 +148,18 @@ function inferSpecFromText(
 }
 
 function buildAdditionalProperties(
-  product: DisplayProduct
+  product?: DisplayProduct | null
 ): Array<{ '@type': 'PropertyValue'; name: SpecName; value: string }> {
+  if (!product) {
+    return (
+      ['Algorithm', 'Hashrate', 'Power', 'Efficiency', 'Noise'] as const
+    ).map((name) => ({
+      '@type': 'PropertyValue' as const,
+      name,
+      value: 'Not specified',
+    }));
+  }
+
   const textCorpus = [
     product.algorithm,
     product.hashrate,
@@ -210,7 +220,7 @@ export function generateOrganizationSchema(
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
     description:
-      'Premium cryptocurrency mining hardware store offering ASIC miners, GPU rigs, and enterprise solutions with crypto payment support.',
+      'Premium cryptocurrency mining hardware store offering ASIC products, GPU rigs, and enterprise solutions with crypto payment support.',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '26 Laurel Ave',
@@ -232,25 +242,34 @@ export function generateOrganizationSchema(
  * Generate Product schema from Product data
  */
 export function generateProductSchema(
-  product: DisplayProduct,
+  product: DisplayProduct | null | undefined,
   baseUrl: string,
   currency: string = 'USD'
 ): ProductSchema {
-  const productUrl = `${baseUrl}/miners/${product.handle}`;
+  const hasHandle =
+    typeof product?.handle === 'string' && product.handle.length > 0;
+  const productUrl = hasHandle
+    ? `${baseUrl}/products/${product!.handle}`
+    : `${baseUrl}/products`;
 
   // Calculate price valid until (1 year from now)
   const priceValidUntil = new Date();
   priceValidUntil.setFullYear(priceValidUntil.getFullYear() + 1);
 
   // Extract brand from product name (e.g., "Bitmain Antminer S19" -> "Bitmain")
-  const brandName = product.name.split(' ')[0] || 'Jhuangnyc';
+  const safeName = (product?.name || '').toString();
+  const brandName = (
+    safeName.split(' ')[0] ||
+    product?.brand ||
+    'Jhuangnyc'
+  ).toString();
   const imageSet =
-    product.images?.length && product.images.some(Boolean)
+    product?.images?.length && product.images.some(Boolean)
       ? product.images.filter(Boolean)
-      : product.image
+      : product?.image
         ? [product.image]
         : undefined;
-  const availability = product.inStock
+  const availability = product?.inStock
     ? 'https://schema.org/InStock'
     : 'https://schema.org/OutOfStock';
   const additionalProperty = buildAdditionalProperties(product);
@@ -261,9 +280,9 @@ export function generateProductSchema(
   const schema: ProductSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.name,
+    name: safeName || 'Unknown Product',
     url: productUrl,
-    description: `${product.name} with ${
+    description: `${safeName || 'This product'} with ${
       specLookup.Hashrate ?? 'not specified hashrate'
     }, ${specLookup.Power ?? 'not specified power draw'}, and ${
       specLookup.Efficiency ?? 'efficiency data pending'
@@ -271,25 +290,25 @@ export function generateProductSchema(
       specLookup.Noise ?? 'not specified'
     }.`,
     image: imageSet,
-    sku: product.id.toString(),
+    sku: String(product?.id ?? 'unknown'),
     brand: {
       '@type': 'Brand',
       name: brandName,
     },
-    category: product.category,
+    category: product?.category,
     offers: {
       '@type': 'Offer',
       url: productUrl,
       priceCurrency: currency,
-      price: product.priceUSD.toFixed(2),
+      price: (product?.priceUSD ?? 0).toFixed(2),
       priceValidUntil: priceValidUntil.toISOString().split('T')[0],
       availability,
       itemCondition: 'https://schema.org/NewCondition',
       inventoryLevel:
-        typeof product.stock === 'number'
+        typeof product?.stock === 'number'
           ? {
               '@type': 'QuantitativeValue',
-              value: product.stock,
+              value: product!.stock,
               unitCode: 'EA',
             }
           : undefined,
@@ -298,11 +317,11 @@ export function generateProductSchema(
   };
 
   // Add aggregate rating if available
-  if (product.rating && product.reviewCount > 0) {
+  if (product?.rating && (product?.reviewCount ?? 0) > 0) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: product.rating,
-      reviewCount: product.reviewCount,
+      reviewCount: product.reviewCount!,
       bestRating: 5,
       worstRating: 1,
     };
@@ -321,7 +340,7 @@ export function generateWebSiteSchema(baseUrl: string): WebSiteSchema {
     name: 'Jhuangnyc - Crypto Mining Hardware Store',
     url: baseUrl,
     description:
-      'Premium mining hardware with crypto payment support. ASIC miners, GPU rigs, and enterprise solutions.',
+      'Premium mining hardware with crypto payment support. ASIC products, GPU rigs, and enterprise solutions.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {

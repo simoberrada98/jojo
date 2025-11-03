@@ -56,7 +56,7 @@ export default function MinerDetailPage() {
     typeof window !== 'undefined'
       ? window.location.origin
       : 'https://jhuangnyc.com';
-  const canonicalUrl = `${baseUrl}/miners/${product.handle}`;
+  const canonicalUrl = `${baseUrl}/products/${product.handle}`;
   const productSchema = generateProductSchema(product, baseUrl, currency);
   const fallbackUpdatedLabel = 'Nov 2 2025';
   let updatedLabel = fallbackUpdatedLabel;
@@ -95,7 +95,7 @@ export default function MinerDetailPage() {
             Back
           </Button>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-muted-foreground text-sm">
             <span>Updated {updatedLabel}</span>
             <span aria-hidden="true">|</span>
             <a
@@ -126,15 +126,15 @@ export default function MinerDetailPage() {
           </div>
 
           <aside
-            id="miner-benefits"
+            id="product-benefits"
             className="gap-4 grid grid-cols-3 backdrop-blur-md mt-12 p-12 border border-accent-foreground/10 rounded-xl bg-accent-foreground/5"
           >
             {perks.map(({ icon: Icon, highlight, description }) => (
               <div
-                className="flex flex-col items-center text-center gap-2"
+                className="flex flex-col items-center gap-2 text-center"
                 key={highlight}
               >
-                <div className="flex justify-center items-center bg-accent/10 rounded-full text-accent w-12 h-12">
+                <div className="flex justify-center items-center bg-accent/10 rounded-full w-12 h-12 text-accent">
                   <Icon aria-hidden="true" className="w-6 h-6" />
                 </div>
                 <div className="font-mono font-bold text-accent text-2xl">
@@ -145,7 +145,7 @@ export default function MinerDetailPage() {
             ))}
           </aside>
 
-          <section id="related-miners" className="mt-12">
+          <section id="related-products" className="mt-12">
             <RelatedProducts
               category={product.category}
               currentProductId={product.id}

@@ -29,24 +29,16 @@ export default function AboutPage() {
     },
     telephone: '+1-631-224-3534',
     email: 'contact@jhuangnyc.com',
-    priceRange: '$$$$',
+    priceRange: '$$$',
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
-        dayOfWeek: [
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
-          'Sunday',
-        ],
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Sunday'],
         opens: '00:00',
         closes: '23:59',
       },
     ],
-    sameAs: ['https://twitter.com/jhuangnyc', 'https://github.com/jhuangnyc'],
+    sameAs: ['https://github.com/jhuangnyc'],
   };
 
   return (

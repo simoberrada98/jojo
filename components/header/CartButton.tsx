@@ -20,7 +20,7 @@ import {
 import { useAnimationConfig } from '@/lib/animation';
 import { useCart, type CartItem } from '@/lib/contexts/cart-context';
 import { useCurrency } from '@/lib/contexts/currency-context';
-import { P } from '../ui/typography';
+import { P } from '@/components/ui/typography';
 
 interface CartButtonProps {
   cartCount: number;

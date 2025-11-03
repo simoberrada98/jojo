@@ -24,6 +24,7 @@ import { prepareCheckoutData, type OrderData } from '@/lib/utils/checkout';
 import { PaymentStatusMessage } from '@/components/ui/payment-status-message';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { APP_CONFIG } from '@/lib/config/app.config';
+import { Lock } from 'lucide-react';
 
 interface HoodPayCheckoutFormProps {
   orderData: OrderData;
@@ -74,13 +75,6 @@ export default function HoodPayCheckoutForm({
           icon: Wallet,
           available: hoodPayEnabled,
         },
-        {
-          id: 'web-payment' as const,
-          name: 'Card / Digital Wallet',
-          description: 'Apple Pay, Google Pay, or Card',
-          icon: CreditCard,
-          available: webPaymentSupported,
-        },
       ] satisfies Array<{
         id: PaymentMethodOption;
         name: string;
@@ -88,7 +82,7 @@ export default function HoodPayCheckoutForm({
         icon: typeof Wallet | typeof CreditCard;
         available: boolean;
       }>,
-    [hoodPayEnabled, webPaymentSupported]
+    [hoodPayEnabled]
   );
 
   const activeMethod = useMemo(
@@ -148,13 +142,13 @@ export default function HoodPayCheckoutForm({
           })}
         </div>
         {!hoodPayEnabled && (
-          <Muted className="mt-3 text-xs text-foreground/60">
+          <Muted className="mt-3 text-foreground/60 text-xs">
             Crypto payments are currently unavailable. Choose another method or
-            contact support to enable HoodPay.
+            contact support to enable Crypto.
           </Muted>
         )}
         {!hasAvailableMethod && (
-          <Muted className="mt-3 text-xs text-destructive">
+          <Muted className="mt-3 text-destructive text-xs">
             No payment methods are currently available. Please reach out to
             support for assistance.
           </Muted>
@@ -172,15 +166,12 @@ export default function HoodPayCheckoutForm({
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-foreground/70">Shipping</span>
+            <span className="text-foreground/70">Free Shipping</span>
             <span className="text-foreground">
               ${orderData.shipping.toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground/70">Tax</span>
-            <span className="text-foreground">${orderData.tax.toFixed(2)}</span>
-          </div>
+
           <div className="flex justify-between pt-3 border-border border-t">
             <span className="font-semibold text-foreground">Total</span>
             <span className="font-bold text-accent text-xl">
@@ -231,12 +222,18 @@ export default function HoodPayCheckoutForm({
         )}
       </Button>
 
-      {/* Security Notice */}
-      <div className="bg-primary/10 p-4 border border-primary/20 rounded-lg">
-        <Muted className="m-0 text-foreground/80 text-xs text-center">
-          🔒 Secure payment processing powered by HoodPay. Your payment
-          information is encrypted and secure.
-        </Muted>
+      {/* Security Badge */}
+      <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
+        <Lock className="mt-0.5 w-5 h-5 text-primary shrink-0" />
+        <div>
+          <Muted className="mb-1 font-semibold text-foreground text-xs">
+            Secure Checkout
+          </Muted>
+          <Muted className="m-0 text-foreground/80 text-xs text-center">
+            Secure payment processing powered by Crypto. Your payment
+            information is encrypted and secure.
+          </Muted>
+        </div>
       </div>
     </div>
   );

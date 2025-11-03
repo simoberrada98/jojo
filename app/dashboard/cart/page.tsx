@@ -140,11 +140,7 @@ export default function CartPage() {
                   <span>${total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>$0.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tax</span>
+                  <span>Free Shipping</span>
                   <span>$0.00</span>
                 </div>
                 <div className="mt-2 pt-2 border-t">

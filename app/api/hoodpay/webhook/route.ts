@@ -1,6 +1,6 @@
 /**
- * HoodPay Webhook Receiver
- * Handles webhook events from HoodPay with signature verification
+ * Crypto Webhook Receiver
+ * Handles webhook events from Crypto with signature verification
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -19,7 +19,7 @@ import { logger } from '@/lib/utils/logger';
 
 /**
  * POST /api/hoodpay/webhook
- * Receives webhook events from HoodPay
+ * Receives webhook events from Crypto
  */
 export async function POST(request: NextRequest) {
   try {
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         await handlePaymentExpired(data, dbService);
         break;
       default:
-        logger.warn('Unhandled HoodPay webhook event', { event });
+        logger.warn('Unhandled Crypto webhook event', { event });
     }
 
     // Acknowledge receipt
@@ -226,7 +226,7 @@ async function handlePaymentExpired(
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    message: 'HoodPay webhook endpoint is active',
+    message: 'Crypto webhook endpoint is active',
     events: [
       'PAYMENT_CREATED',
       'PAYMENT_METHOD_SELECTED',

@@ -138,7 +138,7 @@ export class WebPaymentService {
   private supportedNetworks: string[];
 
   constructor(
-    merchantName: string = 'HoodPay Merchant',
+    merchantName: string = 'Merchant',
     supportedNetworks: string[] = ['visa', 'mastercard', 'amex']
   ) {
     this.merchantName = merchantName;
@@ -344,7 +344,7 @@ export function createWebPaymentRequest(
   } = {}
 ): WebPaymentRequest {
   const {
-    merchantName = 'HoodPay Merchant',
+    merchantName = 'Merchant',
     supportedNetworks = ['visa', 'mastercard', 'amex'],
     requestPayerEmail = true,
     requestPayerName = true,

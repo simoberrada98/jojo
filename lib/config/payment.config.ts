@@ -14,7 +14,7 @@ export interface PaymentConfig {
 export const PAYMENT_CONFIG: PaymentConfig = {
   paymentTimeoutSeconds: 15 * 60,
   paymentStatusPollIntervalSeconds: 5,
-  supportedMethods: ['hoodpay', 'web-payment'],
+  supportedMethods: ['hoodpay'],
   hoodpay: {
     apiKey: env.HOODPAY_API_KEY,
     businessId: env.HOODPAY_BUSINESS_ID,

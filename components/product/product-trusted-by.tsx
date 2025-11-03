@@ -2,7 +2,7 @@ import Image from 'next/image';
 import TrustPilotLogo from '@/public/svgs/trust-pilot.svg';
 import AmvLogo from '@/public/svgs/amv.svg';
 import MiningNowLogo from '@/public/svgs/miningnow.svg';
-import { H4, P } from '../ui/typography';
+import { H4, P } from '@/components/ui/typography';
 
 export function ProductTrustedBy() {
   return (

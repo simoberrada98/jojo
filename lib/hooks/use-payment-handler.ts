@@ -32,12 +32,6 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
         window.location.href = session.checkoutUrl;
         return;
       }
-      if (method === 'web-payment') {
-        await new Promise((r) => setTimeout(r, 500));
-        setPaymentStatus('success');
-        options.onComplete?.();
-        return;
-      }
       throw new Error(`Unsupported payment method: ${method}`);
     } catch (err: unknown) {
       setPaymentStatus('failed');

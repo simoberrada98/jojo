@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 import Footer from '../footer';
 import { useCart } from '@/lib/contexts/cart-context';
-import { Header } from '../header/Header';
+import { Header } from '@/components/header';
 
 interface PageLayoutProps {
   children: ReactNode;

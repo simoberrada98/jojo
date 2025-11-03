@@ -1,10 +1,30 @@
 # curated llms index for ai and search models
 https://jhuangnyc.com/
-https://jhuangnyc.com/miners
-https://jhuangnyc.com/miners/specs
+https://jhuangnyc.com/learn-more
+https://jhuangnyc.com/about
+https://jhuangnyc.com/contact
+https://jhuangnyc.com/sitemap
+https://jhuangnyc.com/robots
+https://jhuangnyc.com/feeds/merchant
+https://jhuangnyc.com/collections
+https://jhuangnyc.com/collections/all
+https://jhuangnyc.com/products
+https://jhuangnyc.com/products/specs
 https://jhuangnyc.com/guides/asic-buying-guide#overview
 https://jhuangnyc.com/guides/asic-buying-guide#pricing-framework
+
+
+
+# policies
+https://jhuangnyc.com/policies
 https://jhuangnyc.com/policies/warranty#coverage
 https://jhuangnyc.com/policies/returns#process
 https://jhuangnyc.com/policies/warranty#service-windows
 https://jhuangnyc.com/policies/returns#exceptions
+https://jhuangnyc.com/terms
+https://jhuangnyc.com/terms-of-service
+https://jhuangnyc.com/refunds
+https://jhuangnyc.com/shipping
+https://jhuangnyc.com/returns
+https://jhuangnyc.com/privacy
+https://jhuangnyc.com/privacy-policy

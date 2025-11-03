@@ -1,11 +1,20 @@
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
-type LegacyProductPageProps = {
-  params: {
-    id: string;
-  };
+type ProductPageProps = {
+  // In Next.js 16, route params may be a Promise
+  params: Promise<{
+    id?: string;
+  }>;
 };
 
-export default function LegacyProductPage({ params }: LegacyProductPageProps) {
-  redirect(`/miners/${params.id}`);
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params;
+
+  // Validate param before using
+  const safeId = typeof id === 'string' ? id.trim() : '';
+  if (!safeId) {
+    notFound();
+  }
+
+  redirect(`/products/${encodeURIComponent(safeId)}`);
 }

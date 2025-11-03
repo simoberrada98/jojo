@@ -40,7 +40,7 @@ export async function initiateHoodPayPayment(
   if (!env.NEXT_PUBLIC_ENABLE_HOODPAY) {
     return buildFailureResult(
       'HOODPAY_DISABLED',
-      'HoodPay payments are currently disabled',
+      'Crypto payments are currently disabled',
       false
     );
   }
@@ -51,7 +51,7 @@ export async function initiateHoodPayPayment(
   if (!apiKey || !businessId) {
     return buildFailureResult(
       'HOODPAY_NOT_CONFIGURED',
-      'HoodPay credentials are missing',
+      'Crypto credentials are missing',
       false
     );
   }
@@ -94,7 +94,7 @@ export async function initiateHoodPayPayment(
     const message =
       error instanceof Error
         ? error.message
-        : 'HoodPay payment failed. Please try again later.';
+        : 'Crypto payment failed. Please try again later.';
     return buildFailureResult('HOODPAY_ERROR', message, true);
   }
 }

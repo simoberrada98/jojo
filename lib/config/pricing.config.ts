@@ -5,14 +5,14 @@
 export const PRICING_CONFIG = {
   // Shipping costs
   shipping: {
-    standard: 50, // USD
+    standard: 0, // USD
     express: 100, // USD
-    free: false,
+    free: true,
   },
 
   // Tax rates
   tax: {
-    rate: 0.08, // 8%
+    rate: 0,
     includedInPrice: false,
   },
 

@@ -1,17 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { User, Package, Heart, Settings, LogOut } from 'lucide-react';
+import { User, Package, Heart, Settings, LogOut, X } from 'lucide-react';
 import { Muted } from '@/components/ui/typography';
 import { useAuth } from '@/lib/contexts/auth-context';
 import CurrencyToggle from '@/components/currency-toggle';
 import { MAIN_NAV_ITEMS, USER_DASHBOARD_NAV } from '@/lib/constants/navigation';
 import { useAnimationConfig } from '@/lib/animation';
+import { Button } from '../ui/button';
 
 interface MobileMenuProps {
   isOpen: boolean;
   onAuthDialogOpen: () => void;
+  onClose: () => void;
 }
 
 const iconMap = {
@@ -21,9 +24,22 @@ const iconMap = {
   Settings,
 };
 
-export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
+export function MobileMenu({
+  isOpen,
+  onAuthDialogOpen,
+  onClose,
+}: MobileMenuProps) {
   const { user, profile, signOut } = useAuth();
   const anim = useAnimationConfig();
+
+  // Close on Escape key for accessibility (stable hook order)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -33,9 +49,26 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
       animate={{ y: 0 }}
       exit={{ y: '-100%' }}
       transition={{ duration: anim.pageTransition, ease: anim.easeStandard }}
-      className="md:hidden fixed inset-0 bg-background z-50 flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 overflow-y-auto"
+      className="md:hidden z-50 fixed inset-0 flex flex-col gap-3 sm:gap-4 bg-background p-3 sm:p-4 h-dvh overflow-y-auto"
       aria-label="Mobile navigation"
     >
+      {/* Top affordances: handle and close button */}
+      <div className="relative pb-1">
+        <div
+          className="bg-muted/70 mx-auto mt-1 rounded-full w-10 h-1"
+          aria-hidden
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          aria-label="Close menu"
+          className="inline-flex top-0 right-0 absolute justify-center items-center rounded-md w-14 h-14 text-foreground/80 hover:text-accent transition"
+        >
+          <X className="w-5 h-5" />
+        </Button>
+      </div>
+
       {/* Currency Toggle */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -46,23 +79,25 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
         <CurrencyToggle />
       </motion.div>
 
-      {/* Main Navigation */}
-      {MAIN_NAV_ITEMS.map((item) => (
-        <motion.div
-          key={item.href}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: anim.enter, ease: anim.easeStandard }}
-        >
-          <Link
-            href={item.href}
-            className="text-foreground/80 hover:text-accent transition text-sm sm:text-base"
+      <ul className="flex flex-col flex-1 gap-2 p-2 min-h-fill">
+        {MAIN_NAV_ITEMS.map((item) => (
+          <motion.li
+            key={item.href}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: anim.enter, ease: anim.easeStandard }}
+            className="w-full h-1/16"
           >
-            {item.label}
-          </Link>
-        </motion.div>
-      ))}
-
+            <Link
+              href={item.href}
+              onClick={onClose}
+              className="block p-2 text-foreground/80 text-md hover:text-accent sm:text-base transition"
+            >
+              {item.label}
+            </Link>
+          </motion.li>
+        ))}
+      </ul>
       {/* User Menu */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -86,6 +121,7 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onClose}
                   className="flex items-center gap-2 py-2 text-foreground/80 hover:text-accent transition"
                 >
                   <Icon className="w-4 h-4" />
@@ -94,7 +130,13 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
               );
             })}
             <button
-              onClick={() => signOut()}
+              onClick={async () => {
+                try {
+                  await Promise.resolve(signOut());
+                } finally {
+                  onClose();
+                }
+              }}
               className="flex items-center gap-2 py-2 w-full text-destructive hover:text-destructive/80 transition"
             >
               <LogOut className="w-4 h-4" />
@@ -103,7 +145,10 @@ export function MobileMenu({ isOpen, onAuthDialogOpen }: MobileMenuProps) {
           </>
         ) : (
           <button
-            onClick={onAuthDialogOpen}
+            onClick={() => {
+              onAuthDialogOpen();
+              onClose();
+            }}
             className="flex items-center gap-2 py-2 text-foreground/80 hover:text-accent transition"
           >
             <User className="w-4 h-4" />

@@ -1,6 +1,6 @@
 import { Shield } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
-import { H3 } from '../ui/typography';
+import { H3 } from '@/components/ui/typography';
 
 interface ProductKeyFeaturesProps {
   product: DisplayProduct;

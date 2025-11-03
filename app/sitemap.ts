@@ -10,9 +10,9 @@ type StaticEntry = {
 
 const STATIC_ENTRIES: StaticEntry[] = [
   { path: '/', changeFrequency: 'daily', priority: 1 },
-  { path: '/miners', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/products', changeFrequency: 'daily', priority: 0.9 },
   { path: '/categories', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/miners/specs', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/products/specs', changeFrequency: 'weekly', priority: 0.8 },
   {
     path: '/guides/asic-buying-guide',
     changeFrequency: 'monthly',
@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const updatedAt = product.updated_at ? new Date(product.updated_at) : now;
 
     return {
-      url: `${base}/miners/${product.slug}`,
+      url: `${base}/products/${product.slug}`,
       lastModified: updatedAt,
       changeFrequency: 'weekly',
       priority: 0.8,

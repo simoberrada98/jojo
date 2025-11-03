@@ -14,14 +14,14 @@ export const siteMetadata = {
   name: process.env.NEXT_PUBLIC_APP_NAME || 'Jhuangnyc',
   title: 'Jhuangnyc - Crypto Mining Hardware Store',
   description:
-    'Premium mining hardware with crypto payment support. ASIC miners, GPU rigs, and enterprise solutions.',
+    'Premium mining hardware with crypto payment support. ASIC products, GPU rigs, and enterprise solutions.',
   locale: 'en_US',
-  siteName: 'MineHub',
+  siteName: 'Jhuangnyc',
   keywords: [
     'crypto mining hardware',
-    'ASIC miners',
+    'ASIC products',
     'GPU mining rigs',
-    'bitcoin miners',
+    'bitcoin products',
     'crypto payments',
   ],
   category: 'Technology',

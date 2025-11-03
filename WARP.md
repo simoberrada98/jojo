@@ -144,7 +144,7 @@ const res = await fetch('/api/products?ids=1,2,3');
 const products = await res.json();
 
 // Search/paginate
-const res = await fetch('/api/products?q=miner&limit=10&offset=0');
+const res = await fetch('/api/products?q=product&limit=10&offset=0');
 const { results, total, hasMore } = await res.json();
 ```
 

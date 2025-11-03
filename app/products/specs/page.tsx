@@ -7,22 +7,22 @@ import { logger } from '@/lib/utils/logger';
 import { P, H1, H2 } from '@/components/ui/typography';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
-const canonicalUrl = `${baseUrl}/miners/specs`;
+const canonicalUrl = `${baseUrl}/products/specs`;
 const LAST_UPDATED = 'Nov 2 2025';
 
 export const metadata: Metadata = {
   title: 'Miner Specifications Reference | MineHub',
   description:
-    'Up-to-date ASIC miner specification matrix with algorithm, hashrate, efficiency, and acoustic profiles for procurement and operations teams.',
+    'Up-to-date ASIC product specification matrix with algorithm, hashrate, efficiency, and acoustic profiles for procurement and operations teams.',
   alternates: {
-    canonical: '/miners/specs',
+    canonical: '/products/specs',
   },
   openGraph: {
     type: 'article',
     url: canonicalUrl,
     title: 'Miner Specifications Reference',
     description:
-      'Compare ASIC miners by hashrate, watt draw, efficiency, and expected noise levels before deployment.',
+      'Compare ASIC products by hashrate, watt draw, efficiency, and expected noise levels before deployment.',
   },
 };
 
@@ -46,13 +46,13 @@ export default async function MinersSpecsPage() {
   try {
     products = await fetchActiveProductsForSeo();
   } catch (error) {
-    logger.error('Failed to load miner specs for reference page', error);
+    logger.error('Failed to load product specs for reference page', error);
   }
 
   const tableRows = products
     .map((product) => ({
       name: product.name,
-      url: `${baseUrl}/miners/${product.slug}`,
+      url: `${baseUrl}/products/${product.slug}`,
       algorithm: product.algorithm ?? 'Not specified',
       hashrate: product.hash_rate ?? 'Not specified',
       power: product.power_consumption ?? 'Not specified',
@@ -107,7 +107,7 @@ export default async function MinersSpecsPage() {
           <div className="overflow-x-auto">
             <table className="divide-y divide-border w-full min-w-[720px] text-sm text-left">
               <caption className="sr-only">
-                Comparison matrix of ASIC miners with key specifications
+                Comparison matrix of ASIC products with key specifications
               </caption>
               <thead className="bg-accent/10 text-foreground">
                 <tr>
@@ -147,7 +147,7 @@ export default async function MinersSpecsPage() {
                   <tr key={row.name} className="align-top">
                     <th scope="row" className="px-4 py-3 font-medium">
                       <a
-                        href={`${row.url}?utm_source=reference&utm_medium=table&utm_campaign=miner-specs`}
+                        href={`${row.url}?utm_source=reference&utm_medium=table&utm_campaign=product-specs`}
                         className="text-accent hover:underline underline-offset-4"
                       >
                         {row.name}

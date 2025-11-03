@@ -56,7 +56,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         className="absolute inset-0 bg-card/25 group-hover:bg-card/35 backdrop-blur-xl transition-all duration-500 pointer-events-none"
       />
 
-      <Link href={`/product/${product.handle}`} className="block z-10 relative">
+      <Link
+        href={`/products/${product.handle}`}
+        className="block z-10 relative"
+      >
         {/* Image Container */}
         <div className="relative h-64 overflow-hidden">
           {/* Primary Image */}

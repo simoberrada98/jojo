@@ -1,5 +1,5 @@
 type StructuredContext = Record<string, unknown> | undefined;
-
+type NodeProcessType = typeof process;
 class Logger {
   private isBrowser = typeof window !== 'undefined';
 
@@ -38,7 +38,7 @@ class Logger {
     // Check if we're in a Node.js environment with process available
     if (typeof process !== 'undefined') {
       // Dynamically access process streams to avoid static analysis in Edge Runtime
-      const processStreams = process as any;
+      const processStreams = process as NodeProcessType;
 
       // Check if streams are available (Node.js, not Edge Runtime)
       if (processStreams.stdout && processStreams.stderr) {

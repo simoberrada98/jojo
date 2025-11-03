@@ -30,7 +30,6 @@ export const APP_CONFIG = {
   // Feature flags
   features: {
     enableHoodPay: env.NEXT_PUBLIC_ENABLE_HOODPAY,
-    enableWebPaymentApi: env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API,
   },
 } as const;
 

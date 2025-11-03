@@ -17,7 +17,7 @@ import { useCurrency } from '@/lib/contexts/currency-context';
 import { useCart } from '@/lib/contexts/cart-context';
 import type { DisplayProduct } from '@/types/product';
 
-import { H1, H2, H3, P } from '../ui/typography';
+import { H1, H2, H3, P } from '@/components/ui/typography';
 import { ProductTrustedBy } from './product-trusted-by';
 
 interface ProductInfoProps {

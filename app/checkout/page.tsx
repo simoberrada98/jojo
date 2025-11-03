@@ -599,7 +599,6 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* Order Summary Sidebar */}
             {paymentStep !== 'confirmation' && (
               <div className="lg:col-span-1">
                 <div className="top-24 sticky space-y-6 bg-card p-6 border border-border rounded-lg">
@@ -613,15 +612,11 @@ export default function CheckoutPage() {
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-foreground/70">Shipping</span>
+                        <span className="text-foreground/70">
+                          Free Shipping
+                        </span>
                         <span className="text-foreground">
                           ${shipping.toLocaleString()} USD
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-foreground/70">Tax</span>
-                        <span className="text-foreground">
-                          ${tax.toFixed(2)} USD
                         </span>
                       </div>
                     </div>
@@ -637,19 +632,6 @@ export default function CheckoutPage() {
                           ${totalAmount.toLocaleString()} USD
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Security Badge */}
-                  <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
-                    <Lock className="mt-0.5 w-5 h-5 text-primary shrink-0" />
-                    <div>
-                      <Muted className="mb-1 font-semibold text-foreground text-xs">
-                        Secure Checkout
-                      </Muted>
-                      <Muted className="m-0 text-foreground/70 text-xs">
-                        Crypto payments verified on blockchain
-                      </Muted>
                     </div>
                   </div>
                 </div>

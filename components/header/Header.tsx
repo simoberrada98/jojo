@@ -77,6 +77,7 @@ export function Header({ cartCount = 0 }: HeaderProps) {
           <MobileMenu
             isOpen={isOpen}
             onAuthDialogOpen={() => setAuthDialogOpen(true)}
+            onClose={() => setIsOpen(false)}
           />
         </AnimatePresence>
       </div>

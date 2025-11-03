@@ -8,7 +8,7 @@ const LAST_UPDATED = 'Nov 2 2025';
 export const metadata: Metadata = {
   title: 'Warranty Policy | MineHub',
   description:
-    'Warranty coverage, service windows, and escalation paths for ASIC miners purchased through MineHub.',
+    'Warranty coverage, service windows, and escalation paths for ASIC products purchased through MineHub.',
   alternates: {
     canonical: '/policies/warranty',
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     url: canonicalUrl,
     title: 'Warranty Policy',
     description:
-      'Understand warranty coverage, response timelines, and RMA escalation for ASIC miners.',
+      'Understand warranty coverage, response timelines, and RMA escalation for ASIC products.',
   },
 };
 
@@ -79,7 +79,7 @@ export default function WarrantyPolicyPage() {
             Warranty Coverage & Service Windows
           </H1>
           <P className="mt-4 text-muted-foreground leading-relaxed">
-            This warranty applies to all ASIC miners purchased through MineHub
+            This warranty applies to all ASIC products purchased through MineHub
             and details how we triage repairs, replacements, and on-site
             service.
           </P>
@@ -106,7 +106,7 @@ export default function WarrantyPolicyPage() {
             </H2>
             <P className="mt-2 text-muted-foreground text-sm">
               Coverage begins on the delivery date recorded in your invoice and
-              assumes miners are operated within documented environmental
+              assumes products are operated within documented environmental
               tolerances.
             </P>
           </div>
@@ -225,7 +225,7 @@ export default function WarrantyPolicyPage() {
           <P className="mt-4">
             Email{' '}
             <a
-              href="mailto:warranty@jhuangnyc.com?subject=Warranty%20claim&utm_source=policy&utm_medium=llm&utm_campaign=miner-warranty"
+              href="mailto:warranty@jhuangnyc.com?subject=Warranty%20claim&utm_source=policy&utm_medium=llm&utm_campaign=product-warranty"
               className="text-accent hover:underline underline-offset-4"
             >
               warranty@jhuangnyc.com

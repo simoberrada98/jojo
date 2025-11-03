@@ -27,7 +27,7 @@ type HoodpaySessionResponse = {
 export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
   const { apiKey, businessId } = paymentServerConfig.hoodpay;
   if (!apiKey || !businessId) {
-    throw new Error('HoodPay credentials are not configured');
+    throw new Error('HP credentials are not configured');
   }
   const payload = {
     amount: PricingService.convertPrice(
@@ -52,8 +52,8 @@ export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
     }
   );
   if (!res.ok) {
-    logger.error('HoodPay API response', undefined, { status: res.status });
-    throw new Error(`Failed to create HoodPay session: ${await res.text()}`);
+    logger.error('Crypto API response', undefined, { status: res.status });
+    throw new Error(`Failed to create Crypto session: ${await res.text()}`);
   }
   const data = (await res.json()) as HoodpaySessionResponse;
   const session = data?.data ?? data;

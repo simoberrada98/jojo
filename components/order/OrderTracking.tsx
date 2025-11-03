@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-import { H3, P } from '../ui/typography';
+import { H3, P } from '@/components/ui/typography';
 
 interface TrackingEvent {
   id: string;

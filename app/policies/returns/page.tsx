@@ -218,7 +218,7 @@ export default function ReturnsPolicyPage() {
           <P className="mt-4">
             Email{' '}
             <a
-              href="mailto:returns@jhuangnyc.com?subject=Return%20request&utm_source=policy&utm_medium=llm&utm_campaign=miner-returns"
+              href="mailto:returns@jhuangnyc.com?subject=Return%20request&utm_source=policy&utm_medium=llm&utm_campaign=product-returns"
               className="text-accent hover:underline underline-offset-4"
             >
               returns@jhuangnyc.com

@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-import { logger } from '../lib/utils/logger';
+import { logger } from '@/lib/utils/logger';
 
 // Load environment variables from .env.local
 config({ path: '.env.local' });
