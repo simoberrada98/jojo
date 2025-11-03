@@ -30,7 +30,7 @@ export async function GET() {
 
   const itemsXml = products
     .map((product) => {
-      const productUrl = `${base}/product/${product.slug}`;
+      const productUrl = `${base}/products/${product.slug}`;
       const imageUrl = product.featured_image_url
         ? product.featured_image_url
         : `${base}/favicon.ico`;

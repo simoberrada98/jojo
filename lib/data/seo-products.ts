@@ -43,7 +43,6 @@ const SUPABASE_REST_SELECT = [
   'power_consumption',
   'algorithm',
   'efficiency',
-  'noise_level',
 ].join(',');
 
 function getSupabaseInfo() {

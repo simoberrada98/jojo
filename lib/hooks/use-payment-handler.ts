@@ -23,7 +23,22 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
         const session = await createHoodpaySessionAction({
           amount: data.total,
           currency,
-          metadata: data.metadata,
+          // Include shipping + items summary for fulfillment
+          metadata: {
+            customerInfo: data.customerInfo,
+            items: data.items?.map((i) => ({
+              id: i.id,
+              name: i.name,
+              quantity: i.quantity,
+              total: i.total,
+            })),
+            totals: {
+              subtotal: data.subtotal,
+              shipping: data.shipping,
+              tax: data.tax,
+              total: data.total,
+            },
+          },
           customer: data.customerInfo,
         });
         if (!session.checkoutUrl) {
