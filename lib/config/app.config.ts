@@ -6,7 +6,7 @@ import { env } from '@/lib/config/env';
  */
 export const APP_CONFIG = {
   name: env.NEXT_PUBLIC_APP_NAME,
-  baseUrl: env.NEXT_PUBLIC_BASE_URL,
+  baseUrl: env.BASE_URL ?? env.NEXT_PUBLIC_BASE_URL,
 
   // Session and storage settings
   session: {

@@ -1,6 +1,7 @@
 'use server';
 import 'server-only';
 import { headers } from 'next/headers';
+import { z } from 'zod';
 import { APP_CONFIG } from '@/lib/config/app.config';
 import { logger } from '@/lib/utils/logger';
 import { env } from '@/lib/config/env';
@@ -11,13 +12,73 @@ import {
   PaymentMethod,
   PaymentStatus,
   type PaymentRecord,
+  type CheckoutData,
+  type CheckoutItem,
 } from '@/types/payment';
 import { createHoodpayPaymentSession } from '@/lib/services/payment-strategies/hoodpay.strategy.server';
 import { createClient } from '@/lib/supabase/server';
-import type { CheckoutData, CheckoutItem } from '@/types/payment';
 
-interface Metadata {
-  items?: CheckoutItem[];
+const PayloadSchema = z.object({
+  cartId: z.string().min(1).optional(),
+  amount: z.number().positive(),
+  currency: z.string().min(3),
+  metadata: z
+    .object({
+      items: z
+        .array(
+          z.object({
+            id: z.union([z.string(), z.number()]).optional(),
+            name: z.string().optional(),
+            description: z.string().optional(),
+            quantity: z.union([z.number(), z.string()]).optional(),
+            total: z.union([z.number(), z.string()]).optional(),
+            unitPrice: z.union([z.number(), z.string()]).optional(),
+          })
+        )
+        .optional(),
+      totals: z
+        .object({
+          subtotal: z.union([z.number(), z.string()]).optional(),
+          tax: z.union([z.number(), z.string()]).optional(),
+          shipping: z.union([z.number(), z.string()]).optional(),
+          total: z.union([z.number(), z.string()]).optional(),
+        })
+        .optional(),
+      customerInfo: z
+        .object({
+          email: z.string().email().optional(),
+          name: z.string().optional(),
+          phone: z.string().optional(),
+          address: z
+            .object({
+              line1: z.string().optional(),
+              line2: z.string().optional(),
+              city: z.string().optional(),
+              state: z.string().optional(),
+              postalCode: z.string().optional(),
+              country: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional(),
+    })
+    .catchall(z.unknown())
+    .optional(),
+  customer: z
+    .object({
+      email: z.string().email().optional(),
+    })
+    .optional(),
+});
+
+type NormalizedMetadata = {
+  items?: Array<
+    Partial<CheckoutItem> & {
+      quantity?: number | string;
+      total?: number | string;
+      unitPrice?: number | string;
+    }
+  >;
   totals?: {
     subtotal?: number;
     tax?: number;
@@ -26,54 +87,92 @@ interface Metadata {
   };
   customerInfo?: {
     email?: string;
+    name?: string;
+    phone?: string;
+    address?: {
+      line1?: string;
+      line2?: string;
+      city?: string;
+      state?: string;
+      postalCode?: string;
+      country?: string;
+    };
   };
-  [key: string]: unknown; // Add index signature
-}
-
-type HoodpaySessionInput = {
-  amount: number;
-  currency: string;
-  metadata?: Metadata;
-  customer?: {
-    email?: string;
-  };
+  [key: string]: unknown;
 };
 
-type HoodpaySessionResponse = {
-  data?: {
-    url: string;
-    id: string;
-  };
-  url?: string;
-  id?: string;
-};
+export async function createHoodpaySessionAction(input: unknown) {
+  const payload = PayloadSchema.parse(input);
 
-export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
-  const h = await headers();
-  const ip = h.get('x-forwarded-for') || undefined;
-  const userAgent = h.get('user-agent') || undefined;
+  const hoodpayConfig = paymentServerConfig.hoodpay;
+  let derivedBaseUrl: string | undefined;
+  try {
+    if (hoodpayConfig.successUrl) {
+      derivedBaseUrl = new URL(hoodpayConfig.successUrl).origin;
+    } else if (hoodpayConfig.cancelUrl) {
+      derivedBaseUrl = new URL(hoodpayConfig.cancelUrl).origin;
+    }
+  } catch {
+    derivedBaseUrl = undefined;
+  }
+  const baseUrl =
+    derivedBaseUrl ??
+    hoodpayConfig.baseUrl ??
+    env.BASE_URL ??
+    APP_CONFIG.baseUrl;
+
+  const requiredConfig: Record<string, string | undefined> = {
+    HOODPAY_API_KEY: hoodpayConfig.apiKey,
+    HOODPAY_STORE_ID: hoodpayConfig.storeId ?? hoodpayConfig.businessId,
+    CHECKOUT_SUCCESS_URL: hoodpayConfig.successUrl,
+    CHECKOUT_CANCEL_URL: hoodpayConfig.cancelUrl,
+    BASE_URL: baseUrl,
+  };
+
+  const missing = Object.entries(requiredConfig)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
+
+  if (missing.length > 0) {
+    logger.error('Hoodpay configuration missing', undefined, { missing });
+    throw new Error('Payment configuration is incomplete.');
+  }
+
+  const requestHeaders = await headers();
+  const ip = requestHeaders.get('x-forwarded-for') ?? undefined;
+  const userAgent = requestHeaders.get('user-agent') ?? undefined;
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const baseUrl = APP_CONFIG.baseUrl;
-  const redirectUrl = baseUrl ? `${baseUrl}/thank-you` : undefined;
-  const notifyUrl = baseUrl ? `${baseUrl}/api/hoodpay/webhook` : undefined;
-
   const session = await createHoodpayPaymentSession({
-    amount: input.amount, // already USD
-    currency: 'USD',
-    metadata: input.metadata,
-    customer: { email: input.customer?.email, ip, userAgent },
-    redirectUrl,
-    notifyUrl,
-    name: 'Order',
+    amount: payload.amount,
+    currency: payload.currency,
+    baseUrl: baseUrl!,
+    successUrl: hoodpayConfig.successUrl!,
+    cancelUrl: hoodpayConfig.cancelUrl!,
+    cartId: payload.cartId,
+    metadata: payload.metadata,
+    customer: {
+      email: payload.customer?.email,
+      ip,
+      userAgent,
+    },
   });
 
   if (!session.checkoutUrl) {
-    logger.error('Crypto API response', undefined, { status: 'no_url' });
-    throw new Error('Failed to create Crypto session: missing checkout URL');
+    logger.error('Hoodpay session missing checkout URL', undefined, {
+      payload: payload.cartId,
+    });
+    throw new Error('Crypto API did not return a checkout URL');
+  }
+
+  if (!session.id) {
+    logger.warn('Hoodpay session returned no id', {
+      cartId: payload.cartId,
+    });
   }
 
   // Persist initial payment record for reconciliation and shipping
@@ -82,57 +181,72 @@ export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
       supabaseConfig.url,
       env.SUPABASE_SERVICE_ROLE_KEY
     );
-    const businessId = paymentServerConfig.hoodpay.businessId || '';
 
-    // Normalize checkout_data from provided metadata
-    const md: Metadata = input.metadata || {};
+    const md = (payload.metadata ?? {}) as NormalizedMetadata;
     const items = Array.isArray(md.items) ? md.items : [];
-    const totals = md.totals || {};
+    const totals = md.totals ?? {};
     const customerInfo =
       md.customerInfo ??
-      (input.customer ? { email: input.customer.email } : undefined);
+      (payload.customer ? { email: payload.customer.email } : undefined);
 
     const checkout_data: CheckoutData = {
-      items: items.map((it, idx) => ({
-        id: String(it.id ?? `item-${idx}`),
-        name: String(it.name ?? 'Product'),
-        description: it.description ?? undefined,
-        quantity: Number(it.quantity ?? 1),
-        unitPrice:
-          typeof it.total === 'number' && Number(it.quantity || 1) > 0
-            ? Number(it.total) / Number(it.quantity || 1)
-            : 0,
-        total: Number(it.total ?? 0),
-      })),
+      items: items.map((item, index) => {
+        const rawQuantity = Number(item.quantity ?? 1);
+        const quantity = Number.isFinite(rawQuantity) && rawQuantity > 0 ? rawQuantity : 1;
+        const totalValue = Number(item.total ?? item.unitPrice ?? 0);
+        const unitPriceCandidate =
+          item.unitPrice !== undefined
+            ? Number(item.unitPrice)
+            : quantity > 0
+              ? totalValue / quantity
+              : totalValue;
+
+        return {
+          id: String(item.id ?? `item-${index}`),
+          name: String(item.name ?? 'Product'),
+          description: item.description ?? undefined,
+          quantity,
+          unitPrice: Number.isFinite(unitPriceCandidate) ? unitPriceCandidate : 0,
+          total: Number.isFinite(totalValue) ? totalValue : 0,
+        };
+      }),
       subtotal: Number(totals.subtotal ?? 0),
       tax: Number(totals.tax ?? 0),
       shipping: Number(totals.shipping ?? 0),
-      total: Number(totals.total ?? input.amount ?? 0),
-      currency: 'USD',
+      total: Number(totals.total ?? payload.amount),
+      currency: payload.currency,
       customerInfo,
     };
 
     const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> =
       {
-        hp_payment_id: session.id,
-        business_id: businessId,
-        session_id: session.id,
-        amount: input.amount,
-        currency: 'USD',
+        hp_payment_id: session.id ?? null,
+        business_id:
+          hoodpayConfig.storeId ?? hoodpayConfig.businessId ?? 'unknown',
+        session_id: session.id ?? payload.cartId ?? '',
+        amount: payload.amount,
+        currency: payload.currency,
         status: PaymentStatus.PENDING,
         method: PaymentMethod.HOODPAY,
-        customer_email: input.customer?.email,
+        customer_email: payload.customer?.email,
         customer_ip: ip,
         metadata: {
-          ...input.metadata,
+          ...(payload.metadata ?? {}),
           user_id: user?.id,
         },
         checkout_data,
       };
-    await db.createPayment(newPayment);
-  } catch (e) {
-    // Do not block checkout on DB failures; log for later review
-    logger.error('Failed to persist initial payment record', e as Error);
+
+    const result = await db.createPayment(newPayment);
+    if (!result.success) {
+      logger.error(
+        'Failed to persist initial payment record',
+        undefined,
+        result.error
+      );
+    }
+  } catch (error) {
+    logger.error('Failed to persist initial payment record', error as Error);
   }
 
   return session;

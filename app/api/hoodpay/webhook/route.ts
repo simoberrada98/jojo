@@ -20,6 +20,7 @@ import { logger } from '@/lib/utils/logger';
 import { createOrderDbService } from '@/lib/services/order-db.service';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 /**
  * POST /api/hoodpay/webhook

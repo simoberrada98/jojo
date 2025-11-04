@@ -78,7 +78,13 @@ export async function initiateHoodPayPayment(
     });
 
     const paymentUrl =
-      response?.paymentUrl ?? response?.payment_url ?? response?.payment_url;
+      response?.paymentUrl ??
+      response?.payment_url ??
+      (response as { checkout_url?: string })?.checkout_url ??
+      (response as { data?: { checkout_url?: string; paymentUrl?: string } })
+        ?.data?.checkout_url ??
+      (response as { data?: { paymentUrl?: string } })?.data?.paymentUrl ??
+      undefined;
 
     return {
       success: true,

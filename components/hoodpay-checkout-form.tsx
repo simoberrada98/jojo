@@ -56,7 +56,7 @@ export default function HoodPayCheckoutForm({
       currency,
       includeCustomerInfo
     );
-    handlePayment(selectedMethod, checkoutData, currency);
+    handlePayment(selectedMethod, checkoutData, currency, orderData.orderId);
   };
 
   const [webPaymentSupported, setWebPaymentSupported] = useState(false);

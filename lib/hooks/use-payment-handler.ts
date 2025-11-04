@@ -12,7 +12,7 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const [error, setError] = useState<string | null>(null);
 
-  async function handlePayment(method, data, currency) {
+  async function handlePayment(method, data, currency, cartId?: string) {
     setError(null);
     try {
       setProcessing(true);
@@ -21,6 +21,7 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
         if (!paymentClientConfig.enableHoodpay)
           throw new Error('HoodPay is disabled');
         const session = await createHoodpaySessionAction({
+          cartId,
           amount: data.total,
           currency,
           // Include shipping + items summary for fulfillment

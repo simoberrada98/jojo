@@ -105,6 +105,14 @@ export const metadata: Metadata = {
     title: siteMetadata.title,
     description: siteMetadata.description,
     siteName: siteMetadata.siteName,
+    images: [
+      {
+        url: '/og/og_square.jpg',
+        width: 1200,
+        height: 1200,
+        alt: siteMetadata.title,
+      },
+    ],
   },
   robots: {
     index: true,
@@ -115,6 +123,7 @@ export const metadata: Metadata = {
     creator: siteMetadata.twitterHandle,
     title: siteMetadata.title,
     description: siteMetadata.description,
+    images: ['/og/og_square.jpg'],
   },
   manifest: '/manifest.webmanifest',
   icons: {

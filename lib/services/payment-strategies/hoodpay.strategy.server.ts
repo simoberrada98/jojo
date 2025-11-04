@@ -1,112 +1,128 @@
 import 'server-only';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import { APP_CONFIG } from '@/lib/config/app.config';
-import { createPayment } from '@/lib/hoodpayModule';
 import { logger } from '@/lib/utils/logger';
 
-export type HoodpaySessionInput = {
-  amount: number; // USD amount
-  currency: string; // Display currency (we submit USD to HP)
+type CreateSessionArgs = {
+  amount: number;
+  currency: string;
+  baseUrl?: string;
+  successUrl: string;
+  cancelUrl: string;
+  cartId?: string;
   metadata?: Record<string, unknown>;
   customer?: {
     email?: string;
     ip?: string;
     userAgent?: string;
   };
-  redirectUrl?: string;
-  notifyUrl?: string;
-  name?: string;
-  description?: string;
 };
 
 export type HoodpaySessionResult = {
   checkoutUrl: string;
-  id: string;
+  id?: string;
 };
 
-/**
- * Create a HoodPay payment session using server credentials.
- * - Always submits currency as USD; amount expected to be USD.
- * - Embeds metadata into the description (compact JSON) for shipping context.
- */
-export async function createHoodpayPaymentSession(
-  input: HoodpaySessionInput
-): Promise<HoodpaySessionResult> {
-  const { apiKey, businessId } = paymentServerConfig.hoodpay;
+const HOODPAY_ENDPOINT = 'https://api.hoodpay.io/v1/checkout/sessions';
 
-  if (!apiKey || !businessId) {
-    throw new Error('HP credentials are not configured');
+function normalizeBaseUrl(url: string): string {
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+}
+
+export async function createHoodpayPaymentSession(
+  args: CreateSessionArgs
+): Promise<HoodpaySessionResult> {
+  const { apiKey, storeId, businessId, baseUrl: configuredBaseUrl } =
+    paymentServerConfig.hoodpay;
+
+  if (!apiKey || !(storeId || businessId)) {
+    throw new Error('Hoodpay credentials are not configured');
   }
 
-  const baseUrl = APP_CONFIG.baseUrl;
-  const redirectUrl =
-    input.redirectUrl || (baseUrl ? `${baseUrl}/thank-you` : undefined);
-  const notifyUrl =
-    input.notifyUrl || (baseUrl ? `${baseUrl}/api/hoodpay/webhook` : undefined);
+  const baseUrl = normalizeBaseUrl(
+    args.baseUrl ?? configuredBaseUrl ?? APP_CONFIG.baseUrl ?? ''
+  );
+  if (!baseUrl) {
+    throw new Error('Base URL is not configured');
+  }
 
-  const safeStringify = (obj: unknown, max = 600): string | undefined => {
-    if (!obj) return undefined;
-    try {
-      const s = JSON.stringify(obj);
-      return s.length > max ? `${s.slice(0, max)}...` : s;
-    } catch (_e) {
-      return undefined;
-    }
+  const payload = {
+    store_id: storeId ?? businessId,
+    amount: args.amount,
+    currency: String(args.currency || 'USD').toUpperCase(),
+    success_url: args.successUrl,
+    cancel_url: args.cancelUrl,
+    callback_url: `${baseUrl}/api/hoodpay/webhook`,
+    customer_email: args.customer?.email,
+    customer_ip: args.customer?.ip,
+    customer_user_agent: args.customer?.userAgent,
+    metadata: {
+      ...(args.cartId ? { cartId: args.cartId } : {}),
+      ...(args.metadata ?? {}),
+    },
   };
 
-  const metaJson = safeStringify(input.metadata);
+  const response = await fetch(HOODPAY_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(payload),
+    cache: 'no-store',
+  });
 
-  const name = input.name || 'Order';
-  const description =
-    input.description ||
-    (metaJson
-      ? `Order metadata: ${metaJson}`
-      : 'Order created via website checkout');
-
+  const rawBody = await response.text();
+  let parsed: Record<string, unknown> | undefined;
   try {
-    const res = await createPayment(apiKey, businessId, {
-      currency: 'USD',
-      amount: input.amount,
-      name,
-      description,
-      customerEmail: input.customer?.email,
-      customerIp: input.customer?.ip,
-      customerUserAgent: input.customer?.userAgent,
-      redirectUrl,
-      notifyUrl,
-    });
-
-    // Extract checkout URL and id without using `any`
-    const isRecord = (v: unknown): v is Record<string, unknown> =>
-      typeof v === 'object' && v !== null;
-
-    let checkoutUrl: string | undefined;
-    let id: string | undefined;
-
-    if (isRecord(res)) {
-      if (typeof res.paymentUrl === 'string') checkoutUrl = res.paymentUrl;
-      // Some environments may return snake_case or a fallback `url`
-      if (
-        !checkoutUrl &&
-        typeof (res as { payment_url?: unknown }).payment_url === 'string'
-      ) {
-        checkoutUrl = (res as { payment_url?: string }).payment_url;
-      }
-      if (!checkoutUrl && typeof (res as { url?: unknown }).url === 'string') {
-        checkoutUrl = (res as { url?: string }).url;
-      }
-      if (typeof res.id === 'string' || typeof res.id === 'number') {
-        id = String(res.id);
-      }
-    }
-
-    if (!checkoutUrl) {
-      throw new Error('Crypto API did not return a checkout URL');
-    }
-    return { checkoutUrl, id: id ?? '' };
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Failed to create session';
-    logger.error('Crypto API response', undefined, { error: msg });
-    throw new Error(`Failed to create Crypto session: ${msg}`);
+    parsed = rawBody ? (JSON.parse(rawBody) as Record<string, unknown>) : undefined;
+  } catch {
+    parsed = undefined;
   }
+
+  if (!response.ok) {
+    logger.error('Hoodpay session creation failed', undefined, {
+      status: response.status,
+      body: rawBody.slice(0, 500),
+    });
+    throw new Error('Failed to create Crypto session: provider error');
+  }
+
+  const extractString = (...candidates: Array<unknown>): string | undefined => {
+    for (const candidate of candidates) {
+      if (typeof candidate === 'string' && candidate.length > 0) {
+        return candidate;
+      }
+    }
+    return undefined;
+  };
+
+  const checkoutUrl = extractString(
+    parsed?.checkout_url,
+    parsed?.paymentUrl,
+    parsed?.payment_url,
+    (parsed as { url?: unknown })?.url,
+    (parsed as { data?: Record<string, unknown> })?.data?.checkout_url,
+    (parsed as { data?: Record<string, unknown> })?.data?.paymentUrl,
+    (parsed as { data?: Record<string, unknown> })?.data?.payment_url,
+    (parsed as { data?: Record<string, unknown> })?.data?.url
+  );
+
+  const id = extractString(
+    parsed?.id,
+    (parsed as { data?: Record<string, unknown> })?.data?.id
+  );
+
+  if (!checkoutUrl) {
+    logger.error('Hoodpay session missing checkout URL', undefined, {
+      response: rawBody.slice(0, 500),
+    });
+    throw new Error('Crypto API did not return a checkout URL');
+  }
+
+  return {
+    checkoutUrl,
+    id,
+  };
 }
