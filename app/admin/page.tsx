@@ -1,17 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/contexts/auth-context'; // Import useAuth
 import AdminSidebar from '@/components/admin-sidebar';
 import DashboardOverview from '@/components/dashboard-overview';
 import OrdersManagement from '@/components/orders-management';
 import ProductsManagement from '@/components/products-management';
 import AnalyticsSection from '@/components/analytics-section';
 import { Menu, X } from 'lucide-react';
-import { H1 } from '@/components/ui/typography';
+import { H1, P } from '@/components/ui/typography';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function AdminPage() {
+  const { user, profile, loading: authLoading } = useAuth(); // Get user, profile, and authLoading
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && (!user || profile?.role !== 'admin')) {
+      router.push('/'); // Redirect to homepage if not authenticated or not admin
+    }
+  }, [user, profile, authLoading, router]);
+
+  if (authLoading || !user || profile?.role !== 'admin') {
+    return (
+      <div className="flex justify-center items-center bg-background p-4 min-h-screen">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <P className="text-muted-foreground">
+              You do not have permission to access this page.
+            </P>
+            <Button onClick={() => router.push('/')}>Go to Homepage</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex bg-background h-screen">

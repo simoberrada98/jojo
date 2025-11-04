@@ -6,6 +6,7 @@ export type Profile = {
   phone: string | null;
   created_at: string;
   updated_at: string;
+  role: 'user' | 'admin';
 };
 
 export type Address = {

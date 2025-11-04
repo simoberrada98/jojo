@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 import { ServiceResponse } from '@/types/payment'; // Reusing ServiceResponse type
 

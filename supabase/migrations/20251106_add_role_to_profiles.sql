@@ -1,10 +1,18 @@
 -- Add 'role' column to public.profiles table
 ALTER TABLE public.profiles
-ADD COLUMN role text NOT NULL DEFAULT 'user';
+ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'user';
 
--- Create a RLS policy to allow users to update their own profile, but not their role
-CREATE POLICY "Users can update their own profile without changing role" ON public.profiles
-FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id AND role = old.role);
+-- Create a RLS policy to allow users to update their own profile, but not change role
+CREATE POLICY "Users can update their own profile without changing role"
+ON public.profiles
+FOR UPDATE
+TO authenticated
+USING ((SELECT auth.uid()) = id)
+WITH CHECK (
+  (SELECT auth.uid()) = id
+  -- `role` on the left is the proposed (new) value; the subquery returns the current value in the table
+  AND role = (SELECT p.role FROM public.profiles p WHERE p.id = public.profiles.id)
+);
 
 -- Optionally, create a function to set a user as admin (only callable by service role or admin)
 -- This is a simplified example, in a real app you might have a more robust admin management system
@@ -17,10 +25,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Grant usage to authenticated users (if they need to call it, though typically only admins would)
--- REVOKE EXECUTE ON FUNCTION public.set_user_as_admin(uuid) FROM public;
--- GRANT EXECUTE ON FUNCTION public.set_user_as_admin(uuid) TO authenticated;
-
--- Revoke all from public and grant to service_role for security
+-- Restrict execution: revoke public and grant to service_role
 REVOKE EXECUTE ON FUNCTION public.set_user_as_admin(uuid) FROM public;
 GRANT EXECUTE ON FUNCTION public.set_user_as_admin(uuid) TO service_role;
