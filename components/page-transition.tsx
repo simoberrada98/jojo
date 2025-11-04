@@ -13,6 +13,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
   const anim = useAnimationConfig();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [overlayReady, setOverlayReady] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window === 'undefined' ? 1024 : window.innerWidth
@@ -31,6 +32,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
   useEffect(() => {
     setMounted(true);
+    setOverlayReady(true);
   }, []);
 
   const isMobile = viewportWidth < 768;
@@ -76,7 +78,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
         }}
       >
         {/* Animated overlay layers - kept lightweight for responsiveness */}
-        {!prefersReducedMotion && (
+        {overlayReady && !prefersReducedMotion && (
           <motion.div
             className="z-50 fixed inset-0 pointer-events-none"
             initial={{ opacity: 1 }}

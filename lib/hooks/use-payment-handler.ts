@@ -26,6 +26,7 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
           currency,
           // Include shipping + items summary for fulfillment
           metadata: {
+            selectedCurrency: currency,
             customerInfo: data.customerInfo,
             items: data.items?.map((i) => ({
               id: i.id,

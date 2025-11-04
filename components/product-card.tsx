@@ -1,15 +1,18 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Zap, Cpu, Star } from 'lucide-react';
+import { ShoppingCart, Zap, Cpu, Star, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import ProductImage from '@/components/product-image';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { useCart } from '@/lib/contexts/cart-context';
+import { useAuth } from '@/lib/contexts/auth-context';
+import { AuthDialog } from '@/components/auth-dialog';
+import { wishlistService } from '@/lib/services/wishlist.service'; // Import wishlistService
 import type { DisplayProduct } from '@/types/product';
+import { useAnimationConfig } from '@/lib/animation';
+import { H3, P } from './ui/typography';
 
 interface ProductCardProps {
   product: DisplayProduct;
@@ -19,12 +22,32 @@ export default function ProductCard({ product }: ProductCardProps) {
   const anim = useAnimationConfig();
   const [isAdded, setIsAdded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isWished, setIsWished] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+
   const { currency, formatPrice } = useCurrency();
   const { addItem } = useCart();
+  const { user } = useAuth();
 
   // Get hover image (second image if available)
   const hoverImage =
     product.images && product.images.length > 1 ? product.images[1] : null;
+
+  // Check initial wishlist status
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (user && product.id) {
+        const { success, data } = await wishlistService.isProductWished(
+          user.id,
+          product.id
+        );
+        if (success && data !== undefined) {
+          setIsWished(data);
+        }
+      }
+    };
+    checkWishlistStatus();
+  }, [user, product.id]);
 
   const handleAddToCart = () => {
     addItem(product);
@@ -32,6 +55,37 @@ export default function ProductCard({ product }: ProductCardProps) {
     toast.success(`${product.name} added to cart!`);
     setTimeout(() => setIsAdded(false), 2000);
   };
+
+  const handleToggleWishlist = useCallback(async () => {
+    if (!user) {
+      setShowAuthDialog(true);
+      return;
+    }
+
+    if (isWished) {
+      const { success } = await wishlistService.removeFromWishlist(
+        user.id,
+        product.id
+      );
+      if (success) {
+        setIsWished(false);
+        toast.info(`${product.name} removed from wishlist.`);
+      } else {
+        toast.error(`Failed to remove ${product.name} from wishlist.`);
+      }
+    } else {
+      const { success } = await wishlistService.addToWishlist(
+        user.id,
+        product.id
+      );
+      if (success) {
+        setIsWished(true);
+        toast.success(`${product.name} added to wishlist!`);
+      } else {
+        toast.error(`Failed to add ${product.name} to wishlist.`);
+      }
+    }
+  }, [user, isWished, product.id, product.name]);
 
   return (
     <motion.div
@@ -81,6 +135,19 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="top-3 left-3 z-10 absolute bg-accent/90 group-hover:bg-accent backdrop-blur-sm px-3 py-1 rounded-full font-semibold text-xs transition-all duration-300 text-accent-foreground">
             {product.category}
           </div>
+
+          {/* Wishlist Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="top-3 right-3 z-20 absolute text-primary-foreground/80 hover:text-primary backdrop-blur-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              handleToggleWishlist();
+            }}
+          >
+            <Heart className={isWished ? 'fill-primary' : ''} />
+          </Button>
         </div>
 
         {/* Content */}
@@ -160,8 +227,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Button>
         </motion.div>
       </div>
+      <AuthDialog isOpen={showAuthDialog} onClose={() => setShowAuthDialog(false)} />
     </motion.div>
   );
 }
-import { useAnimationConfig } from '@/lib/animation';
-import { H3, P } from './ui/typography';

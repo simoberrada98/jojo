@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/product-card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { H2, H3, H4, Muted, P } from '@/components/ui/typography';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Frown } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
 
 const SORT_OPTIONS = [
@@ -248,9 +248,16 @@ function ProductCatalogContent() {
             ))
           ) : (
             <div className="col-span-full py-12 text-center">
-              <P className="text-foreground/60">
-                No products found matching your filters.
-              </P>
+              <div className="flex flex-col items-center justify-center text-foreground/60">
+                <Frown className="mb-4 w-16 h-16" />
+                <H3 className="mb-2 text-2xl font-semibold">
+                  No products found
+                </H3>
+                <P className="max-w-md text-center">
+                  We couldn&apos;t find any products matching your search or filters.
+                  Try adjusting your criteria or browsing other categories.
+                </P>
+              </div>
             </div>
           )}
         </div>
@@ -260,17 +267,5 @@ function ProductCatalogContent() {
 }
 
 export default function ProductCatalog() {
-  return (
-    <Suspense
-      fallback={
-        <section className="px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mx-auto max-w-7xl text-center">
-            <div className="mx-auto border-accent border-b-2 rounded-full w-12 h-12 animate-spin"></div>
-          </div>
-        </section>
-      }
-    >
-      <ProductCatalogContent />
-    </Suspense>
-  );
+  return <ProductCatalogContent />;
 }

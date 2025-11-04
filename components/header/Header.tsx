@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
@@ -24,11 +24,16 @@ export function Header({ cartCount = 0 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const anim = useAnimationConfig();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={false}
+      animate={isMounted ? { y: 0, opacity: 1 } : { y: 0, opacity: 1 }}
       transition={{ duration: anim.enter, ease: anim.easeStandard }}
       className="top-0 z-50 fixed bg-background/60 backdrop-blur-md border-border border-b w-full"
       role="banner"

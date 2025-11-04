@@ -153,6 +153,8 @@ export interface PaymentCreationRequest {
   customerUserAgent?: string;
   redirectUrl?: string;
   notifyUrl?: string;
+  cancelUrl?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface HoodPayPaymentResponse {
@@ -474,6 +476,8 @@ export async function createPayment(
       customer_user_agent: payment.customerUserAgent,
       redirect_url: payment.redirectUrl,
       notify_url: payment.notifyUrl,
+      cancel_url: payment.cancelUrl,
+      metadata: payment.metadata,
     }),
   });
   if (!response.ok) {

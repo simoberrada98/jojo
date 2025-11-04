@@ -125,7 +125,6 @@ export async function createHoodpaySessionAction(input: unknown) {
     HOODPAY_API_KEY: hoodpayConfig.apiKey,
     HOODPAY_STORE_ID: hoodpayConfig.storeId ?? hoodpayConfig.businessId,
     CHECKOUT_SUCCESS_URL: hoodpayConfig.successUrl,
-    CHECKOUT_CANCEL_URL: hoodpayConfig.cancelUrl,
     BASE_URL: baseUrl,
   };
 
@@ -147,14 +146,57 @@ export async function createHoodpaySessionAction(input: unknown) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const providerCurrency = 'USD';
+  const totalsFromClient =
+    (payload.metadata as { totals?: { subtotal?: number; tax?: number; shipping?: number } })
+      ?.totals ?? {};
+  const rawSubtotal = Number(totalsFromClient.subtotal);
+  const rawTax = Number(totalsFromClient.tax);
+  const rawShipping = Number(totalsFromClient.shipping);
+
+  const sanitizedTax = Number.isFinite(rawTax) ? Number(rawTax.toFixed(2)) : 0;
+  const sanitizedShipping = Number.isFinite(rawShipping)
+    ? Number(rawShipping.toFixed(2))
+    : 0;
+
+  const preliminaryTotal = Number.isFinite(payload.amount)
+    ? Number(payload.amount)
+    : 0;
+  const sanitizedSubtotal = Number.isFinite(rawSubtotal)
+    ? Number(rawSubtotal.toFixed(2))
+    : Number(
+        Math.max(preliminaryTotal - sanitizedTax - sanitizedShipping, 0).toFixed(2)
+      );
+
+  const amountUSD = Number(
+    Math.max(sanitizedSubtotal + sanitizedTax + sanitizedShipping, 0.5).toFixed(2)
+  );
+
+  if (amountUSD < 0.5) {
+    throw new Error('Order total is below the minimum chargeable amount.');
+  }
+
+  const sanitizedTotals = {
+    subtotal: sanitizedSubtotal,
+    tax: sanitizedTax,
+    shipping: sanitizedShipping,
+  };
+
   const session = await createHoodpayPaymentSession({
-    amount: payload.amount,
-    currency: payload.currency,
+    amount: amountUSD,
+    currency: providerCurrency,
     baseUrl: baseUrl!,
     successUrl: hoodpayConfig.successUrl!,
-    cancelUrl: hoodpayConfig.cancelUrl!,
+    cancelUrl: hoodpayConfig.cancelUrl ?? `${baseUrl}/checkout`,
+    notifyUrl: `${baseUrl}/api/hoodpay/webhook`,
     cartId: payload.cartId,
-    metadata: payload.metadata,
+    metadata: {
+      cart_id: payload.cartId,
+      selected_currency: payload.currency,
+      subtotal: sanitizedTotals.subtotal,
+      tax: sanitizedTotals.tax,
+      shipping: sanitizedTotals.shipping,
+    },
     customer: {
       email: payload.customer?.email,
       ip,
@@ -185,9 +227,52 @@ export async function createHoodpaySessionAction(input: unknown) {
     const md = (payload.metadata ?? {}) as NormalizedMetadata;
     const items = Array.isArray(md.items) ? md.items : [];
     const totals = md.totals ?? {};
-    const customerInfo =
+    const rawCustomerInfo =
       md.customerInfo ??
       (payload.customer ? { email: payload.customer.email } : undefined);
+
+    const normalizedCustomerInfo =
+      rawCustomerInfo &&
+      (rawCustomerInfo.email ||
+        rawCustomerInfo.name ||
+        rawCustomerInfo.phone ||
+        rawCustomerInfo.address)
+        ? (() => {
+            const addr = rawCustomerInfo.address;
+            let address:
+              | {
+                  line1: string;
+                  line2?: string;
+                  city: string;
+                  state?: string;
+                  postalCode: string;
+                  country: string;
+                }
+              | undefined;
+            if (
+              addr &&
+              addr.line1 &&
+              addr.city &&
+              addr.postalCode &&
+              addr.country
+            ) {
+              address = {
+                line1: addr.line1,
+                line2: addr.line2 ?? undefined,
+                city: addr.city,
+                state: addr.state ?? undefined,
+                postalCode: addr.postalCode,
+                country: addr.country,
+              };
+            }
+            return {
+              email: rawCustomerInfo.email,
+              name: rawCustomerInfo.name,
+              phone: rawCustomerInfo.phone,
+              ...(address ? { address } : {}),
+            };
+          })()
+        : undefined;
 
     const checkout_data: CheckoutData = {
       items: items.map((item, index) => {
@@ -210,22 +295,22 @@ export async function createHoodpaySessionAction(input: unknown) {
           total: Number.isFinite(totalValue) ? totalValue : 0,
         };
       }),
-      subtotal: Number(totals.subtotal ?? 0),
-      tax: Number(totals.tax ?? 0),
-      shipping: Number(totals.shipping ?? 0),
-      total: Number(totals.total ?? payload.amount),
-      currency: payload.currency,
-      customerInfo,
+      subtotal: sanitizedTotals.subtotal,
+      tax: sanitizedTotals.tax,
+      shipping: sanitizedTotals.shipping,
+      total: amountUSD,
+      currency: providerCurrency,
+      customerInfo: normalizedCustomerInfo,
     };
 
     const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> =
       {
-        hp_payment_id: session.id ?? null,
+        hp_payment_id: session.id ?? undefined,
         business_id:
           hoodpayConfig.storeId ?? hoodpayConfig.businessId ?? 'unknown',
         session_id: session.id ?? payload.cartId ?? '',
-        amount: payload.amount,
-        currency: payload.currency,
+        amount: amountUSD,
+        currency: providerCurrency,
         status: PaymentStatus.PENDING,
         method: PaymentMethod.HOODPAY,
         customer_email: payload.customer?.email,
@@ -233,21 +318,31 @@ export async function createHoodpaySessionAction(input: unknown) {
         metadata: {
           ...(payload.metadata ?? {}),
           user_id: user?.id,
+          selected_currency: payload.currency,
+          totals: sanitizedTotals,
         },
         checkout_data,
+        hoodpay_response: session.providerResponse,
       };
 
     const result = await db.createPayment(newPayment);
     if (!result.success) {
       logger.error(
         'Failed to persist initial payment record',
-        undefined,
-        result.error
+        result.error.details, // Log the actual Supabase error
+        {
+          code: result.error.code,
+          message: result.error.message,
+          retryable: result.error.retryable,
+        }
       );
     }
   } catch (error) {
     logger.error('Failed to persist initial payment record', error as Error);
   }
 
-  return session;
+  return {
+    checkoutUrl: session.checkoutUrl,
+    id: session.id ?? null,
+  };
 }

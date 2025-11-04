@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -15,6 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { P } from '@/components/ui/typography';
 
 export default function SignupPage() {
@@ -23,15 +32,22 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    if (error) {
+      setShowErrorDialog(true);
+    }
+  }, [error]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -41,10 +57,12 @@ export default function SignupPage() {
       },
     });
 
-    if (error) {
-      setError(error.message);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
     } else {
+      // Handle successful signup (e.g., show a success message or redirect)
+      // For now, we'll just redirect to dashboard as per existing logic
       router.push('/dashboard');
       router.refresh();
     }
@@ -59,11 +77,6 @@ export default function SignupPage() {
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
-            {error && (
-              <div className="bg-destructive/10 p-3 rounded-md text-destructive text-sm">
-                {error}
-              </div>
-            )}
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -112,6 +125,20 @@ export default function SignupPage() {
           </CardFooter>
         </form>
       </Card>
+
+      <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign Up Error</AlertDialogTitle>
+            <AlertDialogDescription>{error}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowErrorDialog(false)}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

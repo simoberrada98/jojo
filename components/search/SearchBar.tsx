@@ -28,10 +28,11 @@ export function SearchBar({ className, placeholder = 'Search products…' }: Sea
     const next = new URLSearchParams(params.toString());
     if (query && query.trim().length > 0) {
       next.set('q', query.trim());
+      router.push(`${targetPath}?${next.toString()}`);
     } else {
       next.delete('q');
+      router.push(targetPath);
     }
-    router.push(`${targetPath}?${next.toString()}`);
     return false;
   };
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { H1, H2, H3, Muted } from '@/components/ui/typography';
@@ -15,6 +16,7 @@ import PageLayout from '@/components/layout/PageLayout';
 export default function CartPage() {
   const { items: cartItems, updateQuantity, removeItem } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   // Calculate totals using shared utility
   const { subtotal, shipping, tax, total } =
@@ -22,9 +24,7 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     setIsLoading(true);
-    setTimeout(() => {
-      window.location.href = '/checkout';
-    }, 500);
+    router.push('/checkout');
   };
 
   return (

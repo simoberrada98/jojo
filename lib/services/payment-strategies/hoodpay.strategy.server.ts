@@ -1,6 +1,7 @@
 import 'server-only';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import { APP_CONFIG } from '@/lib/config/app.config';
+import { createPayment, type HoodPayPaymentResponse } from '@/lib/hoodpayModule';
 import { logger } from '@/lib/utils/logger';
 
 type CreateSessionArgs = {
@@ -8,7 +9,8 @@ type CreateSessionArgs = {
   currency: string;
   baseUrl?: string;
   successUrl: string;
-  cancelUrl: string;
+  cancelUrl?: string;
+  notifyUrl?: string;
   cartId?: string;
   metadata?: Record<string, unknown>;
   customer?: {
@@ -16,26 +18,35 @@ type CreateSessionArgs = {
     ip?: string;
     userAgent?: string;
   };
+  name?: string;
+  description?: string;
 };
 
 export type HoodpaySessionResult = {
   checkoutUrl: string;
   id?: string;
+  providerResponse: HoodPayPaymentResponse;
 };
-
-const HOODPAY_ENDPOINT = 'https://api.hoodpay.io/v1/checkout/sessions';
 
 function normalizeBaseUrl(url: string): string {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
+function safeStringify(value: unknown): string | undefined {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function createHoodpayPaymentSession(
   args: CreateSessionArgs
 ): Promise<HoodpaySessionResult> {
-  const { apiKey, storeId, businessId, baseUrl: configuredBaseUrl } =
+  const { apiKey, businessId, baseUrl: configuredBaseUrl, cancelUrl: configCancelUrl } =
     paymentServerConfig.hoodpay;
 
-  if (!apiKey || !(storeId || businessId)) {
+  if (!apiKey || !businessId) {
     throw new Error('Hoodpay credentials are not configured');
   }
 
@@ -46,83 +57,64 @@ export async function createHoodpayPaymentSession(
     throw new Error('Base URL is not configured');
   }
 
-  const payload = {
-    store_id: storeId ?? businessId,
-    amount: args.amount,
-    currency: String(args.currency || 'USD').toUpperCase(),
-    success_url: args.successUrl,
-    cancel_url: args.cancelUrl,
-    callback_url: `${baseUrl}/api/hoodpay/webhook`,
-    customer_email: args.customer?.email,
-    customer_ip: args.customer?.ip,
-    customer_user_agent: args.customer?.userAgent,
-    metadata: {
-      ...(args.cartId ? { cartId: args.cartId } : {}),
-      ...(args.metadata ?? {}),
-    },
-  };
+  const redirectUrl = args.successUrl || `${baseUrl}/thank-you`;
+  const notifyUrl =
+    args.notifyUrl ?? `${baseUrl}/api/hoodpay/webhook`;
 
-  const response = await fetch(HOODPAY_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+  const metadataSnippet = args.metadata ? safeStringify(args.metadata) : undefined;
+  const description =
+    args.description ??
+    (metadataSnippet ? `Cart metadata: ${metadataSnippet.slice(0, 500)}` : undefined);
+
+  const currency = (args.currency || 'USD').toUpperCase();
+  const cancelUrl = args.cancelUrl ?? configCancelUrl ?? `${baseUrl}/checkout`;
+
+  const response = await createPayment(apiKey, businessId, {
+    currency,
+    amount: args.amount,
+    name: args.name ?? 'Order',
+    description,
+    customerEmail: args.customer?.email,
+    customerIp: args.customer?.ip,
+    customerUserAgent: args.customer?.userAgent,
+    redirectUrl,
+    notifyUrl,
+    cancelUrl,
+    metadata: {
+      cart_id: args.cartId,
+      selected_currency: (args.metadata as { selected_currency?: string })?.selected_currency,
+      subtotal: args.metadata && (args.metadata as { totals?: { subtotal?: number } }).totals
+        ? (args.metadata as { totals?: { subtotal?: number } }).totals?.subtotal
+        : undefined,
+      tax: args.metadata && (args.metadata as { totals?: { tax?: number } }).totals
+        ? (args.metadata as { totals?: { tax?: number } }).totals?.tax
+        : undefined,
+      shipping: args.metadata && (args.metadata as { totals?: { shipping?: number } }).totals
+        ? (args.metadata as { totals?: { shipping?: number } }).totals?.shipping
+        : undefined,
     },
-    body: JSON.stringify(payload),
-    cache: 'no-store',
   });
 
-  const rawBody = await response.text();
-  let parsed: Record<string, unknown> | undefined;
-  try {
-    parsed = rawBody ? (JSON.parse(rawBody) as Record<string, unknown>) : undefined;
-  } catch {
-    parsed = undefined;
-  }
-
-  if (!response.ok) {
-    logger.error('Hoodpay session creation failed', undefined, {
-      status: response.status,
-      body: rawBody.slice(0, 500),
-    });
-    throw new Error('Failed to create Crypto session: provider error');
-  }
-
-  const extractString = (...candidates: Array<unknown>): string | undefined => {
-    for (const candidate of candidates) {
-      if (typeof candidate === 'string' && candidate.length > 0) {
-        return candidate;
-      }
-    }
-    return undefined;
-  };
-
-  const checkoutUrl = extractString(
-    parsed?.checkout_url,
-    parsed?.paymentUrl,
-    parsed?.payment_url,
-    (parsed as { url?: unknown })?.url,
-    (parsed as { data?: Record<string, unknown> })?.data?.checkout_url,
-    (parsed as { data?: Record<string, unknown> })?.data?.paymentUrl,
-    (parsed as { data?: Record<string, unknown> })?.data?.payment_url,
-    (parsed as { data?: Record<string, unknown> })?.data?.url
-  );
-
-  const id = extractString(
-    parsed?.id,
-    (parsed as { data?: Record<string, unknown> })?.data?.id
-  );
+  const checkoutUrl =
+    response?.paymentUrl ??
+    (response as { payment_url?: string })?.payment_url ??
+    (response as { checkout_url?: string })?.checkout_url ??
+    (response as { url?: string })?.url ??
+    (response as { data?: { url?: string } })?.data?.url;
 
   if (!checkoutUrl) {
     logger.error('Hoodpay session missing checkout URL', undefined, {
-      response: rawBody.slice(0, 500),
+      response,
     });
     throw new Error('Crypto API did not return a checkout URL');
   }
 
   return {
     checkoutUrl,
-    id,
+    id:
+      typeof response?.id === 'number' || typeof response?.id === 'string'
+        ? String(response.id)
+        : undefined,
+    providerResponse: response,
   };
 }
