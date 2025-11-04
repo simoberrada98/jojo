@@ -28,7 +28,13 @@ export async function GET(
   const { gtin } = await context.params;
   if (!gtin) {
     return NextResponse.json(
-      { gtin: '', averageRating: 0, reviewCount: 0, reviews: [], source: 'Supabase Reviews' },
+      {
+        gtin: '',
+        averageRating: 0,
+        reviewCount: 0,
+        reviews: [],
+        source: 'Supabase Reviews',
+      },
       { status: 200 }
     );
   }

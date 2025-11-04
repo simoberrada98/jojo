@@ -7,7 +7,6 @@ import ProductCatalog from '@/components/product-catalog';
 import { H1, P } from '@/components/ui/typography';
 import { Skeleton } from '@/components/ui/skeleton';
 
-
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q');

@@ -31,12 +31,45 @@ This guide will walk you through setting up Supabase for your MineHub ecommerce 
 2. Update `.env.local` with your Supabase credentials:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your-anon-key
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
    NEXT_PUBLIC_APP_URL=http://localhost:3000
    ```
 
-## 4. Run Database Migration
+## 4. Setup Server-Side Supabase Client
+
+For server-side operations (e.g., in API routes, server components, or server actions), we use a helper function to create a Supabase client that correctly handles cookies.
+
+1.  Ensure you have the file `lib/supabase/server.ts` with the following content:
+
+    ```typescript
+    import { createServerClient, type CookieOptions } from '@supabase/ssr';
+    import { cookies } from 'next/headers';
+
+    export function createClient() {
+      const cookieStore = cookies();
+
+      return createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get: (name: string) => (cookieStore as any).get(name)?.value,
+            set: (name: string, value: string, options: CookieOptions) => {
+              (cookieStore as any).set(name, value, options);
+            },
+            remove: (name: string, options: CookieOptions) => {
+              (cookieStore as any).set(name, '', options);
+            },
+          },
+        }
+      );
+    }
+    ```
+
+2.  Use this `createClient` function in your server-side code (e.g., `app/auth/callback/route.ts`, server actions) to interact with Supabase.
+
+## 5. Run Database Migration
 
 1. In your Supabase dashboard, go to **SQL Editor**
 2. Click **New Query**
@@ -56,7 +89,7 @@ This will create all necessary tables:
 - ✅ Row-level security policies
 - ✅ Helper functions
 
-## 5. Configure Authentication
+## 6. Configure Authentication
 
 1. In Supabase dashboard, go to **Authentication** > **Providers**
 2. Enable **Email** provider (enabled by default)
@@ -77,10 +110,11 @@ This will create all necessary tables:
    - Development: `http://localhost:3000`
    - Production: `https://yourdomain.com`
 3. Add redirect URLs:
-   - `http://localhost:3000/**`
-   - `https://yourdomain.com/**`
+   - `http://localhost:3000/auth/callback`
+   - `https://yourdomain.com/auth/callback`
+     (Avoid using wildcards like `**` unless absolutely necessary for security reasons.)
 
-## 6. Seed Sample Data (Optional)
+## 7. Seed Sample Data (Optional)
 
 To test your application, you can add sample products:
 
@@ -94,7 +128,7 @@ VALUES
   ('Mining Power Supply 3000W', 'High-efficiency PSU for mining rigs', 299.00, 100, 'Accessories', null, '3000W', false, true);
 ```
 
-## 7. Test the Setup
+## 8. Test the Setup
 
 1. Start your development server:
 
@@ -111,7 +145,7 @@ VALUES
    - After signup, you should be redirected to `/dashboard`
    - Check all sections: Profile, Orders, Wishlist, Cart
 
-## 8. Verify Database Tables
+## 9. Verify Database Tables
 
 In Supabase dashboard, go to **Database** > **Tables** and verify:
 
@@ -131,7 +165,7 @@ In Supabase dashboard, go to **Database** > **Tables** and verify:
 - Email/password signup and login
 - Session management
 - Protected routes via middleware
-- Automatic profile creation on signup
+- Automatic profile creation on signup (including Gravatar avatar_url)
 
 ### ✅ User Dashboard
 

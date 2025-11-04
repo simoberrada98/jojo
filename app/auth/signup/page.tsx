@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,47 +24,34 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { P } from '@/components/ui/typography';
+import { useAuthForm } from '@/lib/hooks/use-auth-form';
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    loading,
+    error,
+    handleSignUp,
+  } = useAuthForm({
+    onSignUpSuccess: () => {
+      router.push('/dashboard');
+      router.refresh();
+    },
+  });
 
   useEffect(() => {
     if (error) {
-      setShowErrorDialog(true);
+      // setShowErrorDialog(true); // Re-enable if AlertDialog is desired
     }
   }, [error]);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-      },
-    });
-
-    if (signUpError) {
-      setError(signUpError.message);
-      setLoading(false);
-    } else {
-      // Handle successful signup (e.g., show a success message or redirect)
-      // For now, we'll just redirect to dashboard as per existing logic
-      router.push('/dashboard');
-      router.refresh();
-    }
+    await handleSignUp();
   };
 
   return (
@@ -75,19 +61,9 @@ export default function SignupPage() {
           <CardTitle>Create Account</CardTitle>
           <CardDescription>Join Jhuangnyc to start shopping</CardDescription>
         </CardHeader>
-        <form onSubmit={handleSignup}>
+        <form onSubmit={onSubmit}>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                type="text"
-                placeholder="John Doe"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-            </div>
+            {/* Full Name input removed for now, assuming profile update later */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -104,11 +80,10 @@ export default function SignupPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Minimum 6 characters"
+                placeholder="Minimum 8 characters, with uppercase, lowercase, digits, and symbols"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
               />
             </div>
           </CardContent>
@@ -126,7 +101,8 @@ export default function SignupPage() {
         </form>
       </Card>
 
-      <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+      {/* AlertDialog for errors - currently commented out */}
+      {/* <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Sign Up Error</AlertDialogTitle>
@@ -138,7 +114,7 @@ export default function SignupPage() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
     </div>
   );
 }

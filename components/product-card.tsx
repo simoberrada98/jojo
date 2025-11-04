@@ -188,15 +188,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Features List */}
           <ul className="space-y-2 mb-6">
-            {Array.isArray(product.specs) && product.specs.slice(0, 2).map((spec, idx) => (
-              <li
-                key={idx}
-                className="flex items-start gap-2 text-foreground/60 text-sm"
-              >
-                <span className="mt-1 text-accent">•</span>
-                {spec}
-              </li>
-            ))}
+            {Array.isArray(product.specs) &&
+              product.specs.slice(0, 2).map((spec, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-2 text-foreground/60 text-sm"
+                >
+                  <span className="mt-1 text-accent">•</span>
+                  {spec}
+                </li>
+              ))}
           </ul>
         </div>
       </Link>
@@ -227,7 +228,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Button>
         </motion.div>
       </div>
-      <AuthDialog isOpen={showAuthDialog} onClose={() => setShowAuthDialog(false)} />
+      <AuthDialog
+        open={showAuthDialog}
+        onOpenChange={() => setShowAuthDialog(false)}
+      />
     </motion.div>
   );
 }

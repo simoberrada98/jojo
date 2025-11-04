@@ -259,23 +259,25 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </H3>
         </div>
         <ul className="space-y-3">
-          {!Array.isArray(product.specs) || product.specs.length === 0 && (
-            <li className="text-foreground/60 text-sm">
-              No specifications recorded.
-            </li>
-          )}
-          {Array.isArray(product.specs) && product.specs.map((spec) => (
-            <li
-              key={spec}
-              className="flex items-start gap-3 text-foreground/80"
-            >
-              <span
-                aria-hidden="true"
-                className="inline-block bg-accent mt-1.5 rounded-full w-2 h-2"
-              />
-              <span>{spec}</span>
-            </li>
-          ))}
+          {!Array.isArray(product.specs) ||
+            (product.specs.length === 0 && (
+              <li className="text-foreground/60 text-sm">
+                No specifications recorded.
+              </li>
+            ))}
+          {Array.isArray(product.specs) &&
+            product.specs.map((spec) => (
+              <li
+                key={spec}
+                className="flex items-start gap-3 text-foreground/80"
+              >
+                <span
+                  aria-hidden="true"
+                  className="inline-block bg-accent mt-1.5 rounded-full w-2 h-2"
+                />
+                <span>{spec}</span>
+              </li>
+            ))}
         </ul>
       </div>
 

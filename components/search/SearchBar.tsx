@@ -10,7 +10,10 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ className, placeholder = 'Search products…' }: SearchBarProps) {
+export function SearchBar({
+  className,
+  placeholder = 'Search products…',
+}: SearchBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -19,7 +22,6 @@ export function SearchBar({ className, placeholder = 'Search products…' }: Sea
 
   useEffect(() => {
     setQuery(params.get('q') || '');
-     
   }, [params]);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -37,7 +39,12 @@ export function SearchBar({ className, placeholder = 'Search products…' }: Sea
   };
 
   return (
-    <form onSubmit={onSubmit} className={cn('relative', className)} role="search" aria-label="Site search">
+    <form
+      onSubmit={onSubmit}
+      className={cn('relative', className)}
+      role="search"
+      aria-label="Site search"
+    >
       <Search className="top-1/2 left-3 absolute -translate-y-1/2 w-4 h-4 text-foreground/60" />
       <input
         aria-label="Search products"
@@ -54,4 +61,3 @@ export function SearchBar({ className, placeholder = 'Search products…' }: Sea
     </form>
   );
 }
-

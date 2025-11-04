@@ -46,8 +46,7 @@ export function verifyHoodpaySignature(
     };
 
     return (
-      safeEq(sig, expectedHex, 'hex') ||
-      safeEq(sig, expectedB64, 'utf8') // header may already be raw b64 text
+      safeEq(sig, expectedHex, 'hex') || safeEq(sig, expectedB64, 'utf8') // header may already be raw b64 text
     );
   } catch {
     return false;

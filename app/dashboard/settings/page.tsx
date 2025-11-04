@@ -66,7 +66,7 @@ export default function SettingsPage() {
     }
 
     if (newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error('Password must be at least 8 characters');
       setPasswordLoading(false);
       return;
     }

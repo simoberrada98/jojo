@@ -148,8 +148,11 @@ export async function createHoodpaySessionAction(input: unknown) {
 
   const providerCurrency = 'USD';
   const totalsFromClient =
-    (payload.metadata as { totals?: { subtotal?: number; tax?: number; shipping?: number } })
-      ?.totals ?? {};
+    (
+      payload.metadata as {
+        totals?: { subtotal?: number; tax?: number; shipping?: number };
+      }
+    )?.totals ?? {};
   const rawSubtotal = Number(totalsFromClient.subtotal);
   const rawTax = Number(totalsFromClient.tax);
   const rawShipping = Number(totalsFromClient.shipping);
@@ -165,11 +168,16 @@ export async function createHoodpaySessionAction(input: unknown) {
   const sanitizedSubtotal = Number.isFinite(rawSubtotal)
     ? Number(rawSubtotal.toFixed(2))
     : Number(
-        Math.max(preliminaryTotal - sanitizedTax - sanitizedShipping, 0).toFixed(2)
+        Math.max(
+          preliminaryTotal - sanitizedTax - sanitizedShipping,
+          0
+        ).toFixed(2)
       );
 
   const amountUSD = Number(
-    Math.max(sanitizedSubtotal + sanitizedTax + sanitizedShipping, 0.5).toFixed(2)
+    Math.max(sanitizedSubtotal + sanitizedTax + sanitizedShipping, 0.5).toFixed(
+      2
+    )
   );
 
   if (amountUSD < 0.5) {
@@ -277,7 +285,8 @@ export async function createHoodpaySessionAction(input: unknown) {
     const checkout_data: CheckoutData = {
       items: items.map((item, index) => {
         const rawQuantity = Number(item.quantity ?? 1);
-        const quantity = Number.isFinite(rawQuantity) && rawQuantity > 0 ? rawQuantity : 1;
+        const quantity =
+          Number.isFinite(rawQuantity) && rawQuantity > 0 ? rawQuantity : 1;
         const totalValue = Number(item.total ?? item.unitPrice ?? 0);
         const unitPriceCandidate =
           item.unitPrice !== undefined
@@ -291,7 +300,9 @@ export async function createHoodpaySessionAction(input: unknown) {
           name: String(item.name ?? 'Product'),
           description: item.description ?? undefined,
           quantity,
-          unitPrice: Number.isFinite(unitPriceCandidate) ? unitPriceCandidate : 0,
+          unitPrice: Number.isFinite(unitPriceCandidate)
+            ? unitPriceCandidate
+            : 0,
           total: Number.isFinite(totalValue) ? totalValue : 0,
         };
       }),
@@ -329,11 +340,11 @@ export async function createHoodpaySessionAction(input: unknown) {
     if (!result.success) {
       logger.error(
         'Failed to persist initial payment record',
-        result.error.details, // Log the actual Supabase error
+        result.error?.details, // Log the actual Supabase error
         {
-          code: result.error.code,
-          message: result.error.message,
-          retryable: result.error.retryable,
+          code: result.error?.code,
+          message: result.error?.message,
+          retryable: result.error?.retryable,
         }
       );
     }

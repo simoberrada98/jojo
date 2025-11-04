@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuthForm } from '@/lib/hooks/use-auth-form';
+import { toast } from 'sonner';
 
 interface AuthDialogProps {
   open: boolean;
@@ -21,68 +21,37 @@ interface AuthDialogProps {
 }
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClient();
-
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    loading,
+    error,
+    handleSignIn,
+    handleSignUp,
+  } = useAuthForm({
+    onSignInSuccess: () => {
       onOpenChange(false);
       router.refresh();
-      // Reset form
-      setEmail('');
-      setPassword('');
-    }
+    },
+    onSignUpSuccess: () => {
+      onOpenChange(false);
+      // No router.refresh() here, as email confirmation is pending
+    },
+  });
+
+  const onSubmitSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSignIn();
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const onSubmitSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
-      setError(null);
-      // Show success message
-      alert('Check your email to confirm your account!');
-      onOpenChange(false);
-      // Reset form
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-    }
+    await handleSignUp();
   };
 
   return (
@@ -102,7 +71,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           </TabsList>
 
           <TabsContent value="signin">
-            <form onSubmit={handleSignIn} className="space-y-4">
+            <form onSubmit={onSubmitSignIn} className="space-y-4">
               {error && (
                 <div className="bg-destructive/10 p-3 rounded-md text-destructive text-sm">
                   {error}
@@ -136,7 +105,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           </TabsContent>
 
           <TabsContent value="signup">
-            <form onSubmit={handleSignUp} className="space-y-4">
+            <form onSubmit={onSubmitSignUp} className="space-y-4">
               {error && (
                 <div className="bg-destructive/10 p-3 rounded-md text-destructive text-sm">
                   {error}
@@ -158,10 +127,10 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 <Input
                   id="signup-password"
                   type="password"
+                  placeholder="Minimum 8 characters, with uppercase, lowercase, digits, and symbols"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
                 />
               </div>
               <div className="space-y-2">
@@ -172,7 +141,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  minLength={6}
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>

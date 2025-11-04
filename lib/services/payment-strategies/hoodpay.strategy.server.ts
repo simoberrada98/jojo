@@ -1,7 +1,10 @@
 import 'server-only';
 import { paymentServerConfig } from '@/lib/config/payment.config.server';
 import { APP_CONFIG } from '@/lib/config/app.config';
-import { createPayment, type HoodPayPaymentResponse } from '@/lib/hoodpayModule';
+import {
+  createPayment,
+  type HoodPayPaymentResponse,
+} from '@/lib/hoodpayModule';
 import { logger } from '@/lib/utils/logger';
 
 type CreateSessionArgs = {
@@ -43,8 +46,12 @@ function safeStringify(value: unknown): string | undefined {
 export async function createHoodpayPaymentSession(
   args: CreateSessionArgs
 ): Promise<HoodpaySessionResult> {
-  const { apiKey, businessId, baseUrl: configuredBaseUrl, cancelUrl: configCancelUrl } =
-    paymentServerConfig.hoodpay;
+  const {
+    apiKey,
+    businessId,
+    baseUrl: configuredBaseUrl,
+    cancelUrl: configCancelUrl,
+  } = paymentServerConfig.hoodpay;
 
   if (!apiKey || !businessId) {
     throw new Error('Hoodpay credentials are not configured');
@@ -58,13 +65,16 @@ export async function createHoodpayPaymentSession(
   }
 
   const redirectUrl = args.successUrl || `${baseUrl}/thank-you`;
-  const notifyUrl =
-    args.notifyUrl ?? `${baseUrl}/api/hoodpay/webhook`;
+  const notifyUrl = args.notifyUrl ?? `${baseUrl}/api/hoodpay/webhook`;
 
-  const metadataSnippet = args.metadata ? safeStringify(args.metadata) : undefined;
+  const metadataSnippet = args.metadata
+    ? safeStringify(args.metadata)
+    : undefined;
   const description =
     args.description ??
-    (metadataSnippet ? `Cart metadata: ${metadataSnippet.slice(0, 500)}` : undefined);
+    (metadataSnippet
+      ? `Cart metadata: ${metadataSnippet.slice(0, 500)}`
+      : undefined);
 
   const currency = (args.currency || 'USD').toUpperCase();
   const cancelUrl = args.cancelUrl ?? configCancelUrl ?? `${baseUrl}/checkout`;
@@ -82,16 +92,24 @@ export async function createHoodpayPaymentSession(
     cancelUrl,
     metadata: {
       cart_id: args.cartId,
-      selected_currency: (args.metadata as { selected_currency?: string })?.selected_currency,
-      subtotal: args.metadata && (args.metadata as { totals?: { subtotal?: number } }).totals
-        ? (args.metadata as { totals?: { subtotal?: number } }).totals?.subtotal
-        : undefined,
-      tax: args.metadata && (args.metadata as { totals?: { tax?: number } }).totals
-        ? (args.metadata as { totals?: { tax?: number } }).totals?.tax
-        : undefined,
-      shipping: args.metadata && (args.metadata as { totals?: { shipping?: number } }).totals
-        ? (args.metadata as { totals?: { shipping?: number } }).totals?.shipping
-        : undefined,
+      selected_currency: (args.metadata as { selected_currency?: string })
+        ?.selected_currency,
+      subtotal:
+        args.metadata &&
+        (args.metadata as { totals?: { subtotal?: number } }).totals
+          ? (args.metadata as { totals?: { subtotal?: number } }).totals
+              ?.subtotal
+          : undefined,
+      tax:
+        args.metadata && (args.metadata as { totals?: { tax?: number } }).totals
+          ? (args.metadata as { totals?: { tax?: number } }).totals?.tax
+          : undefined,
+      shipping:
+        args.metadata &&
+        (args.metadata as { totals?: { shipping?: number } }).totals
+          ? (args.metadata as { totals?: { shipping?: number } }).totals
+              ?.shipping
+          : undefined,
     },
   });
 

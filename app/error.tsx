@@ -15,9 +15,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           <h2 className="text-2xl font-semibold">Something went wrong.</h2>
           <p className="text-sm text-muted-foreground">
             Try refreshing the page or come back later. Reference:{' '}
-            <span className="font-mono">
-              {error?.digest ?? 'unavailable'}
-            </span>
+            <span className="font-mono">{error?.digest ?? 'unavailable'}</span>
           </p>
           <button
             type="button"

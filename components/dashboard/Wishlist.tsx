@@ -35,22 +35,33 @@ export default function Wishlist() {
 
       setLoading(true);
       setError(null);
-      const { success, data, error: fetchError } = await wishlistService.getWishlistItems(user.id);
+      const {
+        success,
+        data,
+        error: fetchError,
+      } = await wishlistService.getWishlistItems(user.id);
 
       if (success && data) {
         setWishlistItems(data);
         // Fetch product details for each wished item
-        const productIds = data.map(item => item.product_id);
+        const productIds = data.map((item) => item.product_id);
         if (productIds.length > 0) {
           try {
-            const response = await fetch(`/api/products?ids=${productIds.join(',')}`);
+            const response = await fetch(
+              `/api/products?ids=${productIds.join(',')}`
+            );
             if (!response.ok) {
               throw new Error('Failed to fetch product details');
             }
             const productsData: DisplayProduct[] = await response.json();
             setWishedProducts(productsData);
-                } catch (err: unknown) {
-                  setError((err instanceof Error ? err.message : 'Failed to load product details'));          }
+          } catch (err: unknown) {
+            setError(
+              err instanceof Error
+                ? err.message
+                : 'Failed to load product details'
+            );
+          }
         }
       } else if (fetchError) {
         setError(fetchError.message || 'Failed to load wishlist');
@@ -64,14 +75,21 @@ export default function Wishlist() {
   const handleRemoveFromWishlist = async (productId: string) => {
     if (!user) return;
 
-    const { success, error: removeError } = await wishlistService.removeFromWishlist(user.id, productId);
+    const { success, error: removeError } =
+      await wishlistService.removeFromWishlist(user.id, productId);
 
     if (success) {
-      setWishlistItems(prev => prev.filter(item => item.product_id !== productId));
-      setWishedProducts(prev => prev.filter(product => product.id !== productId));
+      setWishlistItems((prev) =>
+        prev.filter((item) => item.product_id !== productId)
+      );
+      setWishedProducts((prev) =>
+        prev.filter((product) => product.id !== productId)
+      );
       toast.success('Product removed from wishlist.');
     } else {
-      toast.error(removeError?.message || 'Failed to remove product from wishlist.');
+      toast.error(
+        removeError?.message || 'Failed to remove product from wishlist.'
+      );
     }
   };
 
@@ -115,8 +133,8 @@ export default function Wishlist() {
               Your wishlist is empty
             </H3>
             <P className="max-w-md text-muted-foreground">
-              Looks like you haven&apos;t added any products to your wishlist yet.
-              Start browsing to find items you love!
+              Looks like you haven&apos;t added any products to your wishlist
+              yet. Start browsing to find items you love!
             </P>
             <Button asChild className="mt-6">
               <Link href="/products">Browse Products</Link>
@@ -125,7 +143,10 @@ export default function Wishlist() {
         ) : (
           <div className="space-y-4">
             {wishedProducts.map((product) => (
-              <div key={product.id} className="flex items-center space-x-4 border-b pb-4 last:border-b-0 last:pb-0">
+              <div
+                key={product.id}
+                className="flex items-center space-x-4 border-b pb-4 last:border-b-0 last:pb-0"
+              >
                 <Link href={`/products/${product.handle}`} className="shrink-0">
                   <Image
                     src={product.image}
@@ -142,7 +163,10 @@ export default function Wishlist() {
                     </H3>
                   </Link>
                   <Muted className="text-sm">
-                    {product.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                    {product.priceUSD.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })}
                   </Muted>
                 </div>
                 <Button

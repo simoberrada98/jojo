@@ -22,6 +22,7 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 ### Supabase data dump
+
 - See `docs/supabase-dump.md` for dumping remote data into `supabase/seed.sql`.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!

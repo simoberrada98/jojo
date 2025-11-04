@@ -254,8 +254,9 @@ function ProductCatalogContent() {
                   No products found
                 </H3>
                 <P className="max-w-md text-center">
-                  We couldn&apos;t find any products matching your search or filters.
-                  Try adjusting your criteria or browsing other categories.
+                  We couldn&apos;t find any products matching your search or
+                  filters. Try adjusting your criteria or browsing other
+                  categories.
                 </P>
               </div>
             </div>

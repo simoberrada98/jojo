@@ -37,7 +37,10 @@ export class WishlistService {
         success: false,
         error: {
           code: 'WISHLIST_ADD_ERROR',
-          message: (error instanceof Error ? error.message : 'Failed to add to wishlist'),
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to add to wishlist',
           details: error,
           retryable: false,
         },
@@ -66,7 +69,10 @@ export class WishlistService {
         success: false,
         error: {
           code: 'WISHLIST_REMOVE_ERROR',
-          message: (error instanceof Error ? error.message : 'Failed to remove from wishlist'),
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to remove from wishlist',
           details: error,
           retryable: false,
         },
@@ -96,7 +102,10 @@ export class WishlistService {
         success: false,
         error: {
           code: 'WISHLIST_CHECK_ERROR',
-          message: (error instanceof Error ? error.message : 'Failed to check wishlist status'),
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to check wishlist status',
           details: error,
           retryable: false,
         },
@@ -123,7 +132,10 @@ export class WishlistService {
         success: false,
         error: {
           code: 'WISHLIST_GET_ERROR',
-          message: (error instanceof Error ? error.message : 'Failed to get wishlist items'),
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to get wishlist items',
           details: error,
           retryable: false,
         },
