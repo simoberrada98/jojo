@@ -20,6 +20,7 @@
     "db:push": "supabase db push",
     "db:migrate": "supabase migration new",
     "db:status": "supabase status",
+    "db:dump:prod": "tsx scripts/dump-prod-db.ts",
     "studio": "supabase studio",
     "prepare:data": "pnpm optimize:products && pnpm json-to-csv",
     "setup:local": "pnpm db:start && pnpm db:seed",

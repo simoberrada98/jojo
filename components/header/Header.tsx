@@ -14,6 +14,7 @@ import { UserMenu } from './UserMenu';
 import { MobileMenu } from './MobileMenu';
 import { useAnimationConfig } from '@/lib/animation';
 import { MotionButton } from '@/components/ui/button';
+import { SearchBar } from '@/components/search/SearchBar';
 
 interface HeaderProps {
   cartCount?: number;
@@ -48,8 +49,11 @@ export function Header({ cartCount = 0 }: HeaderProps) {
           {/* Desktop Navigation */}
           <Navigation />
 
-          {/* Actions: Currency Toggle, Cart, User Menu, Mobile Toggle */}
+          {/* Actions: Search, Currency Toggle, Cart, User Menu, Mobile Toggle */}
           <div className="flex items-center gap-3 sm:gap-4">
+            <div className="hidden md:block">
+              <SearchBar />
+            </div>
             <CurrencyToggle />
             <CartButton cartCount={cartCount} />
             <UserMenu onAuthDialogOpen={() => setAuthDialogOpen(true)} />

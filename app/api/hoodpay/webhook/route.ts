@@ -9,6 +9,7 @@ import {
   PaymentMethod,
   type HoodPayWebhookData,
   type HoodPayWebhookPayload,
+  type WebhookEvent,
 } from '@/types/payment';
 import { env } from '@/lib/config/env';
 import { createPaymentDbService } from '@/lib/services/payment-db.service';
@@ -17,6 +18,8 @@ import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import { createOrderDbService } from '@/lib/services/order-db.service';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/hoodpay/webhook
@@ -51,8 +54,8 @@ export async function POST(request: NextRequest) {
       env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // Store webhook event in database
-    await dbService.createWebhookEvent({
+    // Store webhook event in database (unprocessed)
+    const createdEvent = await dbService.createWebhookEvent({
       event_type: event,
       payment_id: data?.id || '',
       business_id: data?.businessId || '',
@@ -74,26 +77,51 @@ export async function POST(request: NextRequest) {
     const normalizedEvent = EVENT_MAP[event] || event;
 
     // Process webhook based on event type
-    switch (normalizedEvent) {
-      case 'payment:created':
-        await handlePaymentCreated(data, dbService);
-        break;
-      case 'payment:method_selected':
-        await handlePaymentMethodSelected(data, dbService);
-        break;
-      case 'payment:completed':
-        await handlePaymentCompleted(data, dbService);
-        break;
-      case 'payment:cancelled':
-        await handlePaymentCancelled(data, dbService);
-        break;
-      case 'payment:expired':
-        await handlePaymentExpired(data, dbService);
-        break;
-      default:
-        logger.warn('Unhandled Crypto webhook event', {
-          event: normalizedEvent,
+    try {
+      switch (normalizedEvent) {
+        case 'payment:created':
+          await handlePaymentCreated(data, dbService);
+          break;
+        case 'payment:method_selected':
+          await handlePaymentMethodSelected(data, dbService);
+          break;
+        case 'payment:completed':
+          await handlePaymentCompleted(data, dbService);
+          break;
+        case 'payment:cancelled':
+          await handlePaymentCancelled(data, dbService);
+          break;
+        case 'payment:expired':
+          await handlePaymentExpired(data, dbService);
+          break;
+        default:
+          logger.warn('Unhandled Crypto webhook event', {
+            event: normalizedEvent,
+          });
+      }
+
+      // Mark event as processed
+      const evtId = createdEvent.success && createdEvent.data?.id;
+      if (evtId) {
+        await dbService.updateWebhookEvent(evtId, {
+          processed: true,
+          processed_at: new Date().toISOString(),
         });
+      }
+    } catch (handlerError: unknown) {
+      const evtId = createdEvent.success && createdEvent.data?.id;
+      if (evtId) {
+        const updates: Partial<WebhookEvent> = {
+          processed: false,
+          processed_at: new Date().toISOString(),
+          processing_error:
+            handlerError instanceof Error
+              ? handlerError.message
+              : 'Unknown handler error',
+        };
+        await dbService.updateWebhookEvent(evtId, updates);
+      }
+      throw handlerError;
     }
 
     // Acknowledge receipt
@@ -155,7 +183,8 @@ async function handlePaymentMethodSelected(
   const record = payment.data;
 
   await dbService.updatePayment(record.id, {
-    method: data.method?.toLowerCase() as PaymentMethod,
+    // Keep source as Hoodpay; store specific coin/method in metadata
+    method: PaymentMethod.HOODPAY,
     metadata: {
       ...(record.metadata ?? {}),
       methodSelected: data.method,
@@ -195,6 +224,16 @@ async function handlePaymentCompleted(
   try {
     const metadata = record.metadata as PaymentMetadata;
     const userId = metadata?.user_id;
+    const existingOrderId = (metadata?.order_id ?? undefined) as
+      | number
+      | undefined;
+    if (existingOrderId) {
+      logger.info('Order already created for payment; skipping duplicate', {
+        paymentId: record.id,
+        orderId: existingOrderId,
+      });
+      return;
+    }
     if (!userId) {
       logger.info('Skipping order creation (no user_id in metadata)', {
         paymentId: record.id,

@@ -160,14 +160,21 @@ function buildAdditionalProperties(
     }));
   }
 
+  const toStringArray = (value: unknown): string[] =>
+    Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === 'string')
+      : [];
+  const safeSpecs = toStringArray(product.specs);
+  const safeFeatures = toStringArray(product.features);
+
   const textCorpus = [
     product.algorithm,
     product.hashrate,
     product.power,
     product.efficiency,
     product.shortDescription,
-    ...product.specs,
-    ...product.features,
+    ...safeSpecs,
+    ...safeFeatures,
     stripHtml(product.description),
   ]
     .filter(Boolean)

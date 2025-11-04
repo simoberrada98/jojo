@@ -77,7 +77,16 @@ export async function GET(request: NextRequest) {
     if (handle) {
       const { data: product, error } = await supabase
         .from('products')
-        .select('*');
+        .select('*')
+        .eq('slug', handle)
+        .eq('is_active', true)
+        .eq('is_archived', false)
+        .single();
+
+      if (error || !product) {
+        return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+      }
+      const ratings = await getRatingsMap([(product as Product).id as string]);
       const pid = (product as Product).id as string;
       const meta = ratings.get(pid) || { avg: 0, count: 0 };
       return jsonWithCache(

@@ -259,12 +259,12 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </H3>
         </div>
         <ul className="space-y-3">
-          {product.specs.length === 0 && (
+          {!Array.isArray(product.specs) || product.specs.length === 0 && (
             <li className="text-foreground/60 text-sm">
               No specifications recorded.
             </li>
           )}
-          {product.specs.map((spec) => (
+          {Array.isArray(product.specs) && product.specs.map((spec) => (
             <li
               key={spec}
               className="flex items-start gap-3 text-foreground/80"

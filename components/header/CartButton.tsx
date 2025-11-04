@@ -91,10 +91,7 @@ export function CartButton({ cartCount }: CartButtonProps) {
           </AnimatePresence>
         </MotionButton>
       </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="flex flex-col p-0 sm:max-w-md h-full"
-      >
+      <SheetContent side="right" className="flex flex-col p-0 h-full">
         <div className="px-6 pt-6 pb-4 border-border border-b">
           <SheetHeader className="items-start text-left">
             <SheetTitle className="font-semibold text-xl">Your cart</SheetTitle>
@@ -105,20 +102,7 @@ export function CartButton({ cartCount }: CartButtonProps) {
             </SheetDescription>
           </SheetHeader>
         </div>
-        {hasItems && (
-          <div className="px-6 py-4 border-border border-b">
-            <div className="flex justify-between items-center text-muted-foreground text-xs">
-              <span>
-                You&apos;re {formatPrice(amountToFreeShipping)} away from free
-                shipping
-              </span>
-              <span className="font-medium text-foreground">
-                {formatPrice(FREE_SHIPPING_THRESHOLD)}
-              </span>
-            </div>
-            <Progress value={shippingProgress} className="mt-2 h-2" />
-          </div>
-        )}
+
         {hasItems && (
           <div className="flex justify-between items-center px-6 py-3 text-sm">
             <P className="font-medium text-foreground">

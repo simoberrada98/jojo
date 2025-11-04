@@ -121,7 +121,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Features List */}
           <ul className="space-y-2 mb-6">
-            {product.specs.slice(0, 2).map((spec, idx) => (
+            {Array.isArray(product.specs) && product.specs.slice(0, 2).map((spec, idx) => (
               <li
                 key={idx}
                 className="flex items-start gap-2 text-foreground/60 text-sm"

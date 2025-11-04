@@ -48,7 +48,15 @@ function ProductCatalogContent() {
     async function fetchProducts() {
       try {
         setLoading(true);
-        const response = await fetch('/api/products?limit=100');
+        const url = new URL('/api/products', window.location.origin);
+        url.searchParams.set('limit', '100');
+        const q = searchParams.get('q');
+        if (q) url.searchParams.set('q', q);
+        const categoryParam = searchParams.get('category');
+        if (categoryParam && categoryParam !== 'All') {
+          url.searchParams.set('category', categoryParam);
+        }
+        const response = await fetch(url.toString());
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -64,7 +72,7 @@ function ProductCatalogContent() {
       }
     }
     fetchProducts();
-  }, []);
+  }, [searchParams]);
 
   const filteredAndSortedProducts = useMemo(() => {
     const result = products.filter((p) => {

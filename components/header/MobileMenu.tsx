@@ -8,6 +8,7 @@ import { Muted } from '@/components/ui/typography';
 import { useAuth } from '@/lib/contexts/auth-context';
 import CurrencyToggle from '@/components/currency-toggle';
 import { MAIN_NAV_ITEMS, USER_DASHBOARD_NAV } from '@/lib/constants/navigation';
+import { SearchBar } from '@/components/search/SearchBar';
 import { useAnimationConfig } from '@/lib/animation';
 import { Button } from '../ui/button';
 
@@ -77,6 +78,16 @@ export function MobileMenu({
         className="pb-2 border-border border-b"
       >
         <CurrencyToggle />
+      </motion.div>
+
+      {/* Search */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: anim.enter, ease: anim.easeStandard }}
+        className="px-2"
+      >
+        <SearchBar className="w-full" />
       </motion.div>
 
       <ul className="flex flex-col flex-1 gap-2 p-2 min-h-fill">
