@@ -1,114 +1,143 @@
-'use client';
+import 'server-only';
+import { createClient } from '@/lib/supabase/server';
+import PageLayout from '@/components/layout/PageLayout';
+import { H1, Muted } from '@/components/ui/typography';
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/contexts/auth-context';
-import { createClient } from '@/lib/supabase/client';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { Order } from '@/types/database';
-import { P, H1 } from '@/components/ui/typography';
+type Order = {
+  id: string;
+  total_amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
+  items?: Array<{
+    id: string;
+    product_id: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+  }>;
+};
 
-export default function OrdersPage() {
-  const { user } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
+async function getOrders() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+  if (!user) return { user: null, orders: [] as Order[] };
 
-      if (!error && data) {
-        setOrders(data);
-      }
-      setLoading(false);
-    };
+  const { data: orders, error: ordersError } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
 
-    fetchOrders();
-  }, [user, supabase]);
+  if (ordersError) return { user, orders: [] as Order[] };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'bg-green-500';
-      case 'shipped':
-        return 'bg-blue-500';
-      case 'processing':
-        return 'bg-yellow-500';
-      case 'cancelled':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
+  const ids = (orders || []).map((o) => o.id);
+  if (ids.length === 0) return { user, orders: [] as Order[] };
 
-  if (loading) {
-    return <P>Loading orders...</P>;
+  const { data: items } = await supabase
+    .from('order_items')
+    .select('*')
+    .in('order_id', ids);
+
+  const itemsByOrder = new Map<string, Order['items']>();
+  for (const item of (items as OrderItem[]) || []) {
+    const arr = itemsByOrder.get(item.order_id) || [];
+    arr.push({
+      id: item.id,
+      product_id: item.product_id,
+      quantity: item.quantity,
+      unit_price: Number(item.unit_price),
+      total_price: Number(item.total_price),
+    });
+    itemsByOrder.set(item.order_id, arr);
   }
 
-  return (
-    <div>
-      <H1 className="mb-8 font-bold text-3xl">My Orders</H1>
+  const output = ((orders as Order[]) || []).map((o) => ({
+    id: o.id as string,
+    total_amount: Number(o.total_amount),
+    currency: o.currency as string,
+    status: o.status as string,
+    created_at: o.created_at as string,
+    items: itemsByOrder.get(o.id) || [],
+  }));
 
-      {orders.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <P className="text-muted-foreground">No orders yet</P>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <Card key={order.id}>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>Order {order.order_number}</CardTitle>
-                    <CardDescription>
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </CardDescription>
+  return { user, orders: output };
+}
+
+export default async function OrdersPage() {
+  const { user, orders } = await getOrders();
+
+  return (
+    <PageLayout>
+      <main className="pt-20">
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
+          <H1 className="mb-6 text-3xl">My Orders</H1>
+          {!user ? (
+            <Muted>Please sign in to view your orders.</Muted>
+          ) : orders.length === 0 ? (
+            <Muted>No orders yet. Your recent orders will appear here.</Muted>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((o) => (
+                <div
+                  key={o.id}
+                  className="bg-card p-4 border border-border rounded-lg"
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="font-semibold">
+                      Order #{o.id.slice(0, 8)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {new Date(o.created_at).toLocaleString()}
+                    </div>
                   </div>
-                  <Badge className={getStatusColor(order.status)}>
-                    {order.status}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <P className="text-muted-foreground text-sm">Total</P>
-                    <P className="font-bold text-2xl">
-                      ${order.total.toFixed(2)}
-                    </P>
+                  <div className="mt-2 flex justify-between text-sm">
+                    <div>
+                      <span className="text-foreground/70">Status:</span>{' '}
+                      <span className="font-medium">{o.status}</span>
+                    </div>
+                    <div>
+                      <span className="text-foreground/70">Total:</span>{' '}
+                      <span className="font-semibold">
+                        {o.total_amount.toFixed(2)} {o.currency}
+                      </span>
+                    </div>
                   </div>
-                  {order.crypto_currency && (
-                    <div className="text-right">
-                      <P className="text-muted-foreground text-sm">
-                        Paid with {order.crypto_currency}
-                      </P>
-                      <P className="font-mono text-sm">
-                        {order.crypto_amount} {order.crypto_currency}
-                      </P>
+                  {o.items && o.items.length > 0 && (
+                    <div className="mt-3 text-sm">
+                      <div className="mb-1 text-foreground/70">Items</div>
+                      <ul className="list-disc pl-5 space-y-1">
+                        {o.items.map((it) => (
+                          <li key={it.id}>
+                            <span className="text-foreground/80">
+                              {it.product_id}
+                            </span>{' '}
+                            × {it.quantity} — {it.total_price.toFixed(2)}{' '}
+                            {o.currency}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </PageLayout>
   );
 }

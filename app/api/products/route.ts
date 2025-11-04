@@ -45,21 +45,43 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
 
+    async function getRatingsMap(ids: string[]) {
+      if (ids.length === 0)
+        return new Map<string, { avg: number; count: number }>();
+      const { data, error } = await supabase
+        .from('product_reviews')
+        .select('product_id, rating')
+        .in('product_id', ids)
+        .eq('is_approved', true);
+      const map = new Map<string, { sum: number; count: number }>();
+      if (!error && data) {
+        for (const row of data as Array<{
+          product_id: string;
+          rating: number;
+        }>) {
+          const pid = row.product_id;
+          const entry = map.get(pid) || { sum: 0, count: 0 };
+          entry.sum += Number(row.rating || 0);
+          entry.count += 1;
+          map.set(pid, entry);
+        }
+      }
+      const out = new Map<string, { avg: number; count: number }>();
+      for (const [pid, { sum, count }] of map.entries()) {
+        out.set(pid, { avg: count > 0 ? sum / count : 0, count });
+      }
+      return out;
+    }
+
     // Handle single product by handle/slug
     if (handle) {
       const { data: product, error } = await supabase
         .from('products')
-        .select('*')
-        .eq('slug', handle)
-        .eq('is_active', true)
-        .eq('is_archived', false)
-        .single();
-
-      if (error || !product) {
-        return NextResponse.json({ error: 'Not Found' }, { status: 404 });
-      }
+        .select('*');
+      const pid = (product as Product).id as string;
+      const meta = ratings.get(pid) || { avg: 0, count: 0 };
       return jsonWithCache(
-        transformToDisplayProduct(product as Product),
+        transformToDisplayProduct(product as Product, meta.avg, meta.count),
         DETAIL_CACHE_MAX_AGE_SECONDS
       );
     }
@@ -77,8 +99,11 @@ export async function GET(request: NextRequest) {
       if (error || !product) {
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });
       }
+      const ratings = await getRatingsMap([(product as Product).id as string]);
+      const pid = (product as Product).id as string;
+      const meta = ratings.get(pid) || { avg: 0, count: 0 };
       return jsonWithCache(
-        transformToDisplayProduct(product as Product),
+        transformToDisplayProduct(product as Product, meta.avg, meta.count),
         DETAIL_CACHE_MAX_AGE_SECONDS
       );
     }
@@ -101,9 +126,16 @@ export async function GET(request: NextRequest) {
         throw error;
       }
 
-      const transformed = (products || []).map((p) =>
-        transformToDisplayProduct(p as Product)
+      const ratings = await getRatingsMap(
+        (products || []).map((p: Product) => p.id as string)
       );
+      const transformed = (products || []).map((p) => {
+        const meta = ratings.get((p as Product).id as string) || {
+          avg: 0,
+          count: 0,
+        };
+        return transformToDisplayProduct(p as Product, meta.avg, meta.count);
+      });
       return jsonWithCache(transformed, DETAIL_CACHE_MAX_AGE_SECONDS);
     }
 
@@ -135,9 +167,16 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    const results = (products || []).map((p) =>
-      transformToDisplayProduct(p as Product)
+    const ratings = await getRatingsMap(
+      (products || []).map((p: Product) => p.id as string)
     );
+    const results = (products || []).map((p) => {
+      const meta = ratings.get((p as Product).id as string) || {
+        avg: 0,
+        count: 0,
+      };
+      return transformToDisplayProduct(p as Product, meta.avg, meta.count);
+    });
     const total = count || 0;
 
     const payload = {

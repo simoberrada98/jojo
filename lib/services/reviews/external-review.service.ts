@@ -27,7 +27,10 @@ type DummyProduct = {
 
 let cachedProducts: DummyProduct[] | null = null;
 let cacheExpiresAt = 0;
-const serpCache = new Map<string, { summary: ExternalReviewSummary; expiresAt: number }>();
+const serpCache = new Map<
+  string,
+  { summary: ExternalReviewSummary; expiresAt: number }
+>();
 
 function normalizeGtin(value?: string | null): string {
   return value?.replace(/\D+/g, '').trim() ?? '';
@@ -107,7 +110,8 @@ async function fetchSerpApiSummary(
   let simpleSum = 0;
   for (const r of rated) {
     const rating = r.rating as number;
-    const reviewStr = typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
+    const reviewStr =
+      typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
     const count = Number((reviewStr.match(/\d+/g) || []).join('')) || 0;
     if (count > 0) {
       weighted += rating * count;
@@ -115,9 +119,11 @@ async function fetchSerpApiSummary(
     }
     simpleSum += rating;
   }
-  const average = totalWeight > 0 ? weighted / totalWeight : simpleSum / rated.length;
+  const average =
+    totalWeight > 0 ? weighted / totalWeight : simpleSum / rated.length;
   const reviewCount = rated.reduce((acc, r) => {
-    const s = typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
+    const s =
+      typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
     return acc + (Number((s.match(/\d+/g) || []).join('')) || 0);
   }, 0);
 
@@ -181,42 +187,18 @@ export async function getExternalReviewSummary(
   fallback?: { name?: string | null; brand?: string | null }
 ): Promise<ExternalReviewSummary | null> {
   const normalizedGtin = normalizeGtin(gtin);
-  const fallbackQuery = [fallback?.brand, fallback?.name].filter(Boolean).join(' ').trim();
+  const fallbackQuery = [fallback?.brand, fallback?.name]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
 
-  // Try SerpAPI first when configured
-  if (env.SERPAPI_API_KEY) {
-    const serpQuery = normalizedGtin || fallbackQuery;
-    if (serpQuery) {
-      try {
-        const serp = await fetchSerpApiSummary(serpQuery, normalizedGtin);
-        if (serp) return serp;
-      } catch {
-        // fall through to dummy dataset
-      }
-    }
-  }
-
-  const products = await loadProducts();
-
-  let product: DummyProduct | null = null;
-  if (normalizedGtin) {
-    product =
-      products.find(
-        (candidate) => normalizeGtin(candidate.meta?.barcode) === normalizedGtin
-      ) || null;
-  }
-
-  if (!product && fallback?.name) {
-    product = matchByFallback(products, fallback.name);
-  }
-
-  if (!product && fallback?.brand) {
-    product = matchByFallback(products, fallback.brand);
-  }
-
-  if (!product) {
+  // Use SerpAPI exclusively when configured; otherwise return null to avoid mock data
+  const serpQuery = normalizedGtin || fallbackQuery;
+  if (!env.SERPAPI_API_KEY || !serpQuery) return null;
+  try {
+    const serp = await fetchSerpApiSummary(serpQuery, normalizedGtin);
+    return serp;
+  } catch {
     return null;
   }
-
-  return toSummary(product, normalizedGtin || fallback?.name || undefined);
 }

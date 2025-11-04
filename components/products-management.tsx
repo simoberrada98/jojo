@@ -4,9 +4,20 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { H2 } from './ui/typography';
+import { Table } from './ui/table';
+import { StatusBadge } from './ui/status-badge';
+
+interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: string;
+  stock: number;
+  status: string;
+}
 
 export default function ProductsManagement() {
-  const [products] = useState([
+  const [products] = useState<Product[]>([
     {
       id: 1,
       name: 'ProMiner X1000',
@@ -41,6 +52,42 @@ export default function ProductsManagement() {
     },
   ]);
 
+  const columns = [
+    { header: 'Product Name', accessor: 'name' as keyof Product },
+    { header: 'Category', accessor: 'category' as keyof Product },
+    { header: 'Price', accessor: 'price' as keyof Product },
+    { header: 'Stock', accessor: 'stock' as keyof Product },
+    {
+      header: 'Status',
+      accessor: 'status' as keyof Product,
+      cell: (value: Product[keyof Product]) => (
+        <StatusBadge status={value as string} />
+      ),
+    },
+    {
+      header: 'Actions',
+      accessor: 'id' as keyof Product,
+      cell: (value: Product[keyof Product]) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hover:bg-accent/10 text-accent"
+          >
+            <Edit2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hover:bg-destructive/10 text-destructive"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -55,80 +102,7 @@ export default function ProductsManagement() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-background border-border border-b">
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Product Name
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Category
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Price
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Stock
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Status
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.id}
-                  className="hover:bg-background border-border border-b transition"
-                >
-                  <td className="px-6 py-4 font-medium text-foreground">
-                    {product.name}
-                  </td>
-                  <td className="px-6 py-4 text-foreground/70">
-                    {product.category}
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-accent">
-                    {product.price}
-                  </td>
-                  <td className="px-6 py-4 text-foreground">{product.stock}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        product.status === 'Active'
-                          ? 'bg-primary/20 text-primary'
-                          : 'bg-destructive/20 text-destructive'
-                      }`}
-                    >
-                      {product.status}
-                    </span>
-                  </td>
-                  <td className="flex gap-2 px-6 py-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="hover:bg-accent/10 text-accent"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="hover:bg-destructive/10 text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table columns={columns} data={products} />
     </div>
   );
 }

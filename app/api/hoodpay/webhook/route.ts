@@ -16,6 +16,7 @@ import type { PaymentDatabaseService } from '@/lib/services/payment-db.service';
 import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
+import { createOrderDbService } from '@/lib/services/order-db.service';
 
 /**
  * POST /api/hoodpay/webhook
@@ -62,25 +63,37 @@ export async function POST(request: NextRequest) {
       retry_count: 0,
     });
 
+    // Normalize event name to a single convention
+    const EVENT_MAP: Record<string, string> = {
+      PAYMENT_CREATED: 'payment:created',
+      PAYMENT_METHOD_SELECTED: 'payment:method_selected',
+      PAYMENT_COMPLETED: 'payment:completed',
+      PAYMENT_CANCELLED: 'payment:cancelled',
+      PAYMENT_EXPIRED: 'payment:expired',
+    } as const;
+    const normalizedEvent = EVENT_MAP[event] || event;
+
     // Process webhook based on event type
-    switch (event) {
-      case 'PAYMENT_CREATED':
+    switch (normalizedEvent) {
+      case 'payment:created':
         await handlePaymentCreated(data, dbService);
         break;
-      case 'PAYMENT_METHOD_SELECTED':
+      case 'payment:method_selected':
         await handlePaymentMethodSelected(data, dbService);
         break;
-      case 'PAYMENT_COMPLETED':
+      case 'payment:completed':
         await handlePaymentCompleted(data, dbService);
         break;
-      case 'PAYMENT_CANCELLED':
+      case 'payment:cancelled':
         await handlePaymentCancelled(data, dbService);
         break;
-      case 'PAYMENT_EXPIRED':
+      case 'payment:expired':
         await handlePaymentExpired(data, dbService);
         break;
       default:
-        logger.warn('Unhandled Crypto webhook event', { event });
+        logger.warn('Unhandled Crypto webhook event', {
+          event: normalizedEvent,
+        });
     }
 
     // Acknowledge receipt
@@ -151,6 +164,13 @@ async function handlePaymentMethodSelected(
   });
 }
 
+interface PaymentMetadata {
+  user_id?: string;
+  order_id?: number;
+  methodSelected?: string;
+  methodSelectedAt?: string;
+}
+
 /**
  * Handle PAYMENT_COMPLETED event
  */
@@ -170,6 +190,42 @@ async function handlePaymentCompleted(
   const record = payment.data;
 
   await dbService.updatePaymentStatus(record.id, PaymentStatus.COMPLETED);
+
+  // Create order for authenticated users with stored checkout data
+  try {
+    const metadata = record.metadata as PaymentMetadata;
+    const userId = metadata?.user_id;
+    if (!userId) {
+      logger.info('Skipping order creation (no user_id in metadata)', {
+        paymentId: record.id,
+      });
+      return;
+    }
+
+    const orderDb = createOrderDbService(
+      supabaseConfig.url,
+      env.SUPABASE_SERVICE_ROLE_KEY
+    );
+    const order = await orderDb.createOrderFromPayment(userId, record);
+    if (order?.id) {
+      await dbService.updatePayment(record.id, {
+        metadata: {
+          ...(record.metadata ?? {}),
+          order_id: order.id,
+        },
+      });
+      logger.info('Order created from payment', {
+        paymentId: record.id,
+        orderId: order.id,
+      });
+    } else {
+      logger.warn('Order creation returned no id');
+    }
+  } catch (e) {
+    logger.error('Failed to create order from payment', e as Error, {
+      paymentId: record.id,
+    });
+  }
 
   // TODO: Send confirmation email, update order status, etc.
   logger.info('Payment completed successfully', {

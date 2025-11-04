@@ -97,7 +97,7 @@ export async function GET() {
         <g:availability>${availability}</g:availability>
         <g:image_link>${escapeXml(imageUrl)}</g:image_link>
         <g:link>${escapeXml(productUrl)}</g:link>
-        <g:identifier_exists>false</g:identifier_exists>
+        <g:identifier_exists>${product.gtin ? 'true' : 'false'}</g:identifier_exists>
         <g:shipping>
           <g:country>US</g:country>
           <g:service>Standard</g:service>

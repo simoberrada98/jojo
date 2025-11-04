@@ -110,7 +110,7 @@ export interface CheckoutItem {
 }
 
 export interface CustomerInfo {
-  email: string;
+  email?: string;
   name?: string;
   phone?: string;
   address?: Address;

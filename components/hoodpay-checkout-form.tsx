@@ -25,6 +25,7 @@ import { PaymentStatusMessage } from '@/components/ui/payment-status-message';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { APP_CONFIG } from '@/lib/config/app.config';
 import { Lock } from 'lucide-react';
+import { FormSection } from './ui/form-section';
 
 interface HoodPayCheckoutFormProps {
   orderData: OrderData;
@@ -39,7 +40,9 @@ export default function HoodPayCheckoutForm({
 }: HoodPayCheckoutFormProps) {
   const { currency } = useCurrency();
   const { processing, error, paymentStatus, handlePayment } = usePaymentHandler(
-    { onComplete }
+    {
+      onComplete,
+    }
   );
   const hoodPayEnabled = APP_CONFIG.features.enableHoodPay;
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethodOption>(
@@ -106,9 +109,7 @@ export default function HoodPayCheckoutForm({
 
   return (
     <div className="space-y-6">
-      {/* Payment Method Selection */}
-      <div className="bg-card p-6 border border-border rounded-lg">
-        <H3 className="mb-4 text-lg">Select Payment Method</H3>
+      <FormSection title="Select Payment Method">
         <div className="gap-4 grid grid-cols-1">
           {paymentMethods.map((method) => {
             const Icon = method.icon;
@@ -153,11 +154,9 @@ export default function HoodPayCheckoutForm({
             support for assistance.
           </Muted>
         )}
-      </div>
+      </FormSection>
 
-      {/* Payment Summary */}
-      <div className="bg-card p-6 border border-border rounded-lg">
-        <H3 className="mb-4 text-lg">Payment Summary</H3>
+      <FormSection title="Payment Summary">
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
             <span className="text-foreground/70">Subtotal</span>
@@ -179,9 +178,8 @@ export default function HoodPayCheckoutForm({
             </span>
           </div>
         </div>
-      </div>
+      </FormSection>
 
-      {/* Status Messages */}
       {(paymentStatus !== 'idle' || error) && (
         <PaymentStatusMessage
           status={
@@ -193,13 +191,12 @@ export default function HoodPayCheckoutForm({
                   ? 'processing'
                   : paymentStatus === 'success'
                     ? 'success'
-                    : 'error' // Fallback for 'idle' if it somehow gets here, though it shouldn't be rendered
+                    : 'error'
           }
           error={error}
         />
       )}
 
-      {/* Payment Button */}
       <Button
         onClick={handlePaymentClick}
         disabled={
@@ -222,7 +219,6 @@ export default function HoodPayCheckoutForm({
         )}
       </Button>
 
-      {/* Security Badge */}
       <div className="flex gap-3 bg-primary/10 p-4 border border-primary/20 rounded-lg">
         <Lock className="mt-0.5 w-5 h-5 text-primary shrink-0" />
         <div>

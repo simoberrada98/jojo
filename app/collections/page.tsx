@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
 import ProductImage from '@/components/product-image';
@@ -7,62 +5,61 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import ProductCatalog from '@/components/product-catalog';
 import { H1, P, H3 } from '@/components/ui/typography';
+import { createClient } from '@/lib/supabase/server';
 
-const collections = [
-  {
-    id: 'asic-miners',
-    name: 'ASIC Miners',
-    category: 'ASIC',
-    description:
-      'Professional ASIC mining hardware for Bitcoin and other cryptocurrencies',
-    productCount: 12,
-    featured: true,
-  },
-  {
-    id: 'gpu-rigs',
-    name: 'GPU Mining Rigs',
-    category: 'GPU',
-    description: 'High-performance GPU rigs for Ethereum and altcoin mining',
-    productCount: 8,
-    featured: true,
-  },
-  {
-    id: 'compact-miners',
-    name: 'Compact Miners',
-    category: 'Compact',
-    description:
-      'Space-efficient mining solutions for home and small operations',
-    productCount: 6,
-    featured: false,
-  },
-  {
-    id: 'enterprise-solutions',
-    name: 'Enterprise Solutions',
-    category: 'Enterprise',
-    description: 'Large-scale mining infrastructure and datacenter equipment',
-    productCount: 15,
-    featured: true,
-  },
-  {
-    id: 'accessories',
-    name: 'Mining Accessories',
-    category: 'ASIC',
-    description: 'Power supplies, cooling systems, and mining accessories',
-    productCount: 24,
-    featured: false,
-  },
-  {
-    id: 'software-tools',
-    name: 'Software & Tools',
-    category: 'GPU',
-    description:
-      'Mining software, monitoring tools, and optimization utilities',
-    productCount: 10,
-    featured: false,
-  },
-];
+type CollectionRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image_url: string | null;
+  is_featured: boolean;
+  position: number | null;
+};
 
-export default function CollectionPage() {
+async function fetchCollections() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('collections')
+    .select('*')
+    .order('position', { ascending: true });
+  if (error) return [] as CollectionRow[];
+  return (data || []) as CollectionRow[];
+}
+
+interface ProductCollectionRow {
+  collection_id: string;
+}
+
+async function fetchProductCounts(collectionIds: string[]) {
+  if (collectionIds.length === 0) return new Map<string, number>();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('product_collections')
+    .select('id, product_id, collection_id')
+    .in('collection_id', collectionIds);
+  const map = new Map<string, number>();
+  if (!error && data) {
+    for (const row of data as ProductCollectionRow[]) {
+      const cid = row.collection_id;
+      map.set(cid, (map.get(cid) || 0) + 1);
+    }
+  }
+  return map;
+}
+
+function pickCategoryTheme(name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes('gpu')) return 'GPU';
+  if (n.includes('enterprise')) return 'Enterprise';
+  if (n.includes('compact')) return 'Compact';
+  return 'ASIC';
+}
+
+export default async function CollectionPage() {
+  const collections = await fetchCollections();
+  const counts = await fetchProductCounts(collections.map((c) => c.id));
+
   return (
     <PageLayout>
       <main className="pt-20">
@@ -108,9 +105,11 @@ export default function CollectionPage() {
               >
                 <div className="relative mb-4 border border-border group-hover:border-accent rounded-lg h-64 overflow-hidden transition-all duration-300">
                   <div className="h-full group-hover:scale-105 transition-transform duration-500">
-                    <ProductImage category={collection.category} />
+                    <ProductImage
+                      category={pickCategoryTheme(collection.name)}
+                    />
                   </div>
-                  {collection.featured && (
+                  {collection.is_featured && (
                     <div className="top-4 right-4 z-10 absolute bg-accent/90 backdrop-blur-sm px-3 py-1 rounded-full font-semibold text-xs text-accent-foreground">
                       Featured
                     </div>
@@ -120,11 +119,11 @@ export default function CollectionPage() {
                   {collection.name}
                 </H3>
                 <P className="mb-4 text-muted-foreground text-sm">
-                  {collection.description}
+                  {collection.description || ''}
                 </P>
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-accent text-xs">
-                    {collection.productCount} Products
+                    {counts.get(collection.id) || 0} Products
                   </span>
                   <Button
                     variant="ghost"

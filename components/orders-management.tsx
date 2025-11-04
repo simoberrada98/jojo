@@ -4,12 +4,23 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Download } from 'lucide-react';
 import { H2, P } from './ui/typography';
+import { Table } from './ui/table';
+import { StatusBadge } from './ui/status-badge';
+
+interface Order {
+  id: string;
+  customer: string;
+  email: string;
+  amount: string;
+  status: string;
+  date: string;
+}
 
 export default function OrdersManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const orders = [
+  const orders: Order[] = [
     {
       id: 'ORD-001',
       customer: 'John Doe',
@@ -54,6 +65,44 @@ export default function OrdersManagement() {
     return matchesSearch && matchesFilter;
   });
 
+  const columns = [
+    { header: 'Order ID', accessor: 'id' as keyof Order },
+    {
+      header: 'Customer',
+      accessor: 'customer' as keyof Order,
+      cell: (value: Order[keyof Order]) => (
+        <div>
+          <P className="font-medium text-foreground">{value as string}</P>
+          <P className="text-foreground/60 text-xs">
+            {orders.find((o) => o.customer === value)?.email}
+          </P>
+        </div>
+      ),
+    },
+    { header: 'Amount', accessor: 'amount' as keyof Order },
+    {
+      header: 'Status',
+      accessor: 'status' as keyof Order,
+      cell: (value: Order[keyof Order]) => (
+        <StatusBadge status={value as string} />
+      ),
+    },
+    { header: 'Date', accessor: 'date' as keyof Order },
+    {
+      header: 'Action',
+      accessor: 'id' as keyof Order,
+      cell: (value: Order[keyof Order]) => (
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-transparent hover:bg-accent/10 border-accent text-accent"
+        >
+          View
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -92,82 +141,7 @@ export default function OrdersManagement() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-background border-border border-b">
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Order ID
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Customer
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Amount
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Status
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Date
-                </th>
-                <th className="px-6 py-4 font-semibold text-foreground/70 text-left">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="hover:bg-background border-border border-b transition"
-                >
-                  <td className="px-6 py-4 font-mono text-foreground">
-                    {order.id}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <P className="font-medium text-foreground">
-                        {order.customer}
-                      </P>
-                      <P className="text-foreground/60 text-xs">
-                        {order.email}
-                      </P>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-accent">
-                    {order.amount}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.status === 'Completed'
-                          ? 'bg-primary/20 text-primary'
-                          : order.status === 'Pending'
-                            ? 'bg-accent/20 text-accent'
-                            : 'bg-destructive/20 text-destructive'
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-foreground/70">{order.date}</td>
-                  <td className="px-6 py-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="bg-transparent hover:bg-accent/10 border-accent text-accent"
-                    >
-                      View
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table columns={columns} data={filteredOrders} />
     </div>
   );
 }

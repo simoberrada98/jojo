@@ -236,7 +236,7 @@ export interface DisplayProduct extends Product {
 
 export function transformToDisplayProduct(
   dbProduct: Product,
-  rating = 4.5,
+  rating = 0,
   reviewCount = 0
 ): DisplayProduct {
   const images = normalizeStringArray(dbProduct.images as unknown);

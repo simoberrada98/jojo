@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { H3, Muted } from '@/components/ui/typography';
 import { Copy, Check } from 'lucide-react';
 import Image from 'next/image';
+import { FormSection } from './ui/form-section';
 
 interface CryptoPaymentFormProps {
   onComplete: () => void;
@@ -63,9 +64,7 @@ export default function CryptoPaymentForm({
 
   return (
     <div className="space-y-6">
-      {/* Cryptocurrency Selection */}
-      <div className="bg-card p-6 border border-border rounded-lg">
-        <H3 className="mb-4 text-lg">Select Payment Method</H3>
+      <FormSection title="Select Payment Method">
         <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
           {CRYPTOCURRENCIES.map((crypto) => (
             <button
@@ -82,11 +81,9 @@ export default function CryptoPaymentForm({
             </button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
-      {/* Payment Details */}
-      <div className="bg-card p-6 border border-border rounded-lg">
-        <H3 className="mb-4 text-lg">Payment Details</H3>
+      <FormSection title="Payment Details">
         <div className="space-y-4">
           <div>
             <Label className="block mb-2">Amount to Send</Label>
@@ -139,11 +136,9 @@ export default function CryptoPaymentForm({
             </Muted>
           </div>
         </div>
-      </div>
+      </FormSection>
 
-      {/* Confirmation */}
-      <div className="bg-card p-6 border border-border rounded-lg">
-        <H3 className="mb-4 text-lg">Confirm Payment</H3>
+      <FormSection title="Confirm Payment">
         <Muted className="m-0 mb-6">
           Once you send the payment, it may take a few minutes to confirm on the
           blockchain. We&rsquo;ll notify you when we receive it.
@@ -157,7 +152,7 @@ export default function CryptoPaymentForm({
             ? 'Payment Confirmed!'
             : 'I&rsquo;ve Sent the Payment'}
         </Button>
-      </div>
+      </FormSection>
     </div>
   );
 }

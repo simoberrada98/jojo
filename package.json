@@ -10,7 +10,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
-    "test:unit": "tsx scripts/test-generate-product-schema.ts",
     "import:products": "tsx scripts/import-products.ts",
     "optimize:products": "tsx scripts/optimize-products.ts",
     "json-to-csv": "tsx scripts/json-to-csv.ts",
