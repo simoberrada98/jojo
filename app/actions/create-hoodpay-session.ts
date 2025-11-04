@@ -65,7 +65,7 @@ export async function createHoodpaySessionAction(input: HoodpaySessionInput) {
     const businessId = paymentServerConfig.hoodpay.businessId || '';
     const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> =
       {
-        hoodpay_payment_id: session.id,
+        hp_payment_id: session.id,
         business_id: businessId,
         session_id: session.id,
         amount: input.amount,

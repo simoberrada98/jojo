@@ -299,7 +299,7 @@ export class PaymentDatabaseService {
           .from('payments')
           .upsert(
             {
-              hoodpay_payment_id: hpPaymentId,
+              hp_payment_id: hpPaymentId,
               ...paymentData,
               updated_at: new Date().toISOString(),
             },

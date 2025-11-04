@@ -1,6 +1,7 @@
 import 'server-only';
 
 import type { ExternalReviewSummary } from '@/types/review';
+import { env } from '@/lib/config/env';
 
 const REVIEW_DATASET_URL =
   'https://dummyjson.com/products?limit=200&select=id,title,description,rating,reviews,meta';
@@ -26,6 +27,7 @@ type DummyProduct = {
 
 let cachedProducts: DummyProduct[] | null = null;
 let cacheExpiresAt = 0;
+const serpCache = new Map<string, { summary: ExternalReviewSummary; expiresAt: number }>();
 
 function normalizeGtin(value?: string | null): string {
   return value?.replace(/\D+/g, '').trim() ?? '';
@@ -54,6 +56,84 @@ async function loadProducts(): Promise<DummyProduct[]> {
   cachedProducts = payload.products ?? [];
   cacheExpiresAt = now + CACHE_TTL_MS;
   return cachedProducts;
+}
+
+async function fetchSerpApiSummary(
+  query: string,
+  requestedGtin?: string
+): Promise<ExternalReviewSummary | null> {
+  const cacheKey = `serp:${query}`;
+  const now = Date.now();
+  const cached = serpCache.get(cacheKey);
+  if (cached && cached.expiresAt > now) {
+    return cached.summary;
+  }
+
+  const apiKey = env.SERPAPI_API_KEY;
+  if (!apiKey) return null;
+
+  const url = new URL('https://serpapi.com/search.json');
+  url.searchParams.set('engine', 'google_shopping');
+  url.searchParams.set('q', query);
+  url.searchParams.set('gl', 'us');
+  url.searchParams.set('hl', 'en');
+  url.searchParams.set('api_key', apiKey);
+
+  const res = await fetch(url.toString(), {
+    headers: { Accept: 'application/json' },
+    cache: 'no-store',
+  });
+  if (!res.ok) return null;
+
+  type SerpShoppingResult = {
+    title?: string;
+    rating?: number;
+    reviews?: string | number;
+    product_id?: string;
+    link?: string;
+  };
+  type SerpResponse = {
+    shopping_results?: SerpShoppingResult[];
+    search_metadata?: { serpapi_search_url?: string };
+  };
+
+  const data = (await res.json()) as SerpResponse;
+  const results = data.shopping_results || [];
+  const rated = results.filter((r) => typeof r.rating === 'number');
+  if (rated.length === 0) return null;
+
+  let totalWeight = 0;
+  let weighted = 0;
+  let simpleSum = 0;
+  for (const r of rated) {
+    const rating = r.rating as number;
+    const reviewStr = typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
+    const count = Number((reviewStr.match(/\d+/g) || []).join('')) || 0;
+    if (count > 0) {
+      weighted += rating * count;
+      totalWeight += count;
+    }
+    simpleSum += rating;
+  }
+  const average = totalWeight > 0 ? weighted / totalWeight : simpleSum / rated.length;
+  const reviewCount = rated.reduce((acc, r) => {
+    const s = typeof r.reviews === 'string' ? r.reviews : String(r.reviews ?? '0');
+    return acc + (Number((s.match(/\d+/g) || []).join('')) || 0);
+  }, 0);
+
+  const summary: ExternalReviewSummary = {
+    gtin: normalizeGtin(requestedGtin) || '',
+    productTitle: rated[0]?.title,
+    averageRating: Number(average.toFixed(2)),
+    reviewCount,
+    source: 'SerpAPI Google Shopping',
+    sourceUrl: data.search_metadata?.serpapi_search_url,
+    productDescription: undefined,
+    reviews: [],
+  };
+
+  serpCache.set(cacheKey, { summary, expiresAt: now + CACHE_TTL_MS });
+  return summary;
 }
 
 function toSummary(
@@ -100,8 +180,23 @@ export async function getExternalReviewSummary(
   gtin?: string | null,
   fallback?: { name?: string | null; brand?: string | null }
 ): Promise<ExternalReviewSummary | null> {
-  const products = await loadProducts();
   const normalizedGtin = normalizeGtin(gtin);
+  const fallbackQuery = [fallback?.brand, fallback?.name].filter(Boolean).join(' ').trim();
+
+  // Try SerpAPI first when configured
+  if (env.SERPAPI_API_KEY) {
+    const serpQuery = normalizedGtin || fallbackQuery;
+    if (serpQuery) {
+      try {
+        const serp = await fetchSerpApiSummary(serpQuery, normalizedGtin);
+        if (serp) return serp;
+      } catch {
+        // fall through to dummy dataset
+      }
+    }
+  }
+
+  const products = await loadProducts();
 
   let product: DummyProduct | null = null;
   if (normalizedGtin) {

@@ -5,7 +5,7 @@ export const revalidate = 3600;
 
 export async function GET(
   request: NextRequest,
-  context: { params: { gtin: string } }
+  context: { params: Promise<{ gtin: string }> }
 ) {
   const { gtin } = await context.params;
   const searchParams = request.nextUrl.searchParams;

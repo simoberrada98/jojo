@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/collections/all',
-        destination: '/collection',
+        destination: '/collections',
       },
     ];
   },
@@ -22,16 +22,6 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/shop',
-        destination: '/collections/all',
-        permanent: true,
-      },
-      {
-        source: '/product',
-        destination: '/collections/all',
-        permanent: true,
-      },
-      {
-        source: '/products',
         destination: '/collections/all',
         permanent: true,
       },
