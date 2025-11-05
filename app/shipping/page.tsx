@@ -30,8 +30,12 @@ export default function ShippingPage() {
           <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
             <H1 className="mb-4">Information — Shipping:</H1>
             <div className="space-y-2 mx-auto max-w-xl text-muted-foreground text-lg">
-              <P>Handling time: 1–2 days</P>
-              <P>Delivery time: 2–4 days</P>
+              <P>
+                Handling time: <strong>1–2 days</strong>
+              </P>
+              <P>
+                Delivery time: <strong>2–4 days</strong>
+              </P>
             </div>
             <Muted className="m-0 mx-auto max-w-2xl text-lg">
               Fast, secure, and reliable delivery of your mining hardware
@@ -46,32 +50,18 @@ export default function ShippingPage() {
           <div className="gap-8 grid grid-cols-1 md:grid-cols-2 mb-16">
             {[
               {
+                name: 'Handling Time',
+                time: '1-2 Business Days',
+                cost: '$0',
+                icon: Clock,
+                description: 'Faster Order Proccessing',
+              },
+              {
                 name: 'Standard Shipping',
-                time: '7-10 Business Days',
+                time: '2–4 Business Days',
                 cost: 'Free on orders over $500',
                 icon: Truck,
                 description: 'Reliable ground shipping with full tracking',
-              },
-              {
-                name: 'Express Shipping',
-                time: '3-5 Business Days',
-                cost: '$49.99',
-                icon: Clock,
-                description: 'Faster delivery with priority handling',
-              },
-              {
-                name: 'Overnight Shipping',
-                time: '1 Business Day',
-                cost: '$149.99',
-                icon: Globe,
-                description: 'Next-day delivery for urgent orders',
-              },
-              {
-                name: 'International Shipping',
-                time: '10-21 Business Days',
-                cost: 'Calculated at checkout',
-                icon: Shield,
-                description: 'Worldwide delivery with customs support',
               },
             ].map((option, index) => {
               const Icon = option.icon;
