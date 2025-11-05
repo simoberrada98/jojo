@@ -79,14 +79,31 @@ export async function dbOperation<T>(
       },
     };
   } catch (error: unknown) {
-    const normalizedError =
-      error instanceof Error ? error : new Error(errorMessage);
+    // Extract meaningful error message
+    let message = errorMessage;
+    let details: string | undefined;
+    
+    if (error instanceof Error) {
+      message = error.message || errorMessage;
+      details = error.stack;
+    } else if (typeof error === 'object' && error !== null) {
+      // Handle Supabase/Postgres errors
+      const errObj = error as Record<string, unknown>;
+      message = String(errObj.message || errObj.error || errObj.details || errorMessage);
+      details = JSON.stringify(error, null, 2);
+    } else if (typeof error === 'string') {
+      message = error;
+    } else {
+      message = errorMessage;
+      details = String(error);
+    }
+    
     return {
       success: false,
       error: {
         code: errorCode,
-        message: normalizedError.message || errorMessage,
-        details: normalizedError.stack ?? normalizedError.message,
+        message,
+        details,
         retryable: true,
       },
       metadata: {

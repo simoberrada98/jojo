@@ -37,7 +37,16 @@ const isCheckoutData = (value: unknown): value is CheckoutData => {
 export class OrderDatabaseService {
   private client: SupabaseClient;
 
-  constructor(supabaseUrl?: string, serviceKey?: string) {
+  constructor(
+    supabaseClient?: SupabaseClient,
+    supabaseUrl?: string, 
+    serviceKey?: string
+  ) {
+    if (supabaseClient) {
+      this.client = supabaseClient;
+      return;
+    }
+
     const url = supabaseUrl || supabaseConfig.url;
     const key = serviceKey || env.SUPABASE_SERVICE_ROLE_KEY;
     if (!url || !key) throw new Error('Supabase credentials are required');
@@ -118,17 +127,64 @@ export class OrderDatabaseService {
     order: OrderRecordInsert
   ): Promise<ServiceResponse<OrderRecord>> {
     const now = new Date().toISOString();
-    const payload: OrderRecordInsert = {
-      ...order,
+    
+    // Extract order_items before creating the order
+    const orderItems = order.order_items || [];
+    const { order_items, ...orderWithoutItems } = order;
+    
+    const payload: Omit<OrderRecordInsert, 'order_items'> = {
+      ...orderWithoutItems,
       created_at: order.created_at ?? now,
       updated_at: order.updated_at ?? now,
     };
 
-    return dbOperation(
+    // Insert order first
+    const orderResult = await dbOperation<OrderRecord>(
       () => this.client.from('orders').insert(payload).select().single(),
       'DB_CREATE_ERROR',
       'Failed to create order record'
     );
+
+    if (!orderResult.success) {
+      return orderResult;
+    }
+    
+    if (!orderResult.data) {
+      return {
+        success: false,
+        error: {
+          code: 'DB_CREATE_ERROR',
+          message: 'Order created but no data returned',
+          retryable: false,
+        },
+        metadata: orderResult.metadata,
+      };
+    }
+
+    // If there are order items, insert them
+    if (orderItems.length > 0) {
+      const orderId = orderResult.data.id;
+      const itemsToInsert = orderItems.map(item => ({
+        order_id: orderId,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total_price: item.total_price,
+      }));
+
+      await dbOperation(
+        () => this.client.from('order_items').insert(itemsToInsert),
+        'DB_CREATE_ERROR',
+        'Failed to create order items'
+      ).catch((error) => {
+        // Log the error but don't fail the order creation
+        logger?.warn?.('Failed to insert order items', error, {
+          orderId,
+        });
+      });
+    }
+
+    return orderResult;
   }
 
   async updateOrder(
@@ -160,13 +216,9 @@ export class OrderDatabaseService {
   ): Promise<ServiceResponse<OrderRecord>> {
     const now = new Date().toISOString();
     const updates: OrderRecordUpdate = {
-      status,
+      status: status as string, // Convert enum to string
       updated_at: now,
     };
-
-    if (status === OrderStatus.COMPLETED) {
-      updates.completed_at = now;
-    }
 
     return this.updateOrder(orderId, updates);
   }
@@ -176,5 +228,5 @@ export function createOrderDbService(
   supabaseUrl?: string,
   serviceKey?: string
 ): OrderDatabaseService {
-  return new OrderDatabaseService(supabaseUrl, serviceKey);
+  return new OrderDatabaseService(undefined, supabaseUrl, serviceKey); // Pass undefined for supabaseClient
 }

@@ -928,6 +928,15 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      complete_payment_with_order: {
+        Args: {
+          p_metadata_patch?: Json;
+          p_order_payload?: Json;
+          p_payment_id: string;
+          p_user_id?: string;
+        };
+        Returns: Json;
+      };
       delete_user_and_dependents: {
         Args: { user_id: string };
         Returns: undefined;

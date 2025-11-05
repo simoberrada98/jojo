@@ -9,6 +9,7 @@ import { PaymentProcessor } from './payment/PaymentProcessor';
 import { PaymentRecoveryService } from './payment/PaymentRecoveryService';
 import { PaymentDatabaseService } from './payment-db.service';
 import { NotificationService } from './notification.service';
+import { OrderDatabaseService } from './order-db.service'; // Import OrderDatabaseService
 
 type ServiceName = (typeof Services)[keyof typeof Services];
 
@@ -58,6 +59,16 @@ function registerCoreServices() {
     () => {
       const admin = container.resolve<SupabaseAdminService>(Services.SUPABASE_ADMIN);
       return new PaymentDatabaseService(admin.getClient());
+    },
+    true
+  );
+
+  // Add registration for OrderDatabaseService
+  container.register(
+    Services.ORDER_DB,
+    () => {
+      const admin = container.resolve<SupabaseAdminService>(Services.SUPABASE_ADMIN);
+      return new OrderDatabaseService(admin.getClient(), undefined, undefined);
     },
     true
   );

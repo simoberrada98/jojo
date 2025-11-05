@@ -24,25 +24,24 @@ export interface OrderItemRecord {
 
 export interface OrderRecord {
   id: string;
-  user_id: string | null;
-  status: OrderStatus;
+  user_id: string;
+  status: string; // The DB stores this as string, not enum
   total_amount: number;
   currency: string;
   shipping_address: Json | null;
   billing_address: Json | null;
   payment_method: string | null;
-  metadata: Json | null;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
-  order_items?: OrderItemRecord[];
+  order_items?: OrderItemRecord[]; // Not a DB column, only for query results
 }
 
-export type OrderRecordInsert = Omit<OrderRecord, 'id' | 'created_at' | 'updated_at'> & {
+export type OrderRecordInsert = Omit<OrderRecord, 'id' | 'created_at' | 'updated_at' | 'order_items'> & {
   created_at?: string;
   updated_at?: string;
+  order_items?: OrderItemRecord[]; // Optional for convenience, but not inserted directly
 };
 
-export type OrderRecordUpdate = Partial<Omit<OrderRecord, 'id' | 'created_at'> & {
+export type OrderRecordUpdate = Partial<Omit<OrderRecord, 'id' | 'created_at' | 'order_items'> & {
   updated_at?: string;
 }>;
