@@ -19,10 +19,33 @@ import {
   type PaymentAttemptInsert,
   type PaymentMethod,
   type PaymentError,
-  type ServiceResponse,
-  type PaginatedResponse,
 } from '@/types/payment';
+import { type PaginatedResponse, type ServiceResponse } from '@/types/service';
 import { toJson } from '@/lib/utils/json';
+import type { Json } from '@/types/supabase.types';
+
+export interface PaymentOrderItemPayload {
+  product_id: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
+export interface PaymentOrderPayload {
+  total_amount?: number;
+  currency?: string;
+  shipping_address?: Json;
+  billing_address?: Json;
+  payment_method?: string | null;
+  order_items?: PaymentOrderItemPayload[];
+}
+
+export interface CompletePaymentResult {
+  payment_id: string;
+  order_id: string | null;
+  status: string;
+  already_processed: boolean;
+}
 
 /**
  * PaymentDatabaseService - Refactored with DRY principles
@@ -323,6 +346,70 @@ export class PaymentDatabaseService {
       'DB_UPSERT_ERROR',
       'Failed to upsert payment'
     );
+  }
+
+  /**
+   * Complete payment and optionally create order within a single transaction
+   */
+  async completePaymentWithOrder(params: {
+    paymentId: string;
+    userId?: string;
+    orderPayload?: PaymentOrderPayload;
+    metadataPatch?: Record<string, Json>;
+  }): Promise<ServiceResponse<CompletePaymentResult>> {
+    const { paymentId, userId, orderPayload, metadataPatch } = params;
+    const startTime = Date.now();
+
+    try {
+      const { data, error } = await this.client.rpc(
+        'complete_payment_with_order',
+        {
+          p_payment_id: paymentId,
+          p_user_id: userId ?? null,
+          p_order_payload: toJson(orderPayload ?? {}),
+          p_metadata_patch: toJson(metadataPatch ?? {}),
+        }
+      );
+
+      if (error) throw error;
+
+      const payload = (data ?? {}) as Partial<CompletePaymentResult>;
+
+      if (!payload.payment_id) {
+        throw new Error('Transaction did not return a payment_id');
+      }
+
+      return {
+        success: true,
+        data: {
+          payment_id: payload.payment_id,
+          order_id: payload.order_id ?? null,
+          status: payload.status ?? PaymentStatus.COMPLETED,
+          already_processed: payload.already_processed ?? false,
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          duration: Date.now() - startTime,
+        },
+      };
+    } catch (error: unknown) {
+      const normalizedError =
+        error instanceof Error ? error : new Error('Failed to finalize payment');
+
+      return {
+        success: false,
+        error: {
+          code: 'DB_TRANSACTION_ERROR',
+          message: normalizedError.message,
+          details: toJson(error),
+          retryable: false,
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          duration: Date.now() - startTime,
+        },
+      };
+    }
   }
 
   /**

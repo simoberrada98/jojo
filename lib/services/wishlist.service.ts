@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-import { ServiceResponse } from '@/types/payment'; // Reusing ServiceResponse type
+import type { ServiceResponse } from '@/types/service';
 
 interface WishlistItem {
   id: string;
@@ -10,10 +10,30 @@ interface WishlistItem {
 }
 
 export class WishlistService {
-  private supabasePromise = createClient();
+  private readonly supabase = createClient();
+  private readonly tableName = 'wishlist_items';
 
-  private async getSupabaseClient() {
-    return await this.supabasePromise;
+  private get client() {
+    return this.supabase;
+  }
+
+  private buildErrorResponse<T>(
+    error: unknown,
+    code: string,
+    fallbackMessage: string,
+    context?: Record<string, unknown>
+  ): ServiceResponse<T> {
+    logger.error(fallbackMessage, error, context);
+    return {
+      success: false,
+      error: {
+        code,
+        message:
+          error instanceof Error ? error.message : fallbackMessage,
+        details: error instanceof Error ? error.message : String(error),
+        retryable: false,
+      },
+    };
   }
 
   async addToWishlist(
@@ -21,9 +41,8 @@ export class WishlistService {
     productId: string
   ): Promise<ServiceResponse<WishlistItem>> {
     try {
-      const supabase = await this.getSupabaseClient();
-      const { data, error } = await supabase
-        .from('wishlist_items')
+      const { data, error } = await this.client
+        .from(this.tableName)
         .insert({ user_id: userId, product_id: productId })
         .select()
         .single();
@@ -32,19 +51,12 @@ export class WishlistService {
 
       return { success: true, data };
     } catch (error: unknown) {
-      logger.error('Failed to add to wishlist', error);
-      return {
-        success: false,
-        error: {
-          code: 'WISHLIST_ADD_ERROR',
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to add to wishlist',
-          details: error instanceof Error ? error.message : String(error),
-          retryable: false,
-        },
-      };
+      return this.buildErrorResponse<WishlistItem>(
+        error,
+        'WISHLIST_ADD_ERROR',
+        'Failed to add to wishlist',
+        { userId, productId }
+      );
     }
   }
 
@@ -53,9 +65,8 @@ export class WishlistService {
     productId: string
   ): Promise<ServiceResponse<null>> {
     try {
-      const supabase = await this.getSupabaseClient();
-      const { error } = await supabase
-        .from('wishlist_items')
+      const { error } = await this.client
+        .from(this.tableName)
         .delete()
         .eq('user_id', userId)
         .eq('product_id', productId);
@@ -64,19 +75,12 @@ export class WishlistService {
 
       return { success: true, data: null };
     } catch (error: unknown) {
-      logger.error('Failed to remove from wishlist', error);
-      return {
-        success: false,
-        error: {
-          code: 'WISHLIST_REMOVE_ERROR',
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to remove from wishlist',
-          details: error instanceof Error ? error.message : String(error),
-          retryable: false,
-        },
-      };
+      return this.buildErrorResponse<null>(
+        error,
+        'WISHLIST_REMOVE_ERROR',
+        'Failed to remove from wishlist',
+        { userId, productId }
+      );
     }
   }
 
@@ -85,9 +89,8 @@ export class WishlistService {
     productId: string
   ): Promise<ServiceResponse<boolean>> {
     try {
-      const supabase = await this.getSupabaseClient();
-      const { data, error } = await supabase
-        .from('wishlist_items')
+      const { data, error } = await this.client
+        .from(this.tableName)
         .select('id')
         .eq('user_id', userId)
         .eq('product_id', productId)
@@ -97,19 +100,12 @@ export class WishlistService {
 
       return { success: true, data: !!data };
     } catch (error: unknown) {
-      logger.error('Failed to check wishlist status', error);
-      return {
-        success: false,
-        error: {
-          code: 'WISHLIST_CHECK_ERROR',
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to check wishlist status',
-          details: error instanceof Error ? error.message : String(error),
-          retryable: false,
-        },
-      };
+      return this.buildErrorResponse<boolean>(
+        error,
+        'WISHLIST_CHECK_ERROR',
+        'Failed to check wishlist status',
+        { userId, productId }
+      );
     }
   }
 
@@ -117,9 +113,8 @@ export class WishlistService {
     userId: string
   ): Promise<ServiceResponse<WishlistItem[]>> {
     try {
-      const supabase = await this.getSupabaseClient();
-      const { data, error } = await supabase
-        .from('wishlist_items')
+      const { data, error } = await this.client
+        .from(this.tableName)
         .select('*')
         .eq('user_id', userId);
 
@@ -127,19 +122,12 @@ export class WishlistService {
 
       return { success: true, data: data || [] };
     } catch (error: unknown) {
-      logger.error('Failed to get wishlist items', error);
-      return {
-        success: false,
-        error: {
-          code: 'WISHLIST_GET_ERROR',
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to get wishlist items',
-          details: error instanceof Error ? error.message : String(error),
-          retryable: false,
-        },
-      };
+      return this.buildErrorResponse<WishlistItem[]>(
+        error,
+        'WISHLIST_GET_ERROR',
+        'Failed to get wishlist items',
+        { userId }
+      );
     }
   }
 }

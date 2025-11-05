@@ -32,8 +32,24 @@ const serializeError = (error: unknown): Json =>
       : error
   );
 
+export const PAYMENT_PROCESSOR_ERROR_CODES = {
+  UNSUPPORTED_METHOD: 'UNSUPPORTED_METHOD',
+  METHOD_UNAVAILABLE: 'METHOD_UNAVAILABLE',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  PROCESSING_ERROR: 'PROCESSING_ERROR',
+} as const;
+
+export type PaymentProcessorErrorCode =
+  (typeof PAYMENT_PROCESSOR_ERROR_CODES)[keyof typeof PAYMENT_PROCESSOR_ERROR_CODES];
+
 export class PaymentProcessor {
-  constructor(private dbService?: PaymentDatabaseService) {}
+  constructor(private readonly dbService: PaymentDatabaseService) {
+    if (!dbService) {
+      throw new Error(
+        'PaymentProcessor requires a PaymentDatabaseService instance'
+      );
+    }
+  }
 
   /**
    * Process payment using the appropriate strategy
@@ -52,7 +68,7 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: 'UNSUPPORTED_METHOD',
+          code: PAYMENT_PROCESSOR_ERROR_CODES.UNSUPPORTED_METHOD,
           message: `Payment method ${method} not supported`,
           retryable: false,
         },
@@ -66,7 +82,7 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: 'METHOD_UNAVAILABLE',
+          code: PAYMENT_PROCESSOR_ERROR_CODES.METHOD_UNAVAILABLE,
           message: `Payment method ${method} is not available`,
           retryable: false,
         },
@@ -81,7 +97,7 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: 'VALIDATION_ERROR',
+          code: PAYMENT_PROCESSOR_ERROR_CODES.VALIDATION_ERROR,
           message: validation.error || 'Invalid payment data',
           retryable: false,
         },
@@ -93,9 +109,7 @@ export class PaymentProcessor {
       const result = await strategy.process(state, paymentData);
 
       // Record attempt in database if available
-      if (this.dbService) {
-        await this.recordAttempt(state, method, result, paymentData);
-      }
+      await this.recordAttempt(state, method, result, paymentData);
 
       return result;
     } catch (error: unknown) {
@@ -106,7 +120,7 @@ export class PaymentProcessor {
         paymentId: state.paymentIntent.id,
         status: PaymentStatus.FAILED,
         error: {
-          code: 'PROCESSING_ERROR',
+          code: PAYMENT_PROCESSOR_ERROR_CODES.PROCESSING_ERROR,
           message: normalizedError.message || 'Payment processing failed',
           details: serializeError(error),
           retryable: true,
@@ -114,9 +128,7 @@ export class PaymentProcessor {
       };
 
       // Record failed attempt
-      if (this.dbService) {
-        await this.recordAttempt(state, method, errorResult, paymentData);
-      }
+      await this.recordAttempt(state, method, errorResult, paymentData);
 
       return errorResult;
     }
@@ -131,8 +143,6 @@ export class PaymentProcessor {
     result: PaymentResult,
     paymentData?: PaymentStrategyInput
   ): Promise<void> {
-    if (!this.dbService) return;
-
     try {
       await this.dbService.createPaymentAttempt({
         payment_id: state.paymentIntent.id,
@@ -156,8 +166,6 @@ export class PaymentProcessor {
     status: PaymentStatus,
     error?: PaymentError
   ): Promise<void> {
-    if (!this.dbService) return;
-
     try {
       await this.dbService.updatePaymentStatus(paymentId, status, error);
     } catch (err) {
@@ -179,8 +187,6 @@ export class PaymentProcessor {
       checkoutData?: CheckoutData;
     }
   ): Promise<void> {
-    if (!this.dbService) return;
-
     try {
       await this.dbService.createPayment({
         business_id: businessId,

@@ -48,11 +48,14 @@ export class PaymentOrchestrator {
     // Initialize storage
     const storage = createPaymentStorage();
 
-    // Initialize database service (optional)
-    const dbService =
-      config.supabaseUrl && config.supabaseKey
-        ? createPaymentDbService(config.supabaseUrl, config.supabaseKey)
-        : undefined;
+    const supabaseUrl = config.supabaseUrl || supabaseConfig.url;
+    const supabaseKey = config.supabaseKey || supabaseConfig.anonKey;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials are required for payments.');
+    }
+
+    const dbService = createPaymentDbService(supabaseUrl, supabaseKey);
 
     // Initialize specialized services
     this.stateManager = new PaymentStateManager(storage);
@@ -249,6 +252,7 @@ export function createPaymentOrchestrator(
   const resolvedConfig = {
     ...config,
     supabaseUrl: config.supabaseUrl ?? supabaseConfig.url,
+    supabaseKey: config.supabaseKey ?? supabaseConfig.anonKey,
   };
 
   return new PaymentOrchestrator(resolvedConfig);

@@ -9,6 +9,7 @@ import type {
   TablesInsert,
   TablesUpdate,
 } from './supabase.types';
+import type { ServiceError } from './service';
 
 // -----------------------------------------------------------------------------
 // Status and method enums
@@ -55,12 +56,7 @@ export interface PaymentIntent {
   expiresAt?: string;
 }
 
-export interface PaymentError {
-  code: string;
-  message: string;
-  details?: Json;
-  retryable: boolean;
-}
+export type PaymentError = ServiceError;
 
 export interface PaymentResult {
   success: boolean;
@@ -273,27 +269,6 @@ export interface PaymentConfig {
 // -----------------------------------------------------------------------------
 // Service and event helpers
 // -----------------------------------------------------------------------------
-
-export interface ServiceResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: PaymentError;
-  metadata?: {
-    requestId?: string;
-    timestamp: string;
-    duration?: number;
-  };
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
 
 export enum PaymentEventType {
   PAYMENT_CREATED = 'payment:created',

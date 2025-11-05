@@ -1,5 +1,5 @@
 import { APP_CONFIG } from '@/lib/config/app.config';
-import type { ServiceResponse } from '@/types/payment';
+import type { ServiceResponse } from '@/types/service';
 
 type DbOperationResult<T> = { data: T | null; error: Error | null };
 
