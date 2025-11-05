@@ -1,9 +1,40 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { H1, H2, H3, P } from '@/components/ui/typography';
 import { Shield, Zap, Users, Award } from 'lucide-react';
 import { serializeSchema } from '@/lib/schema';
+import { siteMetadata } from '@/lib/seo/site-metadata';
+
+export const metadata: Metadata = {
+  title: 'About Us - Your Trusted Mining Hardware Partner',
+  description: 'Learn about Jhuangnyc, your trusted partner in cryptocurrency mining hardware since 2020. We provide high-quality ASIC miners from leading manufacturers with exceptional customer service.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    type: 'website',
+    url: `${siteMetadata.baseUrl}/about`,
+    title: 'About Jhuangnyc - Cryptocurrency Mining Hardware Experts',
+    description: 'Your trusted partner in cryptocurrency mining hardware since 2020. Quality equipment, competitive pricing, and exceptional service.',
+    siteName: siteMetadata.siteName,
+    images: [
+      {
+        url: '/og/og_square.jpg',
+        width: 1200,
+        height: 1200,
+        alt: 'About Jhuangnyc',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Jhuangnyc',
+    description: 'Your trusted partner in cryptocurrency mining hardware since 2020',
+    images: ['/og/og_square.jpg'],
+  },
+};
 
 export default function AboutPage() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';

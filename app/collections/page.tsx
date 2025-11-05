@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
 import ProductImage from '@/components/product-image';
@@ -6,6 +7,36 @@ import { ChevronRight } from 'lucide-react';
 import ProductCatalog from '@/components/product-catalog';
 import { H1, P, H3 } from '@/components/ui/typography';
 import { createClient } from '@/lib/supabase/server';
+import { siteMetadata } from '@/lib/seo/site-metadata';
+
+export const metadata: Metadata = {
+  title: 'Mining Hardware Collections',
+  description: 'Explore our curated collections of cryptocurrency mining hardware, from entry-level ASIC miners to enterprise-grade solutions.',
+  alternates: {
+    canonical: '/collections',
+  },
+  openGraph: {
+    type: 'website',
+    url: `${siteMetadata.baseUrl}/collections`,
+    title: 'Mining Hardware Collections',
+    description: 'Browse curated collections of premium cryptocurrency mining equipment',
+    siteName: siteMetadata.siteName,
+    images: [
+      {
+        url: '/og/og_square.jpg',
+        width: 1200,
+        height: 1200,
+        alt: 'Mining Hardware Collections',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mining Hardware Collections',
+    description: 'Browse curated collections of premium cryptocurrency mining equipment',
+    images: ['/og/og_square.jpg'],
+  },
+};
 
 type CollectionRow = {
   id: string;
