@@ -79,7 +79,7 @@ export async function createHoodpayPaymentSession(
   const currency = (args.currency || 'USD').toUpperCase();
   const cancelUrl = args.cancelUrl ?? configCancelUrl ?? `${baseUrl}/checkout`;
 
-  const response = await createPayment(apiKey, businessId, {
+  const paymentPayload = {
     currency,
     amount: args.amount,
     name: args.name ?? 'Order',
@@ -111,7 +111,13 @@ export async function createHoodpayPaymentSession(
               ?.shipping
           : undefined,
     },
-  });
+  };
+
+  logger.info('Sending payment to Hoodpay', { paymentPayload });
+
+  const response = await createPayment(apiKey, businessId, paymentPayload);
+
+  logger.info('Received response from Hoodpay', { response });
 
   const checkoutUrl =
     response?.paymentUrl ??
