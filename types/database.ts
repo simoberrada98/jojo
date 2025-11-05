@@ -21,9 +21,9 @@ export type Address = {
   state: string;
   postal_code: string;
   country: string;
-  is_default: boolean;
-  created_at: string;
-  updated_at: string;
+  is_default: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
 };
 
 export type Product = {
@@ -63,7 +63,7 @@ export type CartItem = {
 
 export type Order = {
   id: string;
-  user_id: string | null;
+  user_id: string;
   order_number: string;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_status: 'pending' | 'completed' | 'failed' | 'refunded';
@@ -89,12 +89,14 @@ export type Order = {
 export type OrderItem = {
   id: string;
   order_id: string;
-  product_id: string | null;
+  product_id: string;
   product_name: string;
   product_price: number;
   quantity: number;
-  subtotal: number;
+  total_price: number;
+  unit_price: number;
   created_at: string;
+  updated_at: string;
 };
 
 export type PaymentMethod = {
