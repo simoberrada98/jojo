@@ -24,6 +24,7 @@ import {
   type PaymentHooks,
 } from '@/types/payment';
 import type { PaymentStrategyInput } from '@/lib/services/payment-strategies';
+import type { Json } from '@/types/supabase.types';
 
 export class PaymentOrchestrator {
   private stateManager: PaymentStateManager;
@@ -70,7 +71,7 @@ export class PaymentOrchestrator {
     options?: {
       customerEmail?: string;
       description?: string;
-      metadata?: Record<string, unknown>;
+      metadata?: Json;
     }
   ): Promise<PaymentIntent> {
     const paymentIntent: PaymentIntent = {

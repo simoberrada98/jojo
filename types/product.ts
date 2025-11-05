@@ -1,154 +1,21 @@
-export type Product = {
-  id: string;
-  sku: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  short_description: string | null;
-  category: string;
-  brand: string | null | undefined;
-  tags: string[] | null;
-  gtin?: string | null;
+import type { Tables } from './supabase.types';
 
-  // Pricing
-  base_price: number;
-  compare_at_price: number | null;
-  cost_price: number | null;
+export type Product = Tables<'products'>;
+export type ProductVariant = Tables<'product_variants'>;
+export type ProductOption = Tables<'product_options'>;
+export type ProductOptionValue = Tables<'product_option_values'>;
+export type Collection = Tables<'collections'>;
+export type ProductCollection = Tables<'product_collections'>;
+export type ProductReview = Tables<'product_reviews'>;
 
-  // Mining-specific attributes
-  hash_rate: string | null;
-  power_consumption: string | null;
-  algorithm: string | null | undefined;
-  efficiency: string | null | undefined;
-
-  // Physical attributes
-  weight: number | null;
-  dimensions_length: number | null;
-  dimensions_width: number | null;
-  dimensions_height: number | null;
-
-  // Media
-  featured_image_url: string | null;
-  images: string[] | null;
-  video_url: string | null;
-  model_3d_url: string | null;
-
-  // Inventory
-  track_inventory: boolean;
-  stock_quantity: number;
-  low_stock_threshold: number;
-  allow_backorder: boolean;
-
-  // SEO
-  meta_title: string | null;
-  meta_description: string | null;
-  meta_keywords: string[] | null;
-
-  // Status
-  is_featured: boolean;
-  is_active: boolean;
-  is_archived: boolean;
-  published_at: string | null;
-
-  // Timestamps
-  created_at: string;
-  updated_at: string;
-
-  // Relations
+export type ProductWithRelations = Product & {
   variants?: ProductVariant[];
-  options?: ProductOption[];
+  options?: Array<ProductOption & { values?: ProductOptionValue[] }>;
   collections?: Collection[];
   reviews?: ProductReview[];
 };
 
-export type ProductVariant = {
-  id: string;
-  product_id: string;
-  sku: string;
-  name: string;
-  price: number | null;
-  compare_at_price: number | null;
-  cost_price: number | null;
-  options: Record<string, string> | null;
-  weight: number | null;
-  dimensions_length: number | null;
-  dimensions_width: number | null;
-  dimensions_height: number | null;
-  image_url: string | null;
-  images: string[] | null;
-  stock_quantity: number;
-  low_stock_threshold: number;
-  allow_backorder: boolean;
-  is_active: boolean;
-  position: number;
-  created_at: string;
-  updated_at: string;
-};
-
-export type ProductOption = {
-  id: string;
-  product_id: string;
-  name: string;
-  display_name: string;
-  type: 'select' | 'radio' | 'swatch' | 'button';
-  position: number;
-  required: boolean;
-  created_at: string;
-  values?: ProductOptionValue[];
-};
-
-export type ProductOptionValue = {
-  id: string;
-  option_id: string;
-  value: string;
-  display_value: string | null;
-  color_hex: string | null;
-  image_url: string | null;
-  position: number;
-  is_available: boolean;
-  created_at: string;
-};
-
-export type Collection = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  image_url: string | null;
-  is_featured: boolean;
-  position: number;
-  created_at: string;
-  updated_at: string;
-};
-
-export type ProductCollection = {
-  id: string;
-  product_id: string;
-  collection_id: string;
-  position: number;
-  created_at: string;
-  collection?: Collection;
-};
-
-export type ProductReview = {
-  id: string;
-  product_id: string;
-  user_id: string | null;
-  rating: number;
-  title: string | null;
-  comment: string | null;
-  is_verified_purchase: boolean;
-  is_approved: boolean;
-  helpful_count: number;
-  created_at: string;
-  updated_at: string;
-  user?: {
-    full_name: string | null;
-    avatar_url: string | null;
-  };
-};
-
-export type ProductWithExtras = Product & {
+export type ProductWithExtras = ProductWithRelations & {
   display_price?: number;
   total_stock?: number;
   average_rating?: number;
@@ -180,7 +47,7 @@ function normalizeStringArray(candidate: unknown): string[] {
           .filter((entry) => entry.length > 0);
       }
     } catch {
-      // Fall back to comma/pipe separated values
+      // ignore JSON parse errors and fall back to delimiter split
     }
 
     return trimmed
@@ -281,9 +148,11 @@ export function transformToDisplayProduct(
     description: dbProduct.description || '',
     shortDescription: dbProduct.short_description || undefined,
     priceUSD: Number(dbProduct.base_price),
-    compareAtPrice: dbProduct.compare_at_price
-      ? Number(dbProduct.compare_at_price)
-      : undefined,
+    compareAtPrice:
+      dbProduct.compare_at_price !== null &&
+      dbProduct.compare_at_price !== undefined
+        ? Number(dbProduct.compare_at_price)
+        : undefined,
     costPrice:
       dbProduct.cost_price !== null && dbProduct.cost_price !== undefined
         ? Number(dbProduct.cost_price)
@@ -298,9 +167,10 @@ export function transformToDisplayProduct(
     model3dUrl: dbProduct.model_3d_url,
     stock: dbProduct.stock_quantity ?? 0,
     inStock:
-      (dbProduct.stock_quantity ?? 0) > 0 || dbProduct.allow_backorder === true,
+      (dbProduct.stock_quantity ?? 0) > 0 ||
+      (dbProduct.allow_backorder ?? false),
     rating,
-    reviewCount: reviewCount,
+    reviewCount,
     specs: [
       dbProduct.hash_rate && `Hash Rate: ${dbProduct.hash_rate}`,
       dbProduct.power_consumption && `Power: ${dbProduct.power_consumption}`,
@@ -315,17 +185,17 @@ export function transformToDisplayProduct(
     features: uniqueFeatures,
     brand: dbProduct.brand,
     tags,
-    isFeatured: dbProduct.is_featured || false,
+    isFeatured: dbProduct.is_featured ?? false,
     seo: {
       title: dbProduct.meta_title,
       description: dbProduct.meta_description,
       keywords: metaKeywords,
     },
     inventory: {
-      trackInventory: dbProduct.track_inventory,
+      trackInventory: dbProduct.track_inventory ?? false,
       quantity: dbProduct.stock_quantity ?? 0,
       lowStockThreshold: dbProduct.low_stock_threshold ?? 0,
-      allowBackorder: dbProduct.allow_backorder,
+      allowBackorder: dbProduct.allow_backorder ?? false,
       status: inventoryStatus,
     },
     dimensions: {

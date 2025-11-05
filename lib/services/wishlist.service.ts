@@ -41,7 +41,7 @@ export class WishlistService {
             error instanceof Error
               ? error.message
               : 'Failed to add to wishlist',
-          details: error,
+          details: error instanceof Error ? error.message : String(error),
           retryable: false,
         },
       };
@@ -73,7 +73,7 @@ export class WishlistService {
             error instanceof Error
               ? error.message
               : 'Failed to remove from wishlist',
-          details: error,
+          details: error instanceof Error ? error.message : String(error),
           retryable: false,
         },
       };
@@ -106,7 +106,7 @@ export class WishlistService {
             error instanceof Error
               ? error.message
               : 'Failed to check wishlist status',
-          details: error,
+          details: error instanceof Error ? error.message : String(error),
           retryable: false,
         },
       };
@@ -136,7 +136,7 @@ export class WishlistService {
             error instanceof Error
               ? error.message
               : 'Failed to get wishlist items',
-          details: error,
+          details: error instanceof Error ? error.message : String(error),
           retryable: false,
         },
       };

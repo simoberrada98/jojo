@@ -13,6 +13,18 @@ type RpcOrderItem = {
   total_price: number;
 };
 
+const isCheckoutData = (value: unknown): value is CheckoutData => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  const candidate = value as Partial<CheckoutData>;
+  return (
+    Array.isArray(candidate.items) &&
+    typeof candidate.currency === 'string' &&
+    typeof candidate.total === 'number'
+  );
+};
+
 export class OrderDbService {
   private client: SupabaseClient;
 
@@ -39,7 +51,9 @@ export class OrderDbService {
     userId: string,
     payment: PaymentRecord
   ): Promise<{ id: string } | null> {
-    const checkout = payment.checkout_data as CheckoutData | undefined;
+    const checkout = isCheckoutData(payment.checkout_data)
+      ? payment.checkout_data
+      : undefined;
     if (!checkout) {
       logger?.warn?.('Missing checkout_data on payment; cannot create order', {
         paymentId: payment.id,

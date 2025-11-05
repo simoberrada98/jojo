@@ -10,6 +10,7 @@ import {
 import type { PaymentDatabaseService } from '@/lib/services/payment-db.service';
 import {
   PaymentStatus,
+  paymentErrorToJson,
   type PaymentMethod,
   type PaymentResult,
   type PaymentLocalState,
@@ -17,6 +18,19 @@ import {
   type CheckoutData,
 } from '@/types/payment';
 import { logger } from '@/lib/utils/logger';
+import type { Json } from '@/types/supabase.types';
+import { toJson } from '@/lib/utils/json';
+
+const serializeError = (error: unknown): Json =>
+  toJson(
+    error instanceof Error
+      ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack ?? null,
+        }
+      : error
+  );
 
 export class PaymentProcessor {
   constructor(private dbService?: PaymentDatabaseService) {}
@@ -94,7 +108,7 @@ export class PaymentProcessor {
         error: {
           code: 'PROCESSING_ERROR',
           message: normalizedError.message || 'Payment processing failed',
-          details: error,
+          details: serializeError(error),
           retryable: true,
         },
       };
@@ -125,9 +139,9 @@ export class PaymentProcessor {
         attempt_number: state.attemptCount + 1,
         method,
         status: result.status,
-        error: result.error,
-        request_data: paymentData,
-        response_data: result.metadata,
+        error: result.error ? paymentErrorToJson(result.error) : null,
+        request_data: paymentData ? toJson(paymentData) : null,
+        response_data: result.metadata ? toJson(result.metadata) : null,
       });
     } catch (error) {
       logger.warn('Failed to record payment attempt', { error });
@@ -161,7 +175,7 @@ export class PaymentProcessor {
     currency: string,
     options?: {
       customerEmail?: string;
-      metadata?: Record<string, unknown>;
+      metadata?: Json;
       checkoutData?: CheckoutData;
     }
   ): Promise<void> {
@@ -175,8 +189,10 @@ export class PaymentProcessor {
         currency,
         status: PaymentStatus.PENDING,
         customer_email: options?.customerEmail,
-        metadata: options?.metadata,
-        checkout_data: options?.checkoutData,
+        metadata: options?.metadata ?? null,
+        checkout_data: options?.checkoutData
+          ? toJson(options.checkoutData)
+          : null,
       });
     } catch (error) {
       logger.warn('Failed to save payment to database', { error });

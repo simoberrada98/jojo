@@ -35,6 +35,11 @@ export default function SettingsPage() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile) {
+      toast.error('Profile not loaded');
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase

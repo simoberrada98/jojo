@@ -11,10 +11,13 @@ import { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import type { Tables } from '@/types/supabase.types';
 
+type Profile = Tables<'profiles'>;
+type Address = Tables<'addresses'>;
+
 type AuthContextType = {
   user: User | null;
-  profile: Tables<'profiles'>['Row'] | null;
-  defaultAddress: Tables<'addresses'>['Row'] | null;
+  profile: Profile | null;
+  defaultAddress: Address | null;
   loading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;

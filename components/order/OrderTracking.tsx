@@ -5,45 +5,57 @@ import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 import { H3, P } from '@/components/ui/typography';
+import type { Tables } from '@/types/supabase.types';
 
-interface TrackingEvent {
-  id: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
-  message: string;
-  location?: string;
-  timestamp: string;
-}
+type TrackingRow = Tables<'order_tracking'>;
+type TrackingStatus = 'pending' | 'processing' | 'shipped' | 'delivered';
 
 interface OrderTrackingProps {
   orderNumber: string;
 }
 
-const STATUS_ICONS = {
+const STATUS_ICONS: Record<TrackingStatus, typeof Clock> = {
   pending: Clock,
   processing: Package,
   shipped: Truck,
   delivered: CheckCircle,
 };
 
-const STATUS_LABELS = {
+const STATUS_LABELS: Record<TrackingStatus, string> = {
   pending: 'Order Received',
   processing: 'Processing',
   shipped: 'Shipped',
   delivered: 'Delivered',
 };
 
+const KNOWN_STATUSES: TrackingStatus[] = [
+  'pending',
+  'processing',
+  'shipped',
+  'delivered',
+];
+
+const normalizeStatus = (status: string | null | undefined): TrackingStatus => {
+  if (status && KNOWN_STATUSES.includes(status as TrackingStatus)) {
+    return status as TrackingStatus;
+  }
+  return 'pending';
+};
+
 export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
-  const [events, setEvents] = useState<TrackingEvent[]>([]);
-  const [currentStatus, setCurrentStatus] =
-    useState<TrackingEvent['status']>('pending');
+  const [events, setEvents] = useState<TrackingRow[]>([]);
+  const [currentStatus, setCurrentStatus] = useState<TrackingStatus>('pending');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Default initial event
-    const defaultEvent: TrackingEvent = {
+    const defaultEvent: TrackingRow = {
       id: '1',
       status: 'pending',
       message: 'Order received and awaiting processing',
+      order_number: orderNumber,
+      location: null,
+      created_at: new Date().toISOString(),
       timestamp: new Date().toISOString(),
     };
 
@@ -78,7 +90,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
 
         if (data && data.length > 0) {
           setEvents(data);
-          setCurrentStatus(data[0].status);
+          setCurrentStatus(normalizeStatus(data[0].status));
         } else {
           // No tracking data for this order yet
           setEvents([defaultEvent]);
@@ -108,9 +120,9 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
           filter: `order_number=eq.${orderNumber}`,
         },
         (payload) => {
-          const newEvent = payload.new as TrackingEvent;
+          const newEvent = payload.new as TrackingRow;
           setEvents((prev) => [newEvent, ...prev]);
-          setCurrentStatus(newEvent.status);
+          setCurrentStatus(normalizeStatus(newEvent.status));
         }
       )
       .subscribe();
@@ -133,12 +145,7 @@ export default function OrderTracking({ orderNumber }: OrderTrackingProps) {
     );
   }
 
-  const statusSteps: TrackingEvent['status'][] = [
-    'pending',
-    'processing',
-    'shipped',
-    'delivered',
-  ];
+  const statusSteps: TrackingStatus[] = KNOWN_STATUSES;
   const currentStepIndex = statusSteps.indexOf(currentStatus);
 
   return (

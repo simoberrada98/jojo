@@ -15,6 +15,23 @@ import {
   PaymentError,
 } from '@/types/payment';
 import { logger } from '@/lib/utils/logger';
+import type { Json } from '@/types/supabase.types';
+
+const errorToJson = (error: unknown): Json => {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack ?? null,
+    } as Json;
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(error ?? null)) as Json;
+  } catch {
+    return String(error ?? '') as Json;
+  }
+};
 
 /**
  * Check if Web Payment API is supported
@@ -312,7 +329,7 @@ export class WebPaymentService {
       error: {
         code: errorCode,
         message: errorMessage,
-        details: error,
+        details: errorToJson(error),
         retryable,
       },
     };

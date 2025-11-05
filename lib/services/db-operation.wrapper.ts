@@ -86,7 +86,7 @@ export async function dbOperation<T>(
       error: {
         code: errorCode,
         message: normalizedError.message || errorMessage,
-        details: error,
+        details: normalizedError.stack ?? normalizedError.message,
         retryable: true,
       },
       metadata: {

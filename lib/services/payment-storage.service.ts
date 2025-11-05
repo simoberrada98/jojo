@@ -16,6 +16,15 @@ import {
 import { generateId } from '@/lib/utils/string';
 import { logger } from '@/lib/utils/logger';
 
+const normalizeMetadata = (
+  metadata: PaymentIntent['metadata']
+): Record<string, unknown> => {
+  if (metadata && typeof metadata === 'object' && !Array.isArray(metadata)) {
+    return metadata as Record<string, unknown>;
+  }
+  return {};
+};
+
 /**
  * Storage interface for dependency injection
  */
@@ -447,7 +456,7 @@ export class PaymentStorageService {
         ...state.paymentIntent,
         status: PaymentStatus.COMPLETED,
         metadata: {
-          ...state.paymentIntent.metadata,
+          ...normalizeMetadata(state.paymentIntent.metadata),
           transactionId,
         },
       },

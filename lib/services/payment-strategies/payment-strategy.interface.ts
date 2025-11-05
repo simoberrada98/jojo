@@ -5,6 +5,8 @@
 
 import type { PaymentResult, PaymentLocalState } from '@/types/payment';
 import { PaymentStatus } from '@/types/payment';
+import type { Json } from '@/types/supabase.types';
+import { toJson } from '@/lib/utils/json';
 
 export type PaymentStrategyInput = Record<string, unknown>;
 
@@ -96,14 +98,14 @@ export abstract class BasePaymentStrategy implements PaymentStrategy {
   protected createSuccessResult(
     paymentId: string,
     transactionId: string,
-    metadata?: Record<string, unknown>
+    metadata?: unknown
   ): PaymentResult {
     return {
       success: true,
       paymentId,
       status: PaymentStatus.COMPLETED,
       transactionId,
-      metadata,
+      metadata: metadata !== undefined ? (toJson(metadata) as Json) : undefined,
     };
   }
 }

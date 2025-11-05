@@ -3,6 +3,13 @@
  * Prefer importing from "@/types/payment" to keep consumers DRY.
  */
 
+import type {
+  Json,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from './supabase.types';
+
 // -----------------------------------------------------------------------------
 // Status and method enums
 // -----------------------------------------------------------------------------
@@ -35,7 +42,7 @@ export interface PaymentIntent {
   amount: number;
   currency: string;
   description?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Json;
   customerEmail?: string;
   customerIp?: string;
   customerUserAgent?: string;
@@ -51,7 +58,7 @@ export interface PaymentIntent {
 export interface PaymentError {
   code: string;
   message: string;
-  details?: unknown;
+  details?: Json;
   retryable: boolean;
 }
 
@@ -62,7 +69,7 @@ export interface PaymentResult {
   transactionId?: string;
   receiptUrl?: string;
   error?: PaymentError;
-  metadata?: Record<string, unknown>;
+  metadata?: Json;
 }
 
 // -----------------------------------------------------------------------------
@@ -106,7 +113,7 @@ export interface CheckoutItem {
   quantity: number;
   unitPrice: number;
   total: number;
-  metadata?: Record<string, unknown>;
+  metadata?: Json;
 }
 
 export interface CustomerInfo {
@@ -129,54 +136,17 @@ export interface Address {
 // Persistence layer types
 // -----------------------------------------------------------------------------
 
-export interface PaymentRecord {
-  id: string;
-  hp_payment_id?: string;
-  business_id: string;
-  session_id: string;
-  amount: number;
-  currency: string;
-  status: PaymentStatus;
-  method?: PaymentMethod;
-  customer_email?: string;
-  customer_ip?: string;
-  metadata?: Record<string, unknown>;
-  checkout_data?: CheckoutData;
-  hoodpay_response?: unknown;
-  web_payment_response?: unknown;
-  error_log?: PaymentError[];
-  created_at: string;
-  updated_at: string;
-  completed_at?: string;
-  expires_at?: string;
-}
+export type PaymentRecord = Tables<'payments'>;
+export type PaymentRecordInsert = TablesInsert<'payments'>;
+export type PaymentRecordUpdate = TablesUpdate<'payments'>;
 
-export interface WebhookEvent {
-  id: string;
-  event_type: string;
-  payment_id: string;
-  business_id: string;
-  payload: unknown;
-  signature?: string;
-  verified: boolean;
-  processed: boolean;
-  processing_error?: string;
-  received_at: string;
-  processed_at?: string;
-  retry_count: number;
-}
+export type WebhookEvent = Tables<'webhook_events'>;
+export type WebhookEventInsert = TablesInsert<'webhook_events'>;
+export type WebhookEventUpdate = TablesUpdate<'webhook_events'>;
 
-export interface PaymentAttempt {
-  id: string;
-  payment_id: string;
-  attempt_number: number;
-  method: PaymentMethod;
-  status: PaymentStatus;
-  error?: PaymentError;
-  request_data?: unknown;
-  response_data?: unknown;
-  created_at: string;
-}
+export type PaymentAttempt = Tables<'payment_attempts'>;
+export type PaymentAttemptInsert = TablesInsert<'payment_attempts'>;
+export type PaymentAttemptUpdate = TablesUpdate<'payment_attempts'>;
 
 // -----------------------------------------------------------------------------
 // Web payment API shapes
@@ -245,7 +215,7 @@ export interface HoodPayPaymentResponse {
   paymentUrl: string;
   expiresAt: string;
   createdAt: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Json;
 }
 
 export interface HoodPayWebhookData {
@@ -353,3 +323,11 @@ export interface PaymentHooks {
   onFailed?: PaymentCallback;
   onCancelled?: PaymentCallback;
 }
+
+export const paymentErrorToJson = (error: PaymentError): Json =>
+  ({
+    code: error.code,
+    message: error.message,
+    details: error.details ?? null,
+    retryable: error.retryable,
+  }) as Json;

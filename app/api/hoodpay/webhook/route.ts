@@ -10,6 +10,7 @@ import {
   type HoodPayWebhookData,
   type HoodPayWebhookPayload,
   type WebhookEvent,
+  type WebhookEventUpdate,
 } from '@/types/payment';
 import { env } from '@/lib/config/env';
 import { createPaymentDbService } from '@/lib/services/payment-db.service';
@@ -18,6 +19,8 @@ import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import { createOrderDbService } from '@/lib/services/order-db.service';
+import type { Json } from '@/types/supabase.types';
+import { toJson } from '@/lib/utils/json';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -60,7 +63,7 @@ export async function POST(request: NextRequest) {
       event_type: event,
       payment_id: data?.id || '',
       business_id: data?.businessId || '',
-      payload: data,
+      payload: toJson(data),
       signature,
       verified: true,
       processed: false,
@@ -112,7 +115,7 @@ export async function POST(request: NextRequest) {
     } catch (handlerError: unknown) {
       const evtId = createdEvent.success && createdEvent.data?.id;
       if (evtId) {
-        const updates: Partial<WebhookEvent> = {
+        const updates: WebhookEventUpdate = {
           processed: false,
           processed_at: new Date().toISOString(),
           processing_error:
@@ -147,16 +150,33 @@ async function handlePaymentCreated(
 ) {
   logger.info('Payment created', { id: data.id });
 
+  const sessionId =
+    typeof data.id === 'string' && data.id.length > 0
+      ? data.id
+      : `hp-${Date.now()}`;
+  const businessId =
+    typeof data.businessId === 'string' && data.businessId.length > 0
+      ? data.businessId
+      : 'unknown';
+  const amount =
+    typeof data.amount === 'number' && Number.isFinite(data.amount)
+      ? data.amount
+      : 0;
+  const currency =
+    typeof data.currency === 'string' && data.currency.length > 0
+      ? data.currency
+      : 'USD';
+
   // Update or create payment record
-  await dbService.upsertPaymentByHoodPayId(data.id, {
-    business_id: data.businessId,
-    session_id: data.id,
-    amount: data.amount,
-    currency: data.currency,
+  await dbService.upsertPaymentByHoodPayId(sessionId, {
+    business_id: businessId,
+    session_id: sessionId,
+    amount,
+    currency,
     status: PaymentStatus.PENDING,
-    customer_email: data.customerEmail,
-    metadata: data,
-    hoodpay_response: data,
+    customer_email: data.customerEmail ?? null,
+    metadata: toJson(data),
+    hoodpay_response: toJson(data),
   });
 }
 
@@ -186,19 +206,28 @@ async function handlePaymentMethodSelected(
   await dbService.updatePayment(record.id, {
     // Keep source as Hoodpay; store specific coin/method in metadata
     method: PaymentMethod.HOODPAY,
-    metadata: {
-      ...(record.metadata ?? {}),
-      methodSelected: data.method,
+    metadata: toJson({
+      ...metadataToRecord(record.metadata),
+      methodSelected: data.method ?? null,
       methodSelectedAt: new Date().toISOString(),
-    },
+    }),
   });
 }
 
 interface PaymentMetadata {
   user_id?: string;
-  order_id?: number;
+  order_id?: string;
   methodSelected?: string;
   methodSelectedAt?: string;
+}
+
+function metadataToRecord(
+  metadata: Json | null | undefined
+): Record<string, Json> {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    return {};
+  }
+  return metadata as Record<string, Json>;
 }
 
 /**
@@ -223,10 +252,10 @@ async function handlePaymentCompleted(
 
   // Create order for authenticated users with stored checkout data
   try {
-    const metadata = record.metadata as PaymentMetadata;
+    const metadata = metadataToRecord(record.metadata) as PaymentMetadata;
     const userId = metadata?.user_id;
     const existingOrderId = (metadata?.order_id ?? undefined) as
-      | number
+      | string
       | undefined;
     if (existingOrderId) {
       logger.info('Order already created for payment; skipping duplicate', {
@@ -249,10 +278,10 @@ async function handlePaymentCompleted(
     const order = await orderDb.createOrderFromPayment(userId, record);
     if (order?.id) {
       await dbService.updatePayment(record.id, {
-        metadata: {
-          ...(record.metadata ?? {}),
+        metadata: toJson({
+          ...metadataToRecord(record.metadata),
           order_id: order.id,
-        },
+        }),
       });
       logger.info('Order created from payment', {
         paymentId: record.id,

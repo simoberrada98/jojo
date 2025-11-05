@@ -7,6 +7,9 @@ import type { WishlistItem, Product } from '@/types/database';
 
 type WishlistEntry = WishlistItem & { product: Product | null };
 
+const isProduct = (candidate: unknown): candidate is Product =>
+  !!candidate && typeof candidate === 'object' && 'id' in candidate;
+
 export function useWishlist() {
   const [wishlist, setWishlist] = useState<WishlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +35,10 @@ export function useWishlist() {
       .eq('user_id', user.id);
 
     if (!error && data) {
-      const normalized: WishlistEntry[] = data.map((item) => ({
-        ...item,
-        product: item.product ?? null,
+      const rows = data as Array<WishlistItem & { product?: unknown }>;
+      const normalized: WishlistEntry[] = rows.map(({ product, ...rest }) => ({
+        ...rest,
+        product: isProduct(product) ? product : null,
       }));
       setWishlist(normalized);
     }

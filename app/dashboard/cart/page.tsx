@@ -55,78 +55,83 @@ export default function CartPage() {
       ) : (
         <div className="gap-6 grid grid-cols-1 lg:grid-cols-3">
           <div className="space-y-4 lg:col-span-2">
-            {cart.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
-                    {item.product?.image_url && (
-                      <Image
-                        src={item.product.image_url}
-                        alt={item.product.name || 'Product image'}
-                        width={96}
-                        height={96}
-                        className="rounded-lg object-cover"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <H3 className="mb-1 font-semibold text-lg">
-                        {item.product?.name}
-                      </H3>
-                      <P className="mb-2 text-muted-foreground">
-                        ${item.product?.price.toFixed(2)}
-                      </P>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() =>
-                            handleQuantityChange(item.id, item.quantity - 1)
-                          }
-                        >
-                          <Minus className="w-4 h-4" />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleQuantityChange(
-                              item.id,
-                              parseInt(e.target.value) || 1
-                            )
-                          }
-                          className="w-20 text-center"
-                          min="1"
+            {cart.map((item) => {
+              const productImage =
+                item.product?.featured_image_url ??
+                item.product?.images?.[0] ??
+                null;
+              const unitPrice = item.product?.base_price ?? 0;
+
+              return (
+                <Card key={item.id}>
+                  <CardContent className="p-6">
+                    <div className="flex gap-4">
+                      {productImage && (
+                        <Image
+                          src={productImage}
+                          alt={item.product?.name || 'Product image'}
+                          width={96}
+                          height={96}
+                          className="rounded-lg object-cover"
                         />
+                      )}
+                      <div className="flex-1">
+                        <H3 className="mb-1 font-semibold text-lg">
+                          {item.product?.name}
+                        </H3>
+                        <P className="mb-2 text-muted-foreground">
+                          ${unitPrice.toFixed(2)}
+                        </P>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity - 1)
+                            }
+                          >
+                            <Minus className="w-4 h-4" />
+                          </Button>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleQuantityChange(
+                                item.id,
+                                parseInt(e.target.value, 10) || 1
+                              )
+                            }
+                            className="w-20 text-center"
+                            min="1"
+                          />
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity + 1)
+                            }
+                          >
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <P className="mb-2 font-bold text-xl">
+                          ${(unitPrice * item.quantity).toFixed(2)}
+                        </P>
                         <Button
+                          variant="ghost"
                           size="icon"
-                          variant="outline"
-                          onClick={() =>
-                            handleQuantityChange(item.id, item.quantity + 1)
-                          }
+                          onClick={() => handleRemove(item.id)}
                         >
-                          <Plus className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <P className="mb-2 font-bold text-xl">
-                        $
-                        {((item.product?.price || 0) * item.quantity).toFixed(
-                          2
-                        )}
-                      </P>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemove(item.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <div>

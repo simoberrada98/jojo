@@ -7,6 +7,9 @@ import type { CartItem, Product } from '@/types/database';
 
 type CartEntry = CartItem & { product: Product | null };
 
+const isProduct = (candidate: unknown): candidate is Product =>
+  !!candidate && typeof candidate === 'object' && 'id' in candidate;
+
 export function useCart() {
   const [cart, setCart] = useState<CartEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +35,10 @@ export function useCart() {
       .eq('user_id', user.id);
 
     if (!error && data) {
-      const normalized: CartEntry[] = data.map((item) => ({
-        ...item,
-        product: item.product ?? null,
+      const rows = data as Array<CartItem & { product?: unknown }>;
+      const normalized: CartEntry[] = rows.map(({ product, ...rest }) => ({
+        ...rest,
+        product: isProduct(product) ? product : null,
       }));
       setCart(normalized);
     }
@@ -111,10 +115,10 @@ export function useCart() {
     await fetchCart();
   };
 
-  const total = cart.reduce(
-    (sum, item) => sum + (item.product?.price || 0) * item.quantity,
-    0
-  );
+  const total = cart.reduce((sum, item) => {
+    const price = item.product?.base_price ?? 0;
+    return sum + price * item.quantity;
+  }, 0);
 
   return {
     cart,

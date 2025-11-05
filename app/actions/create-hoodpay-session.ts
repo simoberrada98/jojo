@@ -11,12 +11,14 @@ import { createPaymentDbService } from '@/lib/services/payment-db.service';
 import {
   PaymentMethod,
   PaymentStatus,
-  type PaymentRecord,
+  type PaymentRecordInsert,
   type CheckoutData,
   type CheckoutItem,
 } from '@/types/payment';
+import type { Json } from '@/types/supabase.types';
 import { createHoodpayPaymentSession } from '@/lib/services/payment-strategies/hoodpay.strategy.server';
 import { createClient } from '@/lib/supabase/server';
+import { toJson } from '@/lib/utils/json';
 
 const PayloadSchema = z.object({
   cartId: z.string().min(1).optional(),
@@ -98,7 +100,7 @@ type NormalizedMetadata = {
       country?: string;
     };
   };
-  [key: string]: unknown;
+  [key: string]: Json | undefined;
 };
 
 export async function createHoodpaySessionAction(input: unknown) {
@@ -314,27 +316,29 @@ export async function createHoodpaySessionAction(input: unknown) {
       customerInfo: normalizedCustomerInfo,
     };
 
-    const newPayment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'> =
-      {
-        hp_payment_id: session.id ?? undefined,
-        business_id:
-          hoodpayConfig.storeId ?? hoodpayConfig.businessId ?? 'unknown',
-        session_id: session.id ?? payload.cartId ?? '',
-        amount: amountUSD,
-        currency: providerCurrency,
-        status: PaymentStatus.PENDING,
-        method: PaymentMethod.HOODPAY,
-        customer_email: payload.customer?.email,
-        customer_ip: ip,
-        metadata: {
-          ...(payload.metadata ?? {}),
-          user_id: user?.id,
-          selected_currency: payload.currency,
-          totals: sanitizedTotals,
+    const newPayment: PaymentRecordInsert = {
+      hp_payment_id: session.id ?? undefined,
+      business_id:
+        hoodpayConfig.storeId ?? hoodpayConfig.businessId ?? 'unknown',
+      session_id: session.id ?? payload.cartId ?? '',
+      amount: amountUSD,
+      currency: providerCurrency,
+      status: PaymentStatus.PENDING,
+      method: PaymentMethod.HOODPAY,
+      customer_email: payload.customer?.email,
+      customer_ip: ip,
+      metadata: toJson({
+        ...(payload.metadata ?? {}),
+        user_id: user?.id ?? null,
+        selected_currency: payload.currency,
+        totals: {
+          ...sanitizedTotals,
+          total: amountUSD,
         },
-        checkout_data,
-        hoodpay_response: session.providerResponse,
-      };
+      }),
+      checkout_data: toJson(checkout_data),
+      hoodpay_response: toJson(session.providerResponse),
+    };
 
     const result = await db.createPayment(newPayment);
     if (!result.success) {

@@ -8,14 +8,21 @@ import { supabaseConfig } from '@/lib/supabase/config';
 import { dbOperation } from './db-operation.wrapper';
 import {
   PaymentStatus,
+  paymentErrorToJson,
   type PaymentRecord,
+  type PaymentRecordInsert,
+  type PaymentRecordUpdate,
   type WebhookEvent,
+  type WebhookEventInsert,
+  type WebhookEventUpdate,
   type PaymentAttempt,
+  type PaymentAttemptInsert,
   type PaymentMethod,
   type PaymentError,
   type ServiceResponse,
   type PaginatedResponse,
 } from '@/types/payment';
+import { toJson } from '@/lib/utils/json';
 
 /**
  * PaymentDatabaseService - Refactored with DRY principles
@@ -38,19 +45,17 @@ export class PaymentDatabaseService {
    * Create a new payment record
    */
   async createPayment(
-    payment: Omit<PaymentRecord, 'id' | 'created_at' | 'updated_at'>
+    payment: PaymentRecordInsert
   ): Promise<ServiceResponse<PaymentRecord>> {
+    const now = new Date().toISOString();
+    const payload: PaymentRecordInsert = {
+      ...payment,
+      created_at: payment.created_at ?? now,
+      updated_at: payment.updated_at ?? now,
+    };
+
     return dbOperation(
-      () =>
-        this.client
-          .from('payments')
-          .insert({
-            ...payment,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .select()
-          .single(),
+      () => this.client.from('payments').insert(payload).select().single(),
       'DB_CREATE_ERROR',
       'Failed to create payment record'
     );
@@ -61,16 +66,19 @@ export class PaymentDatabaseService {
    */
   async updatePayment(
     paymentId: string,
-    updates: Partial<PaymentRecord>
+    updates: PaymentRecordUpdate
   ): Promise<ServiceResponse<PaymentRecord>> {
+    const now = new Date().toISOString();
+    const payload: PaymentRecordUpdate = {
+      ...updates,
+      updated_at: updates.updated_at ?? now,
+    };
+
     return dbOperation(
       () =>
         this.client
           .from('payments')
-          .update({
-            ...updates,
-            updated_at: new Date().toISOString(),
-          })
+          .update(payload)
           .eq('id', paymentId)
           .select()
           .single(),
@@ -171,7 +179,7 @@ export class PaymentDatabaseService {
         error: {
           code: 'DB_QUERY_ERROR',
           message: normalizedError.message || 'Failed to fetch payments',
-          details: error,
+          details: toJson(error),
           retryable: true,
         },
         metadata: {
@@ -186,18 +194,20 @@ export class PaymentDatabaseService {
    * Record webhook event
    */
   async createWebhookEvent(
-    event: Omit<WebhookEvent, 'id' | 'received_at'>
+    event: WebhookEventInsert
   ): Promise<ServiceResponse<WebhookEvent>> {
+    const now = new Date().toISOString();
+    const payload: WebhookEventInsert = {
+      ...event,
+      processed: event.processed ?? false,
+      verified: event.verified ?? false,
+      retry_count: event.retry_count ?? 0,
+      received_at: event.received_at ?? now,
+    };
+
     return dbOperation(
       () =>
-        this.client
-          .from('webhook_events')
-          .insert({
-            ...event,
-            received_at: new Date().toISOString(),
-          })
-          .select()
-          .single(),
+        this.client.from('webhook_events').insert(payload).select().single(),
       'DB_CREATE_ERROR',
       'Failed to create webhook event'
     );
@@ -208,7 +218,7 @@ export class PaymentDatabaseService {
    */
   async updateWebhookEvent(
     eventId: string,
-    updates: Partial<WebhookEvent>
+    updates: WebhookEventUpdate
   ): Promise<ServiceResponse<WebhookEvent>> {
     return dbOperation(
       () =>
@@ -227,18 +237,17 @@ export class PaymentDatabaseService {
    * Record payment attempt
    */
   async createPaymentAttempt(
-    attempt: Omit<PaymentAttempt, 'id' | 'created_at'>
+    attempt: PaymentAttemptInsert
   ): Promise<ServiceResponse<PaymentAttempt>> {
+    const now = new Date().toISOString();
+    const payload: PaymentAttemptInsert = {
+      ...attempt,
+      created_at: attempt.created_at ?? now,
+    };
+
     return dbOperation(
       () =>
-        this.client
-          .from('payment_attempts')
-          .insert({
-            ...attempt,
-            created_at: new Date().toISOString(),
-          })
-          .select()
-          .single(),
+        this.client.from('payment_attempts').insert(payload).select().single(),
       'DB_CREATE_ERROR',
       'Failed to create payment attempt'
     );
@@ -270,17 +279,18 @@ export class PaymentDatabaseService {
     status: PaymentStatus,
     error?: PaymentError
   ): Promise<ServiceResponse<PaymentRecord>> {
-    const updates: Partial<PaymentRecord> = {
+    const now = new Date().toISOString();
+    const updates: PaymentRecordUpdate = {
       status,
-      updated_at: new Date().toISOString(),
+      updated_at: now,
     };
 
     if (status === PaymentStatus.COMPLETED) {
-      updates.completed_at = new Date().toISOString();
+      updates.completed_at = now;
     }
 
     if (error) {
-      updates.error_log = [error]; // Note: In production, append to existing array
+      updates.error_log = [paymentErrorToJson(error)];
     }
 
     return this.updatePayment(paymentId, updates);
@@ -291,22 +301,23 @@ export class PaymentDatabaseService {
    */
   async upsertPaymentByHoodPayId(
     hpPaymentId: string,
-    paymentData: Partial<PaymentRecord>
+    paymentData: PaymentRecordInsert
   ): Promise<ServiceResponse<PaymentRecord>> {
+    const now = new Date().toISOString();
+    const payload: PaymentRecordInsert = {
+      ...paymentData,
+      hp_payment_id: hpPaymentId,
+      created_at: paymentData.created_at ?? now,
+      updated_at: paymentData.updated_at ?? now,
+    };
+
     return dbOperation(
       () =>
         this.client
           .from('payments')
-          .upsert(
-            {
-              hp_payment_id: hpPaymentId,
-              ...paymentData,
-              updated_at: new Date().toISOString(),
-            },
-            {
-              onConflict: 'hp_payment_id',
-            }
-          )
+          .upsert(payload, {
+            onConflict: 'hp_payment_id',
+          })
           .select()
           .single(),
       'DB_UPSERT_ERROR',
