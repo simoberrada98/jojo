@@ -41,12 +41,12 @@ export class SerpApiService {
     try {
       const params = new URLSearchParams({
         api_key: this.apiKey,
-        engine: 'google_product_reviews',
-        q: productQuery,
-        num: String(limit),
+        engine: 'amazon',
+        k: productQuery,
+        amazon_domain: 'amazon.com',
       });
 
-      const url = `${this.baseUrl}?${params.toString()}`;
+      const url = `${this.baseUrl}.json?${params.toString()}`;
       const response = await fetch(url);
 
       if (!response.ok) {
