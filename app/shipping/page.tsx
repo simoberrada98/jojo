@@ -170,7 +170,7 @@ export default function ShippingPage() {
               {[
                 {
                   q: 'How long does shipping take?',
-                  a: 'Shipping times vary by location and method. Standard shipping typically takes 7-10 business days within the US.',
+                  a: 'Shipping times vary by location and method. Standard shipping typically takes 2-4 business days within the US.',
                 },
                 {
                   q: 'Can I track my order?',
