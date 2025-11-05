@@ -51,7 +51,7 @@ export function generateProductMetadata({
       canonical: `/products/${product.handle}`,
     },
     openGraph: {
-      type: 'product',
+      type: 'website',
       url: productUrl,
       title,
       description,
