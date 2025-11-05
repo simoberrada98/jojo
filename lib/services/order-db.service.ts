@@ -5,6 +5,15 @@ import { supabaseConfig } from '@/lib/supabase/config';
 import { env } from '@/lib/config/env';
 import { logger } from '@/lib/utils/logger';
 import type { CheckoutData, PaymentRecord } from '@/types/payment';
+import {
+  OrderStatus,
+  type OrderRecord,
+  type OrderRecordInsert,
+  type OrderRecordUpdate,
+} from '@/types/order';
+
+import { dbOperation } from './db-operation.wrapper';
+import { ServiceResponse } from '@/types/service';
 
 type RpcOrderItem = {
   product_id: string;
@@ -25,7 +34,7 @@ const isCheckoutData = (value: unknown): value is CheckoutData => {
   );
 };
 
-export class OrderDbService {
+export class OrderDatabaseService {
   private client: SupabaseClient;
 
   constructor(supabaseUrl?: string, serviceKey?: string) {
@@ -104,11 +113,68 @@ export class OrderDbService {
 
     return (data as { id: string } | null) ?? null;
   }
+
+  async createOrder(
+    order: OrderRecordInsert
+  ): Promise<ServiceResponse<OrderRecord>> {
+    const now = new Date().toISOString();
+    const payload: OrderRecordInsert = {
+      ...order,
+      created_at: order.created_at ?? now,
+      updated_at: order.updated_at ?? now,
+    };
+
+    return dbOperation(
+      () => this.client.from('orders').insert(payload).select().single(),
+      'DB_CREATE_ERROR',
+      'Failed to create order record'
+    );
+  }
+
+  async updateOrder(
+    orderId: string,
+    updates: OrderRecordUpdate
+  ): Promise<ServiceResponse<OrderRecord>> {
+    const now = new Date().toISOString();
+    const payload: OrderRecordUpdate = {
+      ...updates,
+      updated_at: updates.updated_at ?? now,
+    };
+
+    return dbOperation(
+      () =>
+        this.client
+          .from('orders')
+          .update(payload)
+          .eq('id', orderId)
+          .select()
+          .single(),
+      'DB_UPDATE_ERROR',
+      'Failed to update order record'
+    );
+  }
+
+  async updateOrderStatus(
+    orderId: string,
+    status: OrderStatus
+  ): Promise<ServiceResponse<OrderRecord>> {
+    const now = new Date().toISOString();
+    const updates: OrderRecordUpdate = {
+      status,
+      updated_at: now,
+    };
+
+    if (status === OrderStatus.COMPLETED) {
+      updates.completed_at = now;
+    }
+
+    return this.updateOrder(orderId, updates);
+  }
 }
 
 export function createOrderDbService(
   supabaseUrl?: string,
   serviceKey?: string
-): OrderDbService {
-  return new OrderDbService(supabaseUrl, serviceKey);
+): OrderDatabaseService {
+  return new OrderDatabaseService(supabaseUrl, serviceKey);
 }

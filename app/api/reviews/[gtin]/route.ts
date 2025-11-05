@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import { getExternalReviewSummary } from '@/lib/services/reviews/external-review.service';
+import type { ExternalReviewEntry, ExternalReviewSummary, ReviewRecord, ReviewRecordInsert } from '@/types/review';
 
 export const revalidate = 600;
 export const runtime = 'nodejs';
@@ -82,7 +83,7 @@ export async function GET(
       const { data, error } = await supabase
         .from('product_reviews')
         .select(
-          'rating, title, comment, is_verified_purchase, helpful_count, created_at'
+          'rating, title, comment, is_verified_purchase, helpful_count, created_at, source, external_id'
         )
         .eq('product_id', productId)
         .eq('is_approved', true)
@@ -102,21 +103,55 @@ export async function GET(
     }
   }
 
-  const reviewCount = reviews.length;
-  const averageRating =
-    reviewCount > 0
-      ? reviews.reduce((sum, row) => sum + normalizeNumber(row.rating), 0) /
-        reviewCount
-      : 0;
-
-  if (reviewCount === 0) {
+  let externalReviewSummary: ExternalReviewSummary | null = null;
+  if (reviews.length === 0) {
     try {
-      const fallback = await getExternalReviewSummary(gtin, {
+      externalReviewSummary = await getExternalReviewSummary(gtin, {
         name: fallbackName,
         brand,
       });
-      if (fallback) {
-        return NextResponse.json(fallback, { status: 200 });
+
+      if (externalReviewSummary && productId) {
+        const reviewsToUpsert: ReviewRecordInsert[] = externalReviewSummary.reviews.map(extReview => ({
+          product_id: productId!,
+          user_id: null, // External reviews don't have a user_id
+          rating: extReview.rating,
+          title: extReview.comment ? extReview.comment.substring(0, 50) : null, // Use comment as title, truncated
+          comment: extReview.comment,
+          is_verified_purchase: false, // External reviews are not verified purchases from our system
+          helpful_count: 0,
+          is_approved: true, // Assume external reviews are approved
+          source: extReview.source || externalReviewSummary!.source,
+          external_id: extReview.link ? btoa(extReview.link) : null, // Use base64 encoded link as external_id for uniqueness
+          created_at: extReview.date || new Date().toISOString(),
+        }));
+
+        if (reviewsToUpsert.length > 0) {
+          const { error: upsertError } = await supabase
+            .from('product_reviews')
+            .upsert(reviewsToUpsert, { onConflict: 'product_id, external_id' });
+
+          if (upsertError) {
+            logger.error('Reviews: failed to upsert external reviews', upsertError, { gtin, productId });
+          } else {
+            // Re-fetch reviews from Supabase to include newly upserted ones
+            const { data, error } = await supabase
+              .from('product_reviews')
+              .select(
+                'rating, title, comment, is_verified_purchase, helpful_count, created_at, source, external_id'
+              )
+              .eq('product_id', productId)
+              .eq('is_approved', true)
+              .order('created_at', { ascending: false })
+              .limit(50);
+
+            if (error) {
+              logger.error('Reviews: re-fetch after upsert failed', error, { productId, gtin });
+            } else if (Array.isArray(data)) {
+              reviews = data as ReviewRow[];
+            }
+          }
+        }
       }
     } catch (error) {
       logger.error('Reviews: external fallback failed', error as Error, {
@@ -125,14 +160,21 @@ export async function GET(
     }
   }
 
+  const reviewCount = reviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? reviews.reduce((sum, row) => sum + normalizeNumber(row.rating), 0) /
+        reviewCount
+      : 0;
+
   const payload = {
     gtin,
     productTitle: productTitle ?? fallbackName,
     productDescription,
     averageRating: Number(averageRating.toFixed(2)),
     reviewCount,
-    source: 'Supabase Reviews',
-    sourceUrl: undefined,
+    source: externalReviewSummary?.source || 'Supabase Reviews',
+    sourceUrl: externalReviewSummary?.sourceUrl || undefined,
     reviews: reviews.map((row) => ({
       rating: normalizeNumber(row.rating),
       comment: row.comment ?? row.title ?? 'Verified review',

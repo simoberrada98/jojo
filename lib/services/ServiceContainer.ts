@@ -105,6 +105,9 @@ export const container = new ServiceContainer();
  * Service names (constants for type safety)
  */
 export const Services = {
+  SUPABASE_ADMIN: 'SupabaseAdminService',
+  HOODPAY_DATA: 'HoodpayDataService',
+  NOTIFICATION: 'NotificationService',
   PRICING: 'PricingService',
   PAYMENT_STORAGE: 'PaymentStorageService',
   PAYMENT_DB: 'PaymentDatabaseService',
@@ -113,4 +116,5 @@ export const Services = {
   PAYMENT_PROCESSOR: 'PaymentProcessor',
   PAYMENT_RECOVERY: 'PaymentRecoveryService',
   PAYMENT_ORCHESTRATOR: 'PaymentOrchestrator',
+  ORDER_DB: 'OrderDatabaseService',
 } as const;

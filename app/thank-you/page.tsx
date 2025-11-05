@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
 import OrderTracking from '@/components/order/OrderTracking';
@@ -16,6 +16,7 @@ import { H1, P, H3 } from '@/components/ui/typography';
 
 function ThankYouContent() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
   const { items, clearCart } = useCart();
   const { currency, formatPrice } = useCurrency();
@@ -24,8 +25,16 @@ function ThankYouContent() {
 
   // Get order details from URL or generate
   useEffect(() => {
+    const segments = pathname.split('/').filter(Boolean);
+    const thankYouIndex = segments.indexOf('thank-you');
+    const orderFromPath =
+      thankYouIndex !== -1 && segments.length > thankYouIndex + 1
+        ? decodeURIComponent(segments.slice(thankYouIndex + 1).join('/'))
+        : null;
+
     const orderId =
       searchParams.get('order') ||
+      orderFromPath ||
       `MH-${Date.now().toString(36).toUpperCase()}`;
     const userEmail =
       searchParams.get('email') || localStorage.getItem('checkout_email') || '';
@@ -34,10 +43,13 @@ function ThankYouContent() {
     setEmail(userEmail);
 
     // Clear cart after successful order
-    if (items.length > 0 && searchParams.get('order')) {
+    if (
+      items.length > 0 &&
+      (searchParams.get('order') || orderFromPath)
+    ) {
       clearCart();
     }
-  }, [searchParams, items, clearCart]);
+  }, [searchParams, pathname, items, clearCart]);
 
   const { subtotal, shipping, tax, total } =
     PricingService.calculateCartSummary(items);

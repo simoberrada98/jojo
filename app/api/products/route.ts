@@ -73,15 +73,20 @@ export async function GET(request: NextRequest) {
       return out;
     }
 
-    // Handle single product by handle/slug
-    if (handle) {
+    async function fetchSingleProduct(key: 'id' | 'slug', value: string) {
       const { data: product, error } = await supabase
         .from('products')
         .select('*')
-        .eq('slug', handle)
+        .eq(key, value)
         .eq('is_active', true)
         .eq('is_archived', false)
         .single();
+      return { product, error };
+    }
+
+    // Handle single product by handle/slug
+    if (handle) {
+      const { product, error } = await fetchSingleProduct('slug', handle);
 
       if (error || !product) {
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });
@@ -97,13 +102,7 @@ export async function GET(request: NextRequest) {
 
     // Handle single product by ID
     if (id) {
-      const { data: product, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', id)
-        .eq('is_active', true)
-        .eq('is_archived', false)
-        .single();
+      const { product, error } = await fetchSingleProduct('id', id);
 
       if (error || !product) {
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });

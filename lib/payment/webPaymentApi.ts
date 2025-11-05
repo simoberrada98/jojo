@@ -16,6 +16,7 @@ import {
 } from '@/types/payment';
 import { logger } from '@/lib/utils/logger';
 import type { Json } from '@/types/supabase.types';
+import { env } from '@/lib/config/env';
 
 const errorToJson = (error: unknown): Json => {
   if (error instanceof Error) {
@@ -37,6 +38,9 @@ const errorToJson = (error: unknown): Json => {
  * Check if Web Payment API is supported
  */
 export function isPaymentRequestSupported(): boolean {
+  if (!env.NEXT_PUBLIC_ENABLE_WEB_PAYMENT_API) {
+    return false;
+  }
   return typeof window !== 'undefined' && 'PaymentRequest' in window;
 }
 

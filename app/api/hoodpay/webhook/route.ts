@@ -1,61 +1,82 @@
-/**
- * Crypto Webhook Receiver
- * Handles webhook events from Crypto with signature verification
- */
-
 import { randomUUID } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+
 import {
   PaymentStatus,
   PaymentMethod,
-  type HoodPayWebhookData,
   type HoodPayWebhookPayload,
-  type WebhookEvent,
-  type WebhookEventUpdate,
   type PaymentRecord,
   type CheckoutData,
 } from '@/types/payment';
-import { env } from '@/lib/config/env';
-import {
-  createPaymentDbService,
-  type PaymentDatabaseService,
-  type PaymentOrderPayload,
-} from '@/lib/services/payment-db.service';
 import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
-import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import type { Json } from '@/types/supabase.types';
 import { toJson } from '@/lib/utils/json';
+import { resolveHoodpayConfig } from '@/lib/config/hoodpay.config';
+import {
+  resolveService,
+  Services,
+} from '@/lib/services/service-registry.server';
+import type {
+  PaymentDatabaseService,
+  PaymentOrderPayload,
+} from '@/lib/services/payment-db.service';
+import type { NotificationService } from '@/lib/services/notification.service';
+import type { OrderDatabaseService } from '@/lib/services/order-db.service';
+import { OrderStatus } from '@/types/order';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const EVENT_MAP = {
-  PAYMENT_CREATED: 'payment:created',
-  PAYMENT_METHOD_SELECTED: 'payment:method_selected',
-  PAYMENT_COMPLETED: 'payment:completed',
-  PAYMENT_CANCELLED: 'payment:cancelled',
-  PAYMENT_EXPIRED: 'payment:expired',
+const EVENT_HANDLERS = {
+  'payment:created': handlePaymentCreated,
+  'payment:method_selected': handlePaymentMethodSelected,
+  'payment:completed': handlePaymentCompleted,
+  'payment:cancelled': handlePaymentStatusUpdate(PaymentStatus.CANCELLED),
+  'payment:expired': handlePaymentStatusUpdate(PaymentStatus.EXPIRED),
 } as const;
 
-type NormalizedEvent =
-  (typeof EVENT_MAP)[keyof typeof EVENT_MAP] | string;
+type WebhookHandler = (
+  data: HoodPayWebhookPayload['data'],
+  db: PaymentDatabaseService,
+  orderDb: OrderDatabaseService,
+  ctx: WebhookContext
+) => Promise<void>;
+
+type EventKey = keyof typeof EVENT_HANDLERS;
+
+function normalizeEventName(event: string): EventKey | undefined {
+  const normalized = event
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_.]+/g, ':')
+    .replace(/:{2,}/g, ':');
+
+  return (normalized as EventKey) in EVENT_HANDLERS
+    ? (normalized as EventKey)
+    : undefined;
+}
 
 interface WebhookContext extends Record<string, unknown> {
   requestId: string;
   eventId?: string;
 }
 
-/**
- * POST /api/hoodpay/webhook
- * Receives webhook events from Crypto
- */
 export async function POST(request: NextRequest) {
   const requestId = randomUUID();
-  let context: WebhookContext = { requestId };
+  const context: WebhookContext = { requestId };
 
   try {
-    const webhookSecret = env.HOODPAY_WEBHOOK_SECRET;
+    const hoodpayConfig = resolveHoodpayConfig();
+    if (!hoodpayConfig) {
+      logger.warn('Hoodpay webhook received but Hoodpay is disabled.', { requestId });
+      return NextResponse.json(
+        { error: 'Hoodpay service is currently disabled' },
+        { status: 503 }
+      );
+    }
+
+    const { webhookSecret } = hoodpayConfig;
     if (!webhookSecret) {
       return NextResponse.json(
         { error: 'Webhook secret not configured' },
@@ -63,26 +84,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get raw body for signature verification
     const rawBody = await request.text();
     const signature = request.headers.get('x-hoodpay-signature') || '';
 
-    // Verify signature
     if (!verifyHoodpaySignature(rawBody, signature, webhookSecret)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    // Parse webhook payload
     const payload = JSON.parse(rawBody) as HoodPayWebhookPayload;
     const { event, data } = payload;
 
-    // Initialize Supabase service
-    const dbService = createPaymentDbService(
-      supabaseConfig.url,
-      env.SUPABASE_SERVICE_ROLE_KEY
+    const dbService = resolveService<PaymentDatabaseService>(
+      Services.PAYMENT_DB
+    );
+    const orderDbService = resolveService<OrderDatabaseService>(
+      Services.ORDER_DB
     );
 
-    // Store webhook event in database (unprocessed)
     const createdEvent = await dbService.createWebhookEvent({
       event_type: event,
       payment_id: data?.id || '',
@@ -94,92 +112,17 @@ export async function POST(request: NextRequest) {
       retry_count: 0,
     });
 
-    context = {
-      requestId,
-      eventId: createdEvent.success ? createdEvent.data?.id : undefined,
-    };
+    context.eventId = createdEvent.success ? createdEvent.data?.id : undefined;
 
-    // Normalize event name to a single convention
-    const normalizedEvent = normalizeEvent(event);
+    const handlerKey = normalizeEventName(event);
+    const handler = handlerKey ? EVENT_HANDLERS[handlerKey] : undefined;
 
-    // Process webhook based on event type
-    try {
-      switch (normalizedEvent) {
-        case 'payment:created':
-          await handlePaymentCreated(data, dbService, context);
-          break;
-        case 'payment:method_selected':
-          await handlePaymentMethodSelected(data, dbService, context);
-          break;
-        case 'payment:completed':
-          await handlePaymentCompleted(data, dbService, context);
-          break;
-        case 'payment:cancelled':
-          await handlePaymentCancelled(data, dbService, context);
-          break;
-        case 'payment:expired':
-          await handlePaymentExpired(data, dbService, context);
-          break;
-        default:
-          logger.warn('Unhandled Crypto webhook event', {
-            event: normalizedEvent,
-            requestId,
-          });
-      }
-
-      // Mark event as processed
-      const evtId = createdEvent.success && createdEvent.data?.id;
-      if (evtId) {
-        await dbService.updateWebhookEvent(evtId, {
-          processed: true,
-          processed_at: new Date().toISOString(),
-        });
-        logger.info(
-          'Webhook event processed',
-          toJson({
-            requestId,
-            eventId: evtId,
-            event: normalizedEvent,
-          })
-        );
-      }
-    } catch (handlerError: unknown) {
-      const evtId = createdEvent.success && createdEvent.data?.id;
-      if (evtId) {
-        const updates: WebhookEventUpdate = {
-          processed: false,
-          processed_at: new Date().toISOString(),
-          processing_error:
-            handlerError instanceof Error
-              ? handlerError.message
-              : 'Unknown handler error',
-        };
-        await dbService.updateWebhookEvent(evtId, updates);
-        logger.warn(
-          'Webhook handler failed',
-          toJson({
-            requestId,
-            eventId: evtId,
-            event: normalizedEvent,
-            error:
-              handlerError instanceof Error
-                ? handlerError.message
-                : 'unknown',
-          })
-        );
-      }
-      throw handlerError;
+    if (handler) {
+      await processWebhookEvent(handler, data, dbService, orderDbService, context);
+    } else {
+      logger.warn('Unhandled webhook event', { event, requestId });
     }
 
-    // Acknowledge receipt
-    logger.info(
-      'Webhook processed successfully',
-      toJson({
-        requestId,
-        event: normalizedEvent,
-        paymentId: data?.id,
-      })
-    );
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error: unknown) {
     logger.error('Webhook processing error', error, context);
@@ -192,181 +135,249 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * Handle PAYMENT_CREATED event
- */
-async function handlePaymentCreated(
-  data: HoodPayWebhookData,
-  dbService: PaymentDatabaseService,
-  context: WebhookContext
+async function processWebhookEvent(
+  handler: WebhookHandler,
+  data: HoodPayWebhookPayload['data'],
+  db: PaymentDatabaseService,
+  orderDb: OrderDatabaseService,
+  ctx: WebhookContext
 ) {
-  logger.info('Payment created', {
-    requestId: context.requestId,
-    hoodpayId: data.id,
-  });
+  const eventId = ctx.eventId;
+  try {
+    await handler(data, db, orderDb, ctx);
+    if (eventId) {
+      await db.updateWebhookEvent(eventId, {
+        processed: true,
+        processed_at: new Date().toISOString(),
+      });
+      logger.info('Webhook event processed successfully', { ...ctx });
+    }
+  } catch (error) {
+    if (eventId) {
+      await db.updateWebhookEvent(eventId, {
+        processed: false,
+        processing_error:
+          error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+    logger.error('Error processing webhook event', error, ctx);
+    throw error; // Re-throw to be caught by the main handler
+  }
+}
 
-  const sessionId =
-    typeof data.id === 'string' && data.id.length > 0
-      ? data.id
-      : `hp-${Date.now()}`;
-  const businessId =
-    typeof data.businessId === 'string' && data.businessId.length > 0
-      ? data.businessId
-      : 'unknown';
-  const amount =
-    typeof data.amount === 'number' && Number.isFinite(data.amount)
-      ? data.amount
-      : 0;
-  const currency =
-    typeof data.currency === 'string' && data.currency.length > 0
-      ? data.currency
-      : 'USD';
-
-  // Update or create payment record
-  await dbService.upsertPaymentByHoodPayId(sessionId, {
-    business_id: businessId,
-    session_id: sessionId,
-    amount,
-    currency,
+async function handlePaymentCreated(
+  data: HoodPayWebhookPayload['data'],
+  db: PaymentDatabaseService,
+  orderDb: OrderDatabaseService,
+  ctx: WebhookContext
+) {
+  logger.info('Payment created', { ...ctx, hoodpayId: data.id });
+  await db.upsertPaymentByHoodPayId(data.id, {
+    business_id: data.businessId ?? 'unknown',
+    session_id: data.id,
+    amount: data.amount ?? 0,
+    currency: data.currency ?? 'USD',
     status: PaymentStatus.PENDING,
-    customer_email: data.customerEmail ?? null,
+    customer_email: data.customerEmail,
     metadata: toJson(data),
     hoodpay_response: toJson(data),
   });
 }
 
-/**
- * Handle PAYMENT_METHOD_SELECTED event
- */
 async function handlePaymentMethodSelected(
-  data: HoodPayWebhookData,
-  dbService: PaymentDatabaseService,
-  context: WebhookContext
+  data: HoodPayWebhookPayload['data'],
+  db: PaymentDatabaseService,
+  orderDb: OrderDatabaseService,
+  ctx: WebhookContext
 ) {
   logger.info('Payment method selected', {
-    requestId: context.requestId,
+    ...ctx,
     hoodpayId: data.id,
     method: data.method,
   });
+  const payment = await getPaymentRecord(data.id, db, ctx);
+  if (!payment) return;
 
-  // Update payment with selected method
-  const payment = await dbService.getPaymentByHoodPayId(data.id);
-  if (!payment.success || !payment.data) {
-    logger.warn('Payment record not found for method update', {
-      requestId: context.requestId,
-      hoodpayId: data.id,
-    });
-    return;
-  }
-
-  const record = payment.data;
-
-  await dbService.updatePayment(record.id, {
-    // Keep source as Hoodpay; store specific coin/method in metadata
+  await db.updatePayment(payment.id, {
     method: PaymentMethod.HOODPAY,
     metadata: toJson({
-      ...metadataToRecord(record.metadata),
-      methodSelected: data.method ?? null,
+      ...metadataToRecord(payment.metadata),
+      methodSelected: data.method,
       methodSelectedAt: new Date().toISOString(),
     }),
   });
 }
 
-interface PaymentMetadata {
-  user_id?: string;
-  order_id?: string;
-  methodSelected?: string;
-  methodSelectedAt?: string;
-}
+async function handlePaymentCompleted(
+  data: HoodPayWebhookPayload['data'],
+  db: PaymentDatabaseService,
+  orderDb: OrderDatabaseService,
+  ctx: WebhookContext
+) {
+  logger.info('Payment completed', { ...ctx, hoodpayId: data.id });
+  const payment = await getPaymentRecord(data.id, db, ctx);
+  if (!payment) return;
 
-function metadataToRecord(
-  metadata: Json | null | undefined
-): Record<string, Json> {
-  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
-    return {};
+  const metadata = metadataToRecord(payment.metadata) as {
+    user_id?: string;
+    order_id?: string;
+  };
+  const userId = metadata.user_id;
+  const orderId = metadata.order_id;
+
+  if (!orderId) {
+    logger.error('Order ID not found in payment metadata', { ...ctx, hoodpayId: data.id });
+    throw new Error('Order ID not found in payment metadata');
   }
-  return metadata as Record<string, Json>;
+
+  // Update the order status to COMPLETED
+  const orderUpdateResult = await orderDb.updateOrderStatus(orderId, OrderStatus.COMPLETED);
+  if (!orderUpdateResult.success) {
+    logger.error('Failed to update order status to COMPLETED', orderUpdateResult.error, { ...ctx, orderId });
+    throw new Error(orderUpdateResult.error?.message ?? 'Failed to update order status');
+  }
+
+  // Update the payment record to reflect completion and link to the order
+  // Instead of updating order_id directly, update the metadata to include order_id
+  const paymentUpdateResult = await db.updatePayment(payment.id, {
+    status: PaymentStatus.COMPLETED,
+    metadata: toJson({ ...metadata, order_id: orderId }), // Update metadata
+  });
+  if (!paymentUpdateResult.success) {
+    logger.error('Failed to update payment record with order ID', paymentUpdateResult.error, { ...ctx, paymentId: payment.id, orderId });
+    throw new Error(paymentUpdateResult.error?.message ?? 'Failed to update payment record');
+  }
+
+  logger.info('Payment and order completed successfully', { ...ctx, hoodpayId: data.id, orderId });
+
+  const notificationService = resolveService<NotificationService>(
+    Services.NOTIFICATION
+  );
+  const customerEmail: string | undefined =
+    typeof payment.customer_email === 'string'
+      ? payment.customer_email
+      : undefined;
+  await notificationService.sendPaymentSuccessNotification({
+    paymentId: payment.id,
+    orderId: orderId,
+    amount: payment.amount,
+    currency: payment.currency,
+    customerEmail,
+  });
 }
 
-function normalizeEvent(event: string): NormalizedEvent {
-  return EVENT_MAP[event as keyof typeof EVENT_MAP] ?? event;
+function mapPaymentStatusToOrderStatus(paymentStatus: PaymentStatus): OrderStatus {
+  switch (paymentStatus) {
+    case PaymentStatus.PENDING:
+      return OrderStatus.PENDING;
+    case PaymentStatus.PROCESSING:
+      return OrderStatus.PROCESSING;
+    case PaymentStatus.COMPLETED:
+      return OrderStatus.COMPLETED;
+    case PaymentStatus.CANCELLED:
+      return OrderStatus.CANCELLED;
+    case PaymentStatus.EXPIRED:
+      return OrderStatus.EXPIRED;
+    case PaymentStatus.REFUNDED:
+      return OrderStatus.REFUNDED;
+    case PaymentStatus.FAILED:
+      return OrderStatus.CANCELLED; // No direct equivalent, map to cancelled
+    default:
+      return OrderStatus.PENDING; // Default or throw error for unhandled statuses
+  }
+}
+
+function handlePaymentStatusUpdate(status: PaymentStatus): WebhookHandler {
+  return async (data, db, orderDb, ctx) => {
+    logger.info(`Updating payment status to ${status}`, {
+      ...ctx,
+      hoodpayId: data.id,
+    });
+    const payment = await getPaymentRecord(data.id, db, ctx);
+    if (payment) {
+      await db.updatePaymentStatus(payment.id, status);
+
+      const metadata = metadataToRecord(payment.metadata) as { order_id?: string };
+      const orderId = metadata.order_id;
+
+      if (orderId) {
+        const orderStatus = mapPaymentStatusToOrderStatus(status); // Convert status
+        const orderUpdateResult = await orderDb.updateOrderStatus(orderId, orderStatus);
+        if (!orderUpdateResult.success) {
+          logger.error('Failed to update order status from webhook', orderUpdateResult.error, { ...ctx, orderId, status });
+        }
+      } else {
+        logger.warn('Order ID not found in payment metadata for status update', { ...ctx, hoodpayId: data.id, status });
+      }
+    }
+  };
+}
+
+async function getPaymentRecord(
+  hoodpayId: string,
+  db: PaymentDatabaseService,
+  ctx: WebhookContext
+): Promise<PaymentRecord | null> {
+  const { success, data } = await db.getPaymentByHoodPayId(hoodpayId);
+  if (!success || !data) {
+    logger.warn('Payment record not found', { ...ctx, hoodpayId });
+    return null;
+  }
+  return data;
+}
+
+function metadataToRecord(metadata: Json | null): Record<string, Json> {
+  return (
+    metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+      ? metadata
+      : {}
+  ) as Record<string, Json>;
 }
 
 function isCheckoutData(value: unknown): value is CheckoutData {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
     return false;
   }
-  const candidate = value as Partial<CheckoutData>;
+
+  const record = value as Record<string, unknown>;
   return (
-    Array.isArray(candidate.items) &&
-    typeof candidate.currency === 'string' &&
-    typeof candidate.total === 'number'
+    'items' in record &&
+    'subtotal' in record &&
+    'tax' in record &&
+    'shipping' in record &&
+    'total' in record &&
+    'currency' in record
   );
 }
 
 function buildOrderPayload(
   payment: PaymentRecord
 ): PaymentOrderPayload | undefined {
-  const checkout = isCheckoutData(payment.checkout_data)
-    ? (payment.checkout_data as CheckoutData)
-    : undefined;
-
-  if (!checkout) {
+  if (!isCheckoutData(payment.checkout_data)) {
     return undefined;
   }
+  const checkout = payment.checkout_data;
+  if (!checkout?.items?.length) return undefined;
 
-  const items =
-    checkout.items
-      ?.map((item) => {
-        const quantity =
-          typeof item.quantity === 'number' && item.quantity > 0
-            ? item.quantity
-            : 1;
-        const total =
-          typeof item.total === 'number' && Number.isFinite(item.total)
-            ? item.total
-            : 0;
-        const unitPrice =
-          typeof item.unitPrice === 'number' && Number.isFinite(item.unitPrice)
-            ? item.unitPrice
-            : quantity > 0
-              ? total / quantity
-              : 0;
-
-        return {
-          product_id: String(item.id),
-          quantity,
-          unit_price: unitPrice,
-          total_price: total,
-        };
-      })
-      .filter((item) => Boolean(item.product_id)) ?? [];
-
-  if (items.length === 0) {
-    return undefined;
-  }
+  const items = checkout.items.map((item) => ({
+    product_id: String(item.id),
+    quantity: item.quantity > 0 ? item.quantity : 1,
+    unit_price: item.unitPrice ?? 0,
+    total_price: item.total ?? 0,
+  }));
 
   const address = checkout.customerInfo?.address
     ? {
-        line1: checkout.customerInfo.address.line1,
-        line2: checkout.customerInfo.address.line2 ?? null,
-        city: checkout.customerInfo.address.city,
-        state: checkout.customerInfo.address.state ?? null,
-        postalCode: checkout.customerInfo.address.postalCode,
-        country: checkout.customerInfo.address.country,
-        name: checkout.customerInfo.name ?? null,
-        email: checkout.customerInfo.email ?? null,
-        phone: checkout.customerInfo.phone ?? null,
+        ...checkout.customerInfo.address,
+        name: checkout.customerInfo.name,
+        email: checkout.customerInfo.email,
+        phone: checkout.customerInfo.phone,
       }
     : null;
 
   return {
-    total_amount:
-      typeof checkout.total === 'number' ? checkout.total : payment.amount,
-    currency:
-      typeof checkout.currency === 'string'
-        ? checkout.currency
-        : payment.currency,
+    total_amount: checkout.total ?? payment.amount,
+    currency: checkout.currency ?? payment.currency,
     shipping_address: address,
     billing_address: address,
     payment_method: payment.method ?? PaymentMethod.HOODPAY,
@@ -374,150 +385,9 @@ function buildOrderPayload(
   };
 }
 
-/**
- * Handle PAYMENT_COMPLETED event
- */
-async function handlePaymentCompleted(
-  data: HoodPayWebhookData,
-  dbService: PaymentDatabaseService,
-  context: WebhookContext
-) {
-  logger.info('Payment completed', {
-    requestId: context.requestId,
-    hoodpayId: data.id,
-  });
-
-  const payment = await dbService.getPaymentByHoodPayId(data.id);
-  if (!payment.success || !payment.data) {
-    logger.warn('Payment record not found for completion', {
-      requestId: context.requestId,
-      hoodpayId: data.id,
-    });
-    return;
-  }
-
-  const record = payment.data;
-  const metadata = metadataToRecord(record.metadata) as PaymentMetadata;
-  const userId =
-    typeof metadata?.user_id === 'string' && metadata.user_id.length > 0
-      ? metadata.user_id
-      : undefined;
-
-  const orderPayload = buildOrderPayload(record);
-  const shouldAttemptOrder =
-    Boolean(userId) &&
-    Boolean(orderPayload?.order_items && orderPayload.order_items.length > 0);
-
-  if (!userId) {
-    logger.info('Completing payment without order (no user_id in metadata)', {
-      requestId: context.requestId,
-      paymentId: record.id,
-    });
-  } else if (!shouldAttemptOrder) {
-    logger.warn('Payment completion missing order payload; skipping order', {
-      requestId: context.requestId,
-      paymentId: record.id,
-    });
-  }
-
-  const result = await dbService.completePaymentWithOrder({
-    paymentId: record.id,
-    userId,
-    orderPayload: orderPayload ?? undefined,
-  });
-
-  if (!result.success || !result.data) {
-    throw new Error(
-      result.error?.message ?? 'Failed to finalize payment transaction'
-    );
-  }
-
-  const { payment_id, order_id, already_processed } = result.data;
-
-  if (already_processed) {
-    logger.info('Payment completion already processed', {
-      requestId: context.requestId,
-      paymentId: payment_id,
-      orderId: order_id,
-    });
-    return;
-  }
-
-  logger.info('Payment completed successfully', {
-    requestId: context.requestId,
-    paymentId: payment_id,
-    orderId: order_id,
-    amount: data.amount,
-    currency: data.currency,
-  });
-}
-
-/**
- * Handle PAYMENT_CANCELLED event
- */
-async function handlePaymentCancelled(
-  data: HoodPayWebhookData,
-  dbService: PaymentDatabaseService,
-  context: WebhookContext
-) {
-  logger.info('Payment cancelled', {
-    requestId: context.requestId,
-    hoodpayId: data.id,
-  });
-
-  const payment = await dbService.getPaymentByHoodPayId(data.id);
-  if (!payment.success || !payment.data) {
-    logger.warn('Payment record not found for cancellation', {
-      requestId: context.requestId,
-      hoodpayId: data.id,
-    });
-    return;
-  }
-
-  const record = payment.data;
-  await dbService.updatePaymentStatus(record.id, PaymentStatus.CANCELLED);
-}
-
-/**
- * Handle PAYMENT_EXPIRED event
- */
-async function handlePaymentExpired(
-  data: HoodPayWebhookData,
-  dbService: PaymentDatabaseService,
-  context: WebhookContext
-) {
-  logger.info('Payment expired', {
-    requestId: context.requestId,
-    hoodpayId: data.id,
-  });
-
-  const payment = await dbService.getPaymentByHoodPayId(data.id);
-  if (!payment.success || !payment.data) {
-    logger.warn('Payment record not found for expiration', {
-      requestId: context.requestId,
-      hoodpayId: data.id,
-    });
-    return;
-  }
-
-  const record = payment.data;
-  await dbService.updatePaymentStatus(record.id, PaymentStatus.EXPIRED);
-}
-
-/**
- * GET /api/hoodpay/webhook
- * Health check endpoint
- */
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
     message: 'Crypto webhook endpoint is active',
-    events: [
-      'PAYMENT_CREATED',
-      'PAYMENT_METHOD_SELECTED',
-      'PAYMENT_COMPLETED',
-      'PAYMENT_CANCELLED',
-      'PAYMENT_EXPIRED',
-    ],
   });
 }

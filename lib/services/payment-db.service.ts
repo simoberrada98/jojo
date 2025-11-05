@@ -53,7 +53,16 @@ export interface CompletePaymentResult {
 export class PaymentDatabaseService {
   private client: SupabaseClient;
 
-  constructor(supabaseUrl?: string, supabaseKey?: string) {
+  constructor(
+    supabaseClient?: SupabaseClient,
+    supabaseUrl?: string,
+    supabaseKey?: string
+  ) {
+    if (supabaseClient) {
+      this.client = supabaseClient;
+      return;
+    }
+
     const url = supabaseUrl || supabaseConfig.url;
     const key = supabaseKey || supabaseConfig.anonKey;
 
@@ -425,7 +434,8 @@ export class PaymentDatabaseService {
  */
 export function createPaymentDbService(
   supabaseUrl?: string,
-  supabaseKey?: string
+  supabaseKey?: string,
+  supabaseClient?: SupabaseClient
 ): PaymentDatabaseService {
-  return new PaymentDatabaseService(supabaseUrl, supabaseKey);
+  return new PaymentDatabaseService(supabaseClient, supabaseUrl, supabaseKey);
 }

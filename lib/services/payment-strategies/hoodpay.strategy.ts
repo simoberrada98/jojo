@@ -7,10 +7,9 @@ import { BasePaymentStrategy } from './payment-strategy.interface';
 import {
   createPayment,
   type PaymentCreationRequest,
-} from '@/lib/hoodpayModule';
-import { PAYMENT_CONFIG } from '@/lib/config/payment.config';
+} from '@/lib/hoodpay';
+import { PAYMENT_CONFIG, paymentServerConfig } from '@/lib/config/hoodpay.config';
 import type { PaymentResult, PaymentLocalState } from '@/types/payment';
-import { paymentServerConfig } from '@/lib/config/payment.config.server';
 
 type HoodPayPaymentData = Partial<PaymentCreationRequest>;
 
@@ -20,8 +19,9 @@ export class HoodPayStrategy extends BasePaymentStrategy {
 
   constructor(apiKey?: string, businessId?: string) {
     super();
-    this.apiKey = apiKey ?? paymentServerConfig.hoodpay.apiKey;
-    this.businessId = businessId ?? paymentServerConfig.hoodpay.businessId;
+    const hoodpayConfig = paymentServerConfig.hoodpay;
+    this.apiKey = apiKey ?? hoodpayConfig?.apiKey;
+    this.businessId = businessId ?? hoodpayConfig?.businessId;
   }
 
   getName(): string {
@@ -60,17 +60,11 @@ export class HoodPayStrategy extends BasePaymentStrategy {
     }
 
     try {
-      const hoodpayResponse = await createPayment(
-        this.apiKey, // Pass API key
-        this.businessId, // Pass Business ID
-        {
-          currency: state.paymentIntent.currency,
-          amount: state.paymentIntent.amount,
-          description: state.paymentIntent.description,
-          customerEmail: state.paymentIntent.customerEmail,
-          ...paymentData,
-        }
-      );
+      const hoodpayResponse = await createPayment(this.businessId, {
+        currency: state.paymentIntent.currency,
+        amount: state.paymentIntent.amount,
+        ...paymentData,
+      });
 
       return this.createSuccessResult(
         state.paymentIntent.id,

@@ -1,7 +1,8 @@
 'use server';
 
-import { env } from '@/lib/config/env';
-import { createPayment } from '@/lib/hoodpayModule';
+import { APP_CONFIG } from '@/lib/config/app.config';
+import { resolveHoodpayConfig } from '@/lib/config/hoodpay.config';
+import { createPayment } from '@/lib/hoodpay';
 import {
   PaymentStatus,
   type CheckoutData,
@@ -37,7 +38,7 @@ function buildFailureResult(
 export async function initiateHoodPayPayment(
   input: HoodPayPaymentInput
 ): Promise<PaymentResult> {
-  if (!env.NEXT_PUBLIC_ENABLE_HOODPAY) {
+  if (!APP_CONFIG.features.enableHoodPay) {
     return buildFailureResult(
       'HOODPAY_DISABLED',
       'Crypto payments are currently disabled',
@@ -45,16 +46,15 @@ export async function initiateHoodPayPayment(
     );
   }
 
-  const apiKey = env.HOODPAY_API_KEY;
-  const businessId = env.HOODPAY_BUSINESS_ID;
-
-  if (!apiKey || !businessId) {
+  const hoodpayConfig = resolveHoodpayConfig();
+  if (!hoodpayConfig) {
     return buildFailureResult(
       'HOODPAY_NOT_CONFIGURED',
       'Crypto credentials are missing',
       false
     );
   }
+  const { businessId } = hoodpayConfig;
 
   const {
     checkoutData,
@@ -66,7 +66,7 @@ export async function initiateHoodPayPayment(
   } = input;
 
   try {
-    const response = await createPayment(apiKey, businessId, {
+    const response = await createPayment(businessId, {
       currency,
       amount: checkoutData.total,
       name: checkoutData.items[0]?.name ?? 'Order',

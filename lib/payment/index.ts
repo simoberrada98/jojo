@@ -33,17 +33,4 @@ export * from '../services/payment';
 export { verifyHoodpaySignature } from '../services/payment/webhook';
 
 // HoodPay API helpers
-export {
-  supabase,
-  getPayments,
-  createPayment,
-  savePaymentsToSupabase,
-  paymentsApiHandler,
-  getWebhooks,
-  createWebhook,
-  deleteWebhook,
-  resetWebhookSecret,
-  webhooksApiHandler,
-  webhookReceiverHandler,
-  verifyWebhookSignature,
-} from '../hoodpayModule';
+
