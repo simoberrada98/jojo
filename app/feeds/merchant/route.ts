@@ -10,7 +10,10 @@ import {
 } from '@/lib/feeds/merchant/schema';
 import { getGoogleCategoryPath } from '@/lib/taxonomy/google-taxonomy';
 
-export const revalidate = 3600; // 1 hour
+// This route supports query-parameter filtering and reads request.url.
+// Opt out of static rendering to avoid DynamicServerError during build.
+// Caching is controlled via response headers below.
+export const dynamic = 'force-dynamic';
 
 const GOOGLE_NAMESPACE = 'xmlns:g="http://base.google.com/ns/1.0"';
 
@@ -191,9 +194,18 @@ export async function GET(request: Request) {
     const base = siteMetadata.baseUrl.toString().replace(/\/$/, '');
     const channelUpdatedAt = new Date().toUTCString();
 
-    // Optional feed-level filters via query params
-    const url = new URL(request.url);
-    const qp = url.searchParams;
+    // Optional feed-level filters via query params (safe parsing)
+    let qp: URLSearchParams;
+    try {
+      const url = new URL(request.url);
+      qp = url.searchParams;
+    } catch (err) {
+      logger.warn(
+        'Failed to parse request.url; proceeding without filters',
+        err as Error
+      );
+      qp = new URLSearchParams();
+    }
     const filterCategory = qp.get('category'); // e.g. "laptops"
     const filterAvailability = qp.get('availability'); // 'in stock' | 'out of stock'
     const priceMinRaw = qp.get('price_min');
