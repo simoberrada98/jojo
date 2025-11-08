@@ -6,6 +6,7 @@ This directory contains CSV files ready to be imported into Supabase.
 
 - `products.csv` - Main product information
 - `product_variants.csv` - Product variants with pricing and inventory
+- `product_reviews_import.csv` - Import-ready reviews for `public.product_reviews` (see docs)
 
 ## Before Import
 
@@ -187,3 +188,8 @@ pnpm run json-to-csv
 ```
 
 This will read from `lib/data/json-optimized/` and create fresh CSV files.
+
+## Product Reviews Import
+
+- Generate import file: `pnpm transform-reviews` → outputs `data/product_reviews_import.csv`.
+- Detailed steps: see `docs/PRODUCT_REVIEWS_IMPORT_GUIDE.md`.

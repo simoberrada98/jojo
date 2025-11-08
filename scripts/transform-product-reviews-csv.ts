@@ -5,7 +5,7 @@
  * a schema-compatible CSV for the Supabase table public.product_reviews.
  *
  * Input:  data/product_reviews_rows.csv (from synthesize-reviews-from-serpapi.ts)
- * Helper: lib/data/csv/products_rows_updated.csv (maps product_id <-> gtin)
+ * Helper: data/products.csv (maps product_id <-> gtin)
  * Output: data/product_reviews_import.csv (headers match product_reviews table)
  *
  * Output CSV headers:
@@ -154,13 +154,7 @@ function synthesizeExternalId(
 async function main() {
   const root = process.cwd();
   const inputCsvPath = path.resolve(root, 'data', 'product_reviews_rows.csv');
-  const productsCsvPath = path.resolve(
-    root,
-    'lib',
-    'data',
-    'csv',
-    'products_rows_updated.csv'
-  );
+  const productsCsvPath = path.resolve(root, 'data', 'products.csv');
   const outputCsvPath = path.resolve(
     root,
     'data',
@@ -181,9 +175,7 @@ async function main() {
   const idxId = prodHeaders.indexOf('id');
   const idxGtin = prodHeaders.indexOf('gtin');
   if (idxId === -1 || idxGtin === -1) {
-    throw new Error(
-      'products_rows_updated.csv must contain id and gtin columns'
-    );
+    throw new Error('data/products.csv must contain id and gtin columns');
   }
   const productIdByGtin = new Map<string, string>();
   for (const r of prodRows) {

@@ -31,7 +31,8 @@
     "fetch-amazon-reviews": "tsx scripts/fetch-amazon-reviews.ts",
     "refresh-reviews": "tsx scripts/refresh-reviews.ts",
     "clean-reviews": "tsx scripts/clean-reviews.ts",
-    "stats-reviews": "tsx scripts/stats-reviews.ts"
+    "stats-reviews": "tsx scripts/stats-reviews.ts",
+    "transform-reviews": "tsx scripts/transform-product-reviews-csv.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
