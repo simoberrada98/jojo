@@ -6,6 +6,15 @@ import { XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+type A11yContextValue = {
+  titleId: string;
+  descriptionId: string;
+  setHasTitle: (v: boolean) => void;
+  setHasDescription: (v: boolean) => void;
+};
+
+const DialogA11yContext = React.createContext<A11yContextValue | null>(null);
+
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -54,6 +63,10 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
 }) {
+  const titleId = React.useId();
+  const descriptionId = React.useId();
+  const [hasTitle, setHasTitle] = React.useState(false);
+  const [hasDescription, setHasDescription] = React.useState(false);
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -63,9 +76,25 @@ function DialogContent({
           'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg',
           className
         )}
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
         {...props}
       >
-        {children}
+        <DialogA11yContext.Provider
+          value={{ titleId, descriptionId, setHasTitle, setHasDescription }}
+        >
+          {!hasTitle && (
+            <span id={titleId} className="sr-only">
+              Dialog
+            </span>
+          )}
+          {!hasDescription && (
+            <span id={descriptionId} className="sr-only">
+              Dialog content
+            </span>
+          )}
+          {children}
+        </DialogA11yContext.Provider>
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
@@ -107,9 +136,15 @@ function DialogTitle({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Title>) {
+  const ctx = React.useContext(DialogA11yContext);
+  React.useEffect(() => {
+    ctx?.setHasTitle(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
+      id={ctx?.titleId}
       className={cn('text-lg leading-none font-semibold', className)}
       {...props}
     />
@@ -120,9 +155,15 @@ function DialogDescription({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  const ctx = React.useContext(DialogA11yContext);
+  React.useEffect(() => {
+    ctx?.setHasDescription(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
+      id={ctx?.descriptionId}
       className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />

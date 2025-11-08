@@ -1,5 +1,7 @@
+"use client";
 import { Cpu, Zap } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface ProductImageProps {
   category: string;
@@ -12,6 +14,7 @@ export default function ProductImage({
   image,
   className = '',
 }: ProductImageProps) {
+  const [error, setError] = useState(false);
   // Color schemes based on category
   const colorSchemes = {
     ASIC: {
@@ -55,7 +58,7 @@ export default function ProductImage({
       />
 
       {/* Product Image or Icon */}
-      {image ? (
+      {image && !error ? (
         <>
           <Image
             src={image}
@@ -64,6 +67,7 @@ export default function ProductImage({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
+            onError={() => setError(true)}
           />
           {/* Multi-layered gradient overlays for depth */}
           <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/60 mix-blend-multiply" />
@@ -77,8 +81,10 @@ export default function ProductImage({
               className={`absolute inset-0 ${colors.glow} blur-3xl rounded-full`}
             />
             <Cpu
+              aria-hidden="true"
               className={`w-32 h-32 md:w-48 md:h-48 ${colors.icon} relative z-10`}
             />
+            <span className="sr-only">Product image unavailable</span>
           </div>
         </div>
       )}

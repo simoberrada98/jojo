@@ -16,6 +16,8 @@ import {
 import { H2, H3, H4, Muted, P } from '@/components/ui/typography';
 import { ChevronDown, Frown } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
+import { fetchWithRetry } from '@/lib/utils/fetch-with-retry';
+import { logger } from '@/lib/utils/logger';
 
 const SORT_OPTIONS = [
   { label: 'Newest', value: 'newest' },
@@ -56,17 +58,20 @@ function ProductCatalogContent() {
         if (categoryParam && categoryParam !== 'All') {
           url.searchParams.set('category', categoryParam);
         }
-        const response = await fetch(url.toString());
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
+        const response = await fetchWithRetry(url.toString(), { cache: 'no-store' }, {
+          retries: 3,
+          backoffMs: 400,
+          backoffMultiplier: 2,
+          timeoutMs: 12000,
+          onRetry: (attempt, err) => logger.warn(`Retrying product fetch (attempt ${attempt})`, err),
+        });
         const data = await response.json();
         setProducts(data.results || []);
         setError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load products'
-        );
+        const message = err instanceof Error ? err.message : 'Failed to load products';
+        setError(message);
+        logger.error('Products fetch failed', err as Error);
       } finally {
         setLoading(false);
       }
@@ -181,7 +186,25 @@ function ProductCatalogContent() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
+        </div>
+          {/* Error state with retry and graceful fallback */}
+          {error && (
+            <div role="alert" className="bg-destructive/10 p-4 rounded-md border border-destructive/20">
+              <p className="text-destructive text-sm">{error}</p>
+              <div className="mt-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // Force re-fetch with current search params
+                    const ev = new Event('popstate');
+                    window.dispatchEvent(ev);
+                  }}
+                >
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Price Range Filter */}
           {showFilters && (
