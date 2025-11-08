@@ -3,7 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import { getExternalReviewSummary } from '@/lib/services/reviews/external-review.service';
-import type { ExternalReviewEntry, ExternalReviewSummary, ReviewRecord, ReviewRecordInsert } from '@/types/review';
+import type {
+  ExternalReviewEntry,
+  ExternalReviewSummary,
+  ReviewRecord,
+  ReviewRecordInsert,
+} from '@/types/review';
 
 export const revalidate = 600;
 export const runtime = 'nodejs';
@@ -34,7 +39,7 @@ export async function GET(
         averageRating: 0,
         reviewCount: 0,
         reviews: [],
-        source: 'Supabase Reviews',
+        source: 'Aggregat',
       },
       { status: 200 }
     );
@@ -43,6 +48,11 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const fallbackName = searchParams.get('q') ?? undefined;
   const brand = searchParams.get('brand') ?? undefined;
+  const sort = (searchParams.get('sort') || 'helpful').toLowerCase();
+  const ratingFilter = Number(searchParams.get('rating') || 0);
+  const page = Math.max(1, Number(searchParams.get('page') || 1));
+  const pageSizeRaw = Number(searchParams.get('pageSize') || 10);
+  const pageSize = Math.min(50, Math.max(1, pageSizeRaw));
 
   const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
     auth: { persistSession: false },
@@ -78,23 +88,45 @@ export async function GET(
   }
 
   let reviews: ReviewRow[] = [];
+  let totalCount = 0;
   if (productId) {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('product_reviews')
         .select(
-          'rating, title, comment, is_verified_purchase, helpful_count, created_at, source, external_id'
+          'rating, title, comment, is_verified_purchase, helpful_count, created_at, source, external_id',
+          { count: 'exact' }
         )
         .eq('product_id', productId)
-        .eq('is_approved', true)
-        .order('helpful_count', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(50);
+        .eq('is_approved', true);
+
+      if (
+        Number.isFinite(ratingFilter) &&
+        ratingFilter >= 1 &&
+        ratingFilter <= 5
+      ) {
+        query = query.eq('rating', ratingFilter);
+      }
+
+      // Sorting
+      if (sort === 'latest') {
+        query = query.order('created_at', { ascending: false });
+      } else {
+        // default: helpful
+        query = query
+          .order('helpful_count', { ascending: false })
+          .order('created_at', { ascending: false });
+      }
+
+      const offset = (page - 1) * pageSize;
+      const to = offset + pageSize - 1;
+      const { data, error, count } = await query.range(offset, to);
 
       if (error) {
         logger.error('Reviews: query failure', error, { productId, gtin });
       } else if (Array.isArray(data)) {
         reviews = data as ReviewRow[];
+        totalCount = typeof count === 'number' ? count : data.length;
       }
     } catch (error) {
       logger.error('Reviews: query exception', error as Error, {
@@ -113,19 +145,22 @@ export async function GET(
       });
 
       if (externalReviewSummary && productId) {
-        const reviewsToUpsert: ReviewRecordInsert[] = externalReviewSummary.reviews.map(extReview => ({
-          product_id: productId!,
-          user_id: null, // External reviews don't have a user_id
-          rating: extReview.rating,
-          title: extReview.comment ? extReview.comment.substring(0, 50) : null, // Use comment as title, truncated
-          comment: extReview.comment,
-          is_verified_purchase: false, // External reviews are not verified purchases from our system
-          helpful_count: 0,
-          is_approved: true, // Assume external reviews are approved
-          source: extReview.source || externalReviewSummary!.source,
-          external_id: extReview.link ? btoa(extReview.link) : null, // Use base64 encoded link as external_id for uniqueness
-          created_at: extReview.date || new Date().toISOString(),
-        }));
+        const reviewsToUpsert: ReviewRecordInsert[] =
+          externalReviewSummary.reviews.map((extReview) => ({
+            product_id: productId!,
+            user_id: null, // External reviews don't have a user_id
+            rating: extReview.rating,
+            title: extReview.comment
+              ? extReview.comment.substring(0, 50)
+              : null, // Use comment as title, truncated
+            comment: extReview.comment,
+            is_verified_purchase: false, // External reviews are not verified purchases from our system
+            helpful_count: 0,
+            is_approved: true, // Assume external reviews are approved
+            source: extReview.source || externalReviewSummary!.source,
+            external_id: extReview.link ? btoa(extReview.link) : null, // Use base64 encoded link as external_id for uniqueness
+            created_at: extReview.date || new Date().toISOString(),
+          }));
 
         if (reviewsToUpsert.length > 0) {
           const { error: upsertError } = await supabase
@@ -133,7 +168,11 @@ export async function GET(
             .upsert(reviewsToUpsert, { onConflict: 'product_id, external_id' });
 
           if (upsertError) {
-            logger.error('Reviews: failed to upsert external reviews', upsertError, { gtin, productId });
+            logger.error(
+              'Reviews: failed to upsert external reviews',
+              upsertError,
+              { gtin, productId }
+            );
           } else {
             // Re-fetch reviews from Supabase to include newly upserted ones
             const { data, error } = await supabase
@@ -148,7 +187,10 @@ export async function GET(
               .limit(50);
 
             if (error) {
-              logger.error('Reviews: re-fetch after upsert failed', error, { productId, gtin });
+              logger.error('Reviews: re-fetch after upsert failed', error, {
+                productId,
+                gtin,
+              });
             } else if (Array.isArray(data)) {
               reviews = data as ReviewRow[];
             }
@@ -175,7 +217,11 @@ export async function GET(
     productDescription,
     averageRating: Number(averageRating.toFixed(2)),
     reviewCount,
-    source: externalReviewSummary?.source || 'Supabase Reviews',
+    page,
+    pageSize,
+    totalCount,
+    totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
+    source: externalReviewSummary?.source || 'Reviews Aggregat',
     sourceUrl: externalReviewSummary?.sourceUrl || undefined,
     reviews: reviews.map((row) => ({
       rating: normalizeNumber(row.rating),
@@ -191,4 +237,96 @@ export async function GET(
     'public, s-maxage=600, stale-while-revalidate=3600'
   );
   return response;
+}
+
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ gtin: string }> }
+) {
+  const { gtin } = await context.params;
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  // Authenticate user via Supabase access token
+  const authHeader = request.headers.get('Authorization');
+  const accessToken = authHeader?.toLowerCase().startsWith('bearer ')
+    ? authHeader.slice(7).trim()
+    : undefined;
+
+  if (!accessToken) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { data: userRes } = await supabase.auth.getUser(accessToken);
+  const user = userRes?.user;
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  let payload: { rating?: number; comment?: string; title?: string };
+  try {
+    payload = await request.json();
+  } catch (_e) {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  const rating = Number(payload.rating);
+  const comment = (payload.comment || '').toString().trim();
+  const title = (payload.title || '').toString().trim();
+
+  if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+    return NextResponse.json(
+      { error: 'Rating must be between 1 and 5' },
+      { status: 400 }
+    );
+  }
+  if (!comment || comment.length < 5) {
+    return NextResponse.json(
+      { error: 'Comment must be at least 5 characters' },
+      { status: 400 }
+    );
+  }
+
+  // Resolve product_id from GTIN
+  const { data: prodRows, error: prodErr } = await supabase
+    .from('products')
+    .select('id')
+    .eq('gtin', gtin)
+    .limit(1);
+  if (prodErr || !prodRows?.length) {
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  }
+  const productId = prodRows[0].id as string;
+
+  const insertPayload = {
+    product_id: productId,
+    user_id: user.id,
+    rating,
+    title: title || null,
+    comment,
+    is_verified_purchase: false,
+    helpful_count: 0,
+    source: 'site',
+    external_id: null,
+    is_approved: false,
+  };
+
+  const { error: insErr } = await supabase
+    .from('product_reviews')
+    .insert(insertPayload);
+  if (insErr) {
+    logger.error('Reviews: insert failed', insErr, {
+      productId,
+      gtin,
+      userId: user.id,
+    });
+    return NextResponse.json(
+      { error: 'Failed to submit review' },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ok: true }, { status: 201 });
 }

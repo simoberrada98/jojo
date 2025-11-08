@@ -18,6 +18,11 @@ export interface ExternalReviewSummary {
   source: string;
   sourceUrl?: string;
   reviews: ExternalReviewEntry[];
+  // Optional pagination metadata when served from our API
+  page?: number;
+  pageSize?: number;
+  totalCount?: number;
+  totalPages?: number;
 }
 
 export interface ReviewRecord {

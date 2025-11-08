@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Headset, ShieldCheck, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ProductInfo } from '@/components/product/product-info';
 import { ProductImageGallery } from '@/components/product/product-image-gallery';
 import PageLayout from '@/components/layout/PageLayout';
@@ -12,6 +13,7 @@ import { ProductKeyFeatures } from '@/components/product/product-key-features';
 import { RelatedProducts } from '@/components/product/related-products';
 import { ProductReviews } from '@/components/product/product-reviews';
 import type { DisplayProduct } from '@/types/product';
+import { resolveGoogleProductCategory } from '@/lib/taxonomy/google-taxonomy';
 
 interface ProductPageClientProps {
   product: DisplayProduct;
@@ -57,6 +59,23 @@ export function ProductPageClient({
               Cite this page
             </a>
           </div>
+
+          {/* Category hierarchy chips resolved to Google Product Taxonomy */}
+          {(() => {
+            const resolution = resolveGoogleProductCategory({
+              category: product.category ?? null,
+              tags: product.tags ?? null,
+            });
+            return (
+              <div className="flex flex-wrap items-center gap-2 mt-4" aria-label="Category hierarchy">
+                {resolution.segments.map((seg, idx) => (
+                  <Badge key={`${seg}-${idx}`} variant="outline" className="capitalize">
+                    {seg}
+                  </Badge>
+                ))}
+              </div>
+            );
+          })()}
 
           <div className="gap-12 grid grid-cols-1 lg:grid-cols-2">
             {/* Product Visuals and Key Features */}

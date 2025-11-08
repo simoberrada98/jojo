@@ -1,4 +1,5 @@
 import type { DisplayProduct } from '@/types/product';
+import { getGoogleCategoryPath } from '@/lib/taxonomy/google-taxonomy';
 
 export interface OrganizationSchema {
   [key: string]: unknown; // Add index signature
@@ -302,7 +303,10 @@ export function generateProductSchema(
       '@type': 'Brand',
       name: brandName,
     },
-    category: product?.category,
+    category: getGoogleCategoryPath({
+      category: product?.category ?? null,
+      tags: product?.tags ?? null,
+    }),
     offers: {
       '@type': 'Offer',
       url: productUrl,
