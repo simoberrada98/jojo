@@ -1,0 +1,12 @@
+product_id,rating,title,comment,is_verified_purchase,is_approved,helpful_count,created_at,source,external_id
+9f1a1e5a-3977-4797-a75f-287d26f9ef59,3,,,false,true,0,2025-11-08 19:09:57.989+00,amazon-serpapi,serpapi-unknown-c2590b47
+2fb35126-7806-42a4-97ac-c0d641bf65e8,3,,,false,true,0,2025-11-08 19:10:09.664+00,amazon-serpapi,serpapi-unknown-732f97dc
+ebf937fa-c5de-4299-8263-204051c0b410,3,,,false,true,0,2025-11-08 19:10:03.946+00,amazon-serpapi,serpapi-unknown-8ebce3b
+359226db-2dbf-4c8f-acd7-49e1b765217f,3,,,false,true,0,2025-11-08 19:18:51.071+00,amazon-serpapi,serpapi-unknown-b671989b
+29634aa8-cc56-4aeb-bf6b-32d1a15769ea,3,,,false,true,0,2025-11-08 19:31:46.166+00,amazon-serpapi,serpapi-unknown-285e7865
+f48ac15d-b52c-4749-9d38-197befb39410,3,,,false,true,0,2025-11-08 19:10:02.039+00,amazon-serpapi,serpapi-unknown-91a24961
+08f619ec-9c14-47df-bef7-b5531f83e0d7,3,,,false,true,0,2025-11-08 19:09:44.385+00,amazon-serpapi,serpapi-unknown-ec323073
+07a92097-6ea3-4ba5-8d34-97c9b9616000,3,,,false,true,0,2025-11-08 19:09:54.264+00,amazon-serpapi,serpapi-unknown-7ea52374
+e3fc7d06-0fdb-4e59-a01e-c8cbcada56ef,3,,,false,true,0,2025-11-08 19:09:59.948+00,amazon-serpapi,serpapi-unknown-91e292a2
+a9a4783f-ef82-4c1a-8a8f-5cd0308c22e8,3,,,false,true,0,2025-11-08 19:10:07.72+00,amazon-serpapi,serpapi-unknown-60287129
+6915da0b-acf1-4e37-980e-2b675519727c,3,,,false,true,0,2025-11-08 19:10:05.872+00,amazon-serpapi,serpapi-unknown-d721c461

@@ -1,0 +1,12 @@
+gtin,asin,source,provider,engine,external_id,title,comment_original,comment_processed,rating,aggregated_rating,helpful_count,date,is_verified_purchase,is_approved,sentiment_score,key_feature_mentions,summary_insights,collected_at,request_id,request_url,response_size_bytes,fetch_duration_ms,status_code,raw_response_reference,is_synthesized
+762730041110,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:09:57.989+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+850010024363,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:10:09.664+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+762730041080,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:10:03.946+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+760627179106,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:18:51.071+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+735280315062,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:31:46.166+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+786213982592,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:10:02.039+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+860008344007,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:09:44.385+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+603465195283,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:09:54.264+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+850010026480,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:09:59.948+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+786213983032,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:10:07.72+00,,,,,,serpapi_amazon_data_rows.raw_response,true
+786213983049,,amazon-serpapi,serpapi,amazon,,,,,,,,,,true,0.00,,,2025-11-08 19:10:05.872+00,,,,,,serpapi_amazon_data_rows.raw_response,true
