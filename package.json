@@ -27,7 +27,11 @@
     "setup:local": "pnpm db:start && pnpm db:seed",
     "deploy:staging": "pnpm build && vercel --prod",
     "deploy:production": "pnpm build && vercel --prod",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "fetch-amazon-reviews": "tsx scripts/fetch-amazon-reviews.ts",
+    "refresh-reviews": "tsx scripts/refresh-reviews.ts",
+    "clean-reviews": "tsx scripts/clean-reviews.ts",
+    "stats-reviews": "tsx scripts/stats-reviews.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

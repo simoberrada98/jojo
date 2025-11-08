@@ -542,8 +542,10 @@ export type Database = {
           is_verified_purchase: boolean | null;
           product_id: string;
           rating: number;
+          source: string | null;
           title: string | null;
           updated_at: string | null;
+          external_id: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -555,8 +557,10 @@ export type Database = {
           is_verified_purchase?: boolean | null;
           product_id: string;
           rating: number;
+          source?: string | null;
           title?: string | null;
           updated_at?: string | null;
+          external_id?: string | null;
           user_id?: string | null;
         };
         Update: {
@@ -568,8 +572,10 @@ export type Database = {
           is_verified_purchase?: boolean | null;
           product_id?: string;
           rating?: number;
+          source?: string | null;
           title?: string | null;
           updated_at?: string | null;
+          external_id?: string | null;
           user_id?: string | null;
         };
         Relationships: [
@@ -588,6 +594,27 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      serpapi_amazon_data: {
+        Row: {
+          id: string;
+          gtin: string;
+          raw_response: Json;
+          last_fetched_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          gtin: string;
+          raw_response: Json;
+          last_fetched_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          gtin?: string;
+          raw_response?: Json;
+          last_fetched_at?: string | null;
+        };
+        Relationships: [];
       };
       product_variants: {
         Row: {

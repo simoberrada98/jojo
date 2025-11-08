@@ -87,6 +87,7 @@ export async function GET(
         )
         .eq('product_id', productId)
         .eq('is_approved', true)
+        .order('helpful_count', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -142,6 +143,7 @@ export async function GET(
               )
               .eq('product_id', productId)
               .eq('is_approved', true)
+              .order('helpful_count', { ascending: false })
               .order('created_at', { ascending: false })
               .limit(50);
 
