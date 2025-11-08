@@ -1,0 +1,23 @@
+
+slug,categories,description
+bitmain-antminer-l7-9050m-scrypt-algorithm,Electronic Engineering;Algorithm Teaching Resources,ASIC miner focused on Scrypt; relevant for hardware engineering curricula and algorithm acceleration
+bitmain-antminer-l9-16-5gh-scrypt-miner,Electronic Engineering,Scrypt ASIC; device specs useful in electronics labs
+bitmain-antminer-s21-235t-3878w,Electronic Engineering,SHA-256 ASIC; power and efficiency topics for EE coursework
+bitmain-antminer-s21-200t-3550w,Electronic Engineering,Mid-tier S21; power electronics and thermal design discussions
+bitmain-antminer-s21-xp-270t-3645w,Electronic Engineering,High-end efficiency; system design and PSU selection case studies
+bitmain-antminer-s21-pro-245t-3675w,Electronic Engineering,Performance-density tradeoffs; suitable for engineering analysis tasks
+bitmain-antminer-s21-216t-3564w,Electronic Engineering,Parameterized miner; great for benchmarking exercises
+bitmain-antminer-s21-plus-225t-3564w,Electronic Engineering,Variant comparisons for component selection in EE training
+bitmain-antminer-s19k-pro-120t-2760w,Electronic Engineering,Prior-generation device; lifecycle and reliability engineering topics
+bitmain-antminer-s19k-pro-115t-2760w,Electronic Engineering,Alternate spec; signals SKU differentiation education
+bitmain-antminer-s19k-pro-110t-2530w,Electronic Engineering,Efficiency variant; PSU and airflow calculation labs
+canaan-avalon-nano-3s-6t,Electronic Engineering,Compact miner; low-power system design examples
+canaan-avalon-mini-3-37-5t-800w,Electronic Engineering,Home miner; thermal and acoustics engineering case study
+canaan-avalon-q-90t-1674w,Electronic Engineering,Mid-range miner; energy efficiency and J/T analysis teaching
+depot-sha-256-data-processing-computing-network,Algorithm Teaching Resources,SHA-256 and distributed computing; cryptographic hashing algorithm labs; performance tuning exercises
+repair-asic-miner-bbdc-board-repair,Training Programs,Board-level diagnostics and reflow training; practical repair workshops for ASIC miners
+repair-asic-power-supply-repair,Training Programs,PSU troubleshooting and component replacement training; safety and measurement procedure modules
+wizminer-bitmain-antminer-s19k-120t-23wt-2760w,Electronic Engineering,Retail naming mix; SKU normalizing exercise for hardware data
+bitmain-antminer-s21-hosting-0-069-eur-kw,Electronic Engineering,Hosting rate; energy cost modeling in engineering economics
+bitmain-antminer-s21-pro-234t-3510w,Electronic Engineering,Alternate spec; vendor variance and datasheet verification lab
+bitmain-antminer-s21-200th-200t-3550w,Electronic Engineering,Normalization of duplicate 'th/t'; data cleaning for engineering datasets

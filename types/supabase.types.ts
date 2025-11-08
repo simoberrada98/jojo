@@ -708,6 +708,7 @@ export type Database = {
           slug: string;
           stock_quantity: number | null;
           tags: string[] | null;
+          category_tags: string[] | null;
           track_inventory: boolean | null;
           updated_at: string | null;
           video_url: string | null;
@@ -748,6 +749,7 @@ export type Database = {
           slug: string;
           stock_quantity?: number | null;
           tags?: string[] | null;
+          category_tags?: string[] | null;
           track_inventory?: boolean | null;
           updated_at?: string | null;
           video_url?: string | null;
@@ -788,6 +790,7 @@ export type Database = {
           slug?: string;
           stock_quantity?: number | null;
           tags?: string[] | null;
+          category_tags?: string[] | null;
           track_inventory?: boolean | null;
           updated_at?: string | null;
           video_url?: string | null;

@@ -43,7 +43,8 @@ COPY public.products(
   hash_rate, power_consumption, algorithm, efficiency,
   weight, dimensions_length, dimensions_width, dimensions_height,
   featured_image_url, images, meta_title, meta_description,
-  is_featured, is_active, published_at, created_at, updated_at
+  is_featured, is_active, published_at, created_at, updated_at,
+  category_tags
 )
 FROM '/path/to/products.csv'
 DELIMITER ','
@@ -125,6 +126,7 @@ ORDER BY p.created_at DESC;
 - `category` - Product category
 - `brand` - Manufacturer (Bitmain, MicroBT, etc.)
 - `tags` - PostgreSQL array of tags
+- `category_tags` - PostgreSQL array of normalized category tags used for faceting
 - `base_price` - Base price in USD
 - `compare_at_price` - Original price (for discounts)
 - `hash_rate` - Mining hash rate (e.g., "9050 MH/s")
