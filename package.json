@@ -33,7 +33,7 @@
     "clean-reviews": "tsx scripts/clean-reviews.ts",
     "stats-reviews": "tsx scripts/stats-reviews.ts",
     "transform-reviews": "tsx scripts/transform-product-reviews-csv.ts",
-    "lighthouse": "pnpm build && start-server-and-test \"pnpm start\" http://localhost:3000 \"lhci collect\""
+    "lighthouse": "pnpm build && start /B pnpm start && timeout /t 10 && lhci collect && taskkill /F /IM node.exe"
   },
   "browserslist": {
     "production": [
