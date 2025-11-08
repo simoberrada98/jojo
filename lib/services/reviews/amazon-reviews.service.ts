@@ -141,13 +141,18 @@ export async function mapSerpApiToReviews(
   if (!raw) return [];
 
   try {
-    const reviews = (raw.raw_response as any)?.reviews_results ?? [];
+    const source = (raw.raw_response as any) ?? {};
+    const reviews =
+      source.reviews_results ||
+      source.product_results?.reviews ||
+      source.reviews ||
+      [];
     const mapped: ReviewInsert[] = reviews.map((r: any) => ({
       product_id: productId,
       user_id: null,
       rating: normalizeRating(Number(r.rating ?? 0)),
       title: (r.title ?? '').slice(0, 120) || null,
-      comment: (r.snippet ?? '').slice(0, 2000) || null,
+      comment: (r.snippet ?? r.body ?? '').slice(0, 2000) || null,
       is_verified_purchase: Boolean(
         typeof r.source === 'string' && /verified/i.test(r.source)
       ),
