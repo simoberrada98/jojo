@@ -1,4 +1,4 @@
-import 'server-only';
+// Note: Do not import 'server-only' here to allow CLI usage via tsx.
 
 import { serpApiService } from '@/lib/services/serpapi.service';
 import { SupabaseAdminService } from '@/lib/services/supabase-admin.service';

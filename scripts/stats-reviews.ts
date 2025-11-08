@@ -1,4 +1,5 @@
 #!/usr/bin/env ts-node
+import '@/lib/config/load-env';
 import { SupabaseAdminService } from '@/lib/services/supabase-admin.service';
 import { logger } from '@/lib/utils/logger';
 
@@ -39,4 +40,3 @@ async function main() {
 }
 
 main();
-
