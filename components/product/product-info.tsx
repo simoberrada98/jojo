@@ -109,7 +109,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 ))}
               </div>
               <span className="font-semibold text-accent text-lg">
-                {product.rating}
+                {product.rating.toFixed(2)}
               </span>
             </div>
             {product.reviewCount && (
@@ -127,7 +127,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
             {formatPrice(product.priceUSD)} {currency}
           </div>
           <div className="font-mono text-foreground/60 text-sm">
-            ${product.priceUSD.toLocaleString()} USD
+            {product.priceUSD.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </div>
         </div>
         <div className="space-y-2 mt-4 text-sm">
@@ -135,7 +138,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="flex justify-between text-foreground/70">
               <span>Compare at price</span>
               <span className="font-mono">
-                ${product.compareAtPrice.toLocaleString()}
+                {product.compareAtPrice.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </div>
           )}
@@ -143,7 +149,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="flex justify-between text-foreground/70">
               <span>Cost price</span>
               <span className="font-mono">
-                ${Number(product.costPrice).toLocaleString()}
+                {Number(product.costPrice).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </div>
           )}

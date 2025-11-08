@@ -30,7 +30,12 @@ export default function PriceDisplay({
         <div className={className}>
           {formatPrice(amountUSD)} {currency}
         </div>
-        <div className={usdClassName}>${amountUSD.toLocaleString()} USD</div>
+        <div className={usdClassName}>
+          {amountUSD.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
       </div>
     );
   }
@@ -40,7 +45,14 @@ export default function PriceDisplay({
       <span className={className}>
         {formatPrice(amountUSD)} {currency}
       </span>{' '}
-      <span className={usdClassName}>(${amountUSD.toLocaleString()} USD)</span>
+      <span className={usdClassName}>
+        (
+        {amountUSD.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+        )
+      </span>
     </span>
   );
 }

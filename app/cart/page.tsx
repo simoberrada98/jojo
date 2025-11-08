@@ -147,7 +147,10 @@ export default function CartPage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/70">Subtotal</span>
                       <span className="text-foreground">
-                        ${subtotal.toLocaleString()} USD
+                        {subtotal.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                     </div>
                   </div>

@@ -58,18 +58,24 @@ function ProductCatalogContent() {
         if (categoryParam && categoryParam !== 'All') {
           url.searchParams.set('category', categoryParam);
         }
-        const response = await fetchWithRetry(url.toString(), { cache: 'no-store' }, {
-          retries: 3,
-          backoffMs: 400,
-          backoffMultiplier: 2,
-          timeoutMs: 12000,
-          onRetry: (attempt, err) => logger.warn(`Retrying product fetch (attempt ${attempt})`, err),
-        });
+        const response = await fetchWithRetry(
+          url.toString(),
+          { cache: 'no-store' },
+          {
+            retries: 3,
+            backoffMs: 400,
+            backoffMultiplier: 2,
+            timeoutMs: 12000,
+            onRetry: (attempt, err) =>
+              logger.warn(`Retrying product fetch (attempt ${attempt})`, err),
+          }
+        );
         const data = await response.json();
         setProducts(data.results || []);
         setError(null);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to load products';
+        const message =
+          err instanceof Error ? err.message : 'Failed to load products';
         setError(message);
         logger.error('Products fetch failed', err as Error);
       } finally {
@@ -186,10 +192,13 @@ function ProductCatalogContent() {
                 </SelectContent>
               </Select>
             </div>
-        </div>
+          </div>
           {/* Error state with retry and graceful fallback */}
           {error && (
-            <div role="alert" className="bg-destructive/10 p-4 rounded-md border border-destructive/20">
+            <div
+              role="alert"
+              className="bg-destructive/10 p-4 border border-destructive/20 rounded-md"
+            >
               <p className="text-destructive text-sm">{error}</p>
               <div className="mt-3">
                 <Button
@@ -236,8 +245,16 @@ function ProductCatalogContent() {
                   </div>
                 </div>
                 <Muted className="m-0 text-xs">
-                  Showing products between ${priceRange[0].toLocaleString()} - $
-                  {priceRange[1].toLocaleString()}
+                  Showing products between
+                  {priceRange[0].toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  })}{' '}
+                  -
+                  {priceRange[1].toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  })}
                 </Muted>
               </div>
             </div>
@@ -271,9 +288,9 @@ function ProductCatalogContent() {
             ))
           ) : (
             <div className="col-span-full py-12 text-center">
-              <div className="flex flex-col items-center justify-center text-foreground/60">
+              <div className="flex flex-col justify-center items-center text-foreground/60">
                 <Frown className="mb-4 w-16 h-16" />
-                <H3 className="mb-2 text-2xl font-semibold">
+                <H3 className="mb-2 font-semibold text-2xl">
                   No products found
                 </H3>
                 <P className="max-w-md text-center">

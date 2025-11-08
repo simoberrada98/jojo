@@ -140,11 +140,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="top-3 right-3 z-20 absolute text-primary-foreground/80 hover:text-primary backdrop-blur-sm"
+            className="top-3 right-3 z-20 absolute backdrop-blur-sm text-primary-foreground/80 hover:text-primary"
             onClick={(e) => {
               e.preventDefault();
               handleToggleWishlist();
             }}
+            aria-label={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             <Heart className={isWished ? 'fill-primary' : ''} />
           </Button>
@@ -161,7 +162,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <div className="flex items-center gap-1 ml-2">
                 <Star className="fill-accent w-4 h-4 text-accent" />
                 <span className="font-semibold text-accent text-sm">
-                  {product.rating}
+                  {product.rating.toFixed(2)}
                 </span>
               </div>
             )}
@@ -210,7 +211,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             {formatPrice(product.priceUSD)} {currency}
           </div>
           <div className="font-mono text-foreground/60 text-sm">
-            ${product.priceUSD.toLocaleString()} USD
+            $
+            {product.priceUSD.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })}{' '}
+            USD
           </div>
         </div>
 

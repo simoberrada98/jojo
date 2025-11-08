@@ -63,7 +63,12 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
                     {formatPrice(item.priceUSD * item.quantity)} {currency}
                   </Muted>
                   <Muted className="m-0 text-xs">
-                    ${(item.priceUSD * item.quantity).toLocaleString()} USD
+                    $
+                    {(item.priceUSD * item.quantity).toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })}{' '}
+                    USD
                   </Muted>
                 </div>
                 <button
@@ -85,18 +90,29 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
           <div className="flex justify-between text-sm">
             <span className="text-foreground/70">Subtotal</span>
             <span className="text-foreground">
-              ${subtotal.toLocaleString()} USD
+              {subtotal.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-foreground/70">Shipping</span>
             <span className="text-foreground">
-              ${shipping.toLocaleString()} USD
+              {shipping.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-foreground/70">Tax (8%)</span>
-            <span className="text-foreground">${tax.toFixed(2)} USD</span>
+            <span className="text-foreground">
+              {tax.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
           </div>
         </div>
         <div className="flex justify-between items-center mb-6">
@@ -106,7 +122,10 @@ export default function OrderSummary({ onProceed }: OrderSummaryProps) {
               {formatPrice(total)} {currency}
             </div>
             <div className="text-foreground/60 text-xs">
-              ${total.toLocaleString()} USD
+              {total.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
         </div>

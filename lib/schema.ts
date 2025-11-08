@@ -331,7 +331,7 @@ export function generateProductSchema(
   if (product?.rating && (product?.reviewCount ?? 0) > 0) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
-      ratingValue: product.rating,
+      ratingValue: Number(product.rating.toFixed(2)),
       reviewCount: product.reviewCount!,
       bestRating: 5,
       worstRating: 1,

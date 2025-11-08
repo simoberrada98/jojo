@@ -40,6 +40,7 @@ export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
         size="icon"
         onClick={onAuthDialogOpen}
         className="rounded-full"
+        aria-label="Open sign-in dialog"
       >
         <User className="w-5 h-5" />
       </MotionButton>
@@ -49,7 +50,12 @@ export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <MotionButton variant="ghost" size="icon" className="rounded-full">
+        <MotionButton
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          aria-label="Open user menu"
+        >
           <Avatar className="w-8 h-8">
             <AvatarImage src={profile?.avatar_url || undefined} />
             <AvatarFallback className="bg-primary text-primary-foreground">

@@ -175,7 +175,10 @@ export default function TopProducts() {
                       {formatPrice(product.priceUSD)} {currency}
                     </span>
                     <span className="font-mono text-foreground/60 text-sm">
-                      ${product.priceUSD.toLocaleString()} USD
+                      {product.priceUSD.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
 

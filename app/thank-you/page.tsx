@@ -43,10 +43,7 @@ function ThankYouContent() {
     setEmail(userEmail);
 
     // Clear cart after successful order
-    if (
-      items.length > 0 &&
-      (searchParams.get('order') || orderFromPath)
-    ) {
+    if (items.length > 0 && (searchParams.get('order') || orderFromPath)) {
       clearCart();
     }
   }, [searchParams, pathname, items, clearCart]);
@@ -147,8 +144,10 @@ function ThankYouContent() {
                           Quantity: {item.quantity}
                         </P>
                         <P className="font-medium text-accent text-sm">
-                          ${(item.priceUSD * item.quantity).toLocaleString()}{' '}
-                          USD
+                          {(item.priceUSD * item.quantity).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                         </P>
                       </div>
                     </div>
@@ -165,19 +164,28 @@ function ThankYouContent() {
                 <div className="flex justify-between items-center">
                   <span className="text-foreground">Subtotal</span>
                   <span className="font-medium text-foreground">
-                    ${subtotal.toLocaleString()} USD
+                    {subtotal.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-foreground">Shipping</span>
                   <span className="font-medium text-foreground">
-                    ${shipping.toLocaleString()} USD
+                    {shipping.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-foreground">Tax</span>
                   <span className="font-medium text-foreground">
-                    ${tax.toFixed(2)} USD
+                    {tax.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-3 border-border border-t">
@@ -189,7 +197,10 @@ function ThankYouContent() {
                       {formatPrice(total)} {currency}
                     </div>
                     <div className="text-muted-foreground text-sm">
-                      ${total.toLocaleString()} USD
+                      {total.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </div>
                   </div>
                 </div>

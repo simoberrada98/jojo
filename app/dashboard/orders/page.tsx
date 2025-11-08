@@ -100,11 +100,11 @@ export default async function OrdersPage() {
                     <div className="font-semibold">
                       Order #{o.id.slice(0, 8)}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(o.created_at).toLocaleString()}
+                    <div className="text-muted-foreground text-sm">
+                      {new Date(o.created_at).toLocaleString('en-US')}
                     </div>
                   </div>
-                  <div className="mt-2 flex justify-between text-sm">
+                  <div className="flex justify-between mt-2 text-sm">
                     <div>
                       <span className="text-foreground/70">Status:</span>{' '}
                       <span className="font-medium">{o.status}</span>
@@ -119,7 +119,7 @@ export default async function OrdersPage() {
                   {o.items && o.items.length > 0 && (
                     <div className="mt-3 text-sm">
                       <div className="mb-1 text-foreground/70">Items</div>
-                      <ul className="list-disc pl-5 space-y-1">
+                      <ul className="space-y-1 pl-5 list-disc">
                         {o.items.map((it) => (
                           <li key={it.id}>
                             <span className="text-foreground/80">

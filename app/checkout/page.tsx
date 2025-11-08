@@ -677,7 +677,10 @@ export default function CheckoutPage() {
                         <div className="flex justify-between text-sm">
                           <span className="text-foreground/70">Subtotal</span>
                           <span className="text-foreground">
-                            ${subtotal.toLocaleString()} USD
+                            {subtotal.toLocaleString('en-US', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -685,7 +688,10 @@ export default function CheckoutPage() {
                             Free Shipping
                           </span>
                           <span className="text-foreground">
-                            ${shipping.toLocaleString()} USD
+                            {shipping.toLocaleString('en-US', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </span>
                         </div>
                       </div>
@@ -698,7 +704,10 @@ export default function CheckoutPage() {
                             {formatPrice(totalAmount)} {currency}
                           </div>
                           <div className="text-foreground/60 text-xs">
-                            ${totalAmount.toLocaleString()} USD
+                            {totalAmount.toLocaleString('en-US', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </div>
                         </div>
                       </div>

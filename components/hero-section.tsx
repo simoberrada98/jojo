@@ -55,7 +55,8 @@ export default function HeroSection() {
         icon: Cpu,
         label: 'Active Miners',
         target: 12_000,
-        format: (value) => `${Math.round(value).toLocaleString()}+`,
+        format: (value) =>
+          `${Math.round(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}+`,
       },
       {
         icon: Shield,
@@ -315,6 +316,9 @@ export default function HeroSection() {
         ref={backgroundVideoRef}
         className="absolute inset-0 w-full h-full object-cover"
         src="/assets/videos/rigs_loop.mp4"
+        preload="metadata"
+        playsInline
+        poster="/og/og_land.jpg"
         autoPlay
         loop
         muted

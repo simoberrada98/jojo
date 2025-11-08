@@ -76,8 +76,8 @@ export const generateInvoicePDF = (data: InvoiceData) => {
   const tableRows = data.items.map((item) => [
     item.name,
     item.quantity.toString(),
-    `$${item.priceUSD.toLocaleString()} USD`,
-    `$${(item.priceUSD * item.quantity).toLocaleString()} USD`,
+    `${item.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`,
+    `${(item.priceUSD * item.quantity).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} `,
   ]);
 
   autoTable(doc, {
@@ -123,15 +123,25 @@ export const generateInvoicePDF = (data: InvoiceData) => {
 
   // Subtotal
   doc.text('Subtotal:', summaryX, summaryStartY);
-  doc.text(`$${data.subtotal.toLocaleString()} USD`, 190, summaryStartY, {
-    align: 'right',
-  });
+  doc.text(
+    `$${data.subtotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} USD`,
+    190,
+    summaryStartY,
+    {
+      align: 'right',
+    }
+  );
 
   // Shipping
   doc.text('Shipping:', summaryX, summaryStartY + 7);
-  doc.text(`$${data.shipping.toLocaleString()} USD`, 190, summaryStartY + 7, {
-    align: 'right',
-  });
+  doc.text(
+    `$${data.shipping.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} USD`,
+    190,
+    summaryStartY + 7,
+    {
+      align: 'right',
+    }
+  );
 
   // Tax
   doc.text('Tax:', summaryX, summaryStartY + 14);
@@ -149,9 +159,14 @@ export const generateInvoicePDF = (data: InvoiceData) => {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('Total:', summaryX, summaryStartY + 28);
-  doc.text(`$${data.total.toLocaleString()} USD`, 190, summaryStartY + 28, {
-    align: 'right',
-  });
+  doc.text(
+    `$${data.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} USD`,
+    190,
+    summaryStartY + 28,
+    {
+      align: 'right',
+    }
+  );
 
   if (data.currency !== 'USD') {
     doc.setFontSize(9);
