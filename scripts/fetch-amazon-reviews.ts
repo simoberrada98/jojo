@@ -8,9 +8,12 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 // Absolute paths provided by user
-const XML_FEED_PATH = 'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/products_feed_gtin.xml';
-const PRODUCTS_CSV_PATH = 'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/products.csv';
-const VARIANTS_CSV_PATH = 'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/product_variants_rows.csv';
+const XML_FEED_PATH =
+  'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/products_feed_gtin.xml';
+const PRODUCTS_CSV_PATH =
+  'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/products.csv';
+const VARIANTS_CSV_PATH =
+  'c:/Users/simoe/Documents/GitHub/miny/mintyos/data/product_variants_rows.csv';
 
 function extractGtinsFromXml(xml: string): string[] {
   const gtins: string[] = [];
@@ -24,48 +27,57 @@ function extractGtinsFromXml(xml: string): string[] {
   return Array.from(new Set(gtins));
 }
 
-function parseCsvRows(csv: string): { headers: string[]; rows: string[][] } {
-  // Minimal CSV parser that respects quotes
-  const lines = csv.split(/\r?\n/).filter((l) => l.length > 0);
-  const headers = parseCsvLine(lines[0]);
+// Robust CSV parser that supports multi-line fields and escaped quotes
+function parseCsv(csv: string): { headers: string[]; rows: string[][] } {
   const rows: string[][] = [];
-  for (let i = 1; i < lines.length; i++) {
-    rows.push(parseCsvLine(lines[i]));
-  }
-  return { headers, rows };
-}
-
-function parseCsvLine(line: string): string[] {
-  const result: string[] = [];
-  let cur = '';
+  let row: string[] = [];
+  let field = '';
   let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
+
+  for (let i = 0; i < csv.length; i++) {
+    const ch = csv[i];
     if (inQuotes) {
       if (ch === '"') {
-        // Lookahead for escaped quote
-        if (line[i + 1] === '"') {
-          cur += '"';
-          i++; // skip the escaped quote
+        // Escaped quote within quotes
+        if (csv[i + 1] === '"') {
+          field += '"';
+          i++;
         } else {
           inQuotes = false;
         }
       } else {
-        cur += ch;
+        field += ch;
       }
     } else {
       if (ch === '"') {
         inQuotes = true;
       } else if (ch === ',') {
-        result.push(cur);
-        cur = '';
+        row.push(field.trim());
+        field = '';
+      } else if (ch === '\r') {
+        // ignore CR (handle CRLF)
+      } else if (ch === '\n') {
+        // end of record (only when not inQuotes)
+        row.push(field.trim());
+        rows.push(row);
+        row = [];
+        field = '';
       } else {
-        cur += ch;
+        field += ch;
       }
     }
   }
-  result.push(cur);
-  return result.map((s) => s.trim());
+
+  // Push final field/row if the file doesn't end with a newline
+  if (field.length > 0 || row.length > 0) {
+    row.push(field.trim());
+    rows.push(row);
+  }
+
+  if (rows.length === 0) return { headers: [], rows: [] };
+  const headers = rows[0];
+  const dataRows = rows.slice(1);
+  return { headers, rows: dataRows };
 }
 
 function buildIndex(headers: string[], rows: string[][]) {
@@ -74,10 +86,15 @@ function buildIndex(headers: string[], rows: string[][]) {
   return idx;
 }
 
-async function gatherGtinsFromXmlAndSupabase(): Promise<{ gtinsXml: string[]; matchedProducts: { id: string; gtin: string }[] }> {
+async function gatherGtinsFromXmlAndSupabase(): Promise<{
+  gtinsXml: string[];
+  matchedProducts: { id: string; gtin: string }[];
+}> {
   // Read XML
   const xml = await fs.readFile(XML_FEED_PATH, 'utf-8').catch((err) => {
-    throw new Error(`Failed to read XML feed at ${XML_FEED_PATH}: ${err?.message || err}`);
+    throw new Error(
+      `Failed to read XML feed at ${XML_FEED_PATH}: ${err?.message || err}`
+    );
   });
   const gtinsXml = extractGtinsFromXml(xml);
   if (gtinsXml.length === 0) {
@@ -93,15 +110,20 @@ async function gatherGtinsFromXmlAndSupabase(): Promise<{ gtinsXml: string[]; ma
     .in('gtin', gtinsXml);
 
   if (error) throw error;
-  const matchedProducts = (data || []).filter((p) => !!p.gtin) as { id: string; gtin: string }[];
+  const matchedProducts = (data || []).filter((p) => !!p.gtin) as {
+    id: string;
+    gtin: string;
+  }[];
   return { gtinsXml, matchedProducts };
 }
 
 async function validateAgainstProductsCsv(gtinsXml: string[]) {
   const csv = await fs.readFile(PRODUCTS_CSV_PATH, 'utf-8').catch((err) => {
-    throw new Error(`Failed to read products.csv at ${PRODUCTS_CSV_PATH}: ${err?.message || err}`);
+    throw new Error(
+      `Failed to read products.csv at ${PRODUCTS_CSV_PATH}: ${err?.message || err}`
+    );
   });
-  const { headers, rows } = parseCsvRows(csv);
+  const { headers, rows } = parseCsv(csv);
   const idx = buildIndex(headers, rows);
   const gtinCol = idx['gtin'];
   if (gtinCol === undefined) {
@@ -117,16 +139,21 @@ async function validateAgainstProductsCsv(gtinsXml: string[]) {
   // Log any XML GTIN not present in CSV
   const missingInCsv = gtinsXml.filter((g) => !gtinsCsv.has(g));
   if (missingInCsv.length) {
-    logger.warn('GTINs present in XML but missing in products.csv', undefined, { count: missingInCsv.length, list: missingInCsv.slice(0, 20) });
+    logger.warn('GTINs present in XML but missing in products.csv', undefined, {
+      count: missingInCsv.length,
+      list: missingInCsv.slice(0, 20),
+    });
   }
   return gtinsCsv;
 }
 
 async function validateVariantLinkage(gtinByProductId: Map<string, string>) {
   const csv = await fs.readFile(VARIANTS_CSV_PATH, 'utf-8').catch((err) => {
-    throw new Error(`Failed to read product_variants_rows.csv at ${VARIANTS_CSV_PATH}: ${err?.message || err}`);
+    throw new Error(
+      `Failed to read product_variants_rows.csv at ${VARIANTS_CSV_PATH}: ${err?.message || err}`
+    );
   });
-  const { headers, rows } = parseCsvRows(csv);
+  const { headers, rows } = parseCsv(csv);
   const idx = buildIndex(headers, rows);
   const productIdCol = idx['product_id'];
   const gtinCol = idx['gtin'];
@@ -155,7 +182,11 @@ async function validateVariantLinkage(gtinByProductId: Map<string, string>) {
     }
   }
 
-  logger.info('Variant linkage validation complete', undefined, { linked, missingParent, mismatched });
+  logger.info('Variant linkage validation complete', undefined, {
+    linked,
+    missingParent,
+    mismatched,
+  });
 }
 
 async function processGtins(gtins: string[]) {
@@ -178,7 +209,10 @@ async function processGtins(gtins: string[]) {
     }
   }
 
-  logger.info('All GTINs processed', undefined, { totalInserted, totalUpdated });
+  logger.info('All GTINs processed', undefined, {
+    totalInserted,
+    totalUpdated,
+  });
 }
 
 async function main() {
@@ -187,7 +221,9 @@ async function main() {
   try {
     if (singleArg) {
       // Backward-compat mode: process a single GTIN provided via CLI argument
-      logger.info('Running in single-GTIN mode', undefined, { gtin: singleArg });
+      logger.info('Running in single-GTIN mode', undefined, {
+        gtin: singleArg,
+      });
       await processGtins([singleArg]);
       return;
     }
@@ -196,7 +232,9 @@ async function main() {
     logger.info('Starting auto GTIN discovery from XML and Supabase');
     const { gtinsXml, matchedProducts } = await gatherGtinsFromXmlAndSupabase();
     logger.info('GTINs found in XML', undefined, { count: gtinsXml.length });
-    logger.info('Products matched in Supabase', undefined, { count: matchedProducts.length });
+    logger.info('Products matched in Supabase', undefined, {
+      count: matchedProducts.length,
+    });
 
     // Build productId -> gtin map and set of matched GTINs
     const gtinByProductId = new Map<string, string>();
@@ -208,7 +246,9 @@ async function main() {
 
     // Cross-validate with products.csv
     const gtinsCsv = await validateAgainstProductsCsv(gtinsXml);
-    const finalGtins = Array.from(new Set([...gtinsXml].filter((g) => matchedGtins.has(g))));
+    const finalGtins = Array.from(
+      new Set([...gtinsXml].filter((g) => matchedGtins.has(g)))
+    );
 
     logger.info('Final GTIN set to process', undefined, {
       count: finalGtins.length,

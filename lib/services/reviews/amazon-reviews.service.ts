@@ -34,7 +34,11 @@ class RateLimiter {
 
 const limiter = new RateLimiter(1000); // ~1 req/sec
 
-export async function backoff<T>(fn: () => Promise<T>, tries = 3, baseMs = 500): Promise<T> {
+export async function backoff<T>(
+  fn: () => Promise<T>,
+  tries = 3,
+  baseMs = 500
+): Promise<T> {
   let attempt = 0;
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -67,7 +71,9 @@ function extractExternalId(link?: string): string | null {
   }
 }
 
-export async function getOrFetchSerpApiRaw(gtin: string): Promise<SerpCacheRow | null> {
+export async function getOrFetchSerpApiRaw(
+  gtin: string
+): Promise<SerpCacheRow | null> {
   const { data: cached, error: cacheError } = await supabase
     .from('serpapi_amazon_data')
     .select('*')
@@ -90,27 +96,15 @@ export async function getOrFetchSerpApiRaw(gtin: string): Promise<SerpCacheRow |
   await limiter.wait();
 
   const fetchFn = async () => {
-    // We use GTIN directly as productQuery. If GTIN missing, caller should provide brand+name.
-    const reviews = await serpApiService.getGoogleProductReviews(gtin);
-    const raw = { reviews_results: reviews };
-
-    const upsert = await supabase
+    // Trigger fetch and storage via SerpApiService. It will upsert the cache table.
+    await serpApiService.getGoogleProductReviews(gtin);
+    const { data, error } = await supabase
       .from('serpapi_amazon_data')
-      .upsert(
-        {
-          gtin,
-          raw_response: raw as unknown as Supabase['Tables']['serpapi_amazon_data']['Row']['raw_response'],
-          last_fetched_at: new Date().toISOString(),
-        },
-        { onConflict: 'gtin' }
-      )
       .select('*')
+      .eq('gtin', gtin)
       .maybeSingle();
-
-    if (upsert.error) {
-      throw upsert.error;
-    }
-    return upsert.data as SerpCacheRow;
+    if (error) throw error;
+    return data as SerpCacheRow;
   };
 
   try {
@@ -144,14 +138,18 @@ export async function mapSerpApiToReviews(
     source: 'amazon-serpapi',
     external_id: extractExternalId(r.link ?? undefined),
     is_approved: true,
-    created_at: r.date ? new Date(r.date).toISOString() : new Date().toISOString(),
+    created_at: r.date
+      ? new Date(r.date).toISOString()
+      : new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }));
 
   return mapped;
 }
 
-export async function publishReviewsForGtin(gtin: string): Promise<{ inserted: number; updated: number }> {
+export async function publishReviewsForGtin(
+  gtin: string
+): Promise<{ inserted: number; updated: number }> {
   // Lookup product by GTIN
   const { data: product, error: productError } = await supabase
     .from('products')
@@ -175,7 +173,10 @@ export async function publishReviewsForGtin(gtin: string): Promise<{ inserted: n
     .select('id');
 
   if (error) {
-    logger.error('Failed to upsert product reviews', error, { gtin, productId });
+    logger.error('Failed to upsert product reviews', error, {
+      gtin,
+      productId,
+    });
     return { inserted: 0, updated: 0 };
   }
 

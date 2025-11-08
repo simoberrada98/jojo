@@ -8,6 +8,7 @@ import {
   formatCurrencyUSD,
   normalizeAvailability,
 } from '@/lib/feeds/merchant/schema';
+import { getGoogleCategoryPath } from '@/lib/taxonomy/google-taxonomy';
 
 export const revalidate = 3600; // 1 hour
 
@@ -88,7 +89,14 @@ function buildItemXml(
   const kv: Record<string, string> = {
     'g:id': String(product.id),
     'g:product_type': String(product.category),
-    'g:google_product_category': 'Electronics', // TODO: map from product data when available
+    // Map Google Product Category using taxonomy resolver
+    'g:google_product_category': getGoogleCategoryPath({
+      product_type: (product.product_type ?? product.category ?? '') as
+        | string
+        | null,
+      category: (product.category ?? '') as string | null,
+      tags: (product.tags ?? null) as string[] | null,
+    }),
     'g:brand': String(product.brand || 'MineHub'),
     'g:condition': 'new',
     ...(product.gtin ? { 'g:gtin': String(product.gtin) } : {}),
@@ -177,11 +185,29 @@ function buildItemXml(
   return xmlParts.join('\n');
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const products = await fetchActiveProductsForSeo();
     const base = siteMetadata.baseUrl.toString().replace(/\/$/, '');
     const channelUpdatedAt = new Date().toUTCString();
+
+    // Optional feed-level filters via query params
+    const url = new URL(request.url);
+    const qp = url.searchParams;
+    const filterCategory = qp.get('category'); // e.g. "laptops"
+    const filterAvailability = qp.get('availability'); // 'in stock' | 'out of stock'
+    const priceMinRaw = qp.get('price_min');
+    const priceMaxRaw = qp.get('price_max');
+    const priceMin = priceMinRaw ? Number(priceMinRaw) : undefined;
+    const priceMax = priceMaxRaw ? Number(priceMaxRaw) : undefined;
+
+    // Validate numeric filters
+    if (priceMinRaw && Number.isNaN(priceMin)) {
+      logger.warn('Invalid price_min filter, ignoring', { priceMinRaw });
+    }
+    if (priceMaxRaw && Number.isNaN(priceMax)) {
+      logger.warn('Invalid price_max filter, ignoring', { priceMaxRaw });
+    }
 
     // Fetch reviews with simple concurrency limit to optimize performance
     const limit = Math.min(
@@ -217,8 +243,28 @@ export async function GET() {
       return results;
     }
 
+    // Apply filters prior to review fetch to minimize calls
+    const filteredProducts = products.filter((p: any) => {
+      // Category filter (match normalized category string)
+      if (filterCategory) {
+        const cat = String(p.category || '')
+          .trim()
+          .toLowerCase();
+        if (cat !== filterCategory.trim().toLowerCase()) return false;
+      }
+      // Availability filter
+      if (filterAvailability) {
+        const avail = normalizeAvailability(p.stock_quantity ?? 0);
+        if (avail !== filterAvailability.trim().toLowerCase()) return false;
+      }
+      // Price bounds
+      if (typeof priceMin === 'number' && p.base_price < priceMin) return false;
+      if (typeof priceMax === 'number' && p.base_price > priceMax) return false;
+      return true;
+    });
+
     const productsWithReviews = await mapWithConcurrency(
-      products,
+      filteredProducts,
       async (product) => ({
         product,
         reviewSummary: product.gtin
