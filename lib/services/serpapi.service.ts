@@ -54,6 +54,15 @@ export class SerpApiService {
       });
 
       const url = `${this.baseUrl}.json?${params.toString()}`;
+      // Request initiation logging
+      logger.groupStart('SerpAPI Request: Amazon Reviews', {
+        timestamp: new Date().toISOString(),
+        gtin: productQuery,
+        engine: 'amazon',
+        request_url: url,
+        params: Object.fromEntries(params.entries()),
+        target: { asin: null, amazon_domain: 'amazon.com' },
+      });
       const response = await fetch(url);
       const status = response.status;
       const headersObj: Record<string, string> = {};
@@ -61,10 +70,17 @@ export class SerpApiService {
 
       if (!response.ok) {
         const errorText = await response.text();
+        // Error logging
         logger.error(
-          `SerpApi request failed with status ${response.status}: ${errorText}`,
-          { productQuery }
+          `SerpAPI request failed`,
+          { message: errorText, status_code: response.status },
+          { gtin: productQuery, request_url: url }
         );
+        logger.debug('SerpAPI Response Meta', {
+          status_code: status,
+          response_headers: headersObj,
+          fetch_duration_ms: Date.now() - start,
+        });
         // Persist error metadata for audit
         await this.serpStorage?.storeResponse({
           provider: 'serpapi',
@@ -80,12 +96,22 @@ export class SerpApiService {
           error_message: errorText,
           collected_at: new Date().toISOString(),
         });
+        logger.groupEnd();
         return [];
       }
 
       const data: SerpApiResult = await response.json();
       const rawStr = JSON.stringify(data);
       const sizeBytes = Buffer.byteLength(rawStr, 'utf8');
+
+      // Response handling logs
+      logger.debug('SerpAPI Response Meta', {
+        status_code: status,
+        response_headers: headersObj,
+        response_size_bytes: sizeBytes,
+        fetch_duration_ms: Date.now() - start,
+      });
+      logger.debug('SerpAPI Raw Response', data);
 
       // Store the full raw response with metadata for audit
       await this.serpStorage?.storeResponse({
@@ -122,6 +148,13 @@ export class SerpApiService {
       const reviews =
         data.reviews_results || data.product_results?.reviews || [];
 
+      // Parsed review data structure
+      logger.debug('Parsed Amazon Reviews', {
+        count: reviews.length,
+        sample: reviews.slice(0, 3),
+      });
+      logger.groupEnd();
+
       return reviews.map((review) => ({
         title: review.title || 'No title',
         snippet: review.snippet || 'No snippet',
@@ -131,8 +164,9 @@ export class SerpApiService {
         link: review.link || '#',
       }));
     } catch (error) {
-      logger.error('Error fetching product reviews from SerpApi', error, {
-        productQuery,
+      // Error logging for exceptions (e.g., parsing failures, network issues)
+      logger.error('Error fetching product reviews from SerpAPI', error, {
+        gtin: productQuery,
       });
       // Persist exception metadata
       await this.serpStorage?.storeResponse({
@@ -150,6 +184,7 @@ export class SerpApiService {
           error instanceof Error ? error.message : 'Unknown SERPAPI error',
         collected_at: new Date().toISOString(),
       });
+      logger.groupEnd();
       return [];
     }
   }

@@ -28,6 +28,10 @@ class RateLimiter {
     this.queue = new Promise<void>((resolve) => (resolveFn = resolve));
     await prev;
     await new Promise((r) => setTimeout(r, this.intervalMs));
+    // Rate limit debug logging (noise reduced by default)
+    logger.debug('Rate limiter delay applied', {
+      interval_ms: this.intervalMs,
+    });
     resolveFn!();
   }
 }
@@ -48,6 +52,10 @@ export async function backoff<T>(
       attempt += 1;
       if (attempt >= tries) throw err;
       const delay = baseMs * Math.pow(2, attempt - 1);
+      logger.debug('Transient error, backing off before retry', {
+        attempt,
+        delay_ms: delay,
+      });
       await new Promise((r) => setTimeout(r, delay));
     }
   }
@@ -90,6 +98,10 @@ export async function getOrFetchSerpApiRaw(
     : false;
 
   if (cached && isFresh) {
+    logger.info('SerpAPI cache hit (fresh)', {
+      gtin,
+      last_fetched_at: cached.last_fetched_at,
+    });
     return cached as SerpCacheRow;
   }
 
@@ -97,6 +109,10 @@ export async function getOrFetchSerpApiRaw(
 
   const fetchFn = async () => {
     // Trigger fetch and storage via SerpApiService. It will upsert the cache table.
+    logger.groupStart('SerpAPI Fetch (cache miss or stale)', {
+      gtin,
+      cached_at: cached?.last_fetched_at ?? null,
+    });
     await serpApiService.getGoogleProductReviews(gtin);
     const { data, error } = await supabase
       .from('serpapi_amazon_data')
@@ -104,6 +120,7 @@ export async function getOrFetchSerpApiRaw(
       .eq('gtin', gtin)
       .maybeSingle();
     if (error) throw error;
+    logger.groupEnd();
     return data as SerpCacheRow;
   };
 
@@ -123,28 +140,41 @@ export async function mapSerpApiToReviews(
   const raw = await getOrFetchSerpApiRaw(gtin);
   if (!raw) return [];
 
-  const reviews = (raw.raw_response as any)?.reviews_results ?? [];
+  try {
+    const reviews = (raw.raw_response as any)?.reviews_results ?? [];
+    const mapped: ReviewInsert[] = reviews.map((r: any) => ({
+      product_id: productId,
+      user_id: null,
+      rating: normalizeRating(Number(r.rating ?? 0)),
+      title: (r.title ?? '').slice(0, 120) || null,
+      comment: (r.snippet ?? '').slice(0, 2000) || null,
+      is_verified_purchase: Boolean(
+        typeof r.source === 'string' && /verified/i.test(r.source)
+      ),
+      helpful_count: Number(r.helpful_count ?? 0) || null,
+      source: 'amazon-serpapi',
+      external_id: extractExternalId(r.link ?? undefined),
+      is_approved: true,
+      created_at: r.date
+        ? new Date(r.date).toISOString()
+        : new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }));
 
-  const mapped: ReviewInsert[] = reviews.map((r: any) => ({
-    product_id: productId,
-    user_id: null,
-    rating: normalizeRating(Number(r.rating ?? 0)),
-    title: (r.title ?? '').slice(0, 120) || null,
-    comment: (r.snippet ?? '').slice(0, 2000) || null,
-    is_verified_purchase: Boolean(
-      typeof r.source === 'string' && /verified/i.test(r.source)
-    ),
-    helpful_count: Number(r.helpful_count ?? 0) || null,
-    source: 'amazon-serpapi',
-    external_id: extractExternalId(r.link ?? undefined),
-    is_approved: true,
-    created_at: r.date
-      ? new Date(r.date).toISOString()
-      : new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }));
-
-  return mapped;
+    logger.info('SerpAPI reviews mapped', {
+      gtin,
+      productId,
+      count: mapped.length,
+    });
+    return mapped;
+  } catch (error) {
+    // Data parsing failure logging
+    logger.error('SerpAPI data parsing failed', error as Error, {
+      gtin,
+      productId,
+    });
+    return [];
+  }
 }
 
 export async function publishReviewsForGtin(
