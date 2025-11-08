@@ -120,6 +120,7 @@ export function ProductPageClient({
             gtin={product.gtin}
             name={product.name}
             brand={product.brand}
+            reviewCount={product.reviewCount}
           />
 
           <section id="related-products" className="mt-12">
