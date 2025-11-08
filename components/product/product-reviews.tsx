@@ -265,63 +265,6 @@ export function ProductReviews({ gtin, name, brand }: ProductReviewsProps) {
               View source dataset
             </a>
           )}
-
-          {/* Submission form */}
-          <div className="mt-8 pt-6 border-t">
-            <h4 className="mb-3 font-medium text-sm">Submit your review</h4>
-            <div className="gap-4 grid sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="sub-rating">Rating</Label>
-                <Select
-                  value={String(subRating)}
-                  onValueChange={(v) => setSubRating(Number(v))}
-                >
-                  <SelectTrigger id="sub-rating" className="w-32">
-                    <SelectValue placeholder="Rating" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="1">1</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="sub-title">Title (optional)</Label>
-                <Input
-                  id="sub-title"
-                  value={subTitle}
-                  onChange={(e) => setSubTitle(e.target.value)}
-                  placeholder="Short summary"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="sub-comment">Comment</Label>
-                <Textarea
-                  id="sub-comment"
-                  value={subComment}
-                  onChange={(e) => setSubComment(e.target.value)}
-                  placeholder="Share your experience"
-                  rows={4}
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mt-4">
-              <Button onClick={handleSubmitReview} disabled={submitting}>
-                Submit Review
-              </Button>
-              {submitError && (
-                <span className="text-red-600 text-sm">{submitError}</span>
-              )}
-              {submitSuccess && (
-                <span className="text-green-600 text-sm">
-                  Thanks! Your review is pending approval.
-                </span>
-              )}
-            </div>
-          </div>
         </CardContent>
       </Card>
     </section>
