@@ -119,7 +119,7 @@ export default function TopProducts() {
                 <div className="top-4 right-4 z-10 absolute bg-primary/90 backdrop-blur-sm px-3 py-1 rounded-full">
                   <span className="flex items-center gap-1 font-bold text-primary-foreground text-xs">
                     <Star className="fill-current w-3 h-3" />
-                    {product.rating}
+                    {product.rating.toFixed(1)}
                   </span>
                 </div>
               </Link>

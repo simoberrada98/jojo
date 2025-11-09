@@ -205,7 +205,7 @@ export function ProductReviews({
           <div className="flex flex-wrap items-center gap-3 text-muted-foreground text-sm">
             <RatingStars value={summary.averageRating} />
             <span className="font-semibold text-foreground">
-              {summary.averageRating.toFixed(2)} / 5.0
+              {summary.averageRating.toFixed(1)} / 5.0
             </span>
             <span aria-hidden="true">•</span>
             <span>{summary.reviewCount} reviews</span>

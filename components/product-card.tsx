@@ -162,7 +162,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <div className="flex items-center gap-1 ml-2">
                 <Star className="fill-accent w-4 h-4 text-accent" />
                 <span className="font-semibold text-accent text-sm">
-                  {product.rating.toFixed(2)}
+                  {product.rating.toFixed(1)}
                 </span>
               </div>
             )}

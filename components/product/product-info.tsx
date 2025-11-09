@@ -109,7 +109,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 ))}
               </div>
               <span className="font-semibold text-accent text-lg">
-                {product.rating.toFixed(2)}
+                {product.rating.toFixed(1)}
               </span>
             </div>
             {product.reviewCount && (
