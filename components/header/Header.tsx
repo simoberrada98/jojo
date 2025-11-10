@@ -46,7 +46,10 @@ export function Header({ cartCount = 0 }: HeaderProps) {
             className="flex items-center gap-2"
             aria-label={`${APP_BRANDING.name} home`}
           >
-            <BrandLogo className="p-4 sm:p-6 text-foreground" decorative />
+            <BrandLogo
+              className="text-foreground w-28 sm:w-36 lg:w-44 h-auto p-1 sm:p-2"
+              decorative
+            />
 
             <span className="sr-only">{APP_BRANDING.name}</span>
           </Link>

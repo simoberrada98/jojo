@@ -7,7 +7,7 @@ import { User, Package, Heart, Settings, LogOut, X } from 'lucide-react';
 import { Muted } from '@/components/ui/typography';
 import { useAuth } from '@/lib/contexts/auth-context';
 import CurrencyToggle from '@/components/currency-toggle';
-import { MAIN_NAV_ITEMS, USER_DASHBOARD_NAV } from '@/lib/constants/navigation';
+import { MAIN_NAV_ITEMS, USER_DASHBOARD_NAV, type NavigationItem } from '@/lib/constants/navigation';
 import { SearchBar } from '@/components/search/SearchBar';
 import { useAnimationConfig } from '@/lib/animation';
 import { Button } from '../ui/button';
@@ -90,24 +90,42 @@ export function MobileMenu({
         <SearchBar className="w-full" />
       </motion.div>
 
-      <ul className="flex flex-col flex-1 gap-2 p-2 min-h-fill">
-        {MAIN_NAV_ITEMS.map((item) => (
-          <motion.li
-            key={item.href}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: anim.enter, ease: anim.easeStandard }}
-            className="w-full h-1/16"
-          >
-            <Link
-              href={item.href}
-              onClick={onClose}
-              className="block p-2 text-foreground/80 text-md hover:text-accent sm:text-base transition"
+      <ul className="flex flex-col flex-1 gap-1 p-2 min-h-fill">
+        {MAIN_NAV_ITEMS.map((item) => {
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          return (
+            <motion.li
+              key={item.href}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: anim.enter, ease: anim.easeStandard }}
+              className="w-full"
             >
-              {item.label}
-            </Link>
-          </motion.li>
-        ))}
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className="block p-2 text-foreground/80 text-md hover:text-accent sm:text-base transition"
+              >
+                {item.label}
+              </Link>
+              {hasChildren ? (
+                <ul className="ml-3 pl-2 border-l border-border">
+                  {item.children?.map((child: NavigationItem) => (
+                    <li key={child.href}>
+                      <Link
+                        href={child.href}
+                        onClick={onClose}
+                        className="block px-2 py-1 text-foreground/70 text-sm hover:text-foreground hover:bg-accent/10 rounded"
+                      >
+                        {child.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </motion.li>
+          );
+        })}
       </ul>
       {/* User Menu */}
       <motion.div

@@ -24,7 +24,14 @@ export function BrandLogo({
   return (
     <svg
       viewBox="0 0 2048 648"
-      className={cn('mr-2 p-2 w-full', className)}
+      className={cn(
+        // Base sizing and spacing kept minimal for header usage
+        'mr-2 w-full p-1 sm:p-2',
+        // Responsive width variants; external className can override
+        'transition-[width,transform] duration-300 ease-out',
+        className
+      )}
+      preserveAspectRatio="xMidYMid meet"
       role={decorative ? undefined : 'img'}
       aria-hidden={decorative ? true : undefined}
       focusable="false"

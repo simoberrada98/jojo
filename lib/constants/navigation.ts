@@ -7,6 +7,7 @@ export interface NavigationItem {
   label: string;
   href: string;
   icon?: string;
+  children?: NavigationItem[];
 }
 
 /**
@@ -20,6 +21,10 @@ export const MAIN_NAV_ITEMS: NavigationItem[] = [
   {
     label: 'Shop',
     href: '/collections/all',
+    children: [
+      { label: 'All Products', href: '/collections/all' },
+      { label: 'Collections', href: '/collections' },
+    ],
   },
   {
     label: 'Contact',
