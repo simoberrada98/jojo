@@ -81,7 +81,7 @@ export default function AboutPage() {
           __html: serializeSchema(localBusinessSchema),
         }}
       />
-      <div className="mx-auto px-4 py-12 container">
+      <div className="mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="mx-auto mb-16 max-w-4xl text-center">
           <H1 className="mb-4">About Jhuangnyc</H1>

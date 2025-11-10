@@ -6,7 +6,7 @@ import { AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 export default function ReturnsPage() {
   return (
     <PageLayout>
-      <div className="mx-auto px-4 py-12 max-w-4xl container">
+      <div className="mx-auto px-4 py-12 max-w-4xl">
         <div className="mb-8">
           <H1 className="mb-2">Returns & Refunds Policy</H1>
           <Muted className="m-0">

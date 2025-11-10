@@ -197,9 +197,7 @@ export default async function RootLayout({
                   style={{ content: ' ', ...glowOverlayStyle }}
                 />
 
-                <div className="mx-auto px-4 sm:px-6 lg:px-8 container">
-                  {children}
-                </div>
+                {children}
 
                 <Toaster position="top-center" />
                 <Analytics />
