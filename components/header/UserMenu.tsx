@@ -31,7 +31,7 @@ const iconMap = {
 
 export function UserMenu({ onAuthDialogOpen }: UserMenuProps) {
   const { user, profile, signOut } = useAuth();
-  const anim = useAnimationConfig();
+
 
   if (!user) {
     return (
