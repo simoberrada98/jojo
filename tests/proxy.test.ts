@@ -9,12 +9,24 @@ vi.mock('@supabase/ssr', () => {
         auth: {
           getUser: vi.fn(async () => ({ data: { user: null } })),
         },
-      } as any;
+      } as { auth: { getUser: () => Promise<{ data: { user: null } }> } };
     }),
   };
 });
 
 import { proxy } from '@/proxy';
+
+interface MockNextRequest {
+  nextUrl: {
+    pathname: string;
+    clone(): URL;
+  };
+  headers: Map<string, string>;
+  cookies: {
+    getAll(): Array<{ name: string; value: string }>;
+    set(name: string, value: string): void;
+  };
+}
 
 function makeRequest(pathname: string) {
   const url = new URL(`http://localhost${pathname}`);
@@ -35,7 +47,7 @@ function makeRequest(pathname: string) {
         cookiesStore[name] = value;
       },
     },
-  } as any;
+  } as MockNextRequest;
 }
 
 describe('proxy edge middleware routing', () => {

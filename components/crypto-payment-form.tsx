@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { H3, Muted } from '@/components/ui/typography';
+import { Muted } from '@/components/ui/typography';
 import { Copy, Check } from 'lucide-react';
 import Image from 'next/image';
 import { FormSection } from './ui/form-section';

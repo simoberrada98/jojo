@@ -4,6 +4,7 @@ import { serpApiService } from '@/lib/services/serpapi.service';
 import { SupabaseAdminService } from '@/lib/services/supabase-admin.service';
 import { logger } from '@/lib/utils/logger';
 import type { Database } from '@/types/supabase.types';
+import type { SerpApiResult } from '@/lib/services/serpapi.service';
 
 type Supabase = Database['public'];
 
@@ -44,7 +45,7 @@ export async function backoff<T>(
   baseMs = 500
 ): Promise<T> {
   let attempt = 0;
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     try {
       return await fn();
@@ -141,13 +142,25 @@ export async function mapSerpApiToReviews(
   if (!raw) return [];
 
   try {
-    const source = (raw.raw_response as any) ?? {};
+    const source = raw.raw_response ?? {};
     const reviews =
-      source.reviews_results ||
-      source.product_results?.reviews ||
-      source.reviews ||
+      (source as SerpApiResult).reviews_results ||
+      (source as SerpApiResult).product_results?.reviews ||
+      (source as SerpApiResult).reviews ||
       [];
-    const mapped: ReviewInsert[] = reviews.map((r: any) => ({
+interface SerpApiReview {
+  rating?: number;
+  title?: string;
+  snippet?: string;
+  body?: string;
+  source?: string;
+  helpful_count?: number;
+  link?: string;
+  date?: string;
+  reviewerName?: string;
+}
+
+    const mapped: ReviewInsert[] = reviews.map((r: SerpApiReview) => ({
       product_id: productId,
       user_id: null,
       rating: normalizeRating(Number(r.rating ?? 0)),

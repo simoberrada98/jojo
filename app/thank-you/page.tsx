@@ -17,7 +17,6 @@ import { H1, P, H3 } from '@/components/ui/typography';
 function ThankYouContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const router = useRouter();
   const { items, clearCart } = useCart();
   const { currency, formatPrice } = useCurrency();
   const [orderNumber, setOrderNumber] = useState<string>('');

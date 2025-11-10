@@ -17,8 +17,9 @@ export default function WishlistPage() {
     try {
       await removeFromWishlist(productId);
       toast.success('Removed from wishlist');
-    } catch (_error) {
-      toast.error('Failed to remove from wishlist');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`Failed to remove from wishlist: ${message}`);
     }
   };
 
@@ -26,8 +27,9 @@ export default function WishlistPage() {
     try {
       await addToCart(productId);
       toast.success('Added to cart');
-    } catch (_error) {
-      toast.error('Failed to add to cart');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`Failed to add to cart: ${message}`);
     }
   };
 

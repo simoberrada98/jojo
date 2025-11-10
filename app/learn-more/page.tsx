@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { H1, H2, H3, Muted, P } from '@/components/ui/typography';
+import { H1, H2, Muted, P } from '@/components/ui/typography';
 import { serializeSchema } from '@/lib/schema';
 import {
   Rocket,

@@ -7,6 +7,20 @@ interface UsePaymentHandlerOptions {
   onComplete?: () => void;
 }
 
+interface CustomerInfo {
+  email?: string;
+  name?: string;
+  phone?: string;
+  address?: {
+    line1?: string;
+    line2?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
+  };
+}
+
 export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
   const [processing, setProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('idle');
@@ -16,7 +30,7 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
     method: string,
     data: {
       total: number;
-      customerInfo?: any; // TODO: Define a proper type for customerInfo
+      customerInfo?: CustomerInfo;
       items?: Array<{ id: string; name: string; quantity: number; total: number }>;
       subtotal: number;
       shipping: number;

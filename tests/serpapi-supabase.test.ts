@@ -53,7 +53,7 @@ describe('SerpApiService', () => {
 
     const supabaseClient = supabaseAdminService.getClient();
     const fromClause = supabaseClient.from('serpapi_amazon_data');
-    const upsertClause = (fromClause as any).upsert;
+    const upsertClause = fromClause.upsert;
 
     expect(supabaseClient.from).toHaveBeenCalledWith('serpapi_amazon_data');
     expect(upsertClause).toHaveBeenCalledWith({

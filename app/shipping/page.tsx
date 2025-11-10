@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import PageLayout from '@/components/layout/PageLayout';
 import { H1, H2, H3, Muted, P } from '@/components/ui/typography';
-import { ChevronRight, Truck, Globe, Clock, Shield } from 'lucide-react';
+import { ChevronRight, Truck, Clock } from 'lucide-react';
 
 export default function ShippingPage() {
   return (

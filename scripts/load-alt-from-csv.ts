@@ -3,6 +3,7 @@ import path from 'path';
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/logger';
+import type { Database } from '@/types/supabase.types';
 
 config({ path: '.env.local' });
 
@@ -288,7 +289,7 @@ async function main() {
   let dupSlugCount = 0;
   let dupSkuCount = 0;
 
-  const toInsert: any[] = [];
+  const toInsert: Database['public']['Tables']['products']['Insert'][] = [];
 
   for (const r of rows) {
     const slug = r.slug?.trim();

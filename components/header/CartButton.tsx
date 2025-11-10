@@ -6,7 +6,7 @@ import { ShoppingCart, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button, MotionButton } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+
 import ProductImage from '@/components/product-image';
 import {
   Sheet,
@@ -44,11 +44,7 @@ export function CartButton({ cartCount }: CartButtonProps) {
 
   const derivedCount = isHydrated ? itemCount : cartCount;
   const hasItems = derivedCount > 0;
-  const shippingProgress = Math.min(
-    100,
-    (total / FREE_SHIPPING_THRESHOLD) * 100
-  );
-  const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - total);
+
 
   const handleRemove = (cartItem: CartItem) => {
     const snapshot = { ...cartItem };

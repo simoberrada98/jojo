@@ -158,7 +158,7 @@ export default async function RootLayout({
 }>) {
   const cookieConsent = await getCookieConsentStatus();
   // Get base URL - use environment variable or fallback
-  const baseUrl = env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
+
 
   return (
     <html

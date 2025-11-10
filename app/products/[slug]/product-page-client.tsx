@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProductInfo } from '@/components/product/product-info';
 import { ProductImageGallery } from '@/components/product/product-image-gallery';
 import PageLayout from '@/components/layout/PageLayout';
-import { P } from '@/components/ui/typography';
+
 import { ProductKeyFeatures } from '@/components/product/product-key-features';
 import { RelatedProducts } from '@/components/product/related-products';
 import { ProductReviews } from '@/components/product/product-reviews';

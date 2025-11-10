@@ -18,6 +18,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import type { SerpApiResult } from '@/lib/services/serpapi.service';
 
 type RowObj = Record<string, string>;
 
@@ -155,7 +156,7 @@ function extractKeyFeatures(text: string, limit = 6): string[] {
   return sorted.slice(0, limit).map(([w]) => w);
 }
 
-function safeJsonParse<T = any>(s: string): T | null {
+function safeJsonParse<T>(s: string): T | null {
   try { return JSON.parse(s); } catch { return null; }
 }
 
@@ -165,7 +166,7 @@ function extractAsinFromLink(link?: string): string | null {
   return m ? m[1].toUpperCase() : null;
 }
 
-function extractAsinFromSearch(raw: any): string | null {
+function extractAsinFromSearch(raw: SerpApiResult): string | null {
   const organic = raw?.organic_results || [];
   for (const r of organic) {
     if (r.asin && typeof r.asin === 'string') return String(r.asin).toUpperCase();
@@ -250,7 +251,7 @@ async function main() {
   // Map GTIN -> ASIN inferred from Amazon search raw_response
   const asinByGtin = new Map<string, string>();
   for (const r of searchObjs) {
-    const raw = safeJsonParse<any>(r['raw_response']);
+    const raw = safeJsonParse<SerpApiResult>(r['raw_response']);
     const asin = raw ? extractAsinFromSearch(raw) : null;
     if (asin) asinByGtin.set(r['gtin'], asin);
   }
@@ -263,7 +264,7 @@ async function main() {
     const provider = r['provider'];
     const gtin = r['gtin'] || r['query'] || '';
     const status = r['status_code'];
-    const raw = safeJsonParse<any>(r['raw_response']);
+    const raw = safeJsonParse<SerpApiResult>(r['raw_response']);
     const asinFromUrl = extractAsinFromLink(r['request_url']);
     const asin = asinFromUrl || asinByGtin.get(gtin) || null;
 
@@ -328,8 +329,8 @@ async function main() {
   // For products with search data but no review rows, add synthesized placeholder rows
   for (const s of searchObjs) {
     const gtin = s['gtin'];
-    const raw = safeJsonParse<any>(s['raw_response']);
-    const asin = extractAsinFromSearch(raw);
+    const raw = safeJsonParse<SerpApiResult>(s['raw_response']);
+    const asin = raw ? extractAsinFromSearch(raw) : null;
     const key = asin || gtin;
     if (!key) continue;
     if (!reviewsByProduct.has(key)) {

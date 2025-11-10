@@ -27,7 +27,7 @@ export default function SettingsPage() {
   const [phone, setPhone] = useState(profile?.phone || '');
 
   // Password form
-  const [currentPassword, setCurrentPassword] = useState('');
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -84,7 +84,6 @@ export default function SettingsPage() {
       toast.error(error.message);
     } else {
       toast.success('Password updated successfully');
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     }

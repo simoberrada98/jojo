@@ -4,6 +4,7 @@ import { publishReviewsForGtin } from '@/lib/services/reviews/amazon-reviews.ser
 import { SupabaseAdminService } from '@/lib/services/supabase-admin.service';
 import { logger } from '@/lib/utils/logger';
 import { env } from '@/lib/config/env';
+import type { Database } from '@/types/supabase.types';
 
 async function main() {
   if (!env.SERPAPI_API_KEY) {
@@ -29,7 +30,9 @@ async function main() {
   }
 
   const gtins: string[] = (data || [])
-    .map((r: any) => String(r.gtin).trim())
+    .map((r: Pick<Database['public']['Tables']['products']['Row'], 'gtin'>) =>
+      String(r.gtin).trim()
+    )
     .filter(Boolean);
 
   logger.info(`Refreshing reviews for ${gtins.length} products`);

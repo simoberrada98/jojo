@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { H1, H2, H3, P } from '@/components/ui/typography';
+import { H1, H3, P } from '@/components/ui/typography';
 import Wishlist from '@/components/dashboard/Wishlist'; // Import Wishlist component
 import { ShoppingCart } from 'lucide-react';
 

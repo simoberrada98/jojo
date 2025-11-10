@@ -6,7 +6,6 @@ import {
   PaymentMethod,
   type HoodPayWebhookPayload,
   type PaymentRecord,
-  type CheckoutData,
 } from '@/types/payment';
 import { verifyHoodpaySignature } from '@/lib/services/payment/webhook';
 import { logger } from '@/lib/utils/logger';
@@ -19,7 +18,6 @@ import {
 } from '@/lib/services/service-registry.server';
 import type {
   PaymentDatabaseService,
-  PaymentOrderPayload,
 } from '@/lib/services/payment-db.service';
 import type { NotificationService } from '@/lib/services/notification.service';
 import type { OrderDatabaseService } from '@/lib/services/order-db.service';
@@ -222,7 +220,7 @@ async function handlePaymentCompleted(
     user_id?: string;
     order_id?: string;
   };
-  const userId = metadata.user_id;
+  const _userId = metadata.user_id;
   const orderId = metadata.order_id;
 
   if (!orderId) {
@@ -334,56 +332,9 @@ function metadataToRecord(metadata: Json | null): Record<string, Json> {
   ) as Record<string, Json>;
 }
 
-function isCheckoutData(value: unknown): value is CheckoutData {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return false;
-  }
 
-  const record = value as Record<string, unknown>;
-  return (
-    'items' in record &&
-    'subtotal' in record &&
-    'tax' in record &&
-    'shipping' in record &&
-    'total' in record &&
-    'currency' in record
-  );
-}
 
-function buildOrderPayload(
-  payment: PaymentRecord
-): PaymentOrderPayload | undefined {
-  if (!isCheckoutData(payment.checkout_data)) {
-    return undefined;
-  }
-  const checkout = payment.checkout_data;
-  if (!checkout?.items?.length) return undefined;
 
-  const items = checkout.items.map((item) => ({
-    product_id: String(item.id),
-    quantity: item.quantity > 0 ? item.quantity : 1,
-    unit_price: item.unitPrice ?? 0,
-    total_price: item.total ?? 0,
-  }));
-
-  const address = checkout.customerInfo?.address
-    ? {
-        ...checkout.customerInfo.address,
-        name: checkout.customerInfo.name,
-        email: checkout.customerInfo.email,
-        phone: checkout.customerInfo.phone,
-      }
-    : null;
-
-  return {
-    total_amount: checkout.total ?? payment.amount,
-    currency: checkout.currency ?? payment.currency,
-    shipping_address: address,
-    billing_address: address,
-    payment_method: payment.method ?? PaymentMethod.HOODPAY,
-    order_items: items,
-  };
-}
 
 export async function GET() {
   return NextResponse.json({

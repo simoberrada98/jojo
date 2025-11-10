@@ -10,7 +10,7 @@ import {
 } from '@/lib/hoodpay';
 import { resolveHoodpayConfig } from '@/lib/config/hoodpay.config';
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const hoodpayConfig = resolveHoodpayConfig();
     if (!hoodpayConfig) {

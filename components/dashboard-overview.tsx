@@ -1,6 +1,6 @@
 'use client';
 
-import { H3, Muted, P } from '@/components/ui/typography';
+import { H3, P } from '@/components/ui/typography';
 import { Users, Package, DollarSign } from 'lucide-react';
 
 const STATS = [

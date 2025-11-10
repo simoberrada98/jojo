@@ -18,8 +18,9 @@ export default function CartPage() {
   ) => {
     try {
       await updateQuantity(cartItemId, newQuantity);
-    } catch (_error) {
-      toast.error(CART_COPY.quantityUpdateError);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`${CART_COPY.quantityUpdateError}: ${message}`);
     }
   };
 
@@ -27,8 +28,9 @@ export default function CartPage() {
     try {
       await removeFromCart(cartItemId);
       toast.success(CART_COPY.removeSuccess);
-    } catch (_error) {
-      toast.error(CART_COPY.removeError);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`${CART_COPY.removeError}: ${message}`);
     }
   };
 

@@ -142,8 +142,12 @@ export function ProductReviews({
       setSubTitle('');
       setSubComment('');
       setSubRating(5);
-    } catch (e: any) {
-      setSubmitError(e?.message || 'Failed to submit review');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setSubmitError(e.message);
+      } else {
+        setSubmitError('Failed to submit review');
+      }
     } finally {
       setSubmitting(false);
     }

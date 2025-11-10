@@ -74,20 +74,19 @@ export function generateProductMetadata({
       ],
       // Product-specific OG tags
       ...(product.priceUSD && {
-        // @ts-expect-error - These are valid OG product tags
+
         'product:price:amount': product.priceUSD.toFixed(2),
         'product:price:currency': 'USD',
       }),
       ...(product.inStock && {
-        // @ts-expect-error
-        'product:availability': 'in stock',
+
       }),
       ...(product.brand && {
-        // @ts-expect-error
+
         'product:brand': product.brand,
       }),
       ...(product.category && {
-        // @ts-expect-error
+
         'product:category': product.category,
       }),
     },

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/contexts/auth-context';
 import { wishlistService } from '@/lib/services/wishlist.service';
-import { H2, H3, P, Muted } from '@/components/ui/typography';
+import { H3, P, Muted } from '@/components/ui/typography';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, HeartCrack, Trash2 } from 'lucide-react';
@@ -21,7 +21,7 @@ interface WishlistItem {
 
 export default function Wishlist() {
   const { user } = useAuth();
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+  const [_wishlistItems, _setWishlistItems] = useState<WishlistItem[]>([]);
   const [wishedProducts, setWishedProducts] = useState<DisplayProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function Wishlist() {
       } = await wishlistService.getWishlistItems(user.id);
 
       if (success && data) {
-        setWishlistItems(data);
+        _setWishlistItems(data);
         // Fetch product details for each wished item
         const productIds = data.map((item) => item.product_id);
         if (productIds.length > 0) {
@@ -79,7 +79,7 @@ export default function Wishlist() {
       await wishlistService.removeFromWishlist(user.id, productId);
 
     if (success) {
-      setWishlistItems((prev) =>
+      _setWishlistItems((prev) =>
         prev.filter((item) => item.product_id !== productId)
       );
       setWishedProducts((prev) =>

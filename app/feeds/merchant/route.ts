@@ -9,6 +9,7 @@ import {
   normalizeAvailability,
 } from '@/lib/feeds/merchant/schema';
 import { getGoogleCategoryPath } from '@/lib/taxonomy/google-taxonomy';
+import type { SeoProduct } from '@/lib/data/seo-products';
 
 // This route supports query-parameter filtering and reads request.url.
 // Opt out of static rendering to avoid DynamicServerError during build.
@@ -49,7 +50,7 @@ type ReviewSummary = Awaited<
 > | null;
 
 function buildItemXml(
-  product: any,
+  product: SeoProduct,
   reviewSummary: ReviewSummary,
   baseUrl: string,
   channelUpdatedAt: string
@@ -94,11 +95,9 @@ function buildItemXml(
     'g:product_type': String(product.category),
     // Map Google Product Category using taxonomy resolver
     'g:google_product_category': getGoogleCategoryPath({
-      product_type: (product.product_type ?? product.category ?? '') as
-        | string
-        | null,
-      category: (product.category ?? '') as string | null,
-      tags: (product.tags ?? null) as string[] | null,
+      product_type: product.category,
+      category: product.category,
+      tags: null,
     }),
     'g:brand': String(product.brand || 'MineHub'),
     'g:condition': 'new',
@@ -256,7 +255,7 @@ export async function GET(request: Request) {
     }
 
     // Apply filters prior to review fetch to minimize calls
-    const filteredProducts = products.filter((p: any) => {
+    const filteredProducts = products.filter((p: SeoProduct) => {
       // Category filter (match normalized category string)
       if (filterCategory) {
         const cat = String(p.category || '')

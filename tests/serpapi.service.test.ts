@@ -13,7 +13,9 @@ vi.mock('@/lib/config/env', () => ({
 
 // Mock Supabase client
 const fromMock = vi.fn();
-const supabaseClientMock = { from: fromMock } as any;
+const supabaseClientMock = { from: fromMock } as {
+  from: typeof fromMock;
+};
 
 vi.mock('@/lib/services/supabase-admin.service', () => {
   return {

@@ -4,9 +4,7 @@ import { supabaseConfig } from '@/lib/supabase/config';
 import { logger } from '@/lib/utils/logger';
 import { getExternalReviewSummary } from '@/lib/services/reviews/external-review.service';
 import type {
-  ExternalReviewEntry,
   ExternalReviewSummary,
-  ReviewRecord,
   ReviewRecordInsert,
 } from '@/types/review';
 
@@ -268,8 +266,9 @@ export async function POST(
   let payload: { rating?: number; comment?: string; title?: string };
   try {
     payload = await request.json();
-  } catch (_e) {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ error: `Invalid JSON body: ${message}` }, { status: 400 });
   }
 
   const rating = Number(payload.rating);

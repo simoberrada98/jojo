@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as svc from '@/lib/services/reviews/amazon-reviews.service';
+import type { Json } from '@/types/supabase.types';
 
 describe('mapSerpApiToReviews', () => {
   it('transforms SerpAPI reviews to product_reviews rows', async () => {
@@ -32,7 +33,7 @@ describe('mapSerpApiToReviews', () => {
     vi.spyOn(svc, 'getOrFetchSerpApiRaw').mockResolvedValue({
       id: 'cache-1',
       gtin,
-      raw_response: raw as any,
+      raw_response: raw as Json,
       last_fetched_at: new Date().toISOString(),
     });
 

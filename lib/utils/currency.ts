@@ -20,8 +20,8 @@ export function formatCurrency(
   const {
     locale = PRICING_CONFIG.defaultLocale,
     currency = PRICING_CONFIG.defaultCurrency,
-    minimumFractionDigits = SUPPORTED_CURRENCIES[currency]?.decimalDigits ?? 2,
-    maximumFractionDigits = SUPPORTED_CURRENCIES[currency]?.decimalDigits ?? 2,
+    minimumFractionDigits = SUPPORTED_CURRENCIES[currency as CurrencyCode]?.decimalDigits ?? 2,
+    maximumFractionDigits = SUPPORTED_CURRENCIES[currency as CurrencyCode]?.decimalDigits ?? 2,
     showSymbol = true,
     showUSDEstimate = PRICING_CONFIG.priceDisplay.showUSDEstimate,
     usdAmount,

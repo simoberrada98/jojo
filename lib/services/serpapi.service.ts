@@ -2,6 +2,7 @@ import { env } from '@/lib/config/env';
 import { logger } from '@/lib/utils/logger';
 import { SupabaseAdminService } from './supabase-admin.service';
 import { SerpStorageService } from './serp-storage.service';
+import type { Json } from '@/types/supabase.types';
 
 interface SerpApiReview {
   title: string;
@@ -11,22 +12,23 @@ interface SerpApiReview {
   source: string;
   link: string;
   body?: string;
+  helpful_count?: number;
 }
 
-interface SerpApiResult {
+export interface SerpApiResult {
   product_results?: {
     reviews?: SerpApiReview[];
   };
   reviews_results?: SerpApiReview[];
   reviews?: SerpApiReview[];
-  organic_results?: Array<{
-    asin?: string;
-    title?: string;
-    rating?: number;
-    reviews?: number;
-    link?: string;
-  }>;
-  // Add other relevant fields from SerpApi response if needed
+      organic_results?: Array<{
+      asin?: string;
+      title?: string;
+      rating?: number;
+      reviews?: number;
+      link?: string;
+      link_clean?: string;
+    }>;  // Add other relevant fields from SerpApi response if needed
 }
 
 export class SerpApiService {
@@ -219,7 +221,7 @@ export class SerpApiService {
           .upsert(
             {
               gtin: productQuery,
-              raw_response: reviewsData as unknown as any,
+              raw_response: reviewsData as Json,
               last_fetched_at: new Date().toISOString(),
             },
             { onConflict: 'gtin' }
@@ -259,7 +261,7 @@ export class SerpApiService {
         .upsert(
           {
             gtin: productQuery,
-            raw_response: searchData as unknown as any,
+            raw_response: searchData as Json,
             last_fetched_at: new Date().toISOString(),
           },
           { onConflict: 'gtin' }

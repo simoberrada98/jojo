@@ -19,7 +19,7 @@ export default function CartPage() {
   const router = useRouter();
 
   // Calculate totals using shared utility
-  const { subtotal, shipping, tax, total } =
+  const { subtotal, total } =
     PricingService.calculateCartSummary(cartItems);
 
   const handleCheckout = () => {
