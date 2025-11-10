@@ -39,5 +39,7 @@ export default defineConfig([
     'build/**',
     'next-env.d.ts',
     'types/supabase.types.ts',
+    'scripts/**', // Add this line to ignore the scripts directory
+    'tests',
   ]),
 ]);

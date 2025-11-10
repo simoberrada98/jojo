@@ -91,7 +91,7 @@ export default function OrdersManagement() {
     {
       header: 'Action',
       accessor: 'id' as keyof Order,
-      cell: (value: Order[keyof Order]) => (
+      cell: (_value: Order[keyof Order]) => (
         <Button
           variant="outline"
           size="sm"

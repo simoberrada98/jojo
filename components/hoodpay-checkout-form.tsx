@@ -1,25 +1,12 @@
 'use client';
 
-import { createHoodpaySessionAction } from '@/app/actions/create-hoodpay-session';
-import { paymentClientConfig } from '@/lib/config/payment.config.client';
-import { useState, useEffect, useMemo, useTransition } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { H3, Muted } from '@/components/ui/typography';
-import {
-  CreditCard,
-  Wallet,
-  Loader2,
-  CheckCircle,
-  XCircle,
-} from 'lucide-react';
-import {
-  createPaymentOrchestrator,
-  PaymentMethod,
-  PaymentStatus,
-  type CheckoutData,
-} from '@/lib/payment';
+import { Muted } from '@/components/ui/typography';
+import { CreditCard, Wallet, Loader2, CheckCircle } from 'lucide-react';
 import { usePaymentHandler } from '@/lib/hooks/use-payment-handler';
 import { prepareCheckoutData, type OrderData } from '@/lib/utils/checkout';
+
 
 import { PaymentStatusMessage } from '@/components/ui/payment-status-message';
 import { useCurrency } from '@/lib/contexts/currency-context';
@@ -59,14 +46,9 @@ export default function HoodPayCheckoutForm({
     handlePayment(selectedMethod, checkoutData, currency, orderData.orderId);
   };
 
-  const [webPaymentSupported, setWebPaymentSupported] = useState(false);
 
-  useEffect(() => {
-    // Check if Web Payment API is available
-    if (typeof window !== 'undefined' && 'PaymentRequest' in window) {
-      setWebPaymentSupported(true);
-    }
-  }, []);
+
+
 
   const paymentMethods = useMemo(
     () =>
