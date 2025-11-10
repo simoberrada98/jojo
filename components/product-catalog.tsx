@@ -32,6 +32,9 @@ function ProductCatalogContent() {
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_RANGES.MIN, PRICE_RANGES.MAX]);
+  const [pageSize, setPageSize] = useState<number>(PRODUCT_CONFIG.itemsPerPage);
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
 
   // Set category from URL params
   useEffect(() => {
@@ -41,19 +44,19 @@ function ProductCatalogContent() {
     }
   }, [searchParams]);
 
-  // Fetch all products on mount
+  // Fetch products for catalog browsing (no free-form search)
   useEffect(() => {
     async function fetchProducts() {
       try {
         setLoading(true);
-        const url = new URL('/api/products', window.location.origin);
-        url.searchParams.set('limit', '100');
-        const q = searchParams.get('q');
-        if (q) url.searchParams.set('q', q);
+        const url = new URL('/api/catalog', window.location.origin);
         const categoryParam = searchParams.get('category');
         if (categoryParam && categoryParam !== 'All') {
           url.searchParams.set('category', categoryParam);
         }
+        const offset = pageIndex * pageSize;
+        url.searchParams.set('limit', String(pageSize));
+        url.searchParams.set('offset', String(offset));
         const response = await fetchWithRetry(
           url.toString(),
           { cache: 'no-store' },
@@ -63,23 +66,24 @@ function ProductCatalogContent() {
             backoffMultiplier: 2,
             timeoutMs: 12000,
             onRetry: (attempt, err) =>
-              logger.warn(`Retrying product fetch (attempt ${attempt})`, err),
+              logger.warn(`Retrying catalog fetch (attempt ${attempt})`, err),
           }
         );
         const data = await response.json();
         setProducts(data.results || []);
+        setTotal(data.total || 0);
         setError(null);
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to load products';
         setError(message);
-        logger.error('Products fetch failed', err as Error);
+        logger.error('Catalog fetch failed', err as Error);
       } finally {
         setLoading(false);
       }
     }
     fetchProducts();
-  }, [searchParams]);
+  }, [searchParams, pageIndex, pageSize]);
 
   const filteredAndSortedProducts = useMemo(() => {
     const result = products.filter((p) => {
@@ -125,6 +129,11 @@ function ProductCatalogContent() {
       max: formatCurrency(priceRange[1], { showSymbol: true })
     };
   }, [priceRange]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(total / pageSize)),
+    [total, pageSize]
+  );
 
   return (
     <section id="products" className="px-4 sm:px-6 lg:px-8 py-20">
@@ -196,6 +205,22 @@ function ProductCatalogContent() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          {/* Pagination size */}
+          <div className="flex items-center justify-end gap-2">
+            <Muted className="m-0">Items per page:</Muted>
+            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[12, 24, 48].map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {/* Error state with retry and graceful fallback */}
           {error && (
@@ -287,7 +312,7 @@ function ProductCatalogContent() {
           ) : error ? (
             <span className="text-destructive">{error}</span>
           ) : (
-            `Showing ${filteredAndSortedProducts.length} of ${products.length} products`
+            `Showing ${filteredAndSortedProducts.length} of ${total} products`
           )}
         </div>
 
@@ -320,6 +345,30 @@ function ProductCatalogContent() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-8">
+          <Muted>
+            Page {pageIndex + 1} of {totalPages}
+          </Muted>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+              disabled={pageIndex === 0 || loading}
+              aria-label="Previous page"
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={() => setPageIndex((p) => Math.min(p + 1, totalPages - 1))}
+              disabled={pageIndex >= totalPages - 1 || loading}
+              aria-label="Next page"
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </section>

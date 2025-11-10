@@ -52,11 +52,15 @@ function buildQueryParams({
   category,
   limit,
   offset,
+  inStockOnly,
+  sort,
 }: {
   q: string;
   category?: string;
   limit: number;
   offset: number;
+  inStockOnly?: boolean;
+  sort?: string;
 }): string {
   const params = new URLSearchParams();
   const safeQ = sanitizeQuery(q);
@@ -64,6 +68,8 @@ function buildQueryParams({
   if (category) params.set('category', category);
   params.set('limit', String(limit));
   params.set('offset', String(offset));
+  if (typeof inStockOnly === 'boolean') params.set('inStockOnly', String(inStockOnly));
+  if (sort) params.set('sort', sort);
   return params.toString();
 }
 
@@ -80,6 +86,9 @@ export function SearchResultsPage() {
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestLoading, setSuggestLoading] = useState<boolean>(false);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const deferredQuery = useDeferredValue(query);
   const abortRef = useRef<AbortController | null>(null);
@@ -140,8 +149,10 @@ export function SearchResultsPage() {
         category,
         limit: pageSize,
         offset,
+        inStockOnly,
+        sort,
       });
-      const res = await fetchWithRetry(`/api/products?${qs}`, { signal });
+      const res = await fetchWithRetry(`/api/search?${qs}`, { signal });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
@@ -190,6 +201,40 @@ export function SearchResultsPage() {
       ? `Error: ${error}`
       : `Showing ${sortedResults.length} of ${total} results`;
 
+  // Autocomplete suggestions for query input
+  useEffect(() => {
+    const term = sanitizeQuery(query);
+    if (!term || term.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    let canceled = false;
+    const timeout = setTimeout(async () => {
+      try {
+        setSuggestLoading(true);
+        const res = await fetchWithRetry(`/api/search/suggest?q=${encodeURIComponent(term)}&limit=6`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as { suggestions?: string[] };
+        if (!canceled) {
+          setSuggestions(data.suggestions || []);
+          setShowSuggestions(true);
+        }
+      } catch {
+        if (!canceled) {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } finally {
+        if (!canceled) setSuggestLoading(false);
+      }
+    }, 250);
+    return () => {
+      canceled = true;
+      clearTimeout(timeout);
+    };
+  }, [query]);
+
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-10">
       <div className="mx-auto max-w-7xl">
@@ -199,7 +244,7 @@ export function SearchResultsPage() {
         {/* Controls */}
         <Card className="p-4">
           <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
-            <div>
+            <div className="relative">
               <Label htmlFor="search-input">Search products</Label>
               <Input
                 id="search-input"
@@ -210,6 +255,33 @@ export function SearchResultsPage() {
                 onChange={(e) => setQuery(e.target.value)}
                 className="mt-2"
               />
+              {showSuggestions && (
+                <Card className="absolute left-0 right-0 z-20 mt-2 p-2">
+                  {suggestLoading && <Muted>Loading suggestions…</Muted>}
+                  {!suggestLoading && suggestions.length === 0 && (
+                    <Muted>No suggestions</Muted>
+                  )}
+                  {!suggestLoading && suggestions.length > 0 && (
+                    <ul>
+                      {suggestions.map((s) => (
+                        <li key={s}>
+                          <button
+                            type="button"
+                            className="w-full text-left px-2 py-1 hover:bg-muted rounded"
+                            onClick={() => {
+                              setQuery(s);
+                              setShowSuggestions(false);
+                              setPageIndex(0);
+                            }}
+                          >
+                            {s}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              )}
             </div>
             <div>
               <Label htmlFor="category-input">Category</Label>
