@@ -12,7 +12,19 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const [error, setError] = useState<string | null>(null);
 
-  async function handlePayment(method, data, currency, cartId?: string) {
+  async function handlePayment(
+    method: string,
+    data: {
+      total: number;
+      customerInfo?: any; // TODO: Define a proper type for customerInfo
+      items?: Array<{ id: string; name: string; quantity: number; total: number }>;
+      subtotal: number;
+      shipping: number;
+      tax: number;
+    },
+    currency: string,
+    cartId?: string
+  ) {
     setError(null);
     try {
       setProcessing(true);
@@ -28,7 +40,7 @@ export function usePaymentHandler(options: UsePaymentHandlerOptions = {}) {
           metadata: {
             selectedCurrency: currency,
             customerInfo: data.customerInfo,
-            items: data.items?.map((i) => ({
+            items: data.items?.map((i: { id: string; name: string; quantity: number; total: number }) => ({
               id: i.id,
               name: i.name,
               quantity: i.quantity,

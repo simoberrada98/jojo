@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import React from 'react';
 
@@ -19,7 +19,7 @@ describe('ProductReviews component', () => {
   });
 
   it('returns null and does not call hook when reviewCount is 0', () => {
-    const mock = useProductReviews as unknown as vi.Mock;
+    const mock = useProductReviews as ReturnType<typeof vi.fn>;
 
     render(
       <ProductReviews
@@ -39,7 +39,7 @@ describe('ProductReviews component', () => {
   });
 
   it('renders full component when reviews exist', () => {
-    const mock = useProductReviews as unknown as vi.Mock;
+    const mock = useProductReviews as ReturnType<typeof vi.fn>;
     mock.mockReturnValue({
       summary: {
         gtin: '1234567890123',

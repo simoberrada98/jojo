@@ -25,17 +25,17 @@ export type NormalizationResult = {
 };
 
 /**
- * Sanitize a candidate slug string: trim, normalize unicode, remove spaces, lowercase.
+ * Sanitize a candidate slug string: trim, normalize unicode, and clean up characters.
+ * Preserves original casing of the slug.
  */
 export function sanitizeSlug(candidate: string): string {
-  const normalized = candidate
+  return candidate
     .normalize('NFKC')
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-zA-Z0-9._-]/g, '-')
-    .replace(/-+/g, '-')
-    .toLowerCase();
-  return normalized;
+    .replace(/\s+/g, '-')        // Replace spaces with single hyphen
+    .replace(/[^a-zA-Z0-9._-]/g, '') // Remove invalid characters
+    .replace(/-+/g, '-')          // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, '');     // Remove leading/trailing hyphens
 }
 
 /**
@@ -88,13 +88,22 @@ export function normalizeProductUrl(
     reasons.push('extra_segments');
   }
 
-  if (!rawSlug || rawSlug !== slug) {
+  // Only mark as sanitized if there were actual changes beyond case differences
+  if (!rawSlug) {
+    reasons.push('empty_slug');
+  } else if (rawSlug.toLowerCase() !== slug.toLowerCase()) {
+    // Only mark as sanitized if there are actual character changes beyond case
     reasons.push('slug_sanitized');
   }
 
   const preservedParams = extractTrackingParams(qp);
   const canonicalPath = `/products/${encodeURIComponent(slug)}`;
-  const isCanonical = !hasExtraSegments && rawSlug === slug;
+  // Consider it canonical if the only difference is case (we preserve case in the URL)
+  const isCanonical = Boolean(
+    !hasExtraSegments && 
+    rawSlug && 
+    rawSlug.toLowerCase() === slug.toLowerCase()
+  );
 
   return {
     slug,

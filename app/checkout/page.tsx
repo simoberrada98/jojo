@@ -45,7 +45,7 @@ const CheckoutHeeaderSkeleton = () => (
   </div>
 );
 
-const CheckoutBodySkeleton = ({ children }) => (
+const CheckoutBodySkeleton = ({ children }: { children: React.ReactNode }) => (
   <div className="gap-8 grid lg:grid-cols-3">
     <div className="lg:col-span-2">{children}</div>
     <div className="lg:col-span-1">
@@ -54,7 +54,7 @@ const CheckoutBodySkeleton = ({ children }) => (
   </div>
 );
 
-const CheckoutHeader = ({ hasRestoredData }) => (
+const CheckoutHeader = ({ hasRestoredData }: { hasRestoredData: boolean }) => (
   <div className="mb-8">
     <Link
       href="/cart"
@@ -85,7 +85,7 @@ const CheckoutHeader = ({ hasRestoredData }) => (
   </div>
 );
 
-const CheckoutProgressIndicator = ({ paymentStep }) => (
+const CheckoutProgressIndicator = ({ paymentStep }: { paymentStep: 'shipping' | 'review' | 'payment' | 'confirmation' }) => (
   <div className="flex items-center gap-2 sm:gap-4 mb-12 pb-2 overflow-x-auto">
     {[
       { step: 'shipping', label: 'Shipping', icon: Truck },

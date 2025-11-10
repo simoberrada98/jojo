@@ -7,7 +7,6 @@ describe('fetchWithRetry', () => {
       .mockRejectedValueOnce(new Error('Failed to fetch'))
       .mockRejectedValueOnce(new Error('Failed to fetch'))
       .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true }), { status: 200 }));
-    // @ts-expect-error override global
     global.fetch = mockFetch;
 
     const res = await fetchWithRetry('/api/products?limit=100');
@@ -17,7 +16,6 @@ describe('fetchWithRetry', () => {
 
   it('does not retry on 400 errors', async () => {
     const mockFetch = vi.fn().mockResolvedValueOnce(new Response('Bad', { status: 400 }));
-    // @ts-expect-error override global
     global.fetch = mockFetch;
 
     await expect(fetchWithRetry('/api/products')).rejects.toThrow(/HTTP 400/);

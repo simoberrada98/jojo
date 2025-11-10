@@ -91,14 +91,6 @@ export function ProductReviews({
   brand,
   reviewCount,
 }: ProductReviewsProps) {
-  // Early guard: skip rendering entirely when GTIN is missing or product reviewCount is 0.
-  // This prevents calling hooks and making network requests when there are no reviews.
-  if (!gtin) {
-    return null;
-  }
-  if (reviewCount === 0) {
-    return null;
-  }
   const [sort, setSort] = useState<'helpful' | 'latest'>('helpful');
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(
     undefined
@@ -120,6 +112,12 @@ export function ProductReviews({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+
+  // Early guard: skip rendering entirely when GTIN is missing or product reviewCount is 0.
+  // This prevents calling hooks and making network requests when there are no reviews.
+  if (!gtin || reviewCount === 0) {
+    return null;
+  }
 
   async function handleSubmitReview() {
     setSubmitting(true);

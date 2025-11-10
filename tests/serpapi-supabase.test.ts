@@ -1,7 +1,7 @@
 
 import { SerpApiService } from '@/lib/services/serpapi.service';
 import { SupabaseAdminService } from '@/lib/services/supabase-admin.service';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 
 // Mock SupabaseAdminService
 vi.mock('@/lib/services/supabase-admin.service', () => {
@@ -44,7 +44,7 @@ describe('SerpApiService', () => {
       ],
     };
 
-    (fetch as vi.Mock).mockResolvedValue({
+    (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockSerpApiResponse),
     });

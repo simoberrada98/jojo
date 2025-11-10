@@ -8,6 +8,7 @@ import {
   logCampaignParams,
   logRedirect,
 } from '@/lib/url/product-url';
+import { findBestMatchingProduct } from '@/lib/url/fuzzy-match';
 
 const WATCHED_CRAWLERS = [
   /gptbot/i,
@@ -91,19 +92,41 @@ export async function proxy(request: NextRequest) {
             },
           }
         );
+        // Use case-insensitive comparison for slug lookup
         const { data: productRow, error } = await supabase
           .from('products')
-          .select('id, is_active, is_archived')
-          .eq('slug', norm.slug)
+          .select('id, is_active, is_archived, slug')
+          .ilike('slug', norm.slug)
           .limit(1)
           .maybeSingle();
 
-        const removed = Boolean(error) || !productRow || !productRow.is_active || productRow.is_archived;
-        if (removed) {
-          return new Response('Gone', { status: 410 });
+        const productNotFound = Boolean(error) || !productRow || !productRow.is_active || productRow.is_archived;
+        
+        if (productNotFound) {
+          // Try to find a similar product
+          const fuzzyMatch = await findBestMatchingProduct(norm.slug);
+          
+          if (fuzzyMatch?.matchedSlug) {
+            // If we found a similar product, redirect to it
+            const redirectPath = `/products/${encodeURIComponent(fuzzyMatch.matchedSlug)}`;
+            const redirectUrl = buildCanonicalUrl(currentUrl.origin, redirectPath, norm.preservedParams);
+            
+            logger.info('Fuzzy matched product', {
+              originalSlug: norm.slug,
+              matchedSlug: fuzzyMatch.matchedSlug,
+              score: fuzzyMatch.score,
+              redirectTo: redirectUrl
+            });
+            
+            return NextResponse.redirect(new URL(redirectUrl), 302);
+          } else {
+            // No similar product found, show a helpful 404 page
+            return NextResponse.rewrite(new URL('/404', request.url));
+          }
         }
-      } catch {
-        // If the check fails, continue without blocking
+      } catch (error) {
+        logger.error('Error checking product status', { error });
+        // Continue to next middleware/route handler
       }
     }
 

@@ -1,87 +1,88 @@
-import type React from 'react';
-import type { CSSProperties } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from 'sonner';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CurrencyProvider } from '@/lib/contexts/currency-context';
 import { AuthProvider } from '@/lib/contexts/auth-context';
 import { CartProvider } from '@/lib/contexts/cart-context';
-import {
-  generateOrganizationSchema,
-  generateWebSiteSchema,
-  serializeSchema,
-} from '@/lib/schema';
 import { siteMetadata } from '@/lib/seo/site-metadata';
 import { getCookieConsentStatus } from '@/lib/cookies/preferences';
 import { CookieBanner } from '@/components/cookie-banner';
 import { ServiceWorkerProvider } from '@/components/service-worker-provider';
-import './globals.css';
-import Link from 'next/link';
+import { ReactNode } from 'react';
+import { WebVitals } from '@/components/web-vitals';
+import { ErrorBoundary } from '@/components/error-boundary';
 import { env } from '@/lib/config/env';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import './globals.css';
 
-// Modern, professional font for body text
+// Preload fonts with modern font-display
 const bodyTextFont = Inter({
   subsets: ['latin'],
-  variable: '--font-inter',
   display: 'swap',
+  variable: '--font-inter',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 });
 
-// Monospace font for technical specs and numbers
 const technicalSpecsNumbersFont = JetBrains_Mono({
   subsets: ['latin'],
-  variable: '--font-mono',
   display: 'swap',
+  variable: '--font-mono',
+  preload: true,
+  fallback: ['monospace'],
 });
 
-const gridOverlayStyle: CSSProperties = {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+  colorScheme: 'light dark',
+  viewportFit: 'cover',
+};
+
+// Optimized background styles with reduced paint complexity
+const gridOverlayStyle = {
   backgroundImage: `
     linear-gradient(
-      0deg,
-      transparent 24%,
-      rgba(102, 204, 255, 0.05) 25%,
-      rgba(102, 204, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(102, 204, 255, 0.05) 75%,
-      rgba(102, 204, 255, 0.05) 76%,
-      transparent 77%,
-      transparent
+      to right,
+      rgba(102, 204, 255, 0.05) 1px,
+      transparent 1px
     ),
     linear-gradient(
-      90deg,
-      transparent 24%,
-      rgba(102, 204, 255, 0.05) 25%,
-      rgba(102, 204, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(102, 204, 255, 0.05) 75%,
-      rgba(102, 204, 255, 0.05) 76%,
-      transparent 77%,
-      transparent
+      to bottom,
+      rgba(102, 204, 255, 0.05) 1px,
+      transparent 1px
     )
   `,
   backgroundSize: '50px 50px',
+  backgroundPosition: '-1px -1px',
+  willChange: 'background-position',
 };
 
-const glowOverlayStyle: CSSProperties = {
-  background: `
+const glowOverlayStyle = {
+  backgroundImage: `
     radial-gradient(
       circle at 25% 20%,
-      rgba(56, 189, 248, 0.35),
-      transparent 55%
+      rgba(56, 189, 248, 0.2) 0%,
+      transparent 50%
     ),
     radial-gradient(
       circle at 75% 80%,
-      rgba(147, 51, 234, 0.3),
-      transparent 60%
+      rgba(147, 51, 234, 0.15) 0%,
+      transparent 50%
     )
   `,
+  willChange: 'opacity',
 };
 
+// Performance-optimized metadata
 export const metadata: Metadata = {
-  metadataBase: siteMetadata.baseUrl,
+  metadataBase: new URL(siteMetadata.baseUrl),
   title: {
     default: siteMetadata.title,
     template: `%s | ${siteMetadata.siteName}`,
@@ -97,6 +98,13 @@ export const metadata: Metadata = {
     languages: {
       'en-US': '/',
     },
+  },
+  formatDetection: {
+    telephone: true,
+    date: true,
+    address: true,
+    email: true,
+    url: true,
   },
   openGraph: {
     type: 'website',
@@ -130,6 +138,14 @@ export const metadata: Metadata = {
     icon: [{ url: '/favicon-96x96.png' }],
     apple: [{ url: '/apple-touch-icon.png' }],
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'link rel="preconnect" href="https://fonts.googleapis.com"': '',
+    'link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"':
+      '',
+  },
   verification: {
     google: env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
   },
@@ -138,91 +154,65 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const cookieConsent = await getCookieConsentStatus();
   // Get base URL - use environment variable or fallback
   const baseUrl = env.NEXT_PUBLIC_BASE_URL || 'https://jhuangnyc.com';
 
-  // Generate Schema.org structured data
-  const organizationSchema = generateOrganizationSchema(baseUrl);
-  const websiteSchema = generateWebSiteSchema(baseUrl);
-
   return (
     <html
       lang="en"
-      className={`${bodyTextFont.variable} ${technicalSpecsNumbersFont.variable}`}
+      className={`${bodyTextFont.variable} ${technicalSpecsNumbersFont.variable} scroll-smooth`}
+      suppressHydrationWarning
     >
+      i
       <head>
+        <meta charSet="UTF-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
-          rel="icon"
-          type="image/png"
-          href="/favicon-96x96.png"
-          sizes="96x96"
-        />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <meta name="apple-mobile-web-app-title" content="JhuangNYC" />
-        {/* Schema.org Organization markup */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: serializeSchema(organizationSchema),
-          }}
-        />
-        {/* Schema.org WebSite markup */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: serializeSchema(websiteSchema),
-          }}
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
         />
       </head>
-      <body className="relative bg-background overflow-x-hidden font-sans antialiased">
-        <div
-          aria-hidden
-          className="z-0 fixed inset-0 overflow-hidden pointer-events-none"
-        >
-          <div className="absolute inset-0 bg-linear-to-b from-primary/25 via-background/85 to-background" />
-          <div
-            className="absolute inset-0 opacity-10"
-            style={gridOverlayStyle}
-          />
-          <div
-            className="absolute inset-0 opacity-40 transition-transform duration-500 ease-out mix-blend-screen"
-            style={glowOverlayStyle}
-          />
-          <div className="-top-32 -left-24 absolute bg-primary/20 blur-3xl rounded-full w-[420px] h-[420px]" />
-          <div className="right-[-180px] bottom-[-260px] absolute bg-accent/25 blur-3xl rounded-full w-[520px] h-[520px]" />
-        </div>
-        <div className="z-10 relative flex flex-col min-h-screen">
-          {/* Skip to main content link for accessibility */}
-          <Link
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:top-0 focus:left-0 focus:z-50 focus:absolute focus:bg-primary focus:p-4 focus:text-primary-foreground"
-          >
-            Skip to main content
-          </Link>
+      <body className="min-h-screen bg-background font-sans antialiased">
+        <ErrorBoundary>
           <AuthProvider>
-            <CurrencyProvider>
-              <CartProvider>
-                <main id="main-content" className="flex-1" role="main">
+            <CartProvider>
+              <CurrencyProvider>
+                <ServiceWorkerProvider />
+                <div
+                  className="fixed inset-0 -z-10"
+                  style={{ content: ' ', ...gridOverlayStyle }}
+                />
+                <div
+                  className="fixed inset-0 -z-20"
+                  style={{ content: ' ', ...glowOverlayStyle }}
+                />
+
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                   {children}
-                </main>
-              </CartProvider>
-            </CurrencyProvider>
+                </div>
+
+                <Toaster position="top-center" />
+                <Analytics />
+                <SpeedInsights />
+                <WebVitals />
+                <CookieBanner initialStatus={cookieConsent} />
+              </CurrencyProvider>
+            </CartProvider>
           </AuthProvider>
-          <Toaster />
-          <ServiceWorkerProvider />
-          <CookieBanner initialStatus={cookieConsent} />
-          <Analytics />
-          <SpeedInsights />
-        </div>
+        </ErrorBoundary>
       </body>
     </html>
   );

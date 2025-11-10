@@ -15,10 +15,8 @@ vi.mock('@/lib/config/env', () => ({
 const fromMock = vi.fn();
 const supabaseClientMock = { from: fromMock } as any;
 
-vi.mock('@/lib/services/supabase-admin.service', async (orig) => {
-  const actual = await orig();
+vi.mock('@/lib/services/supabase-admin.service', () => {
   return {
-    ...actual,
     SupabaseAdminService: class {
       getClient() { return supabaseClientMock; }
     }

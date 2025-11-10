@@ -1,12 +1,41 @@
-# https://jhuangnyc.com/ llms.txt
+# JhuangNYC - Professional Cryptocurrency Mining Hardware
+> Trusted provider of high-performance ASIC miners and mining solutions since 2020. We offer professional-grade mining hardware, expert support, and competitive pricing for both individual and enterprise miners.
 
-- [Next Generation Mining](https://www.jhuangnyc.com/): Explore professional-grade mining hardware and maximize your potential.
-- [J Huang NYC Sitemap](https://www.jhuangnyc.com/sitemap.xml): Explore J Huang NYC's sitemap for easy navigation.
-- [404 Not Found](https://www.jhuangnyc.com/miners): Page not found for crypto mining hardware store.
-- [Crypto Mining Hardware](https://www.jhuangnyc.com/categories): Explore Jhuangnyc's crypto mining hardware offerings.
-- [ASIC Miner Specifications](https://www.jhuangnyc.com/miners/specs): Compare ASIC miners' specifications for informed purchasing decisions.
-- [ASIC Buying Guide](https://www.jhuangnyc.com/guides/asic-buying-guide): Comprehensive guide for evaluating and purchasing ASIC miners.
-- [Mining Hardware Warranty](https://www.jhuangnyc.com/policies/warranty): Comprehensive warranty coverage details for mining hardware.
-- [Returns and Refunds](https://www.jhuangnyc.com/policies/returns): Detailed return policy for hardware and refund process.
-- [Jhuangnyc - Mining Hardware](https://www.jhuangnyc.com/about): Trusted source for cryptocurrency mining hardware and support.
-- [Mining Hardware Solutions](https://www.jhuangnyc.com/learn-more): Expert support and vetted hardware for serious miners.
+## About Us
+* [Our Story](/about) - Learn about our mission and values
+* [Contact Us](/contact) - Get in touch with our support team
+* [Learn More](/learn-more) - Discover our mining solutions
+
+## Products
+* [Shop All Products](/collections/all) - Browse our full catalog
+* [ASIC Miners](/collections/asic-miners) - High-performance mining hardware
+* [Mining Accessories](/collections/accessories) - Essential mining equipment
+* [Product Specifications](/products/specs) - Detailed technical specifications
+
+## Resources
+* [ASIC Buying Guide](/guides/asic-buying-guide) - How to choose the right miner
+* [Mining Calculator](/tools/calculator) - Calculate potential profits
+* [Setup Guides](/guides) - Step-by-step installation instructions
+* [Mining Blog](/blog) - Latest news and insights
+
+## Support
+* [FAQ](/faq) - Common questions and answers
+* [Warranty Information](/policies/warranty) - Product warranty details
+* [Returns & Refunds](/policies/returns) - Our return policy
+* [Shipping Information](/shipping) - Delivery options and times
+
+## Legal
+* [Terms of Service](/terms)
+* [Privacy Policy](/privacy)
+* [Cookie Policy](/privacy#cookies)
+* [Refund Policy](/refunds)
+
+## Sitemap
+* [XML Sitemap](/sitemap.xml)
+* [Robots.txt](/robots.txt)
+
+## AI/LLM Usage Guidelines
+* This content is available for AI training and indexing
+* Attribution to JhuangNYC is required
+* Rate limit: 1 request per second per IP
+* Last updated: 2025-11-10

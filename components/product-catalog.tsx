@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/product-card';
+import { SORT_OPTIONS } from '@/lib/utils/product-sorting';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,14 +19,9 @@ import { ChevronDown, Frown } from 'lucide-react';
 import type { DisplayProduct } from '@/types/product';
 import { fetchWithRetry } from '@/lib/utils/fetch-with-retry';
 import { logger } from '@/lib/utils/logger';
-
-const SORT_OPTIONS = [
-  { label: 'Newest', value: 'newest' },
-  { label: 'Price: Low to High', value: 'price-asc' },
-  { label: 'Price: High to Low', value: 'price-desc' },
-  { label: 'Highest Rated', value: 'rating' },
-  { label: 'Most Popular', value: 'popular' },
-];
+import { formatCurrency } from '@/lib/utils/currency';
+import { PRODUCT_CONFIG } from '@/lib/config/product.config';
+import { PRICE_RANGES } from '@/lib/config/pricing.config';
 
 function ProductCatalogContent() {
   const searchParams = useSearchParams();
@@ -35,7 +31,7 @@ function ProductCatalogContent() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 200000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([PRICE_RANGES.MIN, PRICE_RANGES.MAX]);
 
   // Set category from URL params
   useEffect(() => {
@@ -121,6 +117,14 @@ function ProductCatalogContent() {
     const cats = new Set(products.map((p) => p.category));
     return ['All', ...Array.from(cats).sort()];
   }, [products]);
+
+  // Format price range for display
+  const formattedPriceRange = useMemo(() => {
+    return {
+      min: formatCurrency(priceRange[0], { showSymbol: true }),
+      max: formatCurrency(priceRange[1], { showSymbol: true })
+    };
+  }, [priceRange]);
 
   return (
     <section id="products" className="px-4 sm:px-6 lg:px-8 py-20">
@@ -223,38 +227,53 @@ function ProductCatalogContent() {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <Label className="block mb-2 text-xs">Min Price</Label>
-                    <Input
-                      type="number"
-                      value={priceRange[0]}
-                      onChange={(e) =>
-                        setPriceRange([Number(e.target.value), priceRange[1]])
-                      }
-                      placeholder="$0"
-                    />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        $
+                      </span>
+                      <Input
+                        type="number"
+                        value={priceRange[0]}
+                        onChange={(e) => {
+                          const value = Math.max(
+                            PRICE_RANGES.MIN, 
+                            Math.min(Number(e.target.value), PRICE_RANGES.MAX)
+                          );
+                          setPriceRange([value, Math.max(value, priceRange[1])]);
+                        }}
+                        min={PRICE_RANGES.MIN}
+                        max={PRICE_RANGES.MAX}
+                        step={PRICE_RANGES.STEP}
+                        className="pl-7"
+                      />
+                    </div>
                   </div>
                   <div className="flex-1">
                     <Label className="block mb-2 text-xs">Max Price</Label>
-                    <Input
-                      type="number"
-                      value={priceRange[1]}
-                      onChange={(e) =>
-                        setPriceRange([priceRange[0], Number(e.target.value)])
-                      }
-                      placeholder="$200,000"
-                    />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        $
+                      </span>
+                      <Input
+                        type="number"
+                        value={priceRange[1]}
+                        onChange={(e) => {
+                          const value = Math.max(
+                            priceRange[0],
+                            Math.min(Number(e.target.value), PRICE_RANGES.MAX)
+                          );
+                          setPriceRange([priceRange[0], value]);
+                        }}
+                        min={priceRange[0]} // Ensure max can't be less than min
+                        max={PRICE_RANGES.MAX}
+                        step={PRICE_RANGES.STEP}
+                        className="pl-7"
+                      />
+                    </div>
                   </div>
                 </div>
                 <Muted className="m-0 text-xs">
-                  Showing products between
-                  {priceRange[0].toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  })}{' '}
-                  -
-                  {priceRange[1].toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  })}
+                  Showing products between {formattedPriceRange.min} - {formattedPriceRange.max}
                 </Muted>
               </div>
             </div>
