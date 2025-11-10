@@ -45,12 +45,24 @@ export async function proxy(request: NextRequest) {
 
   // Legacy product path: /product/:id -> normalize to /products/:slug
   if (pathname.startsWith('/product/')) {
-    const legacySegments = pathname.replace(/^\/product\//, '').split('/').filter(Boolean);
+    const legacySegments = pathname
+      .replace(/^\/product\//, '')
+      .split('/')
+      .filter(Boolean);
     const targetSegments = legacySegments.length > 0 ? [legacySegments[0]] : [];
     const norm = normalizeProductUrl(targetSegments, currentUrl.searchParams);
     if (norm.slug && norm.canonicalPath) {
-      const redirectTo = buildCanonicalUrl(currentUrl.origin, norm.canonicalPath, norm.preservedParams);
-      logRedirect({ from: currentUrl.toString(), to: redirectTo, status: 301, reasons: ['legacy_product_path'] });
+      const redirectTo = buildCanonicalUrl(
+        currentUrl.origin,
+        norm.canonicalPath,
+        norm.preservedParams
+      );
+      logRedirect({
+        from: currentUrl.toString(),
+        to: redirectTo,
+        status: 301,
+        reasons: ['legacy_product_path'],
+      });
       const res = NextResponse.redirect(redirectTo, 301);
       res.headers.set('X-Redirect-Reason', 'legacy_product_path');
       return res;
@@ -59,7 +71,10 @@ export async function proxy(request: NextRequest) {
 
   // Product path normalization: /products/:slug[...extra]
   if (pathname.startsWith('/products')) {
-    const segments = pathname.replace(/^\/products\/?/, '').split('/').filter(Boolean);
+    const segments = pathname
+      .replace(/^\/products\/?/, '')
+      .split('/')
+      .filter(Boolean);
     const norm = normalizeProductUrl(segments, currentUrl.searchParams);
 
     // Log campaign params for marketing insights
@@ -69,8 +84,15 @@ export async function proxy(request: NextRequest) {
     }
 
     // Log invalid patterns
-    if (norm.invalidSegments.length > 0 || norm.reasons.includes('slug_sanitized')) {
-      logInvalidUrlPattern({ path: pathname, invalidSegments: norm.invalidSegments, reasons: norm.reasons });
+    if (
+      norm.invalidSegments.length > 0 ||
+      norm.reasons.includes('slug_sanitized')
+    ) {
+      logInvalidUrlPattern({
+        path: pathname,
+        invalidSegments: norm.invalidSegments,
+        reasons: norm.reasons,
+      });
     }
 
     // Lightweight product status check to return 410 for removed/inactive
@@ -85,9 +107,13 @@ export async function proxy(request: NextRequest) {
                 return request.cookies.getAll();
               },
               setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+                cookiesToSet.forEach(({ name, value }) =>
+                  request.cookies.set(name, value)
+                );
                 supabaseResponse = NextResponse.next({ request });
-                cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
+                cookiesToSet.forEach(({ name, value, options }) =>
+                  supabaseResponse.cookies.set(name, value, options)
+                );
               },
             },
           }
@@ -100,24 +126,32 @@ export async function proxy(request: NextRequest) {
           .limit(1)
           .maybeSingle();
 
-        const productNotFound = Boolean(error) || !productRow || !productRow.is_active || productRow.is_archived;
-        
+        const productNotFound =
+          Boolean(error) ||
+          !productRow ||
+          !productRow.is_active ||
+          productRow.is_archived;
+
         if (productNotFound) {
           // Try to find a similar product
           const fuzzyMatch = await findBestMatchingProduct(norm.slug);
-          
+
           if (fuzzyMatch?.matchedSlug) {
             // If we found a similar product, redirect to it
             const redirectPath = `/products/${encodeURIComponent(fuzzyMatch.matchedSlug)}`;
-            const redirectUrl = buildCanonicalUrl(currentUrl.origin, redirectPath, norm.preservedParams);
-            
+            const redirectUrl = buildCanonicalUrl(
+              currentUrl.origin,
+              redirectPath,
+              norm.preservedParams
+            );
+
             logger.info('Fuzzy matched product', {
               originalSlug: norm.slug,
               matchedSlug: fuzzyMatch.matchedSlug,
               score: fuzzyMatch.score,
-              redirectTo: redirectUrl
+              redirectTo: redirectUrl,
             });
-            
+
             return NextResponse.redirect(new URL(redirectUrl), 302);
           } else {
             // No similar product found, show a helpful 404 page
@@ -131,15 +165,30 @@ export async function proxy(request: NextRequest) {
     }
 
     // Build canonical URL and redirect if needed
-    const canonicalUrl = buildCanonicalUrl(currentUrl.origin, norm.canonicalPath ?? pathname, norm.preservedParams);
-    const willChangePath = norm.canonicalPath !== pathname;
+    const targetPath = norm.canonicalPath ?? pathname;
+    const canonicalUrl = buildCanonicalUrl(
+      currentUrl.origin,
+      targetPath,
+      norm.preservedParams
+    );
+    // Only consider a path change if canonicalPath is defined
+    const willChangePath =
+      norm.canonicalPath != null && norm.canonicalPath !== pathname;
     const willChangeQuery = canonicalUrl !== currentUrl.toString();
 
     if (willChangePath || willChangeQuery) {
       const status: 301 | 302 = willChangePath ? 301 : 302;
-      logRedirect({ from: currentUrl.toString(), to: canonicalUrl, status, reasons: norm.reasons });
+      logRedirect({
+        from: currentUrl.toString(),
+        to: canonicalUrl,
+        status,
+        reasons: norm.reasons,
+      });
       const res = NextResponse.redirect(canonicalUrl, status);
-      res.headers.set('X-Redirect-Reason', willChangePath ? 'canonicalize_path' : 'canonicalize_query');
+      res.headers.set(
+        'X-Redirect-Reason',
+        willChangePath ? 'canonicalize_path' : 'canonicalize_query'
+      );
       return res;
     }
   }
@@ -191,6 +240,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - Static assets (svg, png, jpg, jpeg, gif, webp)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|mp3|wav)$).*)',
   ],
 };

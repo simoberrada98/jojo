@@ -16,6 +16,22 @@ function jsonWithCache<T>(payload: T, maxAgeSeconds: number) {
   return response;
 }
 
+/**
+ * Sanitize user-provided search terms to avoid breaking Supabase `.or()` filters.
+ * - Removes comma and parentheses which Supabase uses as separators in OR expressions
+ * - Trims and collapses whitespace
+ * - Strips `%` and `_` to avoid unintended LIKE wildcards within the user input
+ */
+function sanitizeSearchTerm(input: string | null): string {
+  if (!input) return '';
+  const cleaned = input
+    .replace(/[,%()]/g, ' ') // avoid splitting OR conditions
+    .replace(/[\%_]/g, ' ') // strip LIKE wildcards from user term
+    .replace(/\s+/g, ' ') // collapse whitespace
+    .trim();
+  return cleaned;
+}
+
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const params = url.searchParams;
@@ -24,7 +40,8 @@ export async function GET(request: NextRequest) {
   const handle = params.get('handle') ?? undefined;
   const idsParam = params.get('ids') ?? undefined;
   const category = params.get('category') ?? undefined;
-  const q = params.get('q') ?? params.get('search') ?? '';
+  const rawQ = params.get('q') ?? params.get('search') ?? '';
+  const q = sanitizeSearchTerm(rawQ);
 
   const rawLimit = Number(params.get('limit'));
   const rawOffset = Number(params.get('offset'));
@@ -159,7 +176,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Add search filter if provided
-    if (q) {
+    if (q && q.length > 0) {
+      // Log sanitized vs raw query to aid troubleshooting
+      if (rawQ !== q) {
+        logger?.debug?.('Search term sanitized', { raw: rawQ, sanitized: q });
+      }
       query = query.or(
         `name.ilike.%${q}%,description.ilike.%${q}%,category.ilike.%${q}%`
       );

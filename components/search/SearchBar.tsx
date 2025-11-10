@@ -29,15 +29,22 @@ export function SearchBar({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const targetPath = '/products';
+    const targetPath = '/search';
     const next = new URLSearchParams(params.toString());
     if (query && query.trim().length > 0) {
       next.set('q', query.trim());
       router.push(`${targetPath}?${next.toString()}`);
     } else {
       next.delete('q');
-      router.push(targetPath);
+      const qs = next.toString();
+      if (qs) {
+        router.push(`${targetPath}?${qs}`);
+      } else {
+        router.push(targetPath);
+      }
     }
+    // Close overlay after navigation
+    setExpanded(false);
     return false;
   };
 
