@@ -266,7 +266,7 @@
 
   .animated-border::before,
   .animated-border-hover::before {
-    content: '';
+    content: ' ';
     position: absolute;
     inset: -2px;
     border-radius: inherit;
@@ -301,7 +301,7 @@
 
   .animated-border::after,
   .animated-border-hover::after {
-    content: '';
+    content: ' ';
     position: absolute;
     inset: 1px;
     border-radius: inherit;

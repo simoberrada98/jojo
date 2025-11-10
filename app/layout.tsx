@@ -157,8 +157,6 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const cookieConsent = await getCookieConsentStatus();
-  // Get base URL - use environment variable or fallback
-
 
   return (
     <html
@@ -166,7 +164,6 @@ export default async function RootLayout({
       className={`${bodyTextFont.variable} ${technicalSpecsNumbersFont.variable} scroll-smooth`}
       suppressHydrationWarning
     >
-      i
       <head>
         <meta charSet="UTF-8" />
         <meta
@@ -185,22 +182,22 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="bg-background min-h-screen font-sans antialiased">
         <ErrorBoundary>
           <AuthProvider>
             <CartProvider>
               <CurrencyProvider>
                 <ServiceWorkerProvider />
                 <div
-                  className="fixed inset-0 -z-10"
+                  className="-z-10 fixed inset-0"
                   style={{ content: ' ', ...gridOverlayStyle }}
                 />
                 <div
-                  className="fixed inset-0 -z-20"
+                  className="-z-20 fixed inset-0"
                   style={{ content: ' ', ...glowOverlayStyle }}
                 />
 
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto px-4 sm:px-6 lg:px-8 container">
                   {children}
                 </div>
 
